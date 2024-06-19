@@ -72,15 +72,15 @@ const Login = (props) => {
           </CardContent>
           <CardActions>
           <Button id='buttonLogin' variant="contained" onClick={login} aria-label="Click me to login">Login</Button>
-
-          <Link
-            href="#"
-            onClick={() => navigate('/register')}
-            aria-label="Click me to register page"
-          >
-            Forget Password?
-          </Link>
-
+          <small>
+            <Link
+              href="#"
+              onClick={() => navigate('/register')}
+              aria-label="Click me to register page"
+            >
+              Forget Password?
+            </Link>
+          </small>
           </CardActions>
           <CardContent>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
