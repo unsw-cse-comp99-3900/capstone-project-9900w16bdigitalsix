@@ -5,7 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import { ReactComponent as LogoDark } from "../assets/images/logos/capstone.svg";
-const ResetPwd = (props) => {
+const ResetPwdLinkSent = (props) => {
 	const navigate = useNavigate();
 	return(
     <>
@@ -24,7 +24,6 @@ const ResetPwd = (props) => {
 									href="#"
 									onClick={() => navigate('/login')}
 									aria-label="Go Back to Login"
-									sx={{textAlign:'center'}}
 								>
 									Go Back to Login
 								</Link>
@@ -40,4 +39,4 @@ const ResetPwd = (props) => {
 
 }
 
-export default ResetPwd;
+export default ResetPwdLinkSent;

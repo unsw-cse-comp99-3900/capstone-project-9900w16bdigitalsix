@@ -27,23 +27,35 @@ const Login = (props) => {
     setOpen(false);
   };
 
-  // test
-  React.useEffect(() => {
+  // // test
+  // React.useEffect(() => {
     
-  }, []);
+  // }, []);
 
-  // load listings
+  // load dashboard
   React.useEffect(() => {
     if (props.token) {
       navigate('/');
     }
   }, [props.token]);
 
-  
+  ///////////////////////
+  // login function: activate when click on the login button
+  ///////////////////////
   const login = async () => {
+    // check empty
+    if (!email || !password){
+      setSnackbarContent('Please fill in the form');
+      setAlertType('error');
+      setOpen(true);
+      return 
+    };
+
+    // try to request
     const requestBody = {
       email, password
     };
+    
     try {
       const data = await apiCall('POST', 'mock/13/v1/user/pwd_login', requestBody);
       if (data.error) {
@@ -53,6 +65,7 @@ const Login = (props) => {
       } else if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('email', email);
+        // localStorage.setItem('role', data.role);
         props.setToken(data.token);
         setEmail(email);
         navigate('/');
@@ -81,9 +94,9 @@ const Login = (props) => {
           <small>
             <Link
               href="#"
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/forget-pwd')}
               // TODO
-              aria-label="Click me to register page"
+              aria-label="Click me to forget password page"
             >
               Forget Password?
             </Link>

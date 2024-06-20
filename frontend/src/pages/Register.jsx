@@ -46,7 +46,9 @@ const Register = (props) => {
     }
   }, [passwordConfirmed, password]);
 
-  // when click on the register button
+  ///////////////////////
+  // register function: activate when click on the register button
+  /////////////////////// 
   const register = async () => {
     if (unmatched) {
       setSnackbarContent('Password unmatched');
