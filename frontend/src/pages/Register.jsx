@@ -30,7 +30,7 @@ const Register = (props) => {
     setOpen(false);
   };
 
-  // load listings
+  // load dashboard
   React.useEffect(() => {
     if (props.token) {
       navigate('/');
@@ -55,7 +55,7 @@ const Register = (props) => {
       return;
     }
 
-    // chack empty
+    // check empty
     if (!email || !password || !name){
       setSnackbarContent('Please fill in the form');
       setAlertType('error');
@@ -63,7 +63,24 @@ const Register = (props) => {
       return 
     };
 
+    // check valid email
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (! regex.test(email)){
+      setSnackbarContent('Invalid Email');
+      setAlertType('error');
+      setOpen(true);
+      return 
+    };
 
+    // check valid password
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (! passwordRegex.test(password)){
+      setSnackbarContent('Password must be at least 8 characters long, including letter, number, and special character.');
+      setAlertType('error');
+      setOpen(true);
+      return 
+    }
+    
     // try to request
     const requestBody = {
       email, password, name
@@ -74,15 +91,15 @@ const Register = (props) => {
         setSnackbarContent(data.error);
         setAlertType('error');
         setOpen(true);
-      } else {
+      } else if (data.msg) {
         // localStorage.setItem('token', data.token);
         // localStorage.setItem('email', email);
         // props.setToken(data.token);
         // props.setEmail(email);
         navigate('/verify-email-link-sent');
-        // setSnackbarContent('Register successfully');
-        // setAlertType('success');
-        // setOpen(true);
+        setSnackbarContent('data.msg');
+        setAlertType('success');
+        setOpen(true);
       }
     } catch (error) {
       console.error('Error during register:', error);
