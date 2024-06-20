@@ -27,6 +27,11 @@ const Login = (props) => {
     setOpen(false);
   };
 
+  // test
+  React.useEffect(() => {
+    
+  }, []);
+
   // load listings
   React.useEffect(() => {
     if (props.token) {
@@ -34,12 +39,13 @@ const Login = (props) => {
     }
   }, [props.token]);
 
+  
   const login = async () => {
     const requestBody = {
       email, password
     };
     try {
-      const data = await apiCall('POST', 'user/auth/login', requestBody);
+      const data = await apiCall('POST', 'mock/13/v1/user/pwd_login', requestBody);
       if (data.error) {
         setSnackbarContent(data.error);
         setAlertType('error');
@@ -76,6 +82,7 @@ const Login = (props) => {
             <Link
               href="#"
               onClick={() => navigate('/register')}
+              // TODO
               aria-label="Click me to register page"
             >
               Forget Password?

@@ -12,7 +12,7 @@ const apiCall = async (method, path, requestBody = null, token = null, authed = 
       config.body = JSON.stringify(requestBody);
     }
   
-    const response = await fetch(`http://localhost:5005/${path}`, config);
+    const response = await fetch(`http://localhost:8080/${path}`, config);
     const data = await response.json();
     return data;
   }

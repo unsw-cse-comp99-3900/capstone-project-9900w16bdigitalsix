@@ -16,7 +16,7 @@ const Register = (props) => {
   const [password, setPassword] = React.useState('');
   const [passwordConfirmed, setPasswordConfirmed] = React.useState('');
   const [name, setName] = React.useState('');
-  const [error, setError] = React.useState('');
+  const [unmatched, setUnmatched] = React.useState('');
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false); // alert state
   const [snackbarContent, setSnackbarContent] = React.useState('');
@@ -40,19 +40,31 @@ const Register = (props) => {
   // check password validation
   React.useEffect(() => {
     if (password !== passwordConfirmed) {
-      setError('Password unmatched');
+      setUnmatched('Password unmatched');
     } else if (password === passwordConfirmed) {
-      setError('');
+      setUnmatched('');
     }
   }, [passwordConfirmed, password]);
 
+  // when click on the register button
   const register = async () => {
-    if (error) {
+    if (unmatched) {
       setSnackbarContent('Password unmatched');
       setAlertType('error');
       setOpen(true);
       return;
     }
+
+    // chack empty
+    if (!email || !password || !name){
+      setSnackbarContent('Please fill in the form');
+      setAlertType('error');
+      setOpen(true);
+      return 
+    };
+
+
+    // try to request
     const requestBody = {
       email, password, name
     };
@@ -62,15 +74,15 @@ const Register = (props) => {
         setSnackbarContent(data.error);
         setAlertType('error');
         setOpen(true);
-      } else if (data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('email', email);
-        props.setToken(data.token);
-        props.setEmail(email);
-        navigate('/');
-        setSnackbarContent('Register successfully');
-        setAlertType('success');
-        setOpen(true);
+      } else {
+        // localStorage.setItem('token', data.token);
+        // localStorage.setItem('email', email);
+        // props.setToken(data.token);
+        // props.setEmail(email);
+        navigate('/verify-email-link-sent');
+        // setSnackbarContent('Register successfully');
+        // setAlertType('success');
+        // setOpen(true);
       }
     } catch (error) {
       console.error('Error during register:', error);
@@ -95,21 +107,21 @@ const Register = (props) => {
           </CardContent>
           <CardActions>
             <Button id="buttonRegister" variant="contained" onClick={register} aria-label="Click me to register">Register</Button>
-            {error && <small id='unmatchError' style={{ color: 'red', paddingLeft: '1vw' }}>{error}<br/></small>}
+            {unmatched && <small id='unmatchError' style={{ color: 'red', paddingLeft: '1vw' }}>{unmatched}<br/></small>}
           </CardActions>
           <CardContent>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <small>
-                Already have an account?{'\u00A0'}
-                <Link
-                  href="#"
-                  onClick={() => navigate('/login')}
-                  aria-label="Click me to login page"
-                >
-                  Login
-                </Link>
-                {'\u00A0'}now
-              </small>
+              Already have an account?{'\u00A0'}
+              <Link
+                href="#"
+                onClick={() => navigate('/login')}
+                aria-label="Click me to login page"
+              >
+                Login
+              </Link>
+              {'\u00A0'}now
+            </small>
           </div>
           </CardContent>
         </CenteredCard>
