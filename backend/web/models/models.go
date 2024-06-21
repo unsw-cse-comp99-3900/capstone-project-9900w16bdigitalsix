@@ -18,7 +18,7 @@ type User struct {
 	Position       string     `json:"position"`
 	Field          string     `json:"field"`
 	Phone          string
-	Role           int `gorm:"default:1;type:int comment '1表示student, 2表示tutor, 3表示convenor, 4表示client, 5表示admin'"`
+	Role           int `gorm:"default:1;type:int comment '1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin'"`
 	TechStack      string
 	BelongsToGroup *uint     `gorm:"default:null"`
 	Teams          []Team    `gorm:"foreignkey:TutorID"`       //  a turor responsible for many groups

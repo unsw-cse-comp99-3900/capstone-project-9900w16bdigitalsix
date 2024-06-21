@@ -224,6 +224,7 @@ func VerifyEmail(ctx *gin.Context) {
 // @Param registerForm body forms.RegisterForm true "Register form"
 // @Success 200 {object} map[string]string "{"msg":"Verification email sent successfully"}"
 // @Failure 400 {object} map[string]string "{"error":"Validation failed"}"
+// @Failure 409 {object} map[string]string "{"error": "User already exists"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to generate verification token"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to store verification token"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to send verification email"}"
@@ -233,6 +234,13 @@ func Register(ctx *gin.Context) {
 	// 表单验证
 	if err := ctx.ShouldBind(&registerForm); err != nil {
 		HandleValidatorError(ctx, err)
+		return
+	}
+
+	// 检查用户是否存在
+	var user models.User
+	if err := global.DB.Where("email = ?", registerForm.Email).First(&user).Error; err == nil {
+		ctx.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
 		return
 	}
 
@@ -563,4 +571,33 @@ func GetPersonProfile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, profile)
+}
+
+
+// @Summary Get Student List
+// @Description 返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} response.StudentListResponse
+// @Failure 500 {object} map[string]string "{"error": "Failed to fetch users"}""
+// @Router /v1/user/student/list [get]
+func GetAllStudents(c *gin.Context) {
+	var users []models.User
+	if err := global.DB.Where("role = ?", 1).Find(&users).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+		return
+	}
+
+	// 映射到返回的结构体
+	var userResponses []response.StudentListResponse
+	for _, user := range users {
+		userResponses = append(userResponses, response.StudentListResponse{
+			UserID: user.ID,
+			UserName: user.Username,
+			Email:    user.Email,
+		})
+	}
+
+	c.JSON(http.StatusOK, userResponses)
 }

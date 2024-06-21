@@ -6,7 +6,7 @@
     "paths": {
         "/v1/team/create": {
             "post": {
-                "description": "创建一个新的团队",
+                "description": "创建 team, 并且创建人加入了 team, 后端随机生成 teamName, 存入了数据库",
                 "consumes": [
                     "application/json"
                 ],
@@ -55,6 +55,154 @@
                     },
                     "500": {
                         "description": "{\"error\":\"Failed to create team\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/team/get/list": {
+            "get": {
+                "description": "Get all teams",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Get Team List",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.TeamListResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch teams\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/team/get/student-info/{teamName}": {
+            "get": {
+                "description": "Get student list information by team name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Get student list information by team name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Team Name",
+                        "name": "teamName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.StudentInfoResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Team not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/team/invite/{userId}/{teamId}": {
+            "get": {
+                "description": "Invite a student to join a team",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Invite User to Team",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Team ID",
+                        "name": "teamId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\": \"User invited to team successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"User already belongs to a team\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"User not found\"} or gin.H{\"error\": \"Team not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to invite user to team\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -126,7 +274,7 @@
                 }
             }
         },
-        "/v1/team/leave": {
+        "/v1/team/leave/{userId}": {
             "delete": {
                 "description": "用户离开团队",
                 "consumes": [
@@ -141,13 +289,11 @@
                 "summary": "Leave a team",
                 "parameters": [
                     {
-                        "description": "Leave Team form",
-                        "name": "leaveTeamForm",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/forms.LeaveTeamForm"
-                        }
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "UserId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -622,6 +768,15 @@
                             }
                         }
                     },
+                    "409": {
+                        "description": "{\"error\": \"User already exists\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "{\"error\":\"Failed to send verification email\"}",
                         "schema": {
@@ -739,6 +894,41 @@
                     }
                 }
             }
+        },
+        "/v1/user/student/list": {
+            "get": {
+                "description": "返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get Student List",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.StudentListResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch users\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -782,17 +972,6 @@
                 "teamId": {
                     "type": "integer"
                 },
-                "userId": {
-                    "type": "integer"
-                }
-            }
-        },
-        "forms.LeaveTeamForm": {
-            "type": "object",
-            "required": [
-                "userId"
-            ],
-            "properties": {
                 "userId": {
                     "type": "integer"
                 }
@@ -1019,14 +1198,62 @@
                 }
             }
         },
-        "response.TeamMember": {
+        "response.StudentInfoResponse": {
             "type": "object",
             "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.StudentListResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
                 "userId": {
                     "type": "integer"
                 },
                 "userName": {
                     "type": "string"
+                }
+            }
+        },
+        "response.TeamListResponse": {
+            "type": "object",
+            "properties": {
+                "teamId": {
+                    "type": "integer"
+                },
+                "teamName": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.TeamMember": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "userName": {
+                    "type": "string"
+                },
+                "userSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         }
