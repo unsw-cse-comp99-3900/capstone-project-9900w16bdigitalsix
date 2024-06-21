@@ -19,6 +19,13 @@ import Avatar from "@mui/material/Avatar";
 import user5Image from "../assets/images/users/user5.jpg";
 import user4Image from "../assets/images/users/user4.jpg";
 import user3Image from "../assets/images/users/user3.jpg";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Checkbox from "@mui/material/Checkbox";
+import { width } from "@mui/system";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "transparent",
@@ -29,17 +36,57 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const EditableTextField = styled(TextField)(({ theme, $editable }) => ({
-  "& .MuiInputBase-input": {
-    backgroundColor: $editable ? "white" : "transparent",
-    border: $editable ? `1px solid ${theme.palette.divider}` : "none",
-    cursor: $editable ? "text" : "default",
-  },
-}));
+// const EditableTextField = styled(TextField)(({ theme, $editable }) => ({
+//   "& .MuiInputBase-input": {
+//     backgroundColor: $editable ? "white" : "transparent",
+//     border: $editable ? `1px solid ${theme.palette.divider}` : "none",
+//     cursor: $editable ? "text" : "default",
+//   },
+// }));
 
-const TeamProfile = () => {
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const names = [
+  "Python",
+  "Javascript",
+  "Java",
+  "SQL",
+  "Rust",
+  "Golang",
+  "Miriam Wagner",
+  "Bradley Wilkerson",
+  "Virginia Andrews",
+  "Others",
+];
+
+const TeamProfile = ({ teamId, teamNameOld, leaveTeam }) => {
   const [editable, setEditable] = useState(false);
-  const [teamName, setTeamName] = useState("");
+  const [teamNameNew, setTeamNameNew] = useState("");
+  const [personName, setPersonName] = React.useState([]);
+  const userId = 2;
+
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setPersonName(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    );
+  };
+
+  const handleLeaveTeam = async () => {
+    leaveTeam(userId);
+  };
 
   const handleEditClick = () => {
     setEditable(true);
@@ -70,24 +117,28 @@ const TeamProfile = () => {
                       id="outlined-required"
                       label="Team Name"
                       // placeholder="Team Name"
-                      value={teamName}
-                      onChange={(e) => setTeamName(e.target.value)}
+                      value={teamNameNew}
+                      onChange={(e) => setTeamNameNew(e.target.value)}
                     />
                   ) : (
                     <Typography variant="h5" gutterBottom>
-                      Team Name: 叫啥名呢
+                      Team Name: {teamNameOld}
                     </Typography>
                   )}
                 </Item>
                 <Item style={{ textAlign: "left" }}>
                   <Typography variant="h6" gutterBottom>
-                    Team Id: ? ? ?
+                    Team Id: {teamId}
                   </Typography>
                 </Item>
               </Grid>
               <Grid item xs={4}>
                 <Item style={{ textAlign: "end" }}>
-                  <Button variant="outlined" color="error">
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleLeaveTeam}
+                  >
                     Leave
                   </Button>
                 </Item>
@@ -221,6 +272,32 @@ const TeamProfile = () => {
             >
               Team Skills:
             </Typography>
+          </Item>
+          <Item style={{ width: "100%" }}>
+            <div>
+              <FormControl sx={{ m: 1, width: "80%" }}>
+                <InputLabel id="demo-multiple-checkbox-label">
+                  Skills
+                </InputLabel>
+                <Select
+                  labelId="demo-multiple-checkbox-label"
+                  id="demo-multiple-checkbox"
+                  multiple
+                  value={personName}
+                  onChange={handleChange}
+                  input={<OutlinedInput label="Tag" />}
+                  renderValue={(selected) => selected.join(", ")}
+                  MenuProps={MenuProps}
+                >
+                  {names.map((name) => (
+                    <MenuItem key={name} value={name}>
+                      <Checkbox checked={personName.indexOf(name) > -1} />
+                      <ListItemText primary={name} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
           </Item>
         </Grid>
       </Grid>

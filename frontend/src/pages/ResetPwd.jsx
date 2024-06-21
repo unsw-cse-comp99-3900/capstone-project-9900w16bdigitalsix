@@ -5,20 +5,18 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import Link from '@mui/material/Link';
 
+import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import { apiCall } from '../helper';
 import MessageAlert from '../components/MessageAlert';
 import GradientBackground from '../components/GradientBackground';
 
-const Register = (props) => {
+const ResetPwd = (props) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [passwordConfirmed, setPasswordConfirmed] = React.useState('');
-  const [name, setName] = React.useState('');
   const [unmatched, setUnmatched] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false); // alert state
   const [snackbarContent, setSnackbarContent] = React.useState('');
@@ -60,7 +58,7 @@ const Register = (props) => {
     }
 
     // check empty
-    if (!email || !password || !name){
+    if (!email || !password){
       setSnackbarContent('Please fill in the form');
       setAlertType('error');
       setOpen(true);
@@ -87,14 +85,10 @@ const Register = (props) => {
     
     // try to request
     const requestBody = {
-      email: email,
-      password: password,
-      password_confirm: passwordConfirmed,
-      username: name
+      email, password
     };
-    setLoading(true);
     try {
-      const data = await apiCall('POST', 'v1/user/register/send_email', requestBody);
+      const data = await apiCall('POST', 'user/auth/register', requestBody);
       if (data.error) {
         setSnackbarContent(data.error);
         setAlertType('error');
@@ -104,15 +98,13 @@ const Register = (props) => {
         // localStorage.setItem('email', email);
         // props.setToken(data.token);
         // props.setEmail(email);
+        navigate('/verify-email-link-sent');
         setSnackbarContent('data.msg');
         setAlertType('success');
         setOpen(true);
-        navigate('/verify-email-link-sent');
       }
     } catch (error) {
       console.error('Error during register:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -122,26 +114,17 @@ const Register = (props) => {
         <CenteredCard>
           <CardContent>
             <Typography variant="h4" component="div">
-            Register
+            Reset Password
             </Typography> <br />
             <Typography variant="body2">
               <TextField id="email" label="Email" type="text" value={email} onChange={e => setEmail(e.target.value)} /> <br /><br />
               <TextField id="password" label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} /> <br /><br />
               <TextField id="passwordConfirmed" label="Password Confirmed" type="password" value={passwordConfirmed} onChange={e => setPasswordConfirmed(e.target.value)} />
               <br /><br />
-              <TextField id="name" label="Name" type="text" value={name} onChange={e => setName(e.target.value)} /> <br /><br />
             </Typography>
           </CardContent>
           <CardActions>
-            <Button
-              id="buttonRegister"
-              variant="contained"
-              onClick={register}
-              disabled={loading}
-              aria-label="Click me to register"
-            >
-              {loading ? 'Loading...' : 'Register'}
-            </Button>
+            <Button id="buttonRegister" variant="contained" onClick={register} aria-label="Click me to register">Reset</Button>
             {unmatched && <small id='unmatchError' style={{ color: 'red', paddingLeft: '1vw' }}>{unmatched}<br/></small>}
           </CardActions>
           <CardContent>
@@ -167,4 +150,4 @@ const Register = (props) => {
   )
 }
 
-export default Register;
+export default ResetPwd;

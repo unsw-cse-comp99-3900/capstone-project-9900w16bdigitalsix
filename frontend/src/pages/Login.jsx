@@ -8,6 +8,7 @@ import CardContent from '@mui/material/CardContent';
 import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import Link from '@mui/material/Link';
 import MessageAlert from '../components/MessageAlert';
+import GradientBackground from '../components/GradientBackground';
 
 import { apiCall } from '../helper';
 
@@ -27,19 +28,48 @@ const Login = (props) => {
     setOpen(false);
   };
 
-  // load listings
+
+  // React.useEffect(() => {
+  //   if (props.token) {
+  //     navigate('/');
+  //   }
+  // }, []);
+
+  // load dashboard
   React.useEffect(() => {
     if (props.token) {
       navigate('/');
     }
   }, [props.token]);
 
+  ///////////////////////
+  // login function: activate when click on the login button
+  ///////////////////////
   const login = async () => {
+    // check empty
+    if (!email || !password){
+      setSnackbarContent('Please fill in the form');
+      setAlertType('error');
+      setOpen(true);
+      return 
+    };
+
+    // check valid email
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (! regex.test(email)){
+      setSnackbarContent('Invalid Email');
+      setAlertType('error');
+      setOpen(true);
+      return 
+    };
+
+    // try to request
     const requestBody = {
       email, password
     };
+    
     try {
-      const data = await apiCall('POST', 'user/auth/login', requestBody);
+      const data = await apiCall('POST', 'v1/user/pwd_login', requestBody);
       if (data.error) {
         setSnackbarContent(data.error);
         setAlertType('error');
@@ -47,6 +77,8 @@ const Login = (props) => {
       } else if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('email', email);
+        localStorage.setItem('userId', data.id);
+        // localStorage.setItem('role', data.role);
         props.setToken(data.token);
         setEmail(email);
         navigate('/');
@@ -75,8 +107,9 @@ const Login = (props) => {
           <small>
             <Link
               href="#"
-              onClick={() => navigate('/register')}
-              aria-label="Click me to register page"
+              onClick={() => navigate('/forget-pwd')}
+              // TODO
+              aria-label="Click me to forget password page"
             >
               Forget Password?
             </Link>
@@ -100,6 +133,7 @@ const Login = (props) => {
         </CenteredCard>
       </CenteredBox>
       <MessageAlert open={open} alertType={alertType} handleClose={handleClose} snackbarContent={snackbarContent}/>
+      <GradientBackground />
     </>
   )
 }

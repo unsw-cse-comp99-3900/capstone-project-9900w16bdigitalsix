@@ -76,10 +76,10 @@ const Header = () => {
         </Nav>
         <Nav>
           <Link to="/notification" className="nav-link">
-          <div className="notification-icon">
-            <i className="bi bi-bell-fill"></i>
-          </div>
-        </Link>
+            <div className="notification-icon">
+              <i className="bi bi-bell-fill"></i>
+            </div>
+          </Link>
         </Nav>
         <Dropdown isOpen={dropdownOpen} toggle={toggle}>
           <DropdownToggle color="transparent">
@@ -92,9 +92,9 @@ const Header = () => {
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem header>Info</DropdownItem>
-            <DropdownItem>Profile</DropdownItem>
+            <DropdownItem href="/profile">Profile</DropdownItem>
             <DropdownItem divider />
-            <DropdownItem>Logout</DropdownItem>
+            <DropdownItem href="/login">Logout</DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </Collapse>

@@ -5,32 +5,32 @@ import { Link, useLocation } from "react-router-dom";
 const navigation = [
   {
     title: "Project",
-    href: "/project",//need to be implented
+    href: "/project", //need to be implented
     icon: "bi bi-clipboard2-data",
   },
   {
     title: "Notification",
-    href: "/notification",//need to be implented
+    href: "/notification", //need to be implented
     icon: "bi bi-bell",
   },
   {
     title: "Team",
-    href: "/team",//need to be implented
+    href: "/team", //need to be implented
     icon: "bi bi-people",
   },
   {
     title: "Message",
-    href: "/message",//need to be implented
+    href: "/message", //need to be implented
     icon: "bi bi-chat-square-dots",
   },
   {
     title: "Profile",
-    href: "/profile",//need to be implented
+    href: "/profile", //need to be implented
     icon: "bi bi-person-circle",
   },
   {
     title: "Role",
-    href: "/",//need to be implented
+    href: "/", //need to be implented
     icon: "bi bi-person-check",
   },
 ];
@@ -40,8 +40,8 @@ const Sidebar = () => {
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
   };
   let location = useLocation();
-  
-  const currentPath = location.pathname.split('/')[1];
+
+  const currentPath = location.pathname.split("/")[1];
 
   return (
     <div className="p-3">
@@ -65,7 +65,7 @@ const Sidebar = () => {
               <Link
                 to={navi.href}
                 className={
-                  currentPath === navi.href.split('/')[1]
+                  currentPath === navi.href.split("/")[1]
                     ? "text-primary nav-link py-3"
                     : "nav-link text-secondary py-3"
                 }
@@ -75,13 +75,7 @@ const Sidebar = () => {
               </Link>
             </NavItem>
           ))}
-          <Button
-            color="danger"
-            tag="a"
-            target="_blank"
-            className="mt-3"
-            href="https://wrappixel.com/templates/monster-react-admin/?ref=33"
-          >
+          <Button color="danger" tag="a" className="mt-3" href="/login">
             Logout
           </Button>
         </Nav>

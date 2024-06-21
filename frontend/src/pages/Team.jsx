@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import MessageAlert from "../components/MessageAlert";
@@ -9,39 +8,73 @@ import { Container } from "reactstrap";
 import { apiCall } from "../helper";
 import JoinTeamDialog from "./JoinTeam";
 import TeamProfile from "./TeamProfile";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Team = (props) => {
-  const [hasTeam, setHasTeam] = useState(true);
+  const [hasTeam, setHasTeam] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const navigate = useNavigate();
-  const { userId } = props;
+  const [teamId, setTeamId] = useState(null);
+  const [teamName, setTeamName] = useState(null);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [alertType, setAlertType] = useState("error");
+
+  const userId = 2;
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setShowError(false);
+  };
+
+  useEffect(() => {
+    const isTeam = async () => {
+      const res = await apiCall("GET", `v1/team/profile/${userId}`);
+      if (res.error) {
+        setHasTeam(false);
+        setLoading(false);
+        setErrorMessage("Do Not Have a Team");
+        setAlertType("error");
+        setShowError(true);
+      } else {
+        setTeamId(res.teamId);
+        setTeamName(res.teamName);
+        setHasTeam(true);
+        setLoading(false);
+      }
+    };
+    try {
+      isTeam();
+    } catch (error) {
+      setErrorMessage(error);
+      setAlertType("error");
+      setShowError(true);
+    }
+  }, []);
 
   const clickCreate = async () => {
     try {
-      const response = await fetch("/api/create-team", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        // 假设后端返回了团队 ID
-        const teamId = data.teamId;
-
-        // 设置 hasTeam 为 true，可以根据需要设置
-        setHasTeam(true);
-
-        // 跳转到 teamProfile 页面
-        navigate(`/teamProfile/${teamId}`);
+      const body1 = { user_id: userId };
+      const res = await apiCall("POST", "v1/team/create", body1);
+      if (res.error) {
+        setErrorMessage(res.error);
+        setAlertType("error");
+        setShowError(true);
       } else {
-        // 处理错误响应
-        console.error("Failed to create team");
+        console.log(res);
+        setTeamId(res.teamId);
+        setTeamName(res.teamName);
+        setHasTeam(true);
+        setErrorMessage("Success!");
+        setAlertType("success");
+        setShowError(true);
       }
     } catch (error) {
-      console.error("Error:", error);
+      setErrorMessage(error);
+      setAlertType("error");
+      setShowError(true);
     }
   };
 
@@ -49,103 +82,141 @@ const Team = (props) => {
     setDialogOpen(true);
   };
 
+  const joinTeam = async (uid, tid) => {
+    try {
+      const body = { userId: uid, teamId: parseInt(tid) };
+      const res = await apiCall("PUT", "v1/team/join", body);
+      if (res.error) {
+        setErrorMessage("team not found");
+        setAlertType("error");
+        setShowError(true);
+      } else {
+        setTeamId(res.teamId);
+        setTeamName(res.teamName);
+        setHasTeam(true);
+        setErrorMessage("Success!");
+        setAlertType("success");
+        setShowError(true);
+      }
+    } catch (error) {
+      setErrorMessage(error);
+      setAlertType("error");
+      setShowError(true);
+    }
+  };
+
+  const leaveTeam = async (uid) => {
+    try {
+      const body = { userId: uid };
+      const res = await apiCall("DELETE", "v1/team/leave", body);
+      if (res.error) {
+        setErrorMessage(res.error);
+        setAlertType("error");
+        setShowError(true);
+      } else {
+        setErrorMessage("Success leave!");
+        setAlertType("success");
+        setShowError(true);
+      }
+    } catch (error) {
+      setErrorMessage(error);
+      setAlertType("error");
+      setShowError(true);
+    }
+  };
+
   return (
     <>
-      {hasTeam ? (
-        <>
-          <main>
-            <div className="pageWrapper d-lg-flex">
-              {/********Sidebar**********/}
-              <aside className="sidebarArea shadow" id="sidebarArea">
-                <Sidebar />
-              </aside>
-              {/********Content Area**********/}
-              <div className="contentArea">
-                {/********Header**********/}
-                <Header />
-                {/********Middle Content**********/}
-                <Container className="p-4 wrapper" fluid>
-                  {/* add code here */}
-                  <div>
-                    <TeamProfile />
-                  </div>
-                </Container>
-              </div>
-            </div>
-          </main>
-        </>
-      ) : (
-        <>
-          <main>
-            <div className="pageWrapper d-lg-flex">
-              {/********Sidebar**********/}
-              <aside className="sidebarArea shadow" id="sidebarArea">
-                <Sidebar />
-              </aside>
-              {/********Content Area**********/}
-              <div className="contentArea">
-                {/********Header**********/}
-                <Header />
-                {/********Middle Content**********/}
-                <Container
-                  className="p-4 wrapper"
-                  fluid
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  {/* add code here */}
-                  <Typography
-                    variant="h3"
-                    gutterBottom
-                    style={{ textAlign: "center", marginTop: "12vh" }}
-                  >
-                    You do not have your own team yet!
-                  </Typography>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "30px",
-                      marginTop: "15%",
-                      width: "20vw",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Button
-                      variant="contained"
-                      size="large"
-                      style={styles.button}
-                      onClick={clickCreate}
+      <main>
+        <div className="pageWrapper d-lg-flex">
+          {/********Sidebar**********/}
+          <aside className="sidebarArea shadow" id="sidebarArea">
+            <Sidebar />
+          </aside>
+          {/********Content Area**********/}
+          <div className="contentArea">
+            {/********Header**********/}
+            <Header />
+            {/********Middle Content**********/}
+            <Container className="p-4 wrapper" fluid>
+              {loading ? (
+                <div style={styles.loadingContainer}>
+                  <CircularProgress />
+                </div>
+              ) : (
+                <>
+                  {hasTeam ? (
+                    <div>
+                      <TeamProfile
+                        teamId={teamId}
+                        teamNameOld={teamName}
+                        leaveTeam={leaveTeam}
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
                     >
-                      create a team
-                    </Button>
-                    <Button
-                      variant="contained"
-                      size="large"
-                      style={styles.button}
-                      onClick={clickJoin}
-                    >
-                      join a team
-                    </Button>
-                  </div>
-                  <div>
-                    <JoinTeamDialog
-                      open={dialogOpen}
-                      onClose={() => setDialogOpen(false)}
-                    />
-                  </div>
-                </Container>
-              </div>
-            </div>
-          </main>
-        </>
-      )}
-
-      {/* <MessageAlert open={open} alertType={alertType} handleClose={handleClose} snackbarContent={snackbarContent}/> */}
+                      <Typography
+                        variant="h3"
+                        gutterBottom
+                        style={{ textAlign: "center", marginTop: "12vh" }}
+                      >
+                        You do not have your own team yet!
+                      </Typography>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "30px",
+                          marginTop: "15%",
+                          width: "20vw",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Button
+                          variant="contained"
+                          size="large"
+                          style={styles.button}
+                          onClick={clickCreate}
+                        >
+                          create a team
+                        </Button>
+                        <Button
+                          variant="contained"
+                          size="large"
+                          style={styles.button}
+                          onClick={clickJoin}
+                        >
+                          join a team
+                        </Button>
+                      </div>
+                      <div>
+                        <JoinTeamDialog
+                          open={dialogOpen}
+                          onClose={() => setDialogOpen(false)}
+                          joinTeam={joinTeam}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </Container>
+          </div>
+        </div>
+      </main>
+      <MessageAlert
+        open={showError}
+        alertType={alertType}
+        handleClose={handleClose}
+        snackbarContent={errorMessage}
+      />
     </>
   );
 };
