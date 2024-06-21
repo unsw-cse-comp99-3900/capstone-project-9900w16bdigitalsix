@@ -719,6 +719,12 @@ paths:
             additionalProperties:
               type: string
             type: object
+        "409":
+          description: '{"error": "User already exists"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "500":
           description: '{"error":"Failed to send verification email"}'
           schema:

@@ -224,6 +224,7 @@ func VerifyEmail(ctx *gin.Context) {
 // @Param registerForm body forms.RegisterForm true "Register form"
 // @Success 200 {object} map[string]string "{"msg":"Verification email sent successfully"}"
 // @Failure 400 {object} map[string]string "{"error":"Validation failed"}"
+// @Failure 409 {object} map[string]string "{"error": "User already exists"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to generate verification token"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to store verification token"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to send verification email"}"
@@ -233,6 +234,13 @@ func Register(ctx *gin.Context) {
 	// 表单验证
 	if err := ctx.ShouldBind(&registerForm); err != nil {
 		HandleValidatorError(ctx, err)
+		return
+	}
+
+	// 检查用户是否存在
+	var user models.User
+	if err := global.DB.Where("email = ?", registerForm.Email).First(&user).Error; err == nil {
+		ctx.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
 		return
 	}
 

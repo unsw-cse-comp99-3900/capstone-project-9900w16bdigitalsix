@@ -779,6 +779,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "409": {
+                        "description": "{\"error\": \"User already exists\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "{\"error\":\"Failed to send verification email\"}",
                         "schema": {
