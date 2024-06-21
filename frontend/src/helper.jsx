@@ -1,4 +1,4 @@
-const apiCall = async (method, path, requestBody = null, token = null, authed = false) => {
+const apiCall = async (method, path, requestBody = null, token = null, authed = false, queryParams = null) => {
     const config = {
       method,
       headers: {
@@ -6,13 +6,20 @@ const apiCall = async (method, path, requestBody = null, token = null, authed = 
         Authorization: authed ? `Bearer ${token}` : undefined,
       }
     }
+    
     if (method === 'GET' || method === 'DELETE') {
       config.body = undefined;
     } else {
       config.body = JSON.stringify(requestBody);
     }
-  
-    const response = await fetch(`http://localhost:8080/${path}`, config);
+
+    let url = `http://localhost:8080/${path}`
+    if (queryParams) {
+      const params = new URLSearchParams(queryParams);
+      url += `?${params.toString()}`;
+    }
+
+    const response = await fetch(url, config);
     const data = await response.json();
     return data;
   }

@@ -18,6 +18,7 @@ const Register = (props) => {
   const [passwordConfirmed, setPasswordConfirmed] = React.useState('');
   const [name, setName] = React.useState('');
   const [unmatched, setUnmatched] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false); // alert state
   const [snackbarContent, setSnackbarContent] = React.useState('');
@@ -86,10 +87,14 @@ const Register = (props) => {
     
     // try to request
     const requestBody = {
-      email, password, name
+      email: email,
+      password: password,
+      password_confirm: passwordConfirmed,
+      username: name
     };
+    setLoading(true);
     try {
-      const data = await apiCall('POST', 'user/auth/register', requestBody);
+      const data = await apiCall('POST', 'v1/user/register/send_email', requestBody);
       if (data.error) {
         setSnackbarContent(data.error);
         setAlertType('error');
@@ -99,13 +104,15 @@ const Register = (props) => {
         // localStorage.setItem('email', email);
         // props.setToken(data.token);
         // props.setEmail(email);
-        navigate('/verify-email-link-sent');
         setSnackbarContent('data.msg');
         setAlertType('success');
         setOpen(true);
+        navigate('/verify-email-link-sent');
       }
     } catch (error) {
       console.error('Error during register:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -126,7 +133,15 @@ const Register = (props) => {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button id="buttonRegister" variant="contained" onClick={register} aria-label="Click me to register">Register</Button>
+            <Button
+              id="buttonRegister"
+              variant="contained"
+              onClick={register}
+              disabled={loading}
+              aria-label="Click me to register"
+            >
+              {loading ? 'Loading...' : 'Register'}
+            </Button>
             {unmatched && <small id='unmatchError' style={{ color: 'red', paddingLeft: '1vw' }}>{unmatched}<br/></small>}
           </CardActions>
           <CardContent>

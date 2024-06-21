@@ -28,9 +28,11 @@ const Login = (props) => {
     setOpen(false);
   };
 
-  // // test
+
   // React.useEffect(() => {
-    
+  //   if (props.token) {
+  //     navigate('/');
+  //   }
   // }, []);
 
   // load dashboard
@@ -58,7 +60,7 @@ const Login = (props) => {
     };
     
     try {
-      const data = await apiCall('POST', 'mock/13/v1/user/pwd_login', requestBody);
+      const data = await apiCall('POST', 'v1/user/pwd_login', requestBody);
       if (data.error) {
         setSnackbarContent(data.error);
         setAlertType('error');
@@ -66,6 +68,7 @@ const Login = (props) => {
       } else if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('email', email);
+        localStorage.setItem('userId', data.id);
         // localStorage.setItem('role', data.role);
         props.setToken(data.token);
         setEmail(email);
