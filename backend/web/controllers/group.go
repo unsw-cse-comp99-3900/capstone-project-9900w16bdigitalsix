@@ -163,67 +163,72 @@ func UpdateTeamProfile(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error":"Failed to update team"}"
 // @Router /v1/team/join [put]
 func JoinTeam(c *gin.Context) {
-	var req forms.JoinTeamForm
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+    var req forms.JoinTeamForm
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
 
-	var user models.User
-	if err := global.DB.Preload("Skills").First(&user, req.UserId).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		return
-	}
+    var user models.User
+    if err := global.DB.Preload("Skills").First(&user, req.UserId).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+        return
+    }
 
-	var team models.Team
-	if err := global.DB.Preload("Members").Preload("Skills").First(&team, req.TeamId).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
-		return
-	}
+    var team models.Team
+    if err := global.DB.Preload("Members").Preload("Skills").First(&team, req.TeamId).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+        return
+    }
 
-	user.BelongsToGroup = &req.TeamId
+    user.BelongsToGroup = &req.TeamId
 
-	if err := global.DB.Model(&user).Updates(&user).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
-		return
-	}
+    if err := global.DB.Model(&user).Updates(&user).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+        return
+    }
 
-	team.Members = append(team.Members, user)
-	if err := global.DB.Model(&team).Updates(&team).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update team"})
-		return
-	}
+    team.Members = append(team.Members, user)
+    if err := global.DB.Model(&team).Updates(&team).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update team"})
+        return
+    }
 
-	// 获取用户的技能
-	userSkills := make([]string, len(user.Skills))
-	for i, skill := range user.Skills {
-		userSkills[i] = skill.SkillName
-	}
+    // 获取用户的技能
+    userSkills := make([]string, len(user.Skills))
+    for i, skill := range user.Skills {
+        userSkills[i] = skill.SkillName
+    }
 
-	var teamMembers []response.TeamMember
-	for _, member := range team.Members {
-		teamMembers = append(teamMembers, response.TeamMember{
-			UserID:     member.ID,
-			UserName:   member.Username,
-			Email:      member.Email,
-			UserSkills: userSkills,
-		})
-	}
+    var teamMembers []response.TeamMember
+    for _, member := range team.Members {
+        memberSkills := make([]string, len(member.Skills))
+        for i, skill := range member.Skills {
+            memberSkills[i] = skill.SkillName
+        }
+        teamMembers = append(teamMembers, response.TeamMember{
+            UserID:     member.ID,
+            UserName:   member.Username,
+            Email:      member.Email,
+            UserSkills: memberSkills,
+        })
+    }
 
-	var teamSkills []string
-	for _, skill := range team.Skills {
-		teamSkills = append(teamSkills, skill.SkillName)
-	}
+    var teamSkills []string
+    for _, skill := range team.Skills {
+        teamSkills = append(teamSkills, skill.SkillName)
+    }
 
-	response := response.JoinTeamResponse{
-		TeamId:     team.ID,
-		TeamName:   team.Name,
-		TeamMember: teamMembers,
-		TeamSkills: teamSkills,
-	}
+    response := response.JoinTeamResponse{
+        TeamId:     team.ID,
+        TeamName:   team.Name,
+        TeamMember: teamMembers,
+        TeamSkills: teamSkills,
+    }
 
-	c.JSON(http.StatusOK, response)
+    c.JSON(http.StatusOK, response)
 }
+
 
 // GetTeamProfile godoc
 // @Summary Get Team Profile
@@ -301,7 +306,8 @@ func GetTeamProfile(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error":"Failed to update user"}"
 // @Router /v1/team/leave/{userId} [delete]
 func LeaveTeam(c *gin.Context) {
-	userId := c.Query("UserId")
+	// userId := c.Query("UserId")
+	userId := c.Param("userId")
 
 	var user models.User
 	if err := global.DB.First(&user, userId).Error; err != nil {

@@ -72,7 +72,7 @@ const TeamProfile = ({ teamId, teamNameOld, leaveTeam }) => {
   const [editable, setEditable] = useState(false);
   const [teamNameNew, setTeamNameNew] = useState("");
   const [personName, setPersonName] = React.useState([]);
-  const userId = 2;
+  const userId = parseInt(localStorage.getItem("userId"));
 
   const handleChange = (event) => {
     const {
@@ -85,6 +85,7 @@ const TeamProfile = ({ teamId, teamNameOld, leaveTeam }) => {
   };
 
   const handleLeaveTeam = async () => {
+    // const userId = parseInt(localStorage.getItem("userId"));
     leaveTeam(userId);
   };
 

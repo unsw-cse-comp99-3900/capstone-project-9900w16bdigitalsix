@@ -20,7 +20,7 @@ const Team = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
 
-  const userId = 2;
+  const userId = parseInt(localStorage.getItem("userId"));
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -35,14 +35,16 @@ const Team = (props) => {
       if (res.error) {
         setHasTeam(false);
         setLoading(false);
-        setErrorMessage("Do Not Have a Team");
-        setAlertType("error");
-        setShowError(true);
+        // setErrorMessage("Do Not Have a Team");
+        // setAlertType("error");
+        // setShowError(true);
       } else {
+        console.log(res);
         setTeamId(res.teamId);
         setTeamName(res.teamName);
         setHasTeam(true);
         setLoading(false);
+        localStorage.setItem("teamId", res.teamId);
       }
     };
     try {
@@ -52,7 +54,7 @@ const Team = (props) => {
       setAlertType("error");
       setShowError(true);
     }
-  }, []);
+  }, [userId]);
 
   const clickCreate = async () => {
     try {
@@ -70,6 +72,7 @@ const Team = (props) => {
         setErrorMessage("Success!");
         setAlertType("success");
         setShowError(true);
+        localStorage.setItem("teamId", res.teamId);
       }
     } catch (error) {
       setErrorMessage(error);
@@ -97,6 +100,7 @@ const Team = (props) => {
         setErrorMessage("Success!");
         setAlertType("success");
         setShowError(true);
+        localStorage.setItem("teamId", res.teamId);
       }
     } catch (error) {
       setErrorMessage(error);
@@ -107,16 +111,20 @@ const Team = (props) => {
 
   const leaveTeam = async (uid) => {
     try {
-      const body = { userId: uid };
-      const res = await apiCall("DELETE", "v1/team/leave", body);
+      console.log(uid);
+      const res = await apiCall("DELETE", `v1/team/leave/${uid}`);
       if (res.error) {
         setErrorMessage(res.error);
         setAlertType("error");
         setShowError(true);
       } else {
+        localStorage.removeItem("teamId");
         setErrorMessage("Success leave!");
         setAlertType("success");
         setShowError(true);
+        setHasTeam(false);
+        setTeamId(null);
+        setDialogOpen(false);
       }
     } catch (error) {
       setErrorMessage(error);

@@ -13,7 +13,7 @@ const JoinTeamDialog = ({ open, onClose, joinTeam }) => {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
-  const userId = 2;
+  const userId = parseInt(localStorage.getItem("userId"));
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
