@@ -54,6 +54,15 @@ const Login = (props) => {
       return 
     };
 
+    // check valid email
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (! regex.test(email)){
+      setSnackbarContent('Invalid Email');
+      setAlertType('error');
+      setOpen(true);
+      return 
+    };
+
     // try to request
     const requestBody = {
       email, password
