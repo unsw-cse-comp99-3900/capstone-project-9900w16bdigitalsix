@@ -105,12 +105,6 @@ const Login = (props) => {
                 type="text"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                InputProps={{
-                  autoComplete: 'new-password'
-                }}
-                inputProps={{
-                  autoComplete: 'new-password'
-                }}
               /> <br /><br />
               <TextField
                 id='password'
