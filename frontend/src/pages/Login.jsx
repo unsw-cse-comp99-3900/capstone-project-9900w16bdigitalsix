@@ -30,9 +30,10 @@ const Login = (props) => {
 
 
   // React.useEffect(() => {
-  //   if (props.token) {
-  //     navigate('/');
-  //   }
+  //   const inputs = document.querySelectorAll('input');
+  //   inputs.forEach(input => {
+  //     input.value = '';
+  //   });
   // }, []);
 
   // load dashboard
@@ -98,8 +99,32 @@ const Login = (props) => {
               Login
             </Typography> <br />
             <Typography variant="body2">
-              <TextField id='email' label="Email" type="text" value={email} onChange={e => setEmail(e.target.value)} /> <br /><br />
-              <TextField id='password' label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} /> <br /><br />
+              <TextField
+                id='email'
+                label="Email"
+                type="text"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                InputProps={{
+                  autoComplete: 'new-password'
+                }}
+                inputProps={{
+                  autoComplete: 'new-password'
+                }}
+              /> <br /><br />
+              <TextField
+                id='password'
+                label="Password"
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                InputProps={{
+                  autoComplete: 'new-password'
+                }}
+                inputProps={{
+                  autoComplete: 'new-password'
+                }}
+                /> <br /><br />
             </Typography>
           </CardContent>
           <CardActions>
