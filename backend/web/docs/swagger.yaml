@@ -579,6 +579,12 @@ paths:
             additionalProperties:
               type: string
             type: object
+        "404":
+          description: '{"error": "User not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "500":
           description: '{"error":"Failed to send reset password email"}'
           schema:

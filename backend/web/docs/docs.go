@@ -566,6 +566,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "404": {
+                        "description": "{\"error\": \"User not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "{\"error\":\"Failed to send reset password email\"}",
                         "schema": {

@@ -280,6 +280,7 @@ func Register(ctx *gin.Context) {
 // @Param sendEmailResetPwdForm body forms.SendEmailResetPwdForm true "Reset Password form"
 // @Success 200 {object} map[string]string "{"msg":"Reset password email sent successfully"}"
 // @Failure 400 {object} map[string]string "{"error":"Validation failed"}"
+// @Failure 404 {object} map[string]string "{"error": "User not found"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to generate verification token"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to store verification token"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to send reset password email"}"
@@ -288,6 +289,13 @@ func SendEmailResetPassword(c *gin.Context) {
 	var sendEmailResetPwdForm forms.SendEmailResetPwdForm
 	if err := c.ShouldBindJSON(&sendEmailResetPwdForm); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 检查用户是否存在
+	var user models.User
+	if err := global.DB.Where("email = ?", sendEmailResetPwdForm.Email).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
