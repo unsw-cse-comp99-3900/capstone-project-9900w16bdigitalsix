@@ -5,11 +5,12 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import Link from '@mui/material/Link';
 
+import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import { apiCall } from '../helper';
 import MessageAlert from '../components/MessageAlert';
+import GradientBackground from '../components/GradientBackground';
 
 const ResetPwd = (props) => {
   const [email, setEmail] = React.useState('');
@@ -144,6 +145,7 @@ const ResetPwd = (props) => {
         </CenteredCard>
       </CenteredBox>
       <MessageAlert open={open} alertType={alertType} handleClose={handleClose} snackbarContent={snackbarContent}/>
+      <GradientBackground />
     </>
   )
 }

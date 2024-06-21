@@ -5,6 +5,8 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import { ReactComponent as LogoDark } from "../assets/images/logos/capstone.svg";
+import GradientBackground from '../components/GradientBackground';
+
 const VerifyEmail = (props) => {
 	const navigate = useNavigate();
 	return(
@@ -32,6 +34,7 @@ const VerifyEmail = (props) => {
           </CardContent>
         </CenteredCard>
       </CenteredBox>
+      <GradientBackground />
     </>
 
 
