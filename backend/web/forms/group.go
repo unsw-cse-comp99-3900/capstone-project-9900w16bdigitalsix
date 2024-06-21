@@ -19,7 +19,3 @@ type JoinTeamForm struct {
 	UserId uint `json:"userId" binding:"required"`
 	TeamId uint `json:"teamId" binding:"required"`
 }
-
-type LeaveTeamForm struct {
-	UserId uint `json:"userId" binding:"required"`
-}

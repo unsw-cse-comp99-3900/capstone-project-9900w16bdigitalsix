@@ -17,3 +17,14 @@ type ProfileResponse struct {
 	Skills       []string `json:"skills"`
 	Field        string   `json:"field"`
 }
+
+type StudentListResponse struct {
+	UserID    uint   `json:"userId"`
+	UserName string `json:"userName"`
+	Email    string `json:"email"`
+}
+
+type TeamListResponse struct {
+	TeamID   uint   `json:"teamId"`
+	TeamName string `json:"teamName"`
+}

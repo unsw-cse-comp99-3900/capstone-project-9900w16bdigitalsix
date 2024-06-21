@@ -29,13 +29,6 @@ definitions:
     - teamId
     - userId
     type: object
-  forms.LeaveTeamForm:
-    properties:
-      userId:
-        type: integer
-    required:
-    - userId
-    type: object
   forms.PasswordLoginForm:
     properties:
       email:
@@ -183,12 +176,43 @@ definitions:
       userId:
         type: integer
     type: object
-  response.TeamMember:
+  response.StudentInfoResponse:
     properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  response.StudentListResponse:
+    properties:
+      email:
+        type: string
       userId:
         type: integer
       userName:
         type: string
+    type: object
+  response.TeamListResponse:
+    properties:
+      teamId:
+        type: integer
+      teamName:
+        type: string
+    type: object
+  response.TeamMember:
+    properties:
+      email:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+      userSkills:
+        items:
+          type: string
+        type: array
     type: object
 info:
   contact: {}
@@ -197,7 +221,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 创建一个新的团队
+      description: 创建 team, 并且创建人加入了 team, 后端随机生成 teamName, 存入了数据库
       parameters:
       - description: Create Team form
         in: body
@@ -231,6 +255,104 @@ paths:
               type: string
             type: object
       summary: Create a new team
+      tags:
+      - Team
+  /v1/team/get/list:
+    get:
+      consumes:
+      - application/json
+      description: Get all teams
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Team List
+      tags:
+      - Team
+  /v1/team/get/student-info/{teamName}:
+    get:
+      consumes:
+      - application/json
+      description: Get student list information by team name
+      parameters:
+      - description: Team Name
+        in: path
+        name: teamName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.StudentInfoResponse'
+            type: array
+        "404":
+          description: '{"error": "Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get student list information by team name
+      tags:
+      - Team
+  /v1/team/invite/{userId}/{teamId}:
+    get:
+      consumes:
+      - application/json
+      description: Invite a student to join a team
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "User invited to team successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "User already belongs to a team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "User not found"} or gin.H{"error": "Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Failed to invite user to team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Invite User to Team
       tags:
       - Team
   /v1/team/join:
@@ -273,18 +395,17 @@ paths:
       summary: Join a team
       tags:
       - Team
-  /v1/team/leave:
+  /v1/team/leave/{userId}:
     delete:
       consumes:
       - application/json
       description: 用户离开团队
       parameters:
-      - description: Leave Team form
-        in: body
-        name: leaveTeamForm
+      - description: User ID
+        in: query
+        name: UserId
         required: true
-        schema:
-          $ref: '#/definitions/forms.LeaveTeamForm'
+        type: string
       produces:
       - application/json
       responses:
@@ -675,6 +796,30 @@ paths:
               type: string
             type: object
       summary: Reset Password
+      tags:
+      - User
+  /v1/user/student/list:
+    get:
+      consumes:
+      - application/json
+      description: 返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client,
+        4表示convenor, 5表示admin
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.StudentListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch users"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Student List
       tags:
       - User
 swagger: "2.0"

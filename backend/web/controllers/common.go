@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"math/rand"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -56,4 +57,14 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 			return
 		}
 	}
+}
+
+
+func GenerateRandomNumber(r *rand.Rand) int {
+    // 定义最小和最大值
+    min := 1
+    max := 9999
+    
+    // 生成随机数
+    return r.Intn(max-min+1) + min
 }
