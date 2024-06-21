@@ -9,6 +9,7 @@ import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import { ReactComponent as LogoDark } from "../assets/images/logos/capstone.svg";
 import MessageAlert from '../components/MessageAlert';
 import { apiCall } from '../helper';
+import GradientBackground from '../components/GradientBackground';
 
 const ForgetPwd = () => {
 	const navigate = useNavigate();
@@ -90,7 +91,8 @@ const ForgetPwd = () => {
         </CenteredCard>
       </CenteredBox>
 	  <MessageAlert open={open} alertType={alertType} handleClose={handleClose} snackbarContent={snackbarContent}/>
-    </>
+    <GradientBackground />
+		</>
 
 
 	)

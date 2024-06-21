@@ -92,9 +92,13 @@ const Header = () => {
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem header>Info</DropdownItem>
-            <DropdownItem>Profile</DropdownItem>
+            <DropdownItem
+            href="/profile">
+              Profile</DropdownItem>
             <DropdownItem divider />
-            <DropdownItem>Logout</DropdownItem>
+            <DropdownItem
+            href="/login">
+              Logout</DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </Collapse>

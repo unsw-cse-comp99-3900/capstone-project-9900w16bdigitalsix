@@ -78,9 +78,8 @@ const Sidebar = () => {
           <Button
             color="danger"
             tag="a"
-            target="_blank"
             className="mt-3"
-            href="https://wrappixel.com/templates/monster-react-admin/?ref=33"
+            href="/login"
           >
             Logout
           </Button>

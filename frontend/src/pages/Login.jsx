@@ -8,6 +8,7 @@ import CardContent from '@mui/material/CardContent';
 import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import Link from '@mui/material/Link';
 import MessageAlert from '../components/MessageAlert';
+import GradientBackground from '../components/GradientBackground';
 
 import { apiCall } from '../helper';
 
@@ -120,6 +121,7 @@ const Login = (props) => {
         </CenteredCard>
       </CenteredBox>
       <MessageAlert open={open} alertType={alertType} handleClose={handleClose} snackbarContent={snackbarContent}/>
+      <GradientBackground />
     </>
   )
 }

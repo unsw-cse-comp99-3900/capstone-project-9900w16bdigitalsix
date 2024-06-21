@@ -10,6 +10,7 @@ import Link from '@mui/material/Link';
 
 import { apiCall } from '../helper';
 import MessageAlert from '../components/MessageAlert';
+import GradientBackground from '../components/GradientBackground';
 
 const Register = (props) => {
   const [email, setEmail] = React.useState('');
@@ -146,6 +147,7 @@ const Register = (props) => {
         </CenteredCard>
       </CenteredBox>
       <MessageAlert open={open} alertType={alertType} handleClose={handleClose} snackbarContent={snackbarContent}/>
+      <GradientBackground />
     </>
   )
 }
