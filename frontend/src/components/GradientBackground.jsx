@@ -93,37 +93,6 @@ const gradientBackground = css`
   overflow: hidden;
 `;
 
-const backdrop = css`
-  content: '';
-  display: block;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-`;
-
-const content = css`
-  position: relative;
-  z-index: 1;
-  color: #fff;
-  text-align: center;
-  font-size: 2rem;
-  top: 50%;
-  transform: translateY(-50%);
-`;
-
-const title = css`
-  font-size: 4rem;
-  margin-bottom: 1rem;
-`;
-
-const subtitle = css`
-  font-size: 1.5rem;
-`;
-
 function GradientBackground() {
   return (
     <div className={gradientBackground}>
