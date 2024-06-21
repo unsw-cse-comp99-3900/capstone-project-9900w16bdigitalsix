@@ -27,6 +27,7 @@ const Header = () => {
   const showMobilemenu = () => {
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
   };
+
   return (
     <Navbar color="primary" dark expand="md" className="bg-gradient">
       <div className="d-flex align-items-center">
@@ -35,7 +36,7 @@ const Header = () => {
         </NavbarBrand>
         <Button
           color="primary"
-          className=" d-lg-none"
+          className="d-lg-none"
           onClick={() => showMobilemenu()}
         >
           <i className="bi bi-list"></i>
@@ -76,10 +77,10 @@ const Header = () => {
         </Nav>
         <Nav>
           <Link to="/notification" className="nav-link">
-          <div className="notification-icon">
-            <i className="bi bi-bell-fill"></i>
-          </div>
-        </Link>
+            <div className="notification-icon">
+              <i className="bi bi-bell-fill"></i>
+            </div>
+          </Link>
         </Nav>
         <Dropdown isOpen={dropdownOpen} toggle={toggle}>
           <DropdownToggle color="transparent">
