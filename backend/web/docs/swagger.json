@@ -245,7 +245,7 @@
                         }
                     },
                     "400": {
-                        "description": "{\"error\":\"Validation failed\"}",
+                        "description": "{\"error\": \"User already belongs to a team\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -291,8 +291,8 @@
                     {
                         "type": "string",
                         "description": "User ID",
-                        "name": "UserId",
-                        "in": "query",
+                        "name": "userId",
+                        "in": "path",
                         "required": true
                     }
                 ],

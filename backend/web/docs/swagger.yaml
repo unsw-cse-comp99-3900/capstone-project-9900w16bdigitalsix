@@ -375,7 +375,7 @@ paths:
           schema:
             $ref: '#/definitions/response.JoinTeamResponse'
         "400":
-          description: '{"error":"Validation failed"}'
+          description: '{"error": "User already belongs to a team"}'
           schema:
             additionalProperties:
               type: string
@@ -402,8 +402,8 @@ paths:
       description: 用户离开团队
       parameters:
       - description: User ID
-        in: query
-        name: UserId
+        in: path
+        name: userId
         required: true
         type: string
       produces:

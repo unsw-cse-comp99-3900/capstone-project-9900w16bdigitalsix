@@ -256,7 +256,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "{\"error\":\"Validation failed\"}",
+                        "description": "{\"error\": \"User already belongs to a team\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -302,8 +302,8 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "User ID",
-                        "name": "UserId",
-                        "in": "query",
+                        "name": "userId",
+                        "in": "path",
                         "required": true
                     }
                 ],
