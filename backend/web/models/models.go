@@ -42,8 +42,10 @@ type Project struct {
 	Field         string
 	IsPublic      uint   `gorm:"default:1;type:int comment '1表示public 2 表示没有public'"`
 	Description   string `gorm:"type:text"`
+	Filename      string `gorm:"type:text;"`
+	Filepath      string `gorm:"type:varchar(255)"` // 存储文件路径
 	MaxGroups     uint
-	CreatedBy     *uint   `gorm:"default:null"`
+	CreatedBy     *uint   `gorm:"default:null"`                        // createdBy userId
 	Teams         []Team  `gorm:"foreignkey:ProjectID"`                // a project can be done by many groups
 	PreferencedBy []Team  `gorm:"many2many:team_preferenced_projects"` // a project can be preferenced by many groups
 	Skills        []Skill `gorm:"many2many:project_skills;"`
