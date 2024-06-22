@@ -120,6 +120,11 @@ func UpdateTeamProfile(c *gin.Context) {
 
 	team.Name = req.TeamName
 
+	if err := global.DB.Model(&team).Association("Skills").Clear(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to clear existing skills"})
+		return
+	}
+
 	// 查找或创建技能
 	if len(req.TeamSkills) > 0 {
 		var skills []models.Skill

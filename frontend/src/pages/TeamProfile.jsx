@@ -92,8 +92,10 @@ const TeamProfile = ({
   };
 
   useEffect(() => {
-    setCurTeamSkills(personName);
-  }, [personName, setCurTeamSkills]);
+    if (curTeamSkills) {
+      setPersonName(curTeamSkills);
+    }
+  }, [curTeamSkills]);
 
   const handleLeaveTeam = async () => {
     leaveTeam(userId);
@@ -106,7 +108,10 @@ const TeamProfile = ({
   const handleSaveClick = async () => {
     setEditable(false);
     try {
-      const body = { TeamSkills: curTeamSkills, teamName: teamName };
+      const body = {
+        TeamSkills: personName.length > 0 ? personName : [],
+        teamName: teamName,
+      };
       const res = await apiCall(
         "PUT",
         `v1/team/update/profile/${teamId}`,
@@ -117,6 +122,8 @@ const TeamProfile = ({
         setAlertType("error");
         setShowError(true);
       } else {
+        console.log(personName);
+        setCurTeamSkills(personName);
         setErrorMessage("Success!");
         setAlertType("success");
         setShowError(true);
@@ -294,8 +301,7 @@ const TeamProfile = ({
                   gutterBottom
                   style={{ marginLeft: "12px" }}
                 >
-                  Team Skills:{" "}
-                  {curTeamSkills ? curTeamSkills.join(", ") : curTeamSkills}
+                  Team Skills: {curTeamSkills ? curTeamSkills.join(", ") : " "}
                 </Typography>
               )}
             </Item>
