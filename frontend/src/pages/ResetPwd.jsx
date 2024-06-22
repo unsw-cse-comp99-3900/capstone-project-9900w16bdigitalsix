@@ -99,9 +99,9 @@ const ResetPwd = (props) => {
         // props.setToken(data.token);
         // props.setEmail(email);
         navigate('/verify-email-link-sent');
-        setSnackbarContent('data.msg');
-        setAlertType('success');
-        setOpen(true);
+        // setSnackbarContent('data.msg');
+        // setAlertType('success');
+        // setOpen(true);
       }
     } catch (error) {
       console.error('Error during register:', error);
