@@ -28,9 +28,12 @@ const Login = (props) => {
     setOpen(false);
   };
 
-  // // test
+
   // React.useEffect(() => {
-    
+  //   const inputs = document.querySelectorAll('input');
+  //   inputs.forEach(input => {
+  //     input.value = '';
+  //   });
   // }, []);
 
   // load dashboard
@@ -52,13 +55,22 @@ const Login = (props) => {
       return 
     };
 
+    // check valid email
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (! regex.test(email)){
+      setSnackbarContent('Invalid Email');
+      setAlertType('error');
+      setOpen(true);
+      return 
+    };
+
     // try to request
     const requestBody = {
       email, password
     };
     
     try {
-      const data = await apiCall('POST', 'mock/13/v1/user/pwd_login', requestBody);
+      const data = await apiCall('POST', 'v1/user/pwd_login', requestBody);
       if (data.error) {
         setSnackbarContent(data.error);
         setAlertType('error');
@@ -66,6 +78,7 @@ const Login = (props) => {
       } else if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('email', email);
+        localStorage.setItem('userId', data.id);
         // localStorage.setItem('role', data.role);
         props.setToken(data.token);
         setEmail(email);
@@ -86,8 +99,26 @@ const Login = (props) => {
               Login
             </Typography> <br />
             <Typography variant="body2">
-              <TextField id='email' label="Email" type="text" value={email} onChange={e => setEmail(e.target.value)} /> <br /><br />
-              <TextField id='password' label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} /> <br /><br />
+              <TextField
+                id='email'
+                label="Email"
+                type="text"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              /> <br /><br />
+              <TextField
+                id='password'
+                label="Password"
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                InputProps={{
+                  autoComplete: 'new-password'
+                }}
+                inputProps={{
+                  autoComplete: 'new-password'
+                }}
+                /> <br /><br />
             </Typography>
           </CardContent>
           <CardActions>

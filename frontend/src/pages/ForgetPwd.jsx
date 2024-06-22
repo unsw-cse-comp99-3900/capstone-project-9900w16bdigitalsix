@@ -14,6 +14,7 @@ import GradientBackground from '../components/GradientBackground';
 const ForgetPwd = () => {
 	const navigate = useNavigate();
 	const [email, setEmail] = React.useState('');
+	const [loading, setLoading] = React.useState(false);
 	const [open, setOpen] = React.useState(false); // alert state
 	const [snackbarContent, setSnackbarContent] = React.useState('');
 	const [alertType, setAlertType] = React.useState('error');
@@ -38,27 +39,30 @@ const ForgetPwd = () => {
 
     // try to request
     const requestBody = {
-      email
+      'email': email
     };
+	setLoading(true);
     try {
-      const data = await apiCall('POST', 'user/auth/register', requestBody);
-      if (data.error) {
-        setSnackbarContent(data.error);
-        setAlertType('error');
-        setOpen(true);
-      } else if (data.msg) {
-        // localStorage.setItem('token', data.token);
-        // localStorage.setItem('email', email);
-        // props.setToken(data.token);
-        // props.setEmail(email);
-        navigate('/reset-pwd-link-sent');
-        setSnackbarContent('data.msg');
-        setAlertType('success');
-        setOpen(true);
-      }
-    } catch (error) {
-      console.error('Error during register:', error);
-    }
+      const data = await apiCall('POST', 'v1/user/forget_password/send_email', requestBody);
+				if (data.error) {
+					setSnackbarContent(data.error);
+					setAlertType('error');
+					setOpen(true);
+				} else if (data.msg) {
+					// localStorage.setItem('token', data.token);
+					// localStorage.setItem('email', email);
+					// props.setToken(data.token);
+					// props.setEmail(email);
+					navigate('/reset-pwd-link-sent');
+					// setSnackbarContent('data.msg');
+					// setAlertType('success');
+					// setOpen(true);
+				}
+		} catch (error) {
+			console.error('Error during register:', error);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return(
@@ -74,7 +78,15 @@ const ForgetPwd = () => {
             </Typography> <br /><br />
 						<div style={{ display: 'flex', justifyContent: 'center' }}>
 							<TextField id="email" style={{marginRight: "25pt"}} label="Email" type="text" value={email} onChange={e => setEmail(e.target.value)} /> <br /><br />
-							<Button id='buttonSend' variant="contained" onClick={sendResetEmail} aria-label="Click me to send an email">SEND</Button>
+							<Button
+								id="buttonSend"
+								variant="contained"
+								onClick={sendResetEmail}
+								disabled={loading}
+								aria-label="Click me to send an email"
+							>
+								{loading ? 'Loading...' : 'SEND'}
+							</Button>
 						</div>
 						<br />
 						<div style={{ display: 'flex', justifyContent: 'center' }}>
