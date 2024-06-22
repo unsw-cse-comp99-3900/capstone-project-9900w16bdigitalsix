@@ -157,7 +157,7 @@ func UpdateTeamProfile(c *gin.Context) {
 // @Param joinTeamForm body forms.JoinTeamForm true "Join Team form"
 // @Success 200 {object} response.JoinTeamResponse
 // @Failure 400 {object} map[string]string "{"error":"Validation failed"}"
-// @Failure 400 {object} map[string]string "{"error": "User already belongs to a team"}"
+// @Failure 409 {object} map[string]string "{"error": "User already belongs to a team"}"
 // @Failure 404 {object} map[string]string "{"error":"User not found"}"
 // @Failure 404 {object} map[string]string "{"error":"Team not found"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to update user"}"
@@ -178,7 +178,7 @@ func JoinTeam(c *gin.Context) {
 
 	// 检查用户是否已经属于一个团队
 	if user.BelongsToGroup != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User already belongs to a team"})
+		c.JSON(http.StatusConflict, gin.H{"error": "User already belongs to a team"})
 		return
 	}
 

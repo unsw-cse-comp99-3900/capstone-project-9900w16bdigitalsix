@@ -375,13 +375,19 @@ paths:
           schema:
             $ref: '#/definitions/response.JoinTeamResponse'
         "400":
-          description: '{"error": "User already belongs to a team"}'
+          description: '{"error":"Validation failed"}'
           schema:
             additionalProperties:
               type: string
             type: object
         "404":
           description: '{"error":"Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: '{"error": "User already belongs to a team"}'
           schema:
             additionalProperties:
               type: string
@@ -532,13 +538,13 @@ paths:
               type: string
             type: object
         "400":
-          description: '{"password":"原始密码不对"}'
+          description: '{"error":"Original passwords do not match"}'
           schema:
             additionalProperties:
               type: string
             type: object
         "404":
-          description: '{"email":"用户不存在"}'
+          description: '{"error":"User not found"}'
           schema:
             additionalProperties:
               type: string
@@ -667,11 +673,11 @@ paths:
     post:
       consumes:
       - application/json
-      description: 用户通过密码登录
+      description: Authenticate user with email and password
       parameters:
-      - description: Login form
+      - description: Login Form
         in: body
-        name: login
+        name: body
         required: true
         schema:
           $ref: '#/definitions/forms.PasswordLoginForm'
@@ -679,23 +685,32 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"id":1,"username":"user","token":"xxx","expires_at":1234567890}'
+          description: '{"id": int, "username": string, "token": string, "expires_at":
+            int64}'
           schema:
-            additionalProperties: true
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "Invalid credentials. Please check your email and
+            password."}'
+          schema:
+            additionalProperties:
+              type: string
             type: object
         "404":
-          description: '{"email":"用户不存在"}'
+          description: '{"error": "User not found"}'
           schema:
             additionalProperties:
               type: string
             type: object
         "500":
-          description: '{"error":"内部错误"}'
+          description: '{"error": "Internal server error. Please try again later."}'
           schema:
             additionalProperties:
               type: string
             type: object
-      summary: 密码登陆
+      summary: User Login
       tags:
       - User
   /v1/user/register/send_email:
@@ -755,7 +770,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"msg":"注册成功"}'
+          description: '{"msg":"Register successfully"}'
           schema:
             additionalProperties: true
             type: object

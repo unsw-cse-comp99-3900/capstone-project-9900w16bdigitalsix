@@ -37,7 +37,8 @@ func SendEmail(toEmail, token string, emailType int) error {
 	if emailType == 1 {
 		registerLink = fmt.Sprintf("http://%s:3000/verify-email-check?token=%s", host, token)
 	} else if (emailType == 2) {
-		resetPasswordLink = fmt.Sprintf("http://%s:3000/reset-pwd?token=%s", host, token)
+		resetPasswordLink = fmt.Sprintf("http://%s:3000/reset-pwd?email=%s?token=%s", host, toEmail, token)
+		fmt.Println("email:", toEmail)
 	}
 	
 	// 使用邮件服务发送邮件
@@ -47,7 +48,7 @@ func SendEmail(toEmail, token string, emailType int) error {
 	if (emailType == 1) {
 		m.SetHeader("Subject", "Verify your email")
 	} else if (emailType == 2) {
-		m.SetHeader("Subject", "Reset your email")
+		m.SetHeader("Subject", "Reset your password")
 	}
 	
 	if (emailType == 1) {

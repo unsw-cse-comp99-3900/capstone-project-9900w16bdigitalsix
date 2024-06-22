@@ -256,7 +256,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "{\"error\": \"User already belongs to a team\"}",
+                        "description": "{\"error\":\"Validation failed\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -266,6 +266,15 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "{\"error\":\"Team not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "{\"error\": \"User already belongs to a team\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -494,7 +503,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "{\"password\":\"原始密码不对\"}",
+                        "description": "{\"error\":\"Original passwords do not match\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -503,7 +512,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "{\"email\":\"用户不存在\"}",
+                        "description": "{\"error\":\"User not found\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -694,7 +703,7 @@ const docTemplate = `{
         },
         "/v1/user/pwd_login": {
             "post": {
-                "description": "用户通过密码登录",
+                "description": "Authenticate user with email and password",
                 "consumes": [
                     "application/json"
                 ],
@@ -704,11 +713,11 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "密码登陆",
+                "summary": "User Login",
                 "parameters": [
                     {
-                        "description": "Login form",
-                        "name": "login",
+                        "description": "Login Form",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -718,14 +727,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"id\":1,\"username\":\"user\",\"token\":\"xxx\",\"expires_at\":1234567890}",
+                        "description": "{\"id\": int, \"username\": string, \"token\": string, \"expires_at\": int64}",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": true
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"Invalid credentials. Please check your email and password.\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
-                        "description": "{\"email\":\"用户不存在\"}",
+                        "description": "{\"error\": \"User not found\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -734,7 +754,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "{\"error\":\"内部错误\"}",
+                        "description": "{\"error\": \"Internal server error. Please try again later.\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -833,7 +853,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"msg\":\"注册成功\"}",
+                        "description": "{\"msg\":\"Register successfully\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
