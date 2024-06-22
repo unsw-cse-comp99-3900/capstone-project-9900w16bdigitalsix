@@ -27,16 +27,17 @@ import (
 )
 
 
-// PasswordLogin godoc
-// @Summary 密码登陆
-// @Description 用户通过密码登录
+// PasswordLogin handles user login using email and password
+// @Summary User Login
+// @Description Authenticate user with email and password
 // @Tags User
 // @Accept json
 // @Produce json
-// @Param login body forms.PasswordLoginForm true "Login form"
-// @Success 200 {object} map[string]interface{} "{"id":1,"username":"user","token":"xxx","expires_at":1234567890}"
-// @Failure 404 {object} map[string]string "{"email":"用户不存在"}"
-// @Failure 500 {object} map[string]string "{"error":"内部错误"}"
+// @Param body body forms.PasswordLoginForm true "Login Form"
+// @Success 200 {object} map[string]string "{"id": int, "username": string, "token": string, "expires_at": int64}"
+// @Failure 400 {object} map[string]string "{"error": "Invalid credentials. Please check your email and password."}"
+// @Failure 404 {object} map[string]string "{"error": "User not found"}"
+// @Failure 500 {object} map[string]string "{"error": "Internal server error. Please try again later."}"
 // @Router /v1/user/pwd_login [post]
 func PasswordLogin(ctx *gin.Context) {
 	// 表单验证
@@ -80,11 +81,11 @@ func PasswordLogin(ctx *gin.Context) {
 			switch e.Code() { // 把 grpc 的 code 转换成 HTTP 的状态码
 			case codes.NotFound:
 				ctx.JSON(http.StatusNotFound, gin.H{
-					"email": "用户不存在",
+					"error": "User not found",
 				})
 			default:
 				ctx.JSON(http.StatusInternalServerError, gin.H{
-					"error": "内部错误",
+					"error": "Internal server error. Please try again later.",
 				})
 			}
 			return
@@ -96,7 +97,7 @@ func PasswordLogin(ctx *gin.Context) {
 		EncryptedPassward: rsp.Password,
 	}); pwdErr != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"password": "登陆失败",
+			"error": "Login failed",
 		})
 	} else {
 		if pwdRsp.Success { // 密码认证通过
@@ -134,7 +135,7 @@ func PasswordLogin(ctx *gin.Context) {
 
 		} else { // 密码认证不对
 			ctx.JSON(http.StatusBadRequest, gin.H{
-				"msg": "登陆失败, 密码错误",
+				"error": "Invalid credentials. Please check your email and password.",
 			})
 		}
 	}
@@ -147,7 +148,7 @@ func PasswordLogin(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param token query string true "Verification Token"
-// @Success 200 {object} map[string]interface{} "{"msg":"注册成功"}"
+// @Success 200 {object} map[string]interface{} "{"msg":"Register successfully"}"
 // @Failure 400 {object} map[string]string "{"error":"Invalid or expired token"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to verify token"}"
 // @Router /v1/user/register/verify [get]
@@ -388,9 +389,9 @@ func ResetPassword(ctx *gin.Context) {
 // @Param changePasswordForm body forms.ChangePasswordForm true "Change Password form"
 // @Success 200 {object} map[string]string "{"msg":"Password updated successfully"}"
 // @Failure 400 {object} map[string]string "{"error":"Validation failed"}"
-// @Failure 400 {object} map[string]string "{"password":"原始密码不对"}"
-// @Failure 404 {object} map[string]string "{"email":"用户不存在"}"
-// @Failure 500 {object} map[string]string "{"error":"修改密码失败"}"
+// @Failure 400 {object} map[string]string "{"error":"Original passwords do not match"}"
+// @Failure 404 {object} map[string]string "{"error":"User not found"}"
+// @Failure 500 {object} map[string]string "{"error":"Change Password failed"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to connect to user service"}"
 // @Router /v1/user/change_password [post]
 func ChangePassword(c *gin.Context) {
@@ -407,7 +408,7 @@ func ChangePassword(c *gin.Context) {
 	clientConn, err := grpc.NewClient(fmt.Sprintf("%s:%d", ip, port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		zap.S().Errorw("[GetUserList] 连接【用户服务】 失败",
-			"msg", err.Error(),
+			"error", err.Error(),
 		)
 	}
 	defer clientConn.Close()
@@ -425,11 +426,11 @@ func ChangePassword(c *gin.Context) {
 			switch e.Code() { // 把 grpc 的 code 转换成 HTTP 的状态码
 			case codes.NotFound:
 				c.JSON(http.StatusNotFound, gin.H{
-					"email": "用户不存在",
+					"error": "User not found",
 				})
 			default:
 				c.JSON(http.StatusInternalServerError, gin.H{
-					"error": "修改密码失败",
+					"error": "Change password failed",
 				})
 			}
 			return
@@ -445,7 +446,7 @@ func ChangePassword(c *gin.Context) {
 	})
 	if pwdErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"msg": pwdErr.Error(),
+			"error": pwdErr.Error(),
 		})
 		return
 	}
@@ -460,7 +461,7 @@ func ChangePassword(c *gin.Context) {
 		})
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"password": "原始密码不对",
+			"error": "Original passwords do not match",
 		})
 	}
 }

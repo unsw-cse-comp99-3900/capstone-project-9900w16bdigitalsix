@@ -19,6 +19,8 @@ const Team = (props) => {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
+  const [currentMember, setCurrentMember] = useState([]);
+  const [curTeamSkills, setCurTeamSkills] = useState([]);
 
   const userId = parseInt(localStorage.getItem("userId"));
 
@@ -35,13 +37,12 @@ const Team = (props) => {
       if (res.error) {
         setHasTeam(false);
         setLoading(false);
-        // setErrorMessage("Do Not Have a Team");
-        // setAlertType("error");
-        // setShowError(true);
       } else {
         console.log(res);
         setTeamId(res.teamId);
         setTeamName(res.teamName);
+        setCurrentMember(res.teamMember);
+        setCurTeamSkills(res.teamSkills);
         setHasTeam(true);
         setLoading(false);
         localStorage.setItem("teamId", res.teamId);
@@ -54,7 +55,7 @@ const Team = (props) => {
       setAlertType("error");
       setShowError(true);
     }
-  }, [userId]);
+  }, [userId, teamId]);
 
   const clickCreate = async () => {
     try {
@@ -65,9 +66,9 @@ const Team = (props) => {
         setAlertType("error");
         setShowError(true);
       } else {
-        console.log(res);
         setTeamId(res.teamId);
         setTeamName(res.teamName);
+        setCurrentMember(res.teamMember);
         setHasTeam(true);
         setErrorMessage("Success!");
         setAlertType("success");
@@ -94,8 +95,11 @@ const Team = (props) => {
         setAlertType("error");
         setShowError(true);
       } else {
+        console.log(res.teamSkills);
         setTeamId(res.teamId);
         setTeamName(res.teamName);
+        setCurrentMember(res.teamMember);
+        setCurTeamSkills(res.teamSkills);
         setHasTeam(true);
         setErrorMessage("Success!");
         setAlertType("success");
@@ -111,7 +115,7 @@ const Team = (props) => {
 
   const leaveTeam = async (uid) => {
     try {
-      console.log(uid);
+      // console.log(uid);
       const res = await apiCall("DELETE", `v1/team/leave/${uid}`);
       if (res.error) {
         setErrorMessage(res.error);
@@ -157,8 +161,13 @@ const Team = (props) => {
                     <div>
                       <TeamProfile
                         teamId={teamId}
-                        teamNameOld={teamName}
+                        teamName={teamName}
+                        setTeamName={setTeamName}
                         leaveTeam={leaveTeam}
+                        currentMember={currentMember}
+                        setCurrentMember={setCurrentMember}
+                        curTeamSkills={curTeamSkills}
+                        setCurTeamSkills={setCurTeamSkills}
                       />
                     </div>
                   ) : (

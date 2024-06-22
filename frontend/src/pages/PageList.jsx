@@ -29,11 +29,11 @@ const PageList = () => {
           element={<Verify token={token} setToken={setToken} />}
         />
         <Route path="/verify-email-check" element={<VerifyEmail />} />
+        <Route path="/forget-pwd" element={<ForgetPwd />} />
         <Route
           path="/reset-pwd-link-sent"
           element={<ResetPwdLinkSent token={token} setToken={setToken} />}
         />
-        <Route path="/forget-pwd" element={<ForgetPwd />} />
         <Route path="/reset-pwd" element={<ResetPwd />} />
         <Route
           path="/team"

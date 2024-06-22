@@ -157,78 +157,78 @@ func UpdateTeamProfile(c *gin.Context) {
 // @Param joinTeamForm body forms.JoinTeamForm true "Join Team form"
 // @Success 200 {object} response.JoinTeamResponse
 // @Failure 400 {object} map[string]string "{"error":"Validation failed"}"
+// @Failure 409 {object} map[string]string "{"error": "User already belongs to a team"}"
 // @Failure 404 {object} map[string]string "{"error":"User not found"}"
 // @Failure 404 {object} map[string]string "{"error":"Team not found"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to update user"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to update team"}"
 // @Router /v1/team/join [put]
 func JoinTeam(c *gin.Context) {
-    var req forms.JoinTeamForm
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
+	var req forms.JoinTeamForm
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-    var user models.User
-    if err := global.DB.Preload("Skills").First(&user, req.UserId).Error; err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-        return
-    }
+	var user models.User
+	if err := global.DB.Preload("Skills").First(&user, req.UserId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
 
-    var team models.Team
-    if err := global.DB.Preload("Members").Preload("Skills").First(&team, req.TeamId).Error; err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
-        return
-    }
+	// 检查用户是否已经属于一个团队
+	if user.BelongsToGroup != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "User already belongs to a team"})
+		return
+	}
 
-    user.BelongsToGroup = &req.TeamId
+	var team models.Team
+	if err := global.DB.Preload("Members.Skills").Preload("Skills").First(&team, req.TeamId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+		return
+	}
 
-    if err := global.DB.Model(&user).Updates(&user).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
-        return
-    }
+	user.BelongsToGroup = &req.TeamId
 
-    team.Members = append(team.Members, user)
-    if err := global.DB.Model(&team).Updates(&team).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update team"})
-        return
-    }
+	if err := global.DB.Model(&user).Updates(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+		return
+	}
 
-    // 获取用户的技能
-    userSkills := make([]string, len(user.Skills))
-    for i, skill := range user.Skills {
-        userSkills[i] = skill.SkillName
-    }
+	team.Members = append(team.Members, user)
+	if err := global.DB.Model(&team).Updates(&team).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update team"})
+		return
+	}
 
-    var teamMembers []response.TeamMember
-    for _, member := range team.Members {
-        memberSkills := make([]string, len(member.Skills))
-        for i, skill := range member.Skills {
-            memberSkills[i] = skill.SkillName
-        }
-        teamMembers = append(teamMembers, response.TeamMember{
-            UserID:     member.ID,
-            UserName:   member.Username,
-            Email:      member.Email,
-            UserSkills: memberSkills,
-        })
-    }
+	var teamMembers []response.TeamMember
+	for _, member := range team.Members {
+		var memberSkills []string
+		for _, skill := range member.Skills {
+			memberSkills = append(memberSkills, skill.SkillName)
+		}
+		teamMembers = append(teamMembers, response.TeamMember{
+			UserID:     member.ID,
+			UserName:   member.Username,
+			Email:      member.Email,
+			UserSkills: memberSkills,
+		})
+	}
 
-    var teamSkills []string
-    for _, skill := range team.Skills {
-        teamSkills = append(teamSkills, skill.SkillName)
-    }
+	var teamSkills []string
+	for _, skill := range team.Skills {
+		teamSkills = append(teamSkills, skill.SkillName)
+	}
 
-    response := response.JoinTeamResponse{
-        TeamId:     team.ID,
-        TeamName:   team.Name,
-        TeamMember: teamMembers,
-        TeamSkills: teamSkills,
-    }
+	response := response.JoinTeamResponse{
+		TeamId:     team.ID,
+		TeamName:   team.Name,
+		TeamMember: teamMembers,
+		TeamSkills: teamSkills,
+	}
 
-    c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, response)
 }
-
 
 // GetTeamProfile godoc
 // @Summary Get Team Profile
@@ -298,7 +298,7 @@ func GetTeamProfile(c *gin.Context) {
 // @Tags Team
 // @Accept json
 // @Produce json
-// @Param   UserId  query   string  true  "User ID"
+// @Param   userId  path   string  true  "User ID"
 // @Success 200 {object} map[string]string "{"msg":"User has left the team successfully"}"
 // @Failure 400 {object} map[string]string "{"error":"Validation failed"}"
 // @Failure 400 {object} map[string]string "{"error":"User does not belong to any team"}"
@@ -306,7 +306,6 @@ func GetTeamProfile(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error":"Failed to update user"}"
 // @Router /v1/team/leave/{userId} [delete]
 func LeaveTeam(c *gin.Context) {
-	// userId := c.Query("UserId")
 	userId := c.Param("userId")
 
 	var user models.User
