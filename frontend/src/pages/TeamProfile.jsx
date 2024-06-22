@@ -159,13 +159,17 @@ const TeamProfile = ({
                         onChange={(e) => setTeamName(e.target.value)}
                       />
                     ) : (
-                      <Typography variant="h5" gutterBottom>
+                      <Typography
+                        variant="h5"
+                        gutterBottom
+                        sx={{ fontWeight: "bold" }}
+                      >
                         Team Name: {teamName}
                       </Typography>
                     )}
                   </Item>
                   <Item style={{ textAlign: "left" }}>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h6" gutterBottom color="grey">
                       Team Id: {teamId}
                     </Typography>
                   </Item>
@@ -214,6 +218,7 @@ const TeamProfile = ({
                 variant="h5"
                 gutterBottom
                 style={{ marginLeft: "12px" }}
+                sx={{ fontWeight: "bold" }}
               >
                 Team Members:
               </Typography>
@@ -229,10 +234,10 @@ const TeamProfile = ({
               <List sx={{ width: "100%" }}>
                 {currentMember.map((member, index) => {
                   return (
-                    <React.Fragment key={member.UserID}>
+                    <React.Fragment key={member.userId}>
                       <ListItem alignItems="flex-start">
                         <ListItemAvatar>
-                          <Avatar alt={member.UserName} src={user5Image} />
+                          <Avatar alt={member.userName} src={user5Image} />
                         </ListItemAvatar>
                         <ListItemText
                           primary={`${member.userName} (${member.email})`}
@@ -244,11 +249,11 @@ const TeamProfile = ({
                                 variant="body2"
                                 color="text.primary"
                               >
-                                User Skills:
+                                UserId: {member.userId} / User Skills:
                               </Typography>
                               {` ${
-                                member.UserSkills
-                                  ? member.UserSkills.join(", ")
+                                member.userSkills
+                                  ? member.userSkills.join(", ")
                                   : " "
                               }`}
                             </React.Fragment>
@@ -297,13 +302,24 @@ const TeamProfile = ({
                   </FormControl>
                 </div>
               ) : (
-                <Typography
-                  variant="h5"
-                  gutterBottom
-                  style={{ marginLeft: "12px" }}
-                >
-                  Team Skills: {curTeamSkills ? curTeamSkills.join(", ") : " "}
-                </Typography>
+                <>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    style={{ marginLeft: "12px" }}
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    Team Skills:
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    style={{ marginLeft: "12px" }}
+                  >
+                    &nbsp;&nbsp;
+                    {curTeamSkills ? curTeamSkills.join(", ") : " "}
+                  </Typography>
+                </>
               )}
             </Item>
           </Grid>
