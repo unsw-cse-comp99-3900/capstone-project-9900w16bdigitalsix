@@ -4,6 +4,93 @@
         "contact": {}
     },
     "paths": {
+        "/v1/project/create": {
+            "post": {
+                "description": "创建一个新的项目并上传文件",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project"
+                ],
+                "summary": "创建项目",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "项目标题",
+                        "name": "title",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目领域",
+                        "name": "field",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "项目描述",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "客户邮箱",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "所需技能",
+                        "name": "requiredSkills[]",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "上传的文件",
+                        "name": "file",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"msg\": \"Project created successfully\", \"proId\": 1, \"fileName\": \"filename.pdf\", \"filePath\": \"backend/files/filename.pdf\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"Invalid email\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Client not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to save file\"} or {\"error\": \"Failed to create project\"} or {\"error\": \"Failed to find or create skill\"} or {\"error\": \"Failed to associate skills\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/v1/team/create": {
             "post": {
                 "description": "创建 team, 并且创建人加入了 team, 后端随机生成 teamName, 存入了数据库",
@@ -692,7 +779,7 @@
         },
         "/v1/user/pwd_login": {
             "post": {
-                "description": "Authenticate user with email and password",
+                "description": "Authenticate user with email and password, Role 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
                 "consumes": [
                     "application/json"
                 ],
