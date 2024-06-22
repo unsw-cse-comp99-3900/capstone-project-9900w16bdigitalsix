@@ -79,7 +79,7 @@ const Register = (props) => {
     // check valid password
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (! passwordRegex.test(password)){
-      setSnackbarContent('Password must be at least 8 characters long, including letter, number, and special character.');
+      setSnackbarContent('Password must be at least 8 characters long, including letter, number, and special character @$!%*?&');
       setAlertType('error');
       setOpen(true);
       return 
