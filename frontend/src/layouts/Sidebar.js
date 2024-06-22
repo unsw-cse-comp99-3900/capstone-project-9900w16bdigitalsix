@@ -42,9 +42,16 @@ const Sidebar = () => {
   let location = useLocation();
 
   const currentPath = location.pathname.split("/")[1];
+  const sidebarStyle = {
+    position: "fixed",
+    top: "56px", 
+    bottom: 0,
+    width: "250px",
+    overflowY: "auto", 
+  };
 
   return (
-    <div className="p-3">
+    <div className="p-3" style={sidebarStyle}>
       <div className="d-flex align-items-center">
         <Logo />
         <span className="ms-auto d-lg-none">
