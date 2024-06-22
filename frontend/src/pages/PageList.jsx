@@ -12,7 +12,7 @@ import ForgetPwd from './ForgetPwd';
 import ResetPwd from './ResetPwd';
 import VerifyEmail from './VerifyEmail.jsx'
 // team
-import Team from "./Team";
+import Team from "./Team.jsx";
 
 
 const PageList = () => {

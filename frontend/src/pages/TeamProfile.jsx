@@ -217,6 +217,7 @@ const TeamProfile = ({
                 Team Members:
               </Typography>
             </Item>
+
             <Item
               style={{
                 display: "flex",
