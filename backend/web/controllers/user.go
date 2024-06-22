@@ -26,10 +26,9 @@ import (
 	"web/service"
 )
 
-
 // PasswordLogin handles user login using email and password
 // @Summary User Login
-// @Description Authenticate user with email and password
+// @Description Authenticate user with email and password, Role 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
 // @Tags User
 // @Accept json
 // @Produce json
@@ -128,6 +127,7 @@ func PasswordLogin(ctx *gin.Context) {
 
 			ctx.JSON(http.StatusOK, gin.H{
 				"id":         rsp.Id,
+				"role":       rsp.Role,
 				"username":   rsp.Username,
 				"token":      token,                                         // 前端可以从这个token 中解析出 JWT 中 的payload
 				"expires_at": time.Now().Add(30*24*time.Hour).Unix() * 1000, // 单位毫秒， 30 天
@@ -542,7 +542,6 @@ func UpdateUserInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"msg": "User profile updated successfully"})
 }
 
-
 // GetPersonProfile godoc
 // @Summary Get User Profile
 // @Description 获取用户个人信息
@@ -582,7 +581,6 @@ func GetPersonProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, profile)
 }
 
-
 // @Summary Get Student List
 // @Description 返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
 // @Tags User
@@ -602,7 +600,7 @@ func GetAllStudents(c *gin.Context) {
 	var userResponses []response.StudentListResponse
 	for _, user := range users {
 		userResponses = append(userResponses, response.StudentListResponse{
-			UserID: user.ID,
+			UserID:   user.ID,
 			UserName: user.Username,
 			Email:    user.Email,
 		})
