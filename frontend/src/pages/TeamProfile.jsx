@@ -176,11 +176,12 @@ const TeamProfile = ({
                       variant="outlined"
                       color="error"
                       onClick={handleLeaveTeam}
+                      style={{ marginRight: "8px" }}
                     >
                       Leave
                     </Button>
-                  </Item>
-                  <Item style={{ textAlign: "end" }}>
+                    {/* </Item>
+                  <Item style={{ textAlign: "end" }}> */}
                     {editable ? (
                       <Button
                         variant="contained"
