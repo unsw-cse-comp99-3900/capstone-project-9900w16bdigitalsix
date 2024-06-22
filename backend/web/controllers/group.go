@@ -157,6 +157,7 @@ func UpdateTeamProfile(c *gin.Context) {
 // @Param joinTeamForm body forms.JoinTeamForm true "Join Team form"
 // @Success 200 {object} response.JoinTeamResponse
 // @Failure 400 {object} map[string]string "{"error":"Validation failed"}"
+// @Failure 409 {object} map[string]string "{"error": "User already belongs to a team"}"
 // @Failure 404 {object} map[string]string "{"error":"User not found"}"
 // @Failure 404 {object} map[string]string "{"error":"Team not found"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to update user"}"
@@ -175,8 +176,14 @@ func JoinTeam(c *gin.Context) {
 		return
 	}
 
+	// 检查用户是否已经属于一个团队
+	if user.BelongsToGroup != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "User already belongs to a team"})
+		return
+	}
+
 	var team models.Team
-	if err := global.DB.Preload("Members").Preload("Skills").First(&team, req.TeamId).Error; err != nil {
+	if err := global.DB.Preload("Members.Skills").Preload("Skills").First(&team, req.TeamId).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
@@ -194,19 +201,17 @@ func JoinTeam(c *gin.Context) {
 		return
 	}
 
-	// 获取用户的技能
-	userSkills := make([]string, len(user.Skills))
-	for i, skill := range user.Skills {
-		userSkills[i] = skill.SkillName
-	}
-
 	var teamMembers []response.TeamMember
 	for _, member := range team.Members {
+		var memberSkills []string
+		for _, skill := range member.Skills {
+			memberSkills = append(memberSkills, skill.SkillName)
+		}
 		teamMembers = append(teamMembers, response.TeamMember{
 			UserID:     member.ID,
 			UserName:   member.Username,
 			Email:      member.Email,
-			UserSkills: userSkills,
+			UserSkills: memberSkills,
 		})
 	}
 
@@ -293,7 +298,7 @@ func GetTeamProfile(c *gin.Context) {
 // @Tags Team
 // @Accept json
 // @Produce json
-// @Param   UserId  query   string  true  "User ID"
+// @Param   userId  path   string  true  "User ID"
 // @Success 200 {object} map[string]string "{"msg":"User has left the team successfully"}"
 // @Failure 400 {object} map[string]string "{"error":"Validation failed"}"
 // @Failure 400 {object} map[string]string "{"error":"User does not belong to any team"}"
@@ -301,7 +306,7 @@ func GetTeamProfile(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error":"Failed to update user"}"
 // @Router /v1/team/leave/{userId} [delete]
 func LeaveTeam(c *gin.Context) {
-	userId := c.Query("UserId")
+	userId := c.Param("userId")
 
 	var user models.User
 	if err := global.DB.First(&user, userId).Error; err != nil {
