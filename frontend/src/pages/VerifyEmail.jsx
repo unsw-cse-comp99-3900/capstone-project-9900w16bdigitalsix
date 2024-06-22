@@ -10,37 +10,37 @@ import GradientBackground from '../components/GradientBackground';
 import { apiCall } from '../helper';
 
 const VerifyEmail = (props) => {
-	const navigate = useNavigate();
-	const location = useLocation();
-	const [message, setMessage] = React.useState('');
-	const [token, setToken] = React.useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [message, setMessage] = React.useState('');
+  const [token, setToken] = React.useState('');
 
-	React.useEffect(() => {
-		// get token from url
-		const params = new URLSearchParams(location.search);
-		setToken(params.get('token'));
-		console.log(token)
-	}, []);
+  React.useEffect(() => {
+    // get token from url
+    const params = new URLSearchParams(location.search);
+    setToken(params.get('token'));
+    console.log(token)
+  }, []);
 
-	React.useEffect(() => {
-		// return error
-		console.log(token)
-		if (!token) {
-		  setMessage('Invalid Link');
-		  return;
-		}
-		verify();
-	}, [token]);
+  React.useEffect(() => {
+    // return error
+    console.log(token)
+    if (!token) {
+      setMessage('Invalid Link');
+      return;
+    }
+    verify();
+  }, [token]);
 
-	const verify = async() => {
-		// send request to verify token
+  const verify = async() => {
+    // send request to verify token
     try {
-			const queryParams = {
-				'token': token
-			}
+      const queryParams = {
+        'token': token
+      }
       const data = await apiCall('GET', 'v1/user/register/verify', null, null, false, queryParams);
       if (data.error) {
-				setMessage(data.error)
+        setMessage(data.error)
 
       } else if (data.msg) {
         // localStorage.setItem('token', data.token);
@@ -52,29 +52,29 @@ const VerifyEmail = (props) => {
     } catch (error) {
       console.error('Error during verify email:', error);
     };
-	}
-	return(
+  }
+  return(
     <>
       <CenteredBox>
         <CenteredCard>
           <CardContent>
-						<div style={{ display: 'flex', justifyContent: 'center' }}>
-							<LogoDark />
-						</div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <LogoDark />
+            </div>
             <Typography sx={{textAlign:'center'}} variant="h5" component="div">
-							<b></b> {message} <b></b>
+              <b></b> {message} <b></b>
             </Typography> <br />
-						<div style={{ display: 'flex', justifyContent: 'center' }}>
-							<big>
-								<Link
-									href="#"
-									onClick={() => navigate('/login')}
-									aria-label="Go Back to Login"
-								>
-									Go Back to Login
-								</Link>
-							</big>
-						</div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <big>
+                <Link
+                  href="#"
+                  onClick={() => navigate('/login')}
+                  aria-label="Go Back to Login"
+                >
+                  Go Back to Login
+                </Link>
+              </big>
+            </div>
           </CardContent>
         </CenteredCard>
       </CenteredBox>
@@ -82,7 +82,7 @@ const VerifyEmail = (props) => {
     </>
 
 
-	)
+  )
 
 }
 

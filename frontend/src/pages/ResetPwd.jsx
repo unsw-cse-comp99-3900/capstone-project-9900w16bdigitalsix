@@ -34,12 +34,12 @@ const ResetPwd = (props) => {
     setOpen(false);
   };
   
-	React.useEffect(() => {
-		// get token, email from url
-		const params = new URLSearchParams(location.search);
-		setToken(params.get('token'));
+  React.useEffect(() => {
+    // get token, email from url
+    const params = new URLSearchParams(location.search);
+    setToken(params.get('token'));
     setEmail(params.get('email'));
-	}, []);
+  }, []);
 
   // check password validation
   React.useEffect(() => {

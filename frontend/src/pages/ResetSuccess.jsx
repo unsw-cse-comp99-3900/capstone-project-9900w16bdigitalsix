@@ -9,36 +9,36 @@ import GradientBackground from '../components/GradientBackground';
 import Link from '@mui/material/Link';
 
 const ResetSuccess = (props) => {
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
-	return(
+  return(
     <>
       <CenteredBox>
         <CenteredCard>
           <CardContent>
-						<div style={{ display: 'flex', justifyContent: 'center' }}>
-							<LogoDark />
-						</div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <LogoDark />
+            </div>
             <Typography sx={{textAlign:'center'}} variant="h5" component="div">
-							<b></b> Password has been reset successfully. <b></b>
+              <b></b> Password has been reset successfully. <b></b>
             </Typography> <br />
-						<div style={{ display: 'flex', justifyContent: 'center' }}>
-							<big>
-								<Link
-									href="#"
-									onClick={() => navigate('/login')}
-									aria-label="Go Back to Login"
-								>
-									Go Back to Login
-								</Link>
-							</big>
-						</div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <big>
+                <Link
+                  href="#"
+                  onClick={() => navigate('/login')}
+                  aria-label="Go Back to Login"
+                >
+                  Go Back to Login
+                </Link>
+              </big>
+            </div>
           </CardContent>
         </CenteredCard>
       </CenteredBox>
       <GradientBackground />
     </>
-	)
+  )
 }
 
 export default ResetSuccess;
