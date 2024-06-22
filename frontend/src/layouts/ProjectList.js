@@ -17,7 +17,7 @@ const ProjectList = () => {
     },
     {
       title: 'Project Title',
-      client: 'Client',
+      client: 'Dlient',
       clientTitle: 'Client Title',
       skills: 'Required Skills',
       field: 'Field',
@@ -25,7 +25,7 @@ const ProjectList = () => {
     },
     {
       title: 'Project Title',
-      client: 'Client',
+      client: 'Elient',
       clientTitle: 'Client Title',
       skills: 'Required Skills',
       field: 'Field',
@@ -67,6 +67,10 @@ const ProjectList = () => {
       imgSrc: 'path_to_your_image_6.jpg',
     },
   ];
+  const contentAreaStyle = {
+    marginTop: '56px', // Adjust this value to match the Header height
+    // padding: '16px', // Optional padding for the content area
+  };
 
   return (
     <main>
@@ -76,7 +80,7 @@ const ProjectList = () => {
           <Sidebar />
         </aside>
         {/********Content Area**********/}
-        <div className="contentArea">
+        <div className="contentArea" style={contentAreaStyle}>
           {/********Header**********/}
           <Header />
           {/********Middle Content**********/}

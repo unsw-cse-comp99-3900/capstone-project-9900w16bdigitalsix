@@ -5,6 +5,11 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import ProjectForm from './ProjectForm';
 
+const contentAreaStyle = {
+  marginTop: '56px', // Adjust this value to match the Header height
+  // padding: '16px', // Optional padding for the content area
+};
+
 const CreateProject = () => {
   return (
     <main>
@@ -14,7 +19,7 @@ const CreateProject = () => {
           <Sidebar />
         </aside>
         {/********Content Area**********/}
-        <div className="contentArea">
+        <div className="contentArea" style={contentAreaStyle}>
           {/********Header**********/}
           <Header />
           {/********Middle Content**********/}

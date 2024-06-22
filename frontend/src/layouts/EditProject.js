@@ -1,15 +1,16 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
-import Header from "./Header";
-import { Container } from "reactstrap";
+// CreateProject.js
+import React from 'react';
+import { Container } from 'reactstrap';
+import Sidebar from './Sidebar';
+import Header from './Header';
+import ProjectForm from './ProjectForm';
 
 const contentAreaStyle = {
   marginTop: '56px', // Adjust this value to match the Header height
   // padding: '16px', // Optional padding for the content area
 };
 
-const FullLayout = () => {
+const EditProject = () => {
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
@@ -23,8 +24,8 @@ const FullLayout = () => {
           <Header />
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
-            {/* add code here */}
-
+            <h3>Edit Project Information</h3>
+            <ProjectForm />
           </Container>
         </div>
       </div>
@@ -32,4 +33,4 @@ const FullLayout = () => {
   );
 };
 
-export default FullLayout;
+export default EditProject;

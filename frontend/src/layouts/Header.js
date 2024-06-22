@@ -28,8 +28,16 @@ const Header = () => {
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
   };
 
+  const headerStyle = {
+    position: "fixed",
+    top: 0,
+    width: "100%",
+    zIndex: 1000,
+  };
+
+
   return (
-    <Navbar color="primary" dark expand="md" className="bg-gradient">
+    <Navbar color="primary" dark expand="md" className="bg-gradient" style={headerStyle}>
       <div className="d-flex align-items-center">
         <NavbarBrand href="/" className="d-lg-none">
           <LogoWhite />

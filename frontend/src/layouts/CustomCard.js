@@ -1,8 +1,10 @@
 // CustomCard.js
 import React from 'react';
-import { Card, CardBody, CardTitle, CardText } from 'reactstrap';
+import { Link } from 'react-router-dom';
+import { Card, CardBody, CardTitle, CardText, Button } from 'reactstrap';
 
-const CustomCard = ({ title, client, clientTitle, skills, field, imgSrc }) => {
+
+const CustomCard = ({id, title, client, clientTitle, skills, field }) => {
   return (
     <Card className="mb-4">
       <div style={{ height: '150px', backgroundColor: '#D8BFD8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -22,7 +24,12 @@ const CustomCard = ({ title, client, clientTitle, skills, field, imgSrc }) => {
         <CardText>{field}</CardText>
         <div className="d-flex justify-content-between">
           <i className="bi bi-file-earmark"></i>
-          <i className="bi bi-pencil"></i>
+          <Link to={`/project/edit/`}>
+            {/* <Button color="primary"> */}
+              <i className="bi bi-pencil"></i>
+            {/* </Button> */}
+          </Link>
+
           <i className="bi bi-person"></i>
           <i className="bi bi-trash"></i>
         </div>
