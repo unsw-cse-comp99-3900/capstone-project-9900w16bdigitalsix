@@ -14,7 +14,6 @@ import VerifyEmail from './VerifyEmail.jsx'
 // team
 import Team from "./Team.jsx";
 
-import Check from "./Check"
 
 const PageList = () => {
   const [token, setToken] = React.useState(null);
@@ -32,7 +31,6 @@ const PageList = () => {
         <Route path="/reset-pwd" element={<ResetPwd />} />
         
         <Route path="/team" element={<Team token={token} setToken={setToken}/>} />
-        <Route path="/check" element={<Check token={token} setToken={setToken}/>} />
       </Routes>
       <br />
     </>
