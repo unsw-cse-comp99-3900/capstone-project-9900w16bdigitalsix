@@ -37,7 +37,7 @@ func SendEmail(toEmail, token string, emailType int) error {
 	if emailType == 1 {
 		registerLink = fmt.Sprintf("http://%s:3000/verify-email-check?token=%s", host, token)
 	} else if (emailType == 2) {
-		resetPasswordLink = fmt.Sprintf("http://%s:3000/reset-pwd?email=%s?token=%s", host, toEmail, token)
+		resetPasswordLink = fmt.Sprintf("http://%s:3000/reset-pwd?email=%s&token=%s", host, toEmail, token)
 		fmt.Println("email:", toEmail)
 	}
 	
