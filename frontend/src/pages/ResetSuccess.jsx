@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Link from '@mui/material/Link';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
@@ -22,17 +21,6 @@ const ResetSuccess = (props) => {
             <Typography sx={{textAlign:'center'}} variant="h5" component="div">
 							<b></b> Password has been reset successfully. <b></b>
             </Typography> <br />
-						<div style={{ display: 'flex', justifyContent: 'center' }}>
-							<big>
-								<Link
-									href="#"
-									onClick={() => navigate('/login')}
-									aria-label="Go Back to Login"
-								>
-									Go Back to Login
-								</Link>
-							</big>
-						</div>
           </CardContent>
         </CenteredCard>
       </CenteredBox>
