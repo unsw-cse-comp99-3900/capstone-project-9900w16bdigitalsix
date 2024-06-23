@@ -1424,7 +1424,7 @@ const docTemplate = `{
         "response.ProfileResponse": {
             "type": "object",
             "properties": {
-                "avatarPath": {
+                "avatarURL": {
                     "type": "string"
                 },
                 "bio": {
