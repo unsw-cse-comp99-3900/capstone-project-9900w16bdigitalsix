@@ -1497,7 +1497,11 @@ const docTemplate = `{
         "response.StudentInfoResponse": {
             "type": "object",
             "properties": {
+<<<<<<< HEAD
+                "avatarURL": {
+=======
                 "avatarPath": {
+>>>>>>> origin/profile_xly
                     "type": "string"
                 },
                 "email": {
@@ -1539,7 +1543,11 @@ const docTemplate = `{
         "response.TeamMember": {
             "type": "object",
             "properties": {
+<<<<<<< HEAD
+                "avatarURL": {
+=======
                 "avatarPath": {
+>>>>>>> origin/profile_xly
                     "type": "string"
                 },
                 "email": {

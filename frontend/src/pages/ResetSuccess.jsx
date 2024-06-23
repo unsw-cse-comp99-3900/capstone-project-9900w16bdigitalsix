@@ -1,15 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Link from '@mui/material/Link';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+
 import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import { ReactComponent as LogoDark } from "../assets/images/logos/capstone.svg";
 import GradientBackground from '../components/GradientBackground';
+import Link from '@mui/material/Link';
 
 import cap from '../assets/images/logos/cap.png'
-const ResetPwdLinkSent = (props) => {
+
+const ResetSuccess = (props) => {
   const navigate = useNavigate();
+
   return(
     <>
       <CenteredBox>
@@ -20,7 +23,7 @@ const ResetPwdLinkSent = (props) => {
               <img src={cap} alt="small_logo" style={{ width: '80px', height: '80px' }}/>
             </div>
             <Typography sx={{textAlign:'center'}} variant="h5" component="div">
-              <b></b> We sent you an email which contains a link to reset your password. <b></b>
+              <b></b> Password has been reset successfully. <b></b>
             </Typography> <br />
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <big>
@@ -38,10 +41,7 @@ const ResetPwdLinkSent = (props) => {
       </CenteredBox>
       <GradientBackground />
     </>
-
-
   )
-
 }
 
-export default ResetPwdLinkSent;
+export default ResetSuccess;

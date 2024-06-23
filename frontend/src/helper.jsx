@@ -42,6 +42,5 @@ const apiCall = async (method, path, requestBody = null, token = null, authed = 
   }
   
 
-  export default apiCall;
-  export { apiCall, fileToDataUrl};
-  
+export default apiCall;
+export { apiCall, fileToDataUrl };

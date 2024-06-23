@@ -1486,7 +1486,11 @@
         "response.StudentInfoResponse": {
             "type": "object",
             "properties": {
+<<<<<<< HEAD
+                "avatarURL": {
+=======
                 "avatarPath": {
+>>>>>>> origin/profile_xly
                     "type": "string"
                 },
                 "email": {
@@ -1528,7 +1532,11 @@
         "response.TeamMember": {
             "type": "object",
             "properties": {
+<<<<<<< HEAD
+                "avatarURL": {
+=======
                 "avatarPath": {
+>>>>>>> origin/profile_xly
                     "type": "string"
                 },
                 "email": {

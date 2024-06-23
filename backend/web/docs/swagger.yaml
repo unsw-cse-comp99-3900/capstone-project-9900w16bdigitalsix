@@ -237,7 +237,11 @@ definitions:
     type: object
   response.StudentInfoResponse:
     properties:
+<<<<<<< HEAD
+      avatarURL:
+=======
       avatarPath:
+>>>>>>> origin/profile_xly
         type: string
       email:
         type: string
@@ -264,7 +268,11 @@ definitions:
     type: object
   response.TeamMember:
     properties:
+<<<<<<< HEAD
+      avatarURL:
+=======
       avatarPath:
+>>>>>>> origin/profile_xly
         type: string
       email:
         type: string
