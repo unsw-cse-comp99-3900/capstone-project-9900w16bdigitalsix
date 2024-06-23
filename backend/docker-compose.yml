@@ -23,7 +23,7 @@ services:
       - "8080:8080"
     volumes:
       - ./files:/app/files
-      - ./pictures:/app/pictures
+      - ./pictures:/app/images
     depends_on:
       user_srv:
         condition: service_started

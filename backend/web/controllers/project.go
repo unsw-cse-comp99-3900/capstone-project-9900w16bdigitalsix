@@ -82,7 +82,7 @@ func CreateProject(c *gin.Context) {
 	// 如果有上传文件，则保存文件名和文件路径
 	if fileName != "" && filePath != "" {
 		project.Filename = fileName
-		project.Filepath = "backend/files/" + fileName
+		project.FileURL = "backend/files/" + fileName
 	}
 
 	if err := global.DB.Create(&project).Error; err != nil {
@@ -116,7 +116,7 @@ func CreateProject(c *gin.Context) {
 		"msg":      "Project created successfully",
 		"proId":    project.ID,
 		"fileName": project.Filename,
-		"filePath": project.Filepath,
+		"filePath": project.FileURL,
 	})
 }
 
@@ -220,7 +220,7 @@ func GetProjectDetail(c *gin.Context) {
 		RequiredSkills: skills,
 		Field:          project.Field,
 		Description:    project.Description,
-		SpecLink:       project.Filepath, 
+		SpecLink:       project.FileURL, 
 		AllocatedTeam:  teams,
 	}
 

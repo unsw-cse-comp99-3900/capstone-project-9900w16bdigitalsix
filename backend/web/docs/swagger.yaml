@@ -189,7 +189,7 @@ definitions:
     type: object
   response.ProfileResponse:
     properties:
-      avatarPath:
+      avatarURL:
         type: string
       bio:
         type: string
@@ -237,7 +237,7 @@ definitions:
     type: object
   response.StudentInfoResponse:
     properties:
-      avatarPath:
+      avatarURL:
         type: string
       email:
         type: string
@@ -264,7 +264,7 @@ definitions:
     type: object
   response.TeamMember:
     properties:
-      avatarPath:
+      avatarURL:
         type: string
       email:
         type: string

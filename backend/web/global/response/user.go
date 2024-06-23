@@ -13,7 +13,7 @@ type ProfileResponse struct {
 	Email        string   `json:"email"`
 	Bio          string   `json:"bio"`
 	Organization string   `json:"organization"`
-	AvatarPath   string   `json:"avatarPath"`
+	AvatarURL   string   `json:"avatarURL"`
 	Skills       []string `json:"skills"`
 	Field        string   `json:"field"`
 }

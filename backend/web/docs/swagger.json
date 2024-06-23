@@ -1413,7 +1413,7 @@
         "response.ProfileResponse": {
             "type": "object",
             "properties": {
-                "avatarPath": {
+                "avatarURL": {
                     "type": "string"
                 },
                 "bio": {
@@ -1486,7 +1486,7 @@
         "response.StudentInfoResponse": {
             "type": "object",
             "properties": {
-                "avatarPath": {
+                "avatarURL": {
                     "type": "string"
                 },
                 "email": {
@@ -1528,7 +1528,7 @@
         "response.TeamMember": {
             "type": "object",
             "properties": {
-                "avatarPath": {
+                "avatarURL": {
                     "type": "string"
                 },
                 "email": {

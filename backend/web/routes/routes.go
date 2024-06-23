@@ -57,6 +57,7 @@ func ProjectRouter(Router *gin.RouterGroup) {
 		projectRouter.POST("/create", controllers.CreateProject)
 		projectRouter.GET("/get/public_project/list", controllers.GetProjectList)
 		projectRouter.GET("/detail/:projectId", controllers.GetProjectDetail)
+		// projectRouter.GET("/delete/:projectId", controllers.DeleteProject)
 
 	}
 }

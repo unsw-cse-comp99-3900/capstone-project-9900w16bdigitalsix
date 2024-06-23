@@ -2,7 +2,7 @@ name: "capstone"
 host: '127.0.0.1'
 port: 8080
 filepath: "/app/files"
-picture_path: "/app/pictures"
+picture_path: "/app/images"
 user_srv:
   host: 'user_srv'
   port: 50051
