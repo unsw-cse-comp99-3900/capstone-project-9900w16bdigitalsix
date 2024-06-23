@@ -11,6 +11,7 @@ type User struct {
 	Email          string     `gorm:"index:idx_email;unique;type:varchar(255);not null"`
 	Password       string     `gorm:"type:varchar(255);not null"`
 	Username       string     `gorm:"type:varchar(16);not null"`
+	AvatarPath     string     `gorm:"type:varchar(255)"`
 	Gender         string     `gorm:"default:male;type:varchar(6)"`
 	Birthday       *time.Time `gorm:"type:datetime"`
 	Bio            string     `json:"bio"`

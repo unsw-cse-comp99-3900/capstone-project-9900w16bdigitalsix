@@ -82,6 +82,7 @@ func CreateTeam(c *gin.Context) {
 				UserID:     user.ID,
 				UserName:   user.Username,
 				Email:      user.Email,
+				AvatarPath: user.AvatarPath,
 				UserSkills: userSkills,
 			},
 		},
@@ -124,7 +125,6 @@ func UpdateTeamProfile(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to clear existing skills"})
 		return
 	}
-	
 
 	// 查找或创建技能
 	if len(req.TeamSkills) > 0 {
@@ -217,6 +217,7 @@ func JoinTeam(c *gin.Context) {
 			UserID:     member.ID,
 			UserName:   member.Username,
 			Email:      member.Email,
+			AvatarPath: member.AvatarPath,
 			UserSkills: memberSkills,
 		})
 	}
@@ -279,6 +280,7 @@ func GetTeamProfile(c *gin.Context) {
 			UserID:     member.ID,
 			UserName:   member.Username,
 			Email:      member.Email,
+			AvatarPath: member.AvatarPath,
 			UserSkills: userSkills,
 		})
 	}
@@ -312,43 +314,42 @@ func GetTeamProfile(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error":"Failed to update user"}"
 // @Router /v1/team/leave/{userId} [delete]
 func LeaveTeam(c *gin.Context) {
-    userId := c.Param("userId")
+	userId := c.Param("userId")
 
-    var user models.User
-    if err := global.DB.First(&user, userId).Error; err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-        return
-    }
+	var user models.User
+	if err := global.DB.First(&user, userId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
 
-    if user.BelongsToGroup == nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "User does not belong to any team"})
-        return
-    }
+	if user.BelongsToGroup == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User does not belong to any team"})
+		return
+	}
 
-    // 获取用户所属团队的ID
-    teamID := *user.BelongsToGroup
+	// 获取用户所属团队的ID
+	teamID := *user.BelongsToGroup
 
-    // 将用户从团队中移除
-    user.BelongsToGroup = nil
-    if err := global.DB.Save(&user).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
-        return
-    }
+	// 将用户从团队中移除
+	user.BelongsToGroup = nil
+	if err := global.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
+		return
+	}
 
-    // 检查团队是否还有其他成员
-    var memberCount int64
-    global.DB.Model(&models.User{}).Where("belongs_to_group = ?", teamID).Count(&memberCount)
-    if memberCount == 0 {
-        // 如果没有其他成员，则删除团队
-        if err := global.DB.Delete(&models.Team{}, teamID).Error; err != nil {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete team"})
-            return
-        }
-    }
+	// 检查团队是否还有其他成员
+	var memberCount int64
+	global.DB.Model(&models.User{}).Where("belongs_to_group = ?", teamID).Count(&memberCount)
+	if memberCount == 0 {
+		// 如果没有其他成员，则删除团队
+		if err := global.DB.Delete(&models.Team{}, teamID).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete team"})
+			return
+		}
+	}
 
-    c.JSON(http.StatusOK, gin.H{"msg": "User has left the team successfully"})
+	c.JSON(http.StatusOK, gin.H{"msg": "User has left the team successfully"})
 }
-
 
 // GetStudentInfo godoc
 // @Summary Get student list information by team name
@@ -371,9 +372,10 @@ func GetStudentInfo(ctx *gin.Context) {
 	var studentInfos []response.StudentInfoResponse
 	for _, member := range team.Members {
 		studentInfos = append(studentInfos, response.StudentInfoResponse{
-			ID:    member.ID,
-			Name:  member.Username,
-			Email: member.Email,
+			ID:         member.ID,
+			Name:       member.Username,
+			Email:      member.Email,
+			AvatarPath: member.AvatarPath,
 		})
 	}
 
