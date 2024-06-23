@@ -11,6 +11,8 @@ import MessageAlert from '../components/MessageAlert';
 import { apiCall } from '../helper';
 import GradientBackground from '../components/GradientBackground';
 
+import cap from '../assets/images/logos/cap.png'
+
 const ForgetPwd = () => {
   const navigate = useNavigate();
   const [email, setEmail] = React.useState('');
@@ -71,7 +73,8 @@ const ForgetPwd = () => {
         <CenteredCard>
           <CardContent>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <LogoDark />
+              {/* <LogoDark /> */}
+              <img src={cap} alt="small_logo" style={{ width: '80px', height: '80px' }}/>
             </div>
             <Typography sx={{textAlign:'center'}} variant="h5" component="div">
               <b></b> Enter your email address and we'll send you a link to reset your password. <b></b>

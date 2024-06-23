@@ -8,6 +8,8 @@ import { ReactComponent as LogoDark } from "../assets/images/logos/capstone.svg"
 import GradientBackground from '../components/GradientBackground';
 import Link from '@mui/material/Link';
 
+import cap from '../assets/images/logos/cap.png'
+
 const ResetSuccess = (props) => {
   const navigate = useNavigate();
 
@@ -17,7 +19,8 @@ const ResetSuccess = (props) => {
         <CenteredCard>
           <CardContent>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <LogoDark />
+              {/* <LogoDark /> */}
+              <img src={cap} alt="small_logo" style={{ width: '80px', height: '80px' }}/>
             </div>
             <Typography sx={{textAlign:'center'}} variant="h5" component="div">
               <b></b> Password has been reset successfully. <b></b>

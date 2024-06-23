@@ -9,6 +9,8 @@ import { ReactComponent as LogoDark } from "../assets/images/logos/capstone.svg"
 import GradientBackground from '../components/GradientBackground';
 import { apiCall } from '../helper';
 
+import cap from '../assets/images/logos/cap.png'
+
 const VerifyEmail = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,7 +61,8 @@ const VerifyEmail = (props) => {
         <CenteredCard>
           <CardContent>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <LogoDark />
+              {/* <LogoDark /> */}
+              <img src={cap} alt="small_logo" style={{ width: '80px', height: '80px' }}/>
             </div>
             <Typography sx={{textAlign:'center'}} variant="h5" component="div">
               <b></b> {message} <b></b>
