@@ -79,8 +79,10 @@ const Login = (props) => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('email', email);
         localStorage.setItem('userId', data.id);
+        localStorage.setItem('role', data.role);
         // localStorage.setItem('role', data.role);
         props.setToken(data.token);
+        props.setRole(data.role);
         setEmail(email);
         navigate('/');
       }
