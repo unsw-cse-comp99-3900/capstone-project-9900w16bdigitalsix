@@ -47,6 +47,7 @@ const Sidebar = () => {
     top: "56px", 
     bottom: 0,
     width: "250px",
+    // height: "calc(100vh - 56px)", 
     overflowY: "auto", 
   };
 
