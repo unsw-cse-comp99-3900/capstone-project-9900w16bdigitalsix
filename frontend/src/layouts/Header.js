@@ -57,7 +57,7 @@ const Header = () => {
   };
 
   return (
-    <Navbar color="primary" dark expand="md" className="bg-gradient" >
+    <Navbar color="primary" dark expand="md" className="bg-gradient" style={headerStyle}>
       <div className="d-flex align-items-center">
         <NavbarBrand href="/" className="d-lg-none">
           {/* <LogoWhite /> */}
