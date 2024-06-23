@@ -5,7 +5,6 @@ import (
 	"go.uber.org/zap"
 
 	"web/controllers"
-	"web/middlewares"
 )
 
 func BaseRouter(Router *gin.RouterGroup) {
@@ -29,7 +28,8 @@ func UserRouter(Router *gin.RouterGroup) {
 		UserRouter.POST("/forget_password/send_email", controllers.SendEmailResetPassword)
 		UserRouter.POST("/reset/password", controllers.ResetPassword)
 		UserRouter.POST("/modify/profile", controllers.UpdateUserInfo)
-		UserRouter.GET("/profile/:user_id", middlewares.JWTAuth(), controllers.GetPersonProfile)
+		// UserRouter.GET("/profile/:user_id", middlewares.JWTAuth(), controllers.GetPersonProfile)
+		UserRouter.GET("/profile/:user_id", controllers.GetPersonProfile)
 		UserRouter.GET("/student/list", controllers.GetAllStudents)
 	}
 }
@@ -47,27 +47,16 @@ func GroupRouter(Router *gin.RouterGroup) {
 		groupRouter.GET("/get/list", controllers.GetAllTeams)
 		groupRouter.GET("/invite/:userId/:teamId", controllers.InviteUserToTeam)
 
-		// groupRouter.POST("/groups/:group_id/invite", controllers.InviteToTeam)
-		// groupRouter.POST("/groups/:group_id/leave", controllers.LeaveTeam)
-
 	}
 }
 
 func ProjectRouter(Router *gin.RouterGroup) {
-	groupRouter := Router.Group("project")
+	projectRouter := Router.Group("project")
 	zap.S().Info("配置分组相关的 url")
 	{
-		groupRouter.POST("/create", controllers.CreateProject)
-
-
-		// groupRouter.PUT("/update/profile/:teamId", controllers.UpdateTeamProfile)
-		// groupRouter.PUT("/join", controllers.JoinTeam)
-		// groupRouter.GET("/profile/:userId", controllers.GetTeamProfile)
-		// groupRouter.DELETE("/leave", controllers.LeaveTeam)
-		// groupRouter.GET("/get/student-info/:teamName", controllers.GetStudentInfo)
-
-		// groupRouter.POST("/groups/:group_id/invite", controllers.InviteToTeam)
-		// groupRouter.POST("/groups/:group_id/leave", controllers.LeaveTeam)
+		projectRouter.POST("/create", controllers.CreateProject)
+		projectRouter.GET("/get/public_project/list", controllers.GetProjectList)
+		projectRouter.GET("/detail/:projectId", controllers.GetProjectDetail)
 
 	}
 }

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -10,6 +9,7 @@ import (
 	"gorm.io/gorm"
 
 	"web/global"
+	"web/global/response"
 	"web/models"
 )
 
@@ -61,7 +61,6 @@ func CreateProject(c *gin.Context) {
 	description := c.PostForm("description")
 	email := c.PostForm("email")
 	requiredSkills := c.PostFormArray("requiredSkills[]")
-	fmt.Println("requiredskills", requiredSkills)
 
 	// 检查客户是否存在
 	var client models.User
@@ -119,4 +118,111 @@ func CreateProject(c *gin.Context) {
 		"fileName": project.Filename,
 		"filePath": project.Filepath,
 	})
+}
+
+// GetProjectList godoc
+// @Summary 获取公开项目列表
+// @Description is_public 字段 1表示 public， 2 表示未公开, 这里返回的公开的 project 信息
+// @Tags Project
+// @Produce json
+// @Success 200 {array} response.GetProjectListResponse
+// @Failure 500 {object} map[string]string "{"error": string}"
+// @Router /v1/project/get/public_project/list [get]
+func GetProjectList(c *gin.Context) {
+	var projects []models.Project
+
+	if err := global.DB.Preload("Skills").Preload("Teams").Where("is_public = ?", 1).Find(&projects).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var responseList []response.GetProjectListResponse
+
+	for _, project := range projects {
+		var skills []string
+		for _, skill := range project.Skills {
+			skills = append(skills, skill.SkillName)
+		}
+
+		var teams []response.AllocatedTeam
+		for _, team := range project.Teams {
+			teams = append(teams, response.AllocatedTeam{
+				TeamID:   team.ID,
+				TeamName: team.Name,
+			})
+		}
+
+		client := models.User{}
+		if err := global.DB.Where("id = ?", project.CreatedBy).First(&client).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		responseList = append(responseList, response.GetProjectListResponse{
+			ProjectID:      project.ID,
+			Title:          project.Name,
+			ClientName:     client.Username,
+			ClientEmail:    client.Email,
+			UserID:         *project.CreatedBy,
+			RequiredSkills: skills,
+			Field:          project.Field,
+			AllocatedTeam:  teams,
+		})
+	}
+
+	c.JSON(http.StatusOK, responseList)
+}
+
+
+// @Summary 根据 projectId 获取项目 detail
+// @Description 根据项目ID获取项目的详细信息
+// @Tags Project
+// @Produce json
+// @Param projectId path uint true "项目ID"
+// @Success 200 {object} response.ProjectDetailResponse
+// @Failure 404 {object} map[string]string "{"error": "Project not found"}"
+// @Failure 500 {object} map[string]string "{"error": "Internal Server Error"}"
+// @Router /v1/project/detail/{projectId} [get]
+func GetProjectDetail(c *gin.Context) {
+	projectId := c.Param("projectId")
+	
+	var project models.Project
+	if err := global.DB.Preload("Skills").Preload("Teams").Where("id = ?", projectId).First(&project).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
+		return
+	}
+
+	var skills []string
+	for _, skill := range project.Skills {
+		skills = append(skills, skill.SkillName)
+	}
+
+	var teams []response.AllocatedTeam
+	for _, team := range project.Teams {
+		teams = append(teams, response.AllocatedTeam{
+			TeamID:   team.ID,
+			TeamName: team.Name,
+		})
+	}
+
+	client := models.User{}
+	if err := global.DB.Where("id = ?", project.CreatedBy).First(&client).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	projectDetail := response.ProjectDetailResponse{
+		ProjectID:      project.ID,
+		Title:          project.Name,
+		ClientName:     client.Username,
+		ClientEmail:    client.Email,
+		UserID:         *project.CreatedBy,
+		RequiredSkills: skills,
+		Field:          project.Field,
+		Description:    project.Description,
+		SpecLink:       project.Filepath, 
+		AllocatedTeam:  teams,
+	}
+
+	c.JSON(http.StatusOK, projectDetail)
 }
