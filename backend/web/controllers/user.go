@@ -498,7 +498,7 @@ func UpdateUserInfo(c *gin.Context) {
 	}
 
 	// 解析 base64 图片， 并保存
-	outputDir := "../pictures"
+	outputDir := global.ServerConfig.PicturePath
 	filename, _, err := util.SaveBase64Image(profileReq.Profile.Avatarbase64, outputDir)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save picture"})

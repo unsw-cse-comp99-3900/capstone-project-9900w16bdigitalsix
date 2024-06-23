@@ -38,7 +38,7 @@ func CreateProject(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err == nil {
 		// 创建上传目录
-		uploadDir := "../files"
+		uploadDir := global.ServerConfig.FilePath
 		if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
 			os.Mkdir(uploadDir, os.ModePerm)
 		}
