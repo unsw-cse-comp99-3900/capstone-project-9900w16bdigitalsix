@@ -189,7 +189,7 @@ definitions:
     type: object
   response.ProfileResponse:
     properties:
-      avatarPath:
+      avatarURL:
         type: string
       bio:
         type: string

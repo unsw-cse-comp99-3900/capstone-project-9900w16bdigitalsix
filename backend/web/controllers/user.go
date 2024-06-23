@@ -499,17 +499,17 @@ func UpdateUserInfo(c *gin.Context) {
 
 	// 解析 base64 图片， 并保存
 	outputDir := global.ServerConfig.PicturePath
-	filename, _, err := util.SaveBase64Image(profileReq.Profile.Avatarbase64, outputDir)
+	_, url, err := util.SaveBase64Image(profileReq.Profile.Avatarbase64, outputDir)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save picture"})
 	}
-	
+
 	// 更新用户信息
 	user.Username = profileReq.Profile.Name
 	user.Bio = profileReq.Profile.Bio
 	user.Organization = profileReq.Profile.Organization
 	user.Role = profileReq.Profile.Role
-	user.AvatarPath = "backend/pictures/" + filename
+	user.AvatarURL = url
 	user.Field = profileReq.Profile.Field
 
 	// 更新用户技能
@@ -582,7 +582,7 @@ func GetPersonProfile(c *gin.Context) {
 		Email:        user.Email,
 		Bio:          user.Bio,
 		Organization: user.Organization,
-		AvatarPath:   user.AvatarPath,
+		AvatarURL:    user.AvatarURL,
 		Skills:       skillNames,
 		Field:        user.Field,
 	}

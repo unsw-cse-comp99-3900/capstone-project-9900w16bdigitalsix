@@ -67,7 +67,10 @@ const Profile = (props) => {
                     setOrganization(response.organization);
                     setSkills(response.skills);
                     setField(response.field);
-                    const imagePath = `/backend/pictures/${response.avatarPath.split('/').pop()}`; // 使用相对路径
+                    //console.log("response:", response);
+                    /////////////////////
+                    const imagePath = response.avatarURL; 
+                    //console.log("image path:", imagePath);
                     const imageResponse = await fetch(imagePath);
                     if (!imageResponse.ok) {
                         throw new Error('Failed to fetch image');
@@ -77,7 +80,8 @@ const Profile = (props) => {
                     const imageDataUrl = await fileToDataUrl(imageFile);
 
                     setAvatar(imageDataUrl);
-                    //console.log("Fetched avatar:", imageDataUrl);
+                    console.log("Fetched avatar:", imageDataUrl);
+                    /////////////////////
                 } else {
                     setSnackbarContent('Failed to fetch user data');
                     setAlertType('error');
