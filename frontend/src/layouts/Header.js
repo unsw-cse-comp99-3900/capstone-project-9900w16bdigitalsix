@@ -13,7 +13,8 @@ import {
   Dropdown,
   Button,
 } from "reactstrap";
-import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowhite.svg";
+// import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowhite.svg";
+import cap from "../assets/images/logos/cap_white.png";
 import user1 from "../assets/images/users/user1.jpg";
 
 const Header = () => {
@@ -39,7 +40,8 @@ const Header = () => {
     <Navbar color="primary" dark expand="md" className="bg-gradient" style={headerStyle}>
       <div className="d-flex align-items-center">
         <NavbarBrand href="/" className="d-lg-none">
-          <LogoWhite />
+          {/* <LogoWhite /> */}
+          <img src={cap} alt="small_logo" style={{ width: '30px', height: '30px' }}/>
         </NavbarBrand>
         <Button
           color="primary"

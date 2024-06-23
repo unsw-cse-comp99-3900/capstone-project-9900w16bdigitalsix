@@ -7,6 +7,7 @@ import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import { ReactComponent as LogoDark } from "../assets/images/logos/capstone.svg";
 import GradientBackground from '../components/GradientBackground';
 
+import cap from '../assets/images/logos/cap.png'
 const ResetPwdLinkSent = (props) => {
   const navigate = useNavigate();
   return(
@@ -15,7 +16,8 @@ const ResetPwdLinkSent = (props) => {
         <CenteredCard>
           <CardContent>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <LogoDark />
+              {/* <LogoDark /> */}
+              <img src={cap} alt="small_logo" style={{ width: '80px', height: '80px' }}/>
             </div>
             <Typography sx={{textAlign:'center'}} variant="h5" component="div">
               <b></b> We sent you an email which contains a link to reset your password. <b></b>

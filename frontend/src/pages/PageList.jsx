@@ -10,10 +10,12 @@ import Verify from './VerifyLinkSent';
 import ResetPwdLinkSent from './ResetPwdLinkSent';
 import ForgetPwd from './ForgetPwd';
 import ResetPwd from './ResetPwd';
-import VerifyEmail from './VerifyEmail.jsx'
+import VerifyEmail from './VerifyEmail'
 // team
-import Team from "./Team.jsx";
+import Team from "./Team";
 
+//admin
+import RoleManage from "./RoleManage"
 
 const PageList = () => {
   const [token, setToken] = React.useState(null);
@@ -33,6 +35,8 @@ const PageList = () => {
         <Route path="/reset-pwd" element={<ResetPwd />} />
         
         <Route path="/team" element={<Team token={token} setToken={setToken}/>} />
+
+        <Route path="/admin/role-manage" element={<RoleManage token={token} setToken={setToken}/>} />
       </Routes>
       <br />
     </>
