@@ -82,7 +82,7 @@ func CreateTeam(c *gin.Context) {
 				UserID:     user.ID,
 				UserName:   user.Username,
 				Email:      user.Email,
-				AvatarPath: user.AvatarURL,
+				AvatarURL:  user.AvatarURL,
 				UserSkills: userSkills,
 			},
 		},
@@ -217,7 +217,7 @@ func JoinTeam(c *gin.Context) {
 			UserID:     member.ID,
 			UserName:   member.Username,
 			Email:      member.Email,
-			AvatarPath: member.AvatarURL,
+			AvatarURL:  member.AvatarURL,
 			UserSkills: memberSkills,
 		})
 	}
@@ -280,7 +280,7 @@ func GetTeamProfile(c *gin.Context) {
 			UserID:     member.ID,
 			UserName:   member.Username,
 			Email:      member.Email,
-			AvatarPath: member.AvatarURL,
+			AvatarURL: member.AvatarURL,
 			UserSkills: userSkills,
 		})
 	}
@@ -375,7 +375,7 @@ func GetStudentInfo(ctx *gin.Context) {
 			ID:         member.ID,
 			Name:       member.Username,
 			Email:      member.Email,
-			AvatarPath: member.AvatarURL,
+			AvatarURL: member.AvatarURL,
 		})
 	}
 

@@ -1497,7 +1497,7 @@ const docTemplate = `{
         "response.StudentInfoResponse": {
             "type": "object",
             "properties": {
-                "avatarPath": {
+                "avatarURL": {
                     "type": "string"
                 },
                 "email": {
@@ -1539,7 +1539,7 @@ const docTemplate = `{
         "response.TeamMember": {
             "type": "object",
             "properties": {
-                "avatarPath": {
+                "avatarURL": {
                     "type": "string"
                 },
                 "email": {
