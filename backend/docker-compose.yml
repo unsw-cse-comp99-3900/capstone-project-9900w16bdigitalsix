@@ -8,7 +8,7 @@ services:
       - "50051:50051"
     volumes:
       - ./files:/app/files
-      - ./pictures:/app/pictures
+      - ./images:/app/images
     depends_on:
       mysql:
         condition: service_healthy
@@ -23,7 +23,7 @@ services:
       - "8080:8080"
     volumes:
       - ./files:/app/files
-      - ./pictures:/app/images
+      - ./images:/app/images
     depends_on:
       user_srv:
         condition: service_started
