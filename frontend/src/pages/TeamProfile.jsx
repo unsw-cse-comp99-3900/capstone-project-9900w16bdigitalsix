@@ -238,7 +238,9 @@ const TeamProfile = ({
                     <React.Fragment key={member.userId}>
                       <ListItem alignItems="flex-start">
                         <ListItemAvatar>
-                          <Avatar alt={member.userName} src={user5Image} />
+                          <Avatar alt={member.userName} src={member.avatarURL}>
+                            {member.userName.charAt(0)}
+                          </Avatar>
                         </ListItemAvatar>
                         <ListItemText
                           primary={`${member.userName} (${member.email})`}
