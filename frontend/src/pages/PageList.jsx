@@ -11,6 +11,8 @@ import ResetPwdLinkSent from './ResetPwdLinkSent';
 import ForgetPwd from './ForgetPwd';
 import ResetPwd from './ResetPwd';
 import VerifyEmail from './VerifyEmail'
+import Profile from './Profile';
+
 // team
 import Team from "./Team";
 
@@ -21,6 +23,7 @@ const PageList = () => {
   const [token, setToken] = React.useState(null);
   const [role, setRole] = React.useState(null);
 
+  const userId = localStorage.getItem('userId');
   return (
     <>
       <Routes>
@@ -33,6 +36,7 @@ const PageList = () => {
         <Route path="/forget-pwd" element={<ForgetPwd />} />
         <Route path="/reset-pwd-link-sent" element={<ResetPwdLinkSent token={token} setToken={setToken}/>} />
         <Route path="/reset-pwd" element={<ResetPwd />} />
+        <Route path="/profile" element={<Profile />} />
         
         <Route path="/team" element={<Team token={token} setToken={setToken}/>} />
 
