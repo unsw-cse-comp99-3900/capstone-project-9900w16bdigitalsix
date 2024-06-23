@@ -67,15 +67,17 @@ const Profile = (props) => {
                     setOrganization(response.organization);
                     setSkills(response.skills);
                     setField(response.field);
-                    //need to be implented
-                    console.log("response.avatarPath:",response.avatarPath);
-                    const imageResponse = await fetch(`http://localhost:3000/${response.avatarPath}`); // 确保路径正确
+                    const imagePath = `/backend/pictures/${response.avatarPath.split('/').pop()}`; // 使用相对路径
+                    const imageResponse = await fetch(imagePath);
+                    if (!imageResponse.ok) {
+                        throw new Error('Failed to fetch image');
+                    }
                     const imageBlob = await imageResponse.blob();
                     const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
                     const imageDataUrl = await fileToDataUrl(imageFile);
 
                     setAvatar(imageDataUrl);
-                    console.log("Fetched avatar:", imageDataUrl);//
+                    //console.log("Fetched avatar:", imageDataUrl);
                 } else {
                     setSnackbarContent('Failed to fetch user data');
                     setAlertType('error');
