@@ -16,8 +16,6 @@ func InitRouters() *gin.Engine {
 	// 配置跨域
 	Router.Use(middlewares.CORS())
 	Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	Router.Static("/images", "../images")
-	Router.Static("files", "../files")
 
 	ApiGroup := Router.Group("v1")
 	routes.UserRouter(ApiGroup)

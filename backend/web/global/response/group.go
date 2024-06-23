@@ -1,14 +1,9 @@
 package response
 
 type TeamMember struct {
-	UserID     uint     `json:"userId"`
-	UserName   string   `json:"userName"`
-	Email      string   `json:"email"`
-<<<<<<< HEAD
-	AvatarURL string   `json:"avatarURL"`
-=======
-	AvatarPath string   `json:"avatarPath"`
->>>>>>> origin/profile_xly
+	UserID   uint   `json:"userId"`
+	UserName string `json:"userName"`
+	Email    string `json:"email"`
 	UserSkills []string `json:"userSkills"`
 }
 
@@ -40,12 +35,7 @@ type GetTeamProfileResponse struct {
 }
 
 type StudentInfoResponse struct {
-	ID         uint   `json:"id"`
-	Name       string `json:"name"`
-	Email      string `json:"email"`
-<<<<<<< HEAD
-	AvatarURL string `json:"avatarURL"`
-=======
-	AvatarPath string `json:"avatarPath"`
->>>>>>> origin/profile_xly
+	ID    uint   `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }

@@ -102,85 +102,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/project/detail/{projectId}": {
-            "get": {
-                "description": "根据项目ID获取项目的详细信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Project"
-                ],
-                "summary": "根据 projectId 获取项目 detail",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "项目ID",
-                        "name": "projectId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.ProjectDetailResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "{\"error\": \"Project not found\"}",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "{\"error\": \"Internal Server Error\"}",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/project/get/public_project/list": {
-            "get": {
-                "description": "is_public 字段 1表示 public， 2 表示未公开, 这里返回的公开的 project 信息",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Project"
-                ],
-                "summary": "获取公开项目列表",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/response.GetProjectListResponse"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "{\"error\": string}",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/v1/team/create": {
             "post": {
                 "description": "创建 team, 并且创建人加入了 team, 后端随机生成 teamName, 存入了数据库",
@@ -1203,9 +1124,6 @@ const docTemplate = `{
         "forms.Profile": {
             "type": "object",
             "properties": {
-                "avatarBase64": {
-                    "type": "string"
-                },
                 "bio": {
                     "type": "string"
                 },
@@ -1218,8 +1136,8 @@ const docTemplate = `{
                 "organization": {
                     "type": "string"
                 },
-                "role": {
-                    "type": "integer"
+                "position": {
+                    "type": "string"
                 },
                 "skills": {
                     "type": "array",
@@ -1312,17 +1230,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.AllocatedTeam": {
-            "type": "object",
-            "properties": {
-                "teamId": {
-                    "type": "integer"
-                },
-                "teamName": {
-                    "type": "string"
-                }
-            }
-        },
         "response.CreateTeamResponse": {
             "type": "object",
             "properties": {
@@ -1337,41 +1244,6 @@ const docTemplate = `{
                 },
                 "teamName": {
                     "type": "string"
-                }
-            }
-        },
-        "response.GetProjectListResponse": {
-            "type": "object",
-            "properties": {
-                "allocatedTeam": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/response.AllocatedTeam"
-                    }
-                },
-                "clientEmail": {
-                    "type": "string"
-                },
-                "clientName": {
-                    "type": "string"
-                },
-                "field": {
-                    "type": "string"
-                },
-                "projectId": {
-                    "type": "integer"
-                },
-                "requiredSkills": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "title": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
                 }
             }
         },
@@ -1424,9 +1296,6 @@ const docTemplate = `{
         "response.ProfileResponse": {
             "type": "object",
             "properties": {
-                "avatarURL": {
-                    "type": "string"
-                },
                 "bio": {
                     "type": "string"
                 },
@@ -1442,6 +1311,9 @@ const docTemplate = `{
                 "organization": {
                     "type": "string"
                 },
+                "position": {
+                    "type": "string"
+                },
                 "skills": {
                     "type": "array",
                     "items": {
@@ -1453,57 +1325,9 @@ const docTemplate = `{
                 }
             }
         },
-        "response.ProjectDetailResponse": {
-            "type": "object",
-            "properties": {
-                "allocatedTeam": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/response.AllocatedTeam"
-                    }
-                },
-                "clientEmail": {
-                    "type": "string"
-                },
-                "clientName": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "field": {
-                    "type": "string"
-                },
-                "projectId": {
-                    "type": "integer"
-                },
-                "requiredSkills": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "specLink": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                }
-            }
-        },
         "response.StudentInfoResponse": {
             "type": "object",
             "properties": {
-<<<<<<< HEAD
-                "avatarURL": {
-=======
-                "avatarPath": {
->>>>>>> origin/profile_xly
-                    "type": "string"
-                },
                 "email": {
                     "type": "string"
                 },
@@ -1543,13 +1367,6 @@ const docTemplate = `{
         "response.TeamMember": {
             "type": "object",
             "properties": {
-<<<<<<< HEAD
-                "avatarURL": {
-=======
-                "avatarPath": {
->>>>>>> origin/profile_xly
-                    "type": "string"
-                },
                 "email": {
                     "type": "string"
                 },
