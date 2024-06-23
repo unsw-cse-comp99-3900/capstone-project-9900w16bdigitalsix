@@ -33,6 +33,8 @@ type ServerConfig struct {
 	Name        string        `mapstructure:"name"`
 	Host        string        `mapstructure:"host"`
 	Port        int           `mapstructure:"port"`
+	FilePath    string        `mapstructure:"filepath"`
+	PicturePath string        `mapstructure:"picture_path"`
 	UserSrvInfo UserSrvConfig `mapstructure:"user_srv"`
 	JWTInfo     JWTConfig     `mapstructure:"jwt"`
 	MysqlInfo   MysqlConfig   `mapstructure:"mysql"`

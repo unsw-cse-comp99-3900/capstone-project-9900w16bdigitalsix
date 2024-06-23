@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../layouts/Sidebar";
-import Header from "../layouts/Header";
 import { Container,Avatar, Box, Button, Grid, TextField, 
   Typography, Chip,Dialog, DialogActions, DialogContent, 
   DialogContentText, DialogTitle, IconButton } from '@mui/material';
@@ -10,31 +8,88 @@ import SaveIcon from '@mui/icons-material/Save';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 
 import '../assets/scss/UserInfo.css';
+import Sidebar from "../layouts/Sidebar";
+import Header from "../layouts/Header";
 import { apiCall, fileToDataUrl } from '../helper';
 import base64Image from '../assets/images/testimage'
 import MessageAlert from '../components/MessageAlert';
 
+const contentAreaStyle = {
+  marginTop: '56px', // Adjust this value to match the Header height
+  // padding: '16px', // Optional padding for the content area
+};
+
+const roleMap = {
+  1: 'Student',
+  2: 'Tutor',
+  3: 'Client',
+  4: 'Coordinator',
+  5: 'Administrator'
+};
+
+const roleReverseMap = {
+  'Student': 1,
+  'Tutor': 2,
+  'Client': 3,
+  'Coordinator': 4,
+  'Administrator': 5
+};
+
 const Profile = (props) => {
-  const [open, setOpen] = useState(false);
-  const [editable, setEditable] = useState(false);
-  const [email, setEmail] = useState('');
-  const [userId, setUserId] = useState('');
-  const [role, setRole] = useState('');
-  const [bio, setBio] = useState('This is a sample bio text that describes the user.');
-  const [organization, setOrganization] = useState('Sample Organization');
-  const [skills, setSkills] = useState(['Skill 1', 'Skill 2', 'Skill 3']);
-  const [field, setField] = useState('Sample Field');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [alertType, setAlertType] = useState('');
-  const [snackbarContent, setSnackbarContent] = useState('');
-  const [avatar, setAvatar] = useState(base64Image);
+    const [open, setOpen] = useState(false);
+    const [editable, setEditable] = useState(false);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [userId, setUserId] = useState('');
+    const [role, setRole] = useState('');
+    const [bio, setBio] = useState('');
+    const [organization, setOrganization] = useState('');
+    const [skills, setSkills] = useState([]);
+    const [field, setField] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [alertOpen, setAlertOpen] = useState(false);
+    const [alertType, setAlertType] = useState('');
+    const [snackbarContent, setSnackbarContent] = useState('');
+    const [avatar, setAvatar] = useState('');
 
     useEffect(() => {
-        setEmail(localStorage.getItem('email'));
-        setUserId(localStorage.getItem('userId'));
-        setRole(localStorage.getItem('role') || 'Sample Role'); // 设置默认role值以防没有role
+        const fetchUserData = async () => {
+            const userId = localStorage.getItem('userId');
+            try {
+                const response = await apiCall('GET', `v1/user/profile/${userId}`, null, localStorage.getItem('token'), true);
+                if (response) {
+                    setEmail(response.email);
+                    setName(response.name);
+                    setUserId(response.userId);
+                    setRole(roleMap[response.role] || 'Student');
+                    setBio(response.bio);
+                    setOrganization(response.organization);
+                    setSkills(response.skills);
+                    setField(response.field);
+                    //need to be implented
+                    console.log("response.avatarPath:",response.avatarPath);
+                    const imageResponse = await fetch(`http://localhost:3000/${response.avatarPath}`); // 确保路径正确
+                    const imageBlob = await imageResponse.blob();
+                    const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
+                    const imageDataUrl = await fileToDataUrl(imageFile);
+
+                    setAvatar(imageDataUrl);
+                    console.log("Fetched avatar:", imageDataUrl);//
+                } else {
+                    setSnackbarContent('Failed to fetch user data');
+                    setAlertType('error');
+                    setAlertOpen(true);
+                }
+            } catch (error) {
+                console.error('Failed to fetch user data:', error);
+                setSnackbarContent('Failed to fetch user data');
+                setAlertType('error');
+                setAlertOpen(true);
+            }
+        };
+
+        fetchUserData();
     }, []);
 
     const handleClickOpen = () => {
@@ -49,15 +104,57 @@ const Profile = (props) => {
       setAlertOpen(false);
   };
 
-    const handleEditClick = () => {
-      setEditable(!editable);
-  };
+  const handleEditClick = () => {
+    if (editable) {
+        // Save the edited data
+        const saveUserData = async () => {
+            const payload = {
+                    profile: {
+                        avatarBase64: avatar, // Ensure the avatar is in the correct format
+                        bio: bio,
+                        field: field,
+                        name: name,
+                        organization: organization,
+                        role: roleReverseMap[role],
+                        skills: skills,
+                        userId: parseInt(userId, 10)
+                    }
+            };
 
-  const handleFileChange = async (event) => {
+            try {
+                //console.log("handleEditClick - payload:", JSON.stringify(payload, null, 2)); // 确认 payload 的值
+                const response = await apiCall('POST', 'v1/user/modify/profile', payload, localStorage.getItem('token'), true);
+                if (response.msg) {
+                    setSnackbarContent('User profile updated successfully');
+                    setAlertType('success');
+                    setAlertOpen(true);
+                } else {
+                    setSnackbarContent(response.error || 'Failed to update user profile');
+                    setAlertType('error');
+                    setAlertOpen(true);
+                }
+            } catch (error) {
+                console.error('Failed to update user profile:', error);
+                setSnackbarContent('Failed to update user profile');
+                setAlertType('error');
+                setAlertOpen(true);
+            }
+        };
+
+        saveUserData();
+    }
+
+    setEditable(!editable);
+};
+
+
+
+const handleFileChange = async (event) => {
     const file = event.target.files[0];
     try {
         const dataUrl = await fileToDataUrl(file);
         setAvatar(dataUrl);
+        //console.log("handleFileChange - avatar:", dataUrl); // 确认 avatar 的值
     } catch (error) {
         setSnackbarContent('Failed to upload image: ' + error.message);
         setAlertType('error');
@@ -110,7 +207,7 @@ const Profile = (props) => {
         <Sidebar />
       </aside>
       {/********Content Area**********/}
-      <div className="contentArea">
+      <div className="contentArea"  style={contentAreaStyle}>
         {/********Header**********/}
         <Header />
         {/********Middle Content**********/}
@@ -128,17 +225,19 @@ const Profile = (props) => {
                         </IconButton>
                     )}
                     <Box>
-                        <Typography variant="h4" component="h1">Name</Typography>
-                        {editable ? (
-                            <TextField
-                                variant="outlined"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                fullWidth
-                            />
-                        ) : (
-                            <Typography variant="body1" color="textSecondary">{email}</Typography>
-                        )}
+                    {editable ? (
+                        <TextField
+                            variant="outlined"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            fullWidth
+                            sx={{ fontSize: '2rem', fontWeight: 'bold' }} // 大小和加粗样式
+                        />
+                    ) : (
+                        <Typography variant="h4" component="h1" color="textPrimary">{name}</Typography> // 将名字作为大标题
+                    )}
+
+                        <Typography variant="body1" color="textSecondary">Email: {email}</Typography>
                         <Typography variant="body2" color="textSecondary">UserID: {userId}</Typography>
                         <Box sx={{ mt: 2 }}>
                             <Button variant="contained" color="primary" startIcon={editable ? <SaveIcon /> : <EditIcon />} onClick={handleEditClick}>
@@ -205,13 +304,9 @@ const Profile = (props) => {
                         <Grid item xs={6}>
                             <Typography variant="body1">Role:</Typography>
                             {editable ? (
-                                <TextField
-                                    variant="outlined"
-                                    value={role}
-                                    onChange={(e) => setRole(e.target.value)}
-                                    fullWidth
-                                    sx={{ mt: 1 }}
-                                />
+                                <Typography variant="body2" sx={{ mt: 1, bgcolor: 'grey.200', p: 2, borderRadius: 1 }}>
+                                    {role}
+                                </Typography>
                             ) : (
                                 <Typography variant="body2" sx={{ mt: 1, bgcolor: 'grey.200', p: 2, borderRadius: 1 }}>
                                     {role}

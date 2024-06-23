@@ -4,6 +4,11 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { Container } from "reactstrap";
 
+const contentAreaStyle = {
+  marginTop: '56px', // Adjust this value to match the Header height
+  // padding: '16px', // Optional padding for the content area
+};
+
 const FullLayout = () => {
   return (
     <main>
@@ -13,7 +18,7 @@ const FullLayout = () => {
           <Sidebar />
         </aside>
         {/********Content Area**********/}
-        <div className="contentArea">
+        <div className="contentArea"  style={contentAreaStyle}>
           {/********Header**********/}
           <Header />
           {/********Middle Content**********/}
