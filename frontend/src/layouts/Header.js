@@ -29,15 +29,15 @@ const Header = () => {
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
   };
 
-  const headerStyle = {
-    position: "fixed",
-    top: 0,
-    width: "100%",
-    zIndex: 1000,
-  };
+  // const headerStyle = {
+  //   position: "fixed",
+  //   top: 0,
+  //   width: "100%",
+  //   zIndex: 1000,
+  // };style={headerStyle}
 
   return (
-    <Navbar color="primary" dark expand="md" className="bg-gradient" style={headerStyle}>
+    <Navbar color="primary" dark expand="md" className="bg-gradient" >
       <div className="d-flex align-items-center">
         <NavbarBrand href="/" className="d-lg-none">
           {/* <LogoWhite /> */}

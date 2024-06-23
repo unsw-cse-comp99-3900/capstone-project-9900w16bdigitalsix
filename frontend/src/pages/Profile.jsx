@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
 import { Container,Avatar, Box, Button, Grid, TextField, 
   Typography, Chip,Dialog, DialogActions, DialogContent, 
   DialogContentText, DialogTitle, IconButton } from '@mui/material';
@@ -11,7 +10,6 @@ import '../assets/scss/UserInfo.css';
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import { apiCall, fileToDataUrl } from '../helper';
-import base64Image from '../assets/images/testimage'
 import MessageAlert from '../components/MessageAlert';
 
 const contentAreaStyle = {
@@ -63,25 +61,29 @@ const Profile = (props) => {
                     setName(response.name);
                     setUserId(response.userId);
                     setRole(roleMap[response.role] || 'Student');
-                    setBio(response.bio);
-                    setOrganization(response.organization);
+                    setBio(response.bio ? response.bio : 'Null');
+                    setOrganization(response.organization ? response.organization : 'Null');
                     setSkills(response.skills);
-                    setField(response.field);
-                    //console.log("response:", response);
-                    /////////////////////
+                    setField(response.field ? response.field : 'Null');
+                    console.log("response:", response);
                     const imagePath = response.avatarURL; 
-                    //console.log("image path:", imagePath);
-                    const imageResponse = await fetch(imagePath);
-                    if (!imageResponse.ok) {
-                        throw new Error('Failed to fetch image');
+                if (imagePath) {
+                    try {
+                        const imageResponse = await fetch(imagePath);
+                        if (!imageResponse.ok) {
+                            throw new Error('Failed to fetch image');
+                        }
+                        const imageBlob = await imageResponse.blob();
+                        const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
+                        const imageDataUrl = await fileToDataUrl(imageFile);
+                        setAvatar(imageDataUrl);
+                    } catch (imageError) {
+                        console.error('Failed to fetch image:', imageError);
+                        setAvatar(null);
                     }
-                    const imageBlob = await imageResponse.blob();
-                    const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
-                    const imageDataUrl = await fileToDataUrl(imageFile);
-
-                    setAvatar(imageDataUrl);
-                    console.log("Fetched avatar:", imageDataUrl);
-                    /////////////////////
+                } else {
+                    setAvatar(null);
+                }
                 } else {
                     setSnackbarContent('Failed to fetch user data');
                     setAlertType('error');
@@ -127,40 +129,43 @@ const Profile = (props) => {
                     }
             };
 
-            try {
-                //console.log("handleEditClick - payload:", JSON.stringify(payload, null, 2)); // 确认 payload 的值
-                const response = await apiCall('POST', 'v1/user/modify/profile', payload, localStorage.getItem('token'), true);
-                if (response.msg) {
-                    setSnackbarContent('User profile updated successfully');
-                    setAlertType('success');
-                    setAlertOpen(true);
-                } else {
-                    setSnackbarContent(response.error || 'Failed to update user profile');
+            if (!bio || !field || !name || !organization || !skills) {
+                setSnackbarContent('All fields are required. Please fill in all fields.');
+                setAlertType('error');
+                setAlertOpen(true);
+            } else {
+                try {
+                    const response = await apiCall('POST', 'v1/user/modify/profile', payload, localStorage.getItem('token'), true);
+                    if (response.msg) {
+                        setSnackbarContent('User profile updated successfully');
+                        setAlertType('success');
+                        setAlertOpen(true);
+                        setEditable(!editable);
+                    } else {
+                        setSnackbarContent(response.error || 'Failed to update user profile');
+                        setAlertType('error');
+                        setAlertOpen(true);
+                    }
+                } catch (error) {
+                    console.error('Failed to update user profile:', error);
+                    setSnackbarContent('Failed to update user profile');
                     setAlertType('error');
                     setAlertOpen(true);
                 }
-            } catch (error) {
-                console.error('Failed to update user profile:', error);
-                setSnackbarContent('Failed to update user profile');
-                setAlertType('error');
-                setAlertOpen(true);
             }
         };
 
         saveUserData();
+    } else {
+        setEditable(!editable);
     }
-
-    setEditable(!editable);
 };
-
-
 
 const handleFileChange = async (event) => {
     const file = event.target.files[0];
     try {
         const dataUrl = await fileToDataUrl(file);
         setAvatar(dataUrl);
-        //console.log("handleFileChange - avatar:", dataUrl); // 确认 avatar 的值
     } catch (error) {
         setSnackbarContent('Failed to upload image: ' + error.message);
         setAlertType('error');
@@ -219,11 +224,17 @@ const handleFileChange = async (event) => {
         {/********Middle Content**********/}
         <Container className="p-4 wrapper" fluid>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                    <Avatar
-                        src={avatar}
-                        alt="Profile"
-                        sx={{ width: 150, height: 150 }}
-                    />
+                <Avatar
+                    src={avatar}
+                    alt="Profile"
+                    sx={{ width: 150, height: 150 }}
+                >
+                    {!avatar && (
+                        <Typography variant="h3" sx={{ fontSize: '3rem' }}>
+                            {name.charAt(0)}
+                        </Typography>
+                    )}
+                </Avatar>
                     {editable && (
                         <IconButton color="primary" aria-label="upload picture" component="label">
                             <input hidden accept="image/*" type="file" onChange={handleFileChange} />
@@ -237,10 +248,10 @@ const handleFileChange = async (event) => {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             fullWidth
-                            sx={{ fontSize: '2rem', fontWeight: 'bold' }} // 大小和加粗样式
+                            sx={{ fontSize: '2rem', fontWeight: 'bold' }}
                         />
                     ) : (
-                        <Typography variant="h4" component="h1" color="textPrimary">{name}</Typography> // 将名字作为大标题
+                        <Typography variant="h4" component="h1" color="textPrimary">{name}</Typography>
                     )}
 
                         <Typography variant="body1" color="textSecondary">Email: {email}</Typography>
@@ -292,16 +303,21 @@ const handleFileChange = async (event) => {
                         <Grid item xs={6}>
                             <Typography variant="body1">Skills:</Typography>
                             {editable ? (
-                                <TextField
-                                    variant="outlined"
-                                    value={skills.join(', ')}
-                                    onChange={(e) => setSkills(e.target.value.split(', '))}
-                                    fullWidth
-                                    sx={{ mt: 1 }}
-                                />
+                                <>
+                                    <TextField
+                                        variant="outlined"
+                                        value={skills ? skills.join(', ') : ''}
+                                        onChange={(e) => setSkills(e.target.value.split(', '))}
+                                        fullWidth
+                                        sx={{ mt: 1 }}
+                                    />
+                                    <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                                        Please separate keywords with commas
+                                    </Typography>
+                                </>
                             ) : (
                                 <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                    {skills.map((skill, index) => (
+                                    {skills && skills.map((skill, index) => (
                                         <Chip key={index} label={skill} variant="outlined" />
                                     ))}
                                 </Box>
