@@ -43,6 +43,8 @@ definitions:
     type: object
   forms.Profile:
     properties:
+      avatarBase64:
+        type: string
       bio:
         type: string
       field:
@@ -51,8 +53,8 @@ definitions:
         type: string
       organization:
         type: string
-      position:
-        type: string
+      role:
+        type: integer
       skills:
         items:
           type: string
@@ -114,6 +116,13 @@ definitions:
       teamName:
         type: string
     type: object
+  response.AllocatedTeam:
+    properties:
+      teamId:
+        type: integer
+      teamName:
+        type: string
+    type: object
   response.CreateTeamResponse:
     properties:
       teamId:
@@ -124,6 +133,29 @@ definitions:
         type: array
       teamName:
         type: string
+    type: object
+  response.GetProjectListResponse:
+    properties:
+      allocatedTeam:
+        items:
+          $ref: '#/definitions/response.AllocatedTeam'
+        type: array
+      clientEmail:
+        type: string
+      clientName:
+        type: string
+      field:
+        type: string
+      projectId:
+        type: integer
+      requiredSkills:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      userId:
+        type: integer
     type: object
   response.GetTeamProfileResponse:
     properties:
@@ -157,6 +189,8 @@ definitions:
     type: object
   response.ProfileResponse:
     properties:
+      avatarPath:
+        type: string
       bio:
         type: string
       email:
@@ -167,8 +201,6 @@ definitions:
         type: string
       organization:
         type: string
-      position:
-        type: string
       skills:
         items:
           type: string
@@ -176,8 +208,37 @@ definitions:
       userId:
         type: integer
     type: object
+  response.ProjectDetailResponse:
+    properties:
+      allocatedTeam:
+        items:
+          $ref: '#/definitions/response.AllocatedTeam'
+        type: array
+      clientEmail:
+        type: string
+      clientName:
+        type: string
+      description:
+        type: string
+      field:
+        type: string
+      projectId:
+        type: integer
+      requiredSkills:
+        items:
+          type: string
+        type: array
+      specLink:
+        type: string
+      title:
+        type: string
+      userId:
+        type: integer
+    type: object
   response.StudentInfoResponse:
     properties:
+      avatarPath:
+        type: string
       email:
         type: string
       id:
@@ -203,6 +264,8 @@ definitions:
     type: object
   response.TeamMember:
     properties:
+      avatarPath:
+        type: string
       email:
         type: string
       userId:
@@ -278,6 +341,58 @@ paths:
             additionalProperties: true
             type: object
       summary: 创建项目
+      tags:
+      - Project
+  /v1/project/detail/{projectId}:
+    get:
+      description: 根据项目ID获取项目的详细信息
+      parameters:
+      - description: 项目ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ProjectDetailResponse'
+        "404":
+          description: '{"error": "Project not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Internal Server Error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 根据 projectId 获取项目 detail
+      tags:
+      - Project
+  /v1/project/get/public_project/list:
+    get:
+      description: is_public 字段 1表示 public， 2 表示未公开, 这里返回的公开的 project 信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.GetProjectListResponse'
+            type: array
+        "500":
+          description: '{"error": string}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 获取公开项目列表
       tags:
       - Project
   /v1/team/create:
