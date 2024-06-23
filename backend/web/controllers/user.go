@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
+	"path"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -497,9 +499,26 @@ func UpdateUserInfo(c *gin.Context) {
 		return
 	}
 
+	var filename string
+	// 生成文件名
+	if user.AvatarURL == "" {
+		filename = time.Now().Format("20060102150405") + ".png"
+	} else {
+		urlStr := user.AvatarURL
+		// 解析 URL
+		parsedURL, err := url.Parse(urlStr)
+		if err != nil {
+			zap.S().Errorf("解析 avatar url 出错")
+			return
+		}
+		// 提取路径部分并获取文件名
+		filename = path.Base(parsedURL.Path)
+	}
+
 	// 解析 base64 图片， 并保存
 	outputDir := global.ServerConfig.PicturePath
-	_, url, err := util.SaveBase64Image(profileReq.Profile.Avatarbase64, outputDir)
+
+	_, url, err := util.SaveBase64Image(profileReq.Profile.Avatarbase64, filename, outputDir)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save picture"})
 	}
