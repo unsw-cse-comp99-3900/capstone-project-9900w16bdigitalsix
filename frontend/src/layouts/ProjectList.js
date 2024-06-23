@@ -1,45 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import { Container, Row, Col, Button } from 'reactstrap';
 import CustomCard from './CustomCard';
 
+const apiCall = async (method, endpoint) => {
+  const response = await fetch(`http://127.0.0.1:8080${endpoint}`, {
+    method,
+    headers: {
+      'Accept': 'application/json',
+    },
+  });
+  const data = await response.json();
+  return data;
+};
+
+
 const ProjectList = () => {
-  const ongoingProjects = [
-    {
-      title: 'Project Title',
-      client: 'Client',
-      clientTitle: 'Client Title',
-      skills: 'Required Skills',
-      field: 'Field',
-      imgSrc: 'path_to_your_image_1.jpg',
-    },
-    {
-      title: 'Project Title',
-      client: 'Dlient',
-      clientTitle: 'Client Title',
-      skills: 'Required Skills',
-      field: 'Field',
-      imgSrc: 'path_to_your_image_2.jpg',
-    },
-    {
-      title: 'Project Title',
-      client: 'Elient',
-      clientTitle: 'Client Title',
-      skills: 'Required Skills',
-      field: 'Field',
-      imgSrc: 'path_to_your_image_3.jpg',
-    },
-    {
-      title: 'Project Title',
-      client: 'Client',
-      clientTitle: 'Client Title',
-      skills: 'Required Skills',
-      field: 'Field',
-      imgSrc: 'path_to_your_image_3.jpg',
-    },
-  ];
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await apiCall('GET', '/v1/project/get/public_project/list');
+        const mappedProjects = data.map(project => ({
+          id: project.projectId,
+          title: project.title,
+          client: project.clientName,
+          clientTitle: project.clientEmail,
+          skills: project.requiredSkills || 'N/A',
+          field: project.field,
+        }));
+        setProjects(mappedProjects);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+
 
   const archivedProjects = [
     {
@@ -94,19 +96,20 @@ const ProjectList = () => {
             
 
             <Row>
-              {ongoingProjects.map((project, index) => (
-                <Col md="4" key={index}>
-                  <CustomCard
-                    title={project.title}
-                    client={project.client}
-                    clientTitle={project.clientTitle}
-                    skills={project.skills}
-                    field={project.field}
-                    imgSrc={project.imgSrc}
-                  />
-                </Col>
-              ))}
-            </Row>
+        {projects.map((project, index) => (
+          <Col key={index} md="4">
+            <CustomCard
+              id={project.id}
+              title={project.title}
+              client={project.client}
+              clientTitle={project.clientTitle}
+              skills={project.skills}
+              field={project.field}
+            />
+          </Col>
+        ))}
+      </Row>
+
             <h3>Archived Projects</h3>
             <Row>
               {archivedProjects.map((project, index) => (
