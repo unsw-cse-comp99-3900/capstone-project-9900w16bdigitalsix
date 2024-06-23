@@ -4,7 +4,7 @@ type TeamMember struct {
 	UserID     uint     `json:"userId"`
 	UserName   string   `json:"userName"`
 	Email      string   `json:"email"`
-	AvatarPath string   `json:"avatarPath"`
+	AvatarURL string   `json:"avatarURL"`
 	UserSkills []string `json:"userSkills"`
 }
 
@@ -39,5 +39,5 @@ type StudentInfoResponse struct {
 	ID         uint   `json:"id"`
 	Name       string `json:"name"`
 	Email      string `json:"email"`
-	AvatarPath string `json:"avatarPath"`
+	AvatarURL string `json:"avatarURL"`
 }
