@@ -5,32 +5,32 @@ import { Link, useLocation } from "react-router-dom";
 const navigation = [
   {
     title: "Project",
-    href: "/project", //need to be implented
+    href: "/project",//need to be implented
     icon: "bi bi-clipboard2-data",
   },
   {
     title: "Notification",
-    href: "/notification", //need to be implented
+    href: "/notification",//need to be implented
     icon: "bi bi-bell",
   },
   {
     title: "Team",
-    href: "/team", //need to be implented
+    href: "/team",//need to be implented
     icon: "bi bi-people",
   },
   {
     title: "Message",
-    href: "/message", //need to be implented
+    href: "/message",//need to be implented
     icon: "bi bi-chat-square-dots",
   },
   {
     title: "Profile",
-    href: "/profile", //need to be implented
+    href: "/profile",//need to be implented
     icon: "bi bi-person-circle",
   },
   {
     title: "Role",
-    href: "/", //need to be implented
+    href: "/",//need to be implented
     icon: "bi bi-person-check",
   },
 ];
@@ -41,18 +41,19 @@ const Sidebar = () => {
   };
   let location = useLocation();
 
-  const currentPath = location.pathname.split("/")[1];
+  const handleLogout = () => {
+    localStorage.clear(); // clear localStorage
+    window.location.href = '/login';
+  };
+
+  const currentPath = location.pathname.split('/')[1];
   const sidebarStyle = {
     position: "fixed",
     top: "56px", 
     bottom: 0,
     width: "250px",
+    // height: "calc(100vh - 56px)", 
     overflowY: "auto", 
-  };
-
-  const handleLogout = () => {
-    localStorage.clear(); // clear localStorage
-    window.location.href = '/login';
   };
 
   return (
@@ -66,7 +67,7 @@ const Sidebar = () => {
             className="ms-auto d-lg-none"
             onClick={() => showMobilemenu()}
           >
-            &times;
+            {/* &times; */}
           </Button>
         </span>
       </div>
@@ -77,7 +78,7 @@ const Sidebar = () => {
               <Link
                 to={navi.href}
                 className={
-                  currentPath === navi.href.split("/")[1]
+                  currentPath === navi.href.split('/')[1]
                     ? "text-primary nav-link py-3"
                     : "nav-link text-secondary py-3"
                 }
@@ -90,6 +91,7 @@ const Sidebar = () => {
           <Button
             color="danger"
             tag="a"
+            target="_blank"
             className="mt-3"
             href="/login"
             onClick={handleLogout}

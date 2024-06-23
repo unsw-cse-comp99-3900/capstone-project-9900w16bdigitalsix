@@ -10,6 +10,22 @@ const contentAreaStyle = {
 };
 
 const FullLayout = () => {
+  const headerStyleLg = {
+    position: "fixed",
+    top: 0,
+    // width: "100%",
+    width: "calc(100% - 260px)",
+    zIndex: 1000,
+  };
+
+  const headerStyleMd = {
+    position: "fixed",
+    top: 0,
+    width: "100%",
+    // width: "calc(100% - 260px)",
+    zIndex: 1000,
+  };
+
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
@@ -19,12 +35,18 @@ const FullLayout = () => {
         </aside>
         {/********Content Area**********/}
         <div className="contentArea" style={contentAreaStyle}>
-          {/********Header**********/}
-          <Header />
+          <div className="d-mg-none" style={headerStyleLg}>
+            {/********Header**********/}
+            <Header />
+          </div>
+          <div className="d-lg-none" style={headerStyleMd}>
+            {/********Header**********/}
+            <Header />
+          </div>
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
             {/* add code here */}
-
+            hey
           </Container>
         </div>
       </div>
