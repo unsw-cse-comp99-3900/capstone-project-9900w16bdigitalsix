@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Navbar,
@@ -18,22 +18,42 @@ import cap from "../assets/images/logos/cap_white.png";
 import user1 from "../assets/images/users/user1.jpg";
 
 const Header = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true); // 跟踪侧边栏是否展开
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const Handletoggle = () => {
     setIsOpen(!isOpen);
   };
   const showMobilemenu = () => {
-    document.getElementById("sidebarArea").classList.toggle("showSidebar");
+    const sidebar = document.getElementById("sidebarArea");
+    sidebar.classList.toggle("showSidebar");
+    setSidebarOpen(!sidebar.classList.contains("showSidebar")); // 更新侧边栏状态
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 992) {
+        setSidebarOpen(false); // 屏幕小于992px时侧边栏自动收起
+      } else {
+        setSidebarOpen(true); // 屏幕大于等于992px时侧边栏展开
+      }
+    };
+    
+    window.addEventListener("resize", handleResize);
+    handleResize(); // 初始调用一次检查屏幕大小
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const headerStyle = {
     position: "fixed",
     top: 0,
-    width: "100%",
+    left: sidebarOpen ? "250px" : "0", // 根据侧边栏状态调整left值
+    width: sidebarOpen ? "calc(100% - 250px)" : "100%", // 根据侧边栏状态调整宽度
     zIndex: 1000,
+    backgroundColor: "#007bff", // 确保背景颜色与Navbar一致
   };
 
   return (
