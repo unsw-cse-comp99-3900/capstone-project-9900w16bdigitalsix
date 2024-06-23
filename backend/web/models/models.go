@@ -11,6 +11,7 @@ type User struct {
 	Email          string     `gorm:"index:idx_email;unique;type:varchar(255);not null"`
 	Password       string     `gorm:"type:varchar(255);not null"`
 	Username       string     `gorm:"type:varchar(16);not null"`
+	AvatarURL     string     `gorm:"type:varchar(255)"`
 	Gender         string     `gorm:"default:male;type:varchar(6)"`
 	Birthday       *time.Time `gorm:"type:datetime"`
 	Bio            string     `json:"bio"`
@@ -43,7 +44,7 @@ type Project struct {
 	IsPublic      uint   `gorm:"default:1;type:int comment '1表示public 2 表示没有public'"`
 	Description   string `gorm:"type:text"`
 	Filename      string `gorm:"type:text;"`
-	Filepath      string `gorm:"type:varchar(255)"` // 存储文件路径
+	FileURL      string `gorm:"type:varchar(255)"` // 存储文件路径
 	MaxGroups     uint
 	CreatedBy     *uint   `gorm:"default:null"`                        // createdBy userId
 	Teams         []Team  `gorm:"foreignkey:ProjectID"`                // a project can be done by many groups

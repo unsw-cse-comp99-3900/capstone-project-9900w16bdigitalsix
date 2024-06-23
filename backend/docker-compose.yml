@@ -6,6 +6,9 @@ services:
       context: ./user_srv
     ports:
       - "50051:50051"
+    volumes:
+      - ./files:/app/files
+      - ./images:/app/images
     depends_on:
       mysql:
         condition: service_healthy
@@ -18,6 +21,9 @@ services:
       context: ./web
     ports:
       - "8080:8080"
+    volumes:
+      - ./files:/app/files
+      - ./images:/app/images
     depends_on:
       user_srv:
         condition: service_started
@@ -37,7 +43,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -47,7 +53,7 @@ services:
     ports:
       - "6379:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5

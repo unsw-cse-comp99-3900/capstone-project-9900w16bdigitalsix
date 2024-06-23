@@ -50,6 +50,11 @@ const Sidebar = () => {
     overflowY: "auto", 
   };
 
+  const handleLogout = () => {
+    localStorage.clear(); // clear localStorage
+    window.location.href = '/login';
+  };
+
   return (
     <div className="p-3" style={sidebarStyle}>
       <div className="d-flex align-items-center">
@@ -87,6 +92,7 @@ const Sidebar = () => {
             tag="a"
             className="mt-3"
             href="/login"
+            onClick={handleLogout}
           >
             Logout
           </Button>

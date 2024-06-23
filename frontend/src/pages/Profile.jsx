@@ -294,14 +294,14 @@ const handleFileChange = async (event) => {
                             {editable ? (
                                 <TextField
                                     variant="outlined"
-                                    value={skills.join(', ')}
+                                    value={skills ? skills.join(', ') : ''}
                                     onChange={(e) => setSkills(e.target.value.split(', '))}
                                     fullWidth
                                     sx={{ mt: 1 }}
                                 />
                             ) : (
                                 <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                    {skills.map((skill, index) => (
+                                    {skills && skills.map((skill, index) => (
                                         <Chip key={index} label={skill} variant="outlined" />
                                     ))}
                                 </Box>

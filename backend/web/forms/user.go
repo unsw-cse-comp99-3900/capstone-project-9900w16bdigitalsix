@@ -1,8 +1,8 @@
 package forms
 
 type PasswordLoginForm struct {
-	Email     string `form:"email" json:"email" binding:"required,email"`
-	Password  string `form:"password" json:"password"  binding:"required,min=3,max=20"`
+	Email    string `form:"email" json:"email" binding:"required,email"`
+	Password string `form:"password" json:"password"  binding:"required,min=3,max=20"`
 	// Captcha   string `form:"captcha" json:"captcha" binding:"required,len=5"`
 	// CaptchaID string `form:"captcha_id" json:"captcha_id" binding:"required"`
 }
@@ -29,9 +29,10 @@ type ResetPasswordForm struct {
 type Profile struct {
 	UserID       uint     `json:"userId"`
 	Name         string   `json:"name"`
+	Role         int      `json:"role"`
+	Avatarbase64 string   `json:"avatarBase64"`
 	Bio          string   `json:"bio"`
 	Organization string   `json:"organization"`
-	Position     string   `json:"position"`
 	Skills       []string `json:"skills"`
 	Field        string   `json:"field"`
 }
