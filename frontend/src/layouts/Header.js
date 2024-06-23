@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Navbar,
@@ -17,24 +17,43 @@ import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowh
 import user1 from "../assets/images/users/user1.jpg";
 
 const Header = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true); // 跟踪侧边栏是否展开
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const Handletoggle = () => {
     setIsOpen(!isOpen);
   };
   const showMobilemenu = () => {
-    document.getElementById("sidebarArea").classList.toggle("showSidebar");
+    const sidebar = document.getElementById("sidebarArea");
+    sidebar.classList.toggle("showSidebar");
+    setSidebarOpen(!sidebar.classList.contains("showSidebar")); // 更新侧边栏状态
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 992) {
+        setSidebarOpen(false); // 屏幕小于992px时侧边栏自动收起
+      } else {
+        setSidebarOpen(true); // 屏幕大于等于992px时侧边栏展开
+      }
+    };
+    
+    window.addEventListener("resize", handleResize);
+    handleResize(); // 初始调用一次检查屏幕大小
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const headerStyle = {
     position: "fixed",
     top: 0,
-    width: "100%",
+    left: sidebarOpen ? "250px" : "0", // 根据侧边栏状态调整left值
+    width: sidebarOpen ? "calc(100% - 250px)" : "100%", // 根据侧边栏状态调整宽度
     zIndex: 1000,
+    backgroundColor: "#007bff", // 确保背景颜色与Navbar一致
   };
-
 
   return (
     <Navbar color="primary" dark expand="md" className="bg-gradient" style={headerStyle}>
@@ -50,11 +69,10 @@ const Header = () => {
           <i className="bi bi-list"></i>
         </Button>
       </div>
-      <div className="hstack gap-2">
+      <div className="hstack gap-2 d-lg-none">
         <Button
           color="primary"
           size="sm"
-          className="d-sm-block d-md-none"
           onClick={Handletoggle}
         >
           {isOpen ? (
@@ -65,8 +83,8 @@ const Header = () => {
         </Button>
       </div>
 
-      <Collapse navbar isOpen={isOpen}>
-        <Nav className="me-auto" navbar>
+      <Collapse navbar isOpen={isOpen} className="justify-content-between">
+        <Nav navbar>
           <NavItem>
             <Link to="/project/allproject" className="nav-link">
               All Project
@@ -83,29 +101,29 @@ const Header = () => {
             </Link>
           </NavItem>
         </Nav>
-        <Nav>
+        <Nav className="ml-auto d-flex align-items-center">
           <Link to="/notification" className="nav-link">
             <div className="notification-icon">
               <i className="bi bi-bell-fill"></i>
             </div>
           </Link>
+          <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+            <DropdownToggle color="transparent">
+              <img
+                src={user1}
+                alt="profile"
+                className="rounded-circle"
+                width="30"
+              ></img>
+            </DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem header>Info</DropdownItem>
+              <DropdownItem>Profile</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem>Logout</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </Nav>
-        <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-          <DropdownToggle color="transparent">
-            <img
-              src={user1}
-              alt="profile"
-              className="rounded-circle"
-              width="30"
-            ></img>
-          </DropdownToggle>
-          <DropdownMenu>
-            <DropdownItem header>Info</DropdownItem>
-            <DropdownItem>Profile</DropdownItem>
-            <DropdownItem divider />
-            <DropdownItem>Logout</DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
       </Collapse>
     </Navbar>
   );
