@@ -17,13 +17,15 @@ import Team from "./Team.jsx";
 
 const PageList = () => {
   const [token, setToken] = React.useState(null);
+  const [role, setRole] = React.useState(null);
+
   return (
     <>
       <Routes>
         <Route path="/" element={<Dashboard />} />
 
         <Route path="/register" element={<Register token={token} setToken={setToken} />} />
-        <Route path="/login" element={<Login token={token} setToken={setToken}/>} />
+        <Route path="/login" element={<Login token={token} setToken={setToken} role={role} setRole={setRole}/>} />
         <Route path="/verify-email-link-sent" element={<Verify token={token} setToken={setToken}/>} />
         <Route path="/verify-email-check" element={<VerifyEmail />} />
         <Route path="/forget-pwd" element={<ForgetPwd />} />
