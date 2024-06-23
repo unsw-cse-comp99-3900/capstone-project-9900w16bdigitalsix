@@ -124,7 +124,12 @@ const ResetPwd = (props) => {
                     type="text"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    disabled={true}
+                    InputProps={{
+                      autoComplete: 'new-password'
+                    }}
+                    inputProps={{
+                      autoComplete: 'new-password'
+                    }}
                   /> <br /><br />
                   <TextField id="password" label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} /> <br /><br />
                   <TextField id="passwordConfirmed" label="Password Confirmed" type="password" value={passwordConfirmed} onChange={e => setPasswordConfirmed(e.target.value)} />
