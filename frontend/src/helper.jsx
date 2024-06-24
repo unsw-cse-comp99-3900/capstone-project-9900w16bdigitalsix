@@ -23,7 +23,30 @@ const apiCall = async (method, path, requestBody = null, token = null, authed = 
     const data = await response.json();
     return data;
   }
-  
+
+  const apiCallFormData = async (method, path, headers={}, requestBody = null, token = null, queryParams = null) => {
+    const config = {
+      method,
+      headers: headers
+    }
+    
+    if (method === 'GET' || method === 'DELETE') {
+      config.body = undefined;
+    } else {
+      config.body = requestBody;
+    }
+
+    let url = `http://localhost:8080/${path}`
+    if (queryParams) {
+      const params = new URLSearchParams(queryParams);
+      url += `?${params.toString()}`;
+    }
+
+    const response = await fetch(url, config);
+    const data = await response.json();
+    return data;
+  }
+
   const fileToDataUrl = async (file) => {
     const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg']
     const valid = validFileTypes.find(type => type === file.type);
@@ -43,4 +66,4 @@ const apiCall = async (method, path, requestBody = null, token = null, authed = 
   
 
 export default apiCall;
-export { apiCall, fileToDataUrl };
+export { apiCall, fileToDataUrl, apiCallFormData};

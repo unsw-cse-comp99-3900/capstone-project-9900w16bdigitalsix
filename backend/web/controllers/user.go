@@ -609,7 +609,7 @@ func GetPersonProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, profile)
 }
 
-// @Summary Get Student List
+// @Summary Get all students List
 // @Description 返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
 // @Tags User
 // @Accept  json
@@ -620,7 +620,7 @@ func GetPersonProfile(c *gin.Context) {
 func GetAllStudents(c *gin.Context) {
 	var users []models.User
 	if err := global.DB.Where("role = ?", 1).Find(&users).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
 		return
 	}
 
