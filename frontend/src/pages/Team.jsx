@@ -21,6 +21,7 @@ const Team = (props) => {
   const [alertType, setAlertType] = useState("error");
   const [currentMember, setCurrentMember] = useState([]);
   const [curTeamSkills, setCurTeamSkills] = useState([]);
+  const [isInvite, setIsInvite] = useState(false);
 
   const userId = parseInt(localStorage.getItem("userId"));
 
@@ -55,7 +56,7 @@ const Team = (props) => {
       setAlertType("error");
       setShowError(true);
     }
-  }, [userId, teamId]);
+  }, [userId, teamId, isInvite]);
 
   const clickCreate = async () => {
     try {
@@ -138,7 +139,7 @@ const Team = (props) => {
   };
 
   const contentAreaStyle = {
-    marginTop: '56px', // Adjust this value to match the Header height
+    marginTop: "56px", // Adjust this value to match the Header height
     // padding: '16px', // Optional padding for the content area
   };
 
@@ -173,6 +174,8 @@ const Team = (props) => {
                         setCurrentMember={setCurrentMember}
                         curTeamSkills={curTeamSkills}
                         setCurTeamSkills={setCurTeamSkills}
+                        isInvite={isInvite}
+                        setIsInvite={setIsInvite}
                       />
                     </div>
                   ) : (
