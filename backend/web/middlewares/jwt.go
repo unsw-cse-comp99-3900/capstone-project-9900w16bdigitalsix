@@ -62,7 +62,7 @@ func JWTAuth() gin.HandlerFunc {
 				return
 			}
 
-			c.JSON(http.StatusUnauthorized, gin.H{"msg": "未登录"})
+			c.JSON(http.StatusUnauthorized, gin.H{"msg": "Please login first"})
 			c.Abort()
 			return
 		}

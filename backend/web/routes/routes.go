@@ -5,6 +5,7 @@ import (
 	"go.uber.org/zap"
 
 	"web/controllers"
+	"web/middlewares"
 )
 
 func BaseRouter(Router *gin.RouterGroup) {
@@ -28,9 +29,18 @@ func UserRouter(Router *gin.RouterGroup) {
 		UserRouter.POST("/forget_password/send_email", controllers.SendEmailResetPassword)
 		UserRouter.POST("/reset/password", controllers.ResetPassword)
 		UserRouter.POST("/modify/profile", controllers.UpdateUserInfo)
-		// UserRouter.GET("/profile/:user_id", middlewares.JWTAuth(), controllers.GetPersonProfile)
 		UserRouter.GET("/profile/:user_id", controllers.GetPersonProfile)
 		UserRouter.GET("/student/list", controllers.GetAllStudents)
+		UserRouter.GET("/get/all/list", controllers.GetAllUsersInfo)
+	}
+}
+
+func AdminRouter(Router *gin.RouterGroup) {
+	AdminRouter := Router.Group("admin")
+	AdminRouter.Use(middlewares.JWTAuth(), middlewares.IsAdmin())
+	{
+		AdminRouter.GET("/get/user/list", controllers.GetAllUsersInfo)
+		AdminRouter.POST("/modify/user/role", controllers.ModifyUserRole)
 	}
 }
 
