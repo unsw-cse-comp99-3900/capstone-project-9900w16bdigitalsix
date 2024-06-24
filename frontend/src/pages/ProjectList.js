@@ -77,6 +77,22 @@ const ProjectList = () => {
     // padding: '16px', // Optional padding for the content area
   };
 
+  const headerStyleLg = {
+    position: "fixed",
+    top: 0,
+    // width: "100%",
+    width: "calc(100% - 260px)",
+    zIndex: 1000,
+  };
+
+  const headerStyleMd = {
+    position: "fixed",
+    top: 0,
+    width: "100%",
+    // width: "calc(100% - 260px)",
+    zIndex: 1000,
+  };
+
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
@@ -86,8 +102,14 @@ const ProjectList = () => {
         </aside>
         {/********Content Area**********/}
         <div className="contentArea" style={contentAreaStyle}>
-          {/********Header**********/}
-          <Header />
+          <div className="d-mg-none" style={headerStyleLg}>
+            {/********Header**********/}
+            <Header />
+          </div>
+          <div className="d-lg-none" style={headerStyleMd}>
+            {/********Header**********/}
+            <Header />
+          </div>
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
             <div className="d-flex justify-content-between align-items-center mb-4">

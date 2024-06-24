@@ -20,6 +20,22 @@ const contentAreaStyle = {
   marginTop: '56px', // Adjust this value to match the Header height
 };
 
+const headerStyleLg = {
+  position: "fixed",
+  top: 0,
+  // width: "100%",
+  width: "calc(100% - 260px)",
+  zIndex: 1000,
+};
+
+const headerStyleMd = {
+  position: "fixed",
+  top: 0,
+  width: "100%",
+  // width: "calc(100% - 260px)",
+  zIndex: 1000,
+};
+
 const EditProject = () => {
   const { id } = useParams();
   const [initialValues, setInitialValues] = useState(null);
@@ -55,7 +71,14 @@ const EditProject = () => {
           <Sidebar />
         </aside>
         <div className="contentArea" style={contentAreaStyle}>
-          <Header />
+          <div className="d-mg-none" style={headerStyleLg}>
+            {/********Header**********/}
+            <Header />
+          </div>
+          <div className="d-lg-none" style={headerStyleMd}>
+            {/********Header**********/}
+            <Header />
+          </div>
           <Container className="p-4 wrapper" fluid>
             <h3>Edit Project Information</h3>
             <EditProjectForm initialValues={initialValues} id={id} />
