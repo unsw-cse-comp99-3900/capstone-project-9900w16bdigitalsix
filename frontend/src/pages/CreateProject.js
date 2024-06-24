@@ -10,6 +10,22 @@ const contentAreaStyle = {
   // padding: '16px', // Optional padding for the content area
 };
 
+const headerStyleLg = {
+  position: "fixed",
+  top: 0,
+  // width: "100%",
+  width: "calc(100% - 260px)",
+  zIndex: 1000,
+};
+
+const headerStyleMd = {
+  position: "fixed",
+  top: 0,
+  width: "100%",
+  // width: "calc(100% - 260px)",
+  zIndex: 1000,
+};
+
 const CreateProject = () => {
   return (
     <main>
@@ -20,8 +36,14 @@ const CreateProject = () => {
         </aside>
         {/********Content Area**********/}
         <div className="contentArea" style={contentAreaStyle}>
-          {/********Header**********/}
-          <Header />
+          <div className="d-mg-none" style={headerStyleLg}>
+            {/********Header**********/}
+            <Header />
+          </div>
+          <div className="d-lg-none" style={headerStyleMd}>
+            {/********Header**********/}
+            <Header />
+          </div>
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
             <h3>Create a new project</h3>
