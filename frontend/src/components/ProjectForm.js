@@ -1,9 +1,8 @@
 // ProjectForm.js
 import React, { useState } from 'react';
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import MessageAlert from '../components/MessageAlert';
 
 const apiCall = async (method, endpoint, body, isFormData = false) => {
   const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
@@ -29,6 +28,10 @@ const ProjectForm = () => {
     file: null,
   });
 
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertType, setAlertType] = useState('error');
+  const [alertMessage, setAlertMessage] = useState('');
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -42,7 +45,39 @@ const ProjectForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted"); // Debug log
+
+    // Validate form data
+    
+    if (!formData.title) {
+      setAlertMessage('Project title is required.');
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    }
+    if (!formData.field) {
+      setAlertMessage('Field is required.');
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    }
+    if (!formData.description) {
+      setAlertMessage('Description is required.');
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    }
+    if (!formData.email) {
+      setAlertMessage('Email is required.');
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    }
+    if (!formData.requiredSkills) {
+      setAlertMessage('Required skills are required.');
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    }
 
     const form = new FormData();
     form.append('title', formData.title);
@@ -51,102 +86,113 @@ const ProjectForm = () => {
     form.append('email', formData.email);
     form.append('requiredSkills[]', formData.requiredSkills.split(',').map(skill => skill.trim()));
     if (formData.file) {
-      form.append('file', formData.file);
+      const blob = new Blob([formData.file], { type: 'application/pdf' });
+      form.append('spec', blob, formData.file.name);
     }
 
     try {
       const result = await apiCall('POST', '/v1/project/create', form, true);
-      console.log("Response received:", result); // Debug log
-
       if (result.msg === 'Project created successfully') {
-        toast.success('Project created successfully!', {
-          position: 'top-right',
-        });
+        setAlertMessage(result.msg);
+        setAlertType('success');
+        setAlertOpen(true);
         setTimeout(() => {
           navigate('/project/myproject');
-        }, 2000); // 2秒后跳转到"My Project"页面
+        }, 2000);
       } else {
-        toast.error(`Failed to create project: ${result.error}`, {
-          position: 'top-right',
-        });
+        setAlertMessage(result.error);
+        setAlertType('error');
+        setAlertOpen(true);
       }
     } catch (error) {
-      console.error("An error occurred:", error); // Debug log
-      toast.error('An error occurred.', {
-        position: 'top-right',
-      });
+      console.error('An error occurred:', error);
+      setAlertMessage(error.message);
+      setAlertType('error');
+      setAlertOpen(true);
     }
   };
 
+  const handleCloseAlert = () => {
+    setAlertOpen(false);
+  };
+
   return (
-    <Form onSubmit={handleSubmit}>
-      <FormGroup>
-        <Label for="title">Project title</Label>
-        <Input
-          type="text"
-          name="title"
-          id="title"
-          placeholder="Enter project title"
-          value={formData.title}
-          onChange={handleChange}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label for="field">Field</Label>
-        <Input
-          type="text"
-          name="field"
-          id="field"
-          placeholder="Enter field"
-          value={formData.field}
-          onChange={handleChange}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label for="description">Description</Label>
-        <Input
-          type="textarea"
-          name="description"
-          id="description"
-          placeholder="Enter description"
-          value={formData.description}
-          onChange={handleChange}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label for="email">Email</Label>
-        <Input
-          type="email"
-          name="email"
-          id="email"
-          placeholder="Enter client email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label for="requiredSkills">Required skills</Label>
-        <Input
-          type="text"
-          name="requiredSkills"
-          id="requiredSkills"
-          placeholder="Enter required skills"
-          value={formData.requiredSkills}
-          onChange={handleChange}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label for="file">Upload project specification (PDF)</Label>
-        <Input
-          type="file"
-          name="file"
-          id="file"
-          accept="application/pdf"
-          onChange={handleChange}
-        />
-      </FormGroup>
-      <Button type="submit" color="primary">Save</Button>
-    </Form>
+    <div>
+      <Form onSubmit={handleSubmit}>
+        <FormGroup>
+          <Label for="title">Project title</Label>
+          <Input
+            type="text"
+            name="title"
+            id="title"
+            placeholder="Enter project title"
+            value={formData.title}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="field">Field</Label>
+          <Input
+            type="text"
+            name="field"
+            id="field"
+            placeholder="Enter field"
+            value={formData.field}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="description">Description</Label>
+          <Input
+            type="textarea"
+            name="description"
+            id="description"
+            placeholder="Enter description"
+            value={formData.description}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="email">Email</Label>
+          <Input
+            type="email"
+            name="email"
+            id="email"
+            placeholder="Enter client email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="requiredSkills">Required skills (please use ", " to separate each item)</Label>
+          <Input
+            type="text"
+            name="requiredSkills"
+            id="requiredSkills"
+            placeholder="Enter required skills"
+            value={formData.requiredSkills}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="file">Upload project specification (PDF)</Label>
+          <Input
+            type="file"
+            name="file"
+            id="file"
+            accept="application/pdf"
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <Button type="submit" color="primary">Save</Button>
+      </Form>
+      <MessageAlert
+        open={alertOpen}
+        alertType={alertType}
+        handleClose={handleCloseAlert}
+        snackbarContent={alertMessage}
+      />
+    </div>
   );
 };
 

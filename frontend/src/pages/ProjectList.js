@@ -41,6 +41,9 @@ const ProjectList = () => {
     fetchProjects();
   }, []);
 
+  const handleDelete = (id) => {
+    setProjects(projects.filter(project => project.id !== id));
+  };
 
 
   const archivedProjects = [
@@ -96,8 +99,8 @@ const ProjectList = () => {
             
 
             <Row>
-        {projects.map((project, index) => (
-          <Col key={index} md="4">
+        {projects.map(project => (
+          <Col key={project.id} md="4">
             <CustomCard
               id={project.id}
               title={project.title}
@@ -105,10 +108,12 @@ const ProjectList = () => {
               clientTitle={project.clientTitle}
               skills={project.skills}
               field={project.field}
+              onDelete={handleDelete}
             />
           </Col>
         ))}
       </Row>
+
 
             <h3>Archived Projects</h3>
             <Row>
