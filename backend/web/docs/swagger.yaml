@@ -578,14 +578,10 @@ paths:
         name: clientEmail
         required: true
         type: string
-      - collectionFormat: csv
-        description: Required Skills
+      - description: Required Skills
         in: formData
-        items:
-          type: string
-        name: requiredSkills
-        required: true
-        type: array
+        name: requiredSkills[]
+        type: string
       - description: Project Field
         in: formData
         name: field
@@ -599,7 +595,6 @@ paths:
       - description: Specification File
         in: formData
         name: spec
-        required: true
         type: file
       produces:
       - application/json

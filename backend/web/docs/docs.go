@@ -425,15 +425,10 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "csv",
+                        "type": "string",
                         "description": "Required Skills",
-                        "name": "requiredSkills",
-                        "in": "formData",
-                        "required": true
+                        "name": "requiredSkills[]",
+                        "in": "formData"
                     },
                     {
                         "type": "string",
@@ -453,8 +448,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Specification File",
                         "name": "spec",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {

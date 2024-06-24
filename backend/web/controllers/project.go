@@ -275,10 +275,10 @@ func DeleteProject(c *gin.Context) {
 // @Param projectId path int true "Project ID"
 // @Param title formData string true "Project Title"
 // @Param clientEmail formData string true "Client Email"
-// @Param requiredSkills formData []string true "Required Skills"
+// @Param requiredSkills[] formData string false "Required Skills"
 // @Param field formData string true "Project Field"
 // @Param description formData string true "Project Description"
-// @Param spec formData file true "Specification File"
+// @Param spec formData file false "Specification File"
 // @Success 200 {object} response.ModifyProjectDetailResponse
 // @Failure 400 {object} map[string]string "{"error": "File not provided"}"
 // @Failure 404 {object} map[string]string "{"error": "Project not found"}"
@@ -302,7 +302,7 @@ func ModifyProjectDetail(c *gin.Context) {
     // 解析表单数据
     title := c.PostForm("title")
     clientEmail := c.PostForm("clientEmail")
-    requiredSkills := c.PostFormArray("requiredSkills")
+    requiredSkills := c.PostFormArray("requiredSkills[]")
     field := c.PostForm("field")
     description := c.PostForm("description")
 
@@ -319,12 +319,8 @@ func ModifyProjectDetail(c *gin.Context) {
 
     // 获取文件
     file, err := c.FormFile("spec")
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "File not provided"})
-        return
-    }
-
-	uploadDir:= global.ServerConfig.FilePath
+    if err == nil {  // 上传了文件
+        uploadDir:= global.ServerConfig.FilePath
 	// 保存文件到本地存储
 	fileURL = filepath.Join(uploadDir, file.Filename)
 	if err := c.SaveUploadedFile(file, fileURL); err != nil {
@@ -336,6 +332,7 @@ func ModifyProjectDetail(c *gin.Context) {
 	host := global.ServerConfig.Host
 	port := global.ServerConfig.Port
 	fileURL = fmt.Sprintf("http://%s:%d/files/%s", host, port, fileName)
+    }
 
     // 更新项目数据
     project.Name = title
