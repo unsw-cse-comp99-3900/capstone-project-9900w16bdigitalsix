@@ -20,6 +20,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
+import InviteModel from "./InviteModel";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "transparent",
@@ -63,6 +64,8 @@ const TeamProfile = ({
   setCurrentMember,
   curTeamSkills,
   setCurTeamSkills,
+  isInvite,
+  setIsInvite,
 }) => {
   const [editable, setEditable] = useState(false);
   const [personName, setPersonName] = React.useState([]);
@@ -70,10 +73,18 @@ const TeamProfile = ({
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isInvite, setIsInvite] = useState(false);
   // console.log(currentMember);
 
-  const handleClose = (event, reason) => {
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleMessageClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
@@ -271,9 +282,20 @@ const TeamProfile = ({
           </Grid>
           <Grid item xs={10}>
             <Item>
-              <Button variant="contained" color="primary" size="large">
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={showModal}
+              >
                 invite new member
               </Button>
+              <InviteModel
+                isModalOpen={isModalOpen}
+                handleClose={handleClose}
+                isInvite={isInvite}
+                setIsInvite={setIsInvite}
+              ></InviteModel>
             </Item>
           </Grid>
           <Grid item xs={10}>
@@ -330,7 +352,7 @@ const TeamProfile = ({
       <MessageAlert
         open={showError}
         alertType={alertType}
-        handleClose={handleClose}
+        handleClose={handleMessageClose}
         snackbarContent={errorMessage}
       />
     </>
