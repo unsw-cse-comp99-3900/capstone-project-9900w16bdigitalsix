@@ -151,7 +151,7 @@ export default function Team() {
         )}
       </div>
       <Button type="primary" onClick={showModal}>
-        Open Modal
+        Invite
       </Button>
       <InviteModel
         isModalOpen={isModalOpen}
