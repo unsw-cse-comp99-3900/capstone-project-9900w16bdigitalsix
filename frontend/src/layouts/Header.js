@@ -16,11 +16,62 @@ import {
 import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowhite.svg";
 import cap from "../assets/images/logos/cap_white.png";
 import user1 from "../assets/images/users/user1.jpg";
+import { apiCall, fileToDataUrl } from '../helper';
+import MessageAlert from '../components/MessageAlert';
+import { Avatar } from '@mui/material';
 
 const Header = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  
+  const [userId, setUserId] = useState('');
+  const [avatar, setAvatar] = useState('');
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertType, setAlertType] = useState('');
+  const [snackbarContent, setSnackbarContent] = useState('');
+
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem('userId');
+      try {
+        const response = await apiCall('GET', `v1/user/profile/${userId}`, null, localStorage.getItem('token'), true);
+        if (response) {
+          const imagePath = response.avatarURL; 
+          if (imagePath) {
+            try {
+              const imageResponse = await fetch(imagePath);
+              if (!imageResponse.ok) {
+                  throw new Error('Failed to fetch image');
+              }
+              const imageBlob = await imageResponse.blob();
+              const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
+              const imageDataUrl = await fileToDataUrl(imageFile);
+              setAvatar(imageDataUrl);
+            } catch (imageError) {
+              console.error('Failed to fetch image:', imageError);
+              setAvatar(null);
+            }
+          } else {
+            setAvatar(null);
+          }
+        } else {
+          setSnackbarContent('Failed to fetch user data');
+          setAlertType('error');
+          setAlertOpen(true);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user data:', error);
+        setSnackbarContent('Failed to fetch user data');
+        setAlertType('error');
+        setAlertOpen(true);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const Handletoggle = () => {
@@ -87,12 +138,18 @@ const Header = () => {
         </Nav>
         <Dropdown isOpen={dropdownOpen} toggle={toggle}>
           <DropdownToggle color="transparent">
-            <img
+            {/* avatar */}
+            {/* <img
               src={user1}
               alt="profile"
               className="rounded-circle"
               width="30"
-            ></img>
+            ></img> */}
+            <Avatar
+                src={avatar}
+                alt="Profile"
+                sx={{ width: 30, height: 30 }}
+            />
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem header>Info</DropdownItem>
@@ -106,6 +163,12 @@ const Header = () => {
           </DropdownMenu>
         </Dropdown>
       </Collapse>
+      <MessageAlert
+        open={alertOpen}
+        alertType={alertType}
+        handleClose={handleAlertClose}
+        snackbarContent={snackbarContent}
+      />
     </Navbar>
   );
 };

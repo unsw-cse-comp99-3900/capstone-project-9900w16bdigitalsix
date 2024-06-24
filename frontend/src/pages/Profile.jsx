@@ -110,7 +110,7 @@ const Profile = (props) => {
 
     const handleAlertClose = () => {
       setAlertOpen(false);
-  };
+    };
 
   const handleEditClick = () => {
     if (editable) {
