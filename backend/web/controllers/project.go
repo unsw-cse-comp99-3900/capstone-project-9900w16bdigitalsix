@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -32,7 +33,7 @@ import (
 // @Router /v1/project/create [post]
 func CreateProject(c *gin.Context) {
 	var fileName string
-	var filePath string
+	var fileURL string
 
 	// 解析文件
 	file, err := c.FormFile("file")
@@ -44,12 +45,17 @@ func CreateProject(c *gin.Context) {
 		}
 
 		// 保存文件到本地存储
-		filePath = filepath.Join(uploadDir, file.Filename)
-		if err := c.SaveUploadedFile(file, filePath); err != nil {
+		fileURL = filepath.Join(uploadDir, file.Filename)
+		if err := c.SaveUploadedFile(file, fileURL); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
 			return
 		}
+
 		fileName = file.Filename
+		host := global.ServerConfig.Host
+		port := global.ServerConfig.Port
+		fileURL = fmt.Sprintf("http://%s:%d/files/%s", host, port, fileName)
+
 	} else if err != http.ErrMissingFile {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to upload file"})
 		return
@@ -80,9 +86,9 @@ func CreateProject(c *gin.Context) {
 	}
 
 	// 如果有上传文件，则保存文件名和文件路径
-	if fileName != "" && filePath != "" {
+	if fileURL != "" {
 		project.Filename = fileName
-		project.FileURL = "backend/files/" + fileName
+		project.FileURL = fileURL
 	}
 
 	if err := global.DB.Create(&project).Error; err != nil {
@@ -116,7 +122,7 @@ func CreateProject(c *gin.Context) {
 		"msg":      "Project created successfully",
 		"proId":    project.ID,
 		"fileName": project.Filename,
-		"filePath": project.FileURL,
+		"fileURL":  project.FileURL,
 	})
 }
 
@@ -173,7 +179,6 @@ func GetProjectList(c *gin.Context) {
 	c.JSON(http.StatusOK, responseList)
 }
 
-
 // @Summary 根据 projectId 获取项目 detail
 // @Description 根据项目ID获取项目的详细信息
 // @Tags Project
@@ -185,7 +190,7 @@ func GetProjectList(c *gin.Context) {
 // @Router /v1/project/detail/{projectId} [get]
 func GetProjectDetail(c *gin.Context) {
 	projectId := c.Param("projectId")
-	
+
 	var project models.Project
 	if err := global.DB.Preload("Skills").Preload("Teams").Where("id = ?", projectId).First(&project).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
@@ -220,7 +225,7 @@ func GetProjectDetail(c *gin.Context) {
 		RequiredSkills: skills,
 		Field:          project.Field,
 		Description:    project.Description,
-		SpecLink:       project.FileURL, 
+		SpecLink:       project.FileURL,
 		AllocatedTeam:  teams,
 	}
 

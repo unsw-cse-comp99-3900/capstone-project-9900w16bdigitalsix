@@ -3,8 +3,10 @@ package util
 import (
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"os"
 	"strings"
+	"web/global"
 )
 
 func SaveBase64Image(base64Data, filename, outputDir string) (string, string, error) {
@@ -21,8 +23,6 @@ func SaveBase64Image(base64Data, filename, outputDir string) (string, string, er
 		return "", "", err
 	}
 
-	// // 生成文件名
-	// filename := time.Now().Format("20060102150405") + ".png"
 	savePath := outputDir + "/" + filename
 
 	// 确保输出目录存在
@@ -37,8 +37,10 @@ func SaveBase64Image(base64Data, filename, outputDir string) (string, string, er
 		return "", "", err
 	}
 
-	// 生成访问URL，假设图片可以通过 http://localhost:8080/images/ 访问
-	url := "http://localhost:8080/images/" + filename
+	// 生成访问URL，图片可以通过 http://localhost:8080/images/ 访问
+    host := global.ServerConfig.Host
+    port := global.ServerConfig.Port
+    url := fmt.Sprintf("http://%s:%d/images/%s", host, port, filename)
 
 	return filename, url, nil
 }
