@@ -16,6 +16,11 @@ import Profile from './Profile';
 // team
 import Team from "./Team";
 
+// project
+import ProjectList from './ProjectList';
+import CreateProject from './CreateProject';
+import EditProject from './EditProject';
+
 //admin
 import RoleManage from "./RoleManage"
 
@@ -29,6 +34,7 @@ const PageList = () => {
       <Routes>
         <Route path="/" element={<Dashboard />} />
 
+        {/* auth */}
         <Route path="/register" element={<Register token={token} setToken={setToken} />} />
         <Route path="/login" element={<Login token={token} setToken={setToken} role={role} setRole={setRole}/>} />
         <Route path="/verify-email-link-sent" element={<Verify token={token} setToken={setToken}/>} />
@@ -38,8 +44,15 @@ const PageList = () => {
         <Route path="/reset-pwd" element={<ResetPwd />} />
         <Route path="/profile" element={<Profile />} />
         
+        {/* team */}
         <Route path="/team" element={<Team token={token} setToken={setToken}/>} />
 
+        {/* project */}
+        <Route path='/project/myproject' element={<ProjectList token={token} setToken={setToken}/>}/>
+        <Route path='project/create' element={<CreateProject token={token} setToken={setToken}/>}/>
+        <Route path="/project/edit/:id" element={<EditProject token={token} setToken={setToken}/>}/>
+
+        {/* admin */}
         <Route path="/admin/role-manage" element={<RoleManage token={token} setToken={setToken}/>} />
       </Routes>
       <br />

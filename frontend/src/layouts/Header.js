@@ -21,8 +21,8 @@ import MessageAlert from '../components/MessageAlert';
 import { Avatar } from '@mui/material';
 
 const Header = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userId, setUserId] = useState('');
   const [avatar, setAvatar] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
@@ -72,6 +72,7 @@ const Header = () => {
 
     fetchUserData();
   }, []);
+  const [sidebarOpen, setSidebarOpen] = useState(true); // 跟踪侧边栏是否展开
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const Handletoggle = () => {
@@ -90,17 +91,16 @@ const Header = () => {
         </NavbarBrand>
         <Button
           color="primary"
-          className=" d-lg-none"
+          className="d-lg-none"
           onClick={() => showMobilemenu()}
         >
           <i className="bi bi-list"></i>
         </Button>
       </div>
-      <div className="hstack gap-2">
+      <div className="hstack gap-2 d-lg-none">
         <Button
           color="primary"
           size="sm"
-          className="d-sm-block d-md-none"
           onClick={Handletoggle}
         >
           {isOpen ? (
@@ -111,8 +111,8 @@ const Header = () => {
         </Button>
       </div>
 
-      <Collapse navbar isOpen={isOpen}>
-        <Nav className="me-auto" navbar>
+      <Collapse navbar isOpen={isOpen} className="justify-content-between">
+        <Nav navbar>
           <NavItem>
             <Link to="/project/allproject" className="nav-link">
               All Project
@@ -129,7 +129,7 @@ const Header = () => {
             </Link>
           </NavItem>
         </Nav>
-        <Nav>
+        <Nav className="ml-auto d-flex align-items-center">
           <Link to="/notification" className="nav-link">
             <div className="notification-icon">
               <i className="bi bi-bell-fill"></i>
