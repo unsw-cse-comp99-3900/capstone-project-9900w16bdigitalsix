@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Navbar,
@@ -13,13 +13,14 @@ import {
   Dropdown,
   Button,
 } from "reactstrap";
-// import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowhite.svg";
+import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowhite.svg";
 import cap from "../assets/images/logos/cap_white.png";
 import user1 from "../assets/images/users/user1.jpg";
 
 const Header = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const Handletoggle = () => {
@@ -29,15 +30,8 @@ const Header = () => {
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
   };
 
-  // const headerStyle = {
-  //   position: "fixed",
-  //   top: 0,
-  //   width: "100%",
-  //   zIndex: 1000,
-  // };style={headerStyle}
-
   return (
-    <Navbar color="primary" dark expand="md" className="bg-gradient" >
+    <Navbar color="primary" dark expand="md" className="bg-gradient">
       <div className="d-flex align-items-center">
         <NavbarBrand href="/" className="d-lg-none">
           {/* <LogoWhite /> */}

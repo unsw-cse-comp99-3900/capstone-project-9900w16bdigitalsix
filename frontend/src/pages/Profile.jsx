@@ -133,6 +133,10 @@ const Profile = (props) => {
                 setSnackbarContent('All fields are required. Please fill in all fields.');
                 setAlertType('error');
                 setAlertOpen(true);
+            } else if (!avatar) {
+                setSnackbarContent('Please update avatar.');
+                setAlertType('error');
+                setAlertOpen(true);
             } else {
                 try {
                     const response = await apiCall('POST', 'v1/user/modify/profile', payload, localStorage.getItem('token'), true);
@@ -210,6 +214,22 @@ const handleFileChange = async (event) => {
     }
   };
 
+  const headerStyleLg = {
+    position: "fixed",
+    top: 0,
+    // width: "100%",
+    width: "calc(100% - 260px)",
+    zIndex: 1000,
+  };
+
+  const headerStyleMd = {
+    position: "fixed",
+    top: 0,
+    width: "100%",
+    // width: "calc(100% - 260px)",
+    zIndex: 1000,
+  };
+
   return (
     <main>
     <div className="pageWrapper d-lg-flex">
@@ -219,8 +239,14 @@ const handleFileChange = async (event) => {
       </aside>
       {/********Content Area**********/}
       <div className="contentArea"  style={contentAreaStyle}>
-        {/********Header**********/}
-        <Header />
+        <div className="d-mg-none" style={headerStyleLg}>
+                {/********Header**********/}
+                <Header />
+            </div>
+            <div className="d-lg-none" style={headerStyleMd}>
+                {/********Header**********/}
+                <Header />
+            </div>
         {/********Middle Content**********/}
         <Container className="p-4 wrapper" fluid>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
@@ -228,13 +254,7 @@ const handleFileChange = async (event) => {
                     src={avatar}
                     alt="Profile"
                     sx={{ width: 150, height: 150 }}
-                >
-                    {!avatar && (
-                        <Typography variant="h3" sx={{ fontSize: '3rem' }}>
-                            {name.charAt(0)}
-                        </Typography>
-                    )}
-                </Avatar>
+                />
                     {editable && (
                         <IconButton color="primary" aria-label="upload picture" component="label">
                             <input hidden accept="image/*" type="file" onChange={handleFileChange} />
