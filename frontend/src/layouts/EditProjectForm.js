@@ -22,7 +22,7 @@ export const apiCall = async (method, endpoint, data, isFormData = false) => {
   const response = await fetch(`http://127.0.0.1:8080${endpoint}`, options);
   const result = await response.json();
   console.log(result);
-  return result;
+  return { status: response.status, data: result };
 };
 
 const createFormData = () => {
@@ -122,7 +122,7 @@ const EditProjectForm = ({ initialValues, id }) => {
 
     try {
       const result = await apiCall('POST', `/v1/project/modify/${id}`, form, true);
-      if (result.message === '') {
+      if (result.status === 200) {
         setAlertMessage('Project updated successfully!');
         setAlertType('success');
         setAlertOpen(true);
@@ -130,7 +130,7 @@ const EditProjectForm = ({ initialValues, id }) => {
           navigate('/project/myproject');
         }, 2000);
       } else {
-        setAlertMessage(result.error || 'Failed to update project');
+        setAlertMessage(result.data.error || 'Failed to update project');
         setAlertType('error');
         setAlertOpen(true);
       }
@@ -194,7 +194,7 @@ const EditProjectForm = ({ initialValues, id }) => {
           />
         </FormGroup>
         <FormGroup>
-          <Label for="requiredSkills">Required skills</Label>
+          <Label for="requiredSkills">Required skills  (please use ", " to separate each item)</Label>
           <Input
             type="text"
             name="requiredSkills"

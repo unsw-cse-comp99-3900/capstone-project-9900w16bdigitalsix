@@ -164,7 +164,7 @@ const ProjectForm = () => {
           />
         </FormGroup>
         <FormGroup>
-          <Label for="requiredSkills">Required skills (please use ", " to sperate each iteam)</Label>
+          <Label for="requiredSkills">Required skills (please use ", " to separate each item)</Label>
           <Input
             type="text"
             name="requiredSkills"
