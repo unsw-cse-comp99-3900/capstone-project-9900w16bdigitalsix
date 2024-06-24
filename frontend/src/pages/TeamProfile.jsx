@@ -14,7 +14,6 @@ import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
-import user5Image from "../assets/images/users/user5.jpg";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -238,7 +237,9 @@ const TeamProfile = ({
                     <React.Fragment key={member.userId}>
                       <ListItem alignItems="flex-start">
                         <ListItemAvatar>
-                          <Avatar alt={member.userName} src={user5Image} />
+                          <Avatar alt={member.userName} src={member.avatarURL}>
+                            {member.userName.charAt(0)}
+                          </Avatar>
                         </ListItemAvatar>
                         <ListItemText
                           primary={`${member.userName} (${member.email})`}
