@@ -187,6 +187,17 @@ definitions:
           type: string
         type: array
     type: object
+  response.ModifyProjectDetailResponse:
+    properties:
+      createdBy:
+        type: string
+      createdByEmail:
+        type: string
+      createdByUserId:
+        type: integer
+      message:
+        type: string
+    type: object
   response.ProfileResponse:
     properties:
       avatarURL:
@@ -318,8 +329,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"msg": "Project created successfully", "proId": 1, "fileName":
-            "filename.pdf", "filePath": "backend/files/filename.pdf"}'
+          description: '{"msg": "Project created successfully", "projectId": 1, "fileName":
+            "filename.pdf", "filePath": "backend/files/filename.pdf", "createdBy":
+            1}'
           schema:
             additionalProperties: true
             type: object
@@ -341,6 +353,38 @@ paths:
             additionalProperties: true
             type: object
       summary: 创建项目
+      tags:
+      - Project
+  /v1/project/delete/{projectId}:
+    delete:
+      description: 根据项目ID删除项目
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success": bool}'
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: '{"error": string}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": string}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 删除项目
       tags:
       - Project
   /v1/project/detail/{projectId}:
@@ -393,6 +437,78 @@ paths:
               type: string
             type: object
       summary: 获取公开项目列表
+      tags:
+      - Project
+  /v1/project/modify/{projectId}:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 通过projectId修改项目详细信息，并更新项目的创建人
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      - description: Project Title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Client Email
+        in: formData
+        name: clientEmail
+        required: true
+        type: string
+      - collectionFormat: csv
+        description: Required Skills
+        in: formData
+        items:
+          type: string
+        name: requiredSkills
+        required: true
+        type: array
+      - description: Project Field
+        in: formData
+        name: field
+        required: true
+        type: string
+      - description: Project Description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Specification File
+        in: formData
+        name: spec
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ModifyProjectDetailResponse'
+        "400":
+          description: '{"error": "File not provided"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Project not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": Internal Error}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 修改项目详细信息
       tags:
       - Project
   /v1/team/create:
