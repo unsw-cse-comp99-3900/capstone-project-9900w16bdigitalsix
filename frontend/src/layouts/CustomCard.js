@@ -47,7 +47,7 @@ const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete })
               <i className="bi bi-pencil"></i>
             </Link>
             <i className="bi bi-person"></i>
-            <i className="bi bi-trash" onClick={toggle} style={{ color: 'red', cursor: 'pointer' }}></i>
+            <i className="bi bi-trash" onClick={toggle}></i>
           </div>
         </CardBody>
       </Card>
@@ -59,7 +59,7 @@ const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete })
         </ModalBody>
         <ModalFooter>
           <Button color="danger" onClick={handleDelete}>Delete</Button>
-          <Button color="secondary" onClick={toggle}>Cancel</Button>
+          <Button color="secondary" onClick={toggle} >Cancel</Button>
         </ModalFooter>
       </Modal>
     </>

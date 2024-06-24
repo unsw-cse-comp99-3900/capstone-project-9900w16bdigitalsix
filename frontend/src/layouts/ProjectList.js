@@ -73,6 +73,7 @@ const ProjectList = () => {
     marginTop: '56px', // Adjust this value to match the Header height
     // padding: '16px', // Optional padding for the content area
   };
+  
 
   return (
     <main>
@@ -105,6 +106,7 @@ const ProjectList = () => {
               clientTitle={project.clientTitle}
               skills={project.skills}
               field={project.field}
+              onDelete={handleDelete}
             />
           </Col>
         ))}
