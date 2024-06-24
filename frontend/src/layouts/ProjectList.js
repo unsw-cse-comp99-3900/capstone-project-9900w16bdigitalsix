@@ -41,6 +41,9 @@ const ProjectList = () => {
     fetchProjects();
   }, []);
 
+  const handleDelete = (id) => {
+    setProjects(projects.filter(project => project.id !== id));
+  };
 
 
   const archivedProjects = [
@@ -73,7 +76,6 @@ const ProjectList = () => {
     marginTop: '56px', // Adjust this value to match the Header height
     // padding: '16px', // Optional padding for the content area
   };
-  
 
   return (
     <main>
@@ -97,8 +99,8 @@ const ProjectList = () => {
             
 
             <Row>
-        {projects.map((project, index) => (
-          <Col key={index} md="4">
+        {projects.map(project => (
+          <Col key={project.id} md="4">
             <CustomCard
               id={project.id}
               title={project.title}
@@ -111,6 +113,7 @@ const ProjectList = () => {
           </Col>
         ))}
       </Row>
+
 
             <h3>Archived Projects</h3>
             <Row>

@@ -30,25 +30,25 @@ export const apiCall = async (method, endpoint, data, isFormData = false) => {
 
 };
 
-// const createFormData = () => {
-//   const formDataa = new FormData();
+const createFormData = () => {
+  const formDataa = new FormData();
   
-//   formDataa.append('title', 'wqeq1');
-//   formDataa.append('clientEmail', 'haowang32123@gmail.com');
+  formDataa.append('title', 'wqeq1');
+  formDataa.append('clientEmail', 'haowang32123@gmail.com');
   
-//   // 添加技能数组
-//   const skills = ['python', 'java'];
-//   skills.forEach(skill => formDataa.append('requiredSkills[]', skill));
+  // 添加技能数组
+  const skills = ['python', 'java'];
+  skills.forEach(skill => formDataa.append('requiredSkills[]', skill));
   
-//   formDataa.append('field', 'field2');
-//   formDataa.append('description', 'descripti3on');
+  formDataa.append('field', 'field2');
+  formDataa.append('description', 'descripti3on');
   
-//   // 创建一个虚拟文件
-//   const blob = new Blob(['dummy content'], { type: 'application/pdf' });
-//   formDataa.append('spec', blob, 'dummy.pdf');
+  // 创建一个虚拟文件
+  const blob = new Blob(['dummy content'], { type: 'application/pdf' });
+  formDataa.append('spec', blob, 'dummy.pdf');
 
-//   return formDataa;
-// };
+  return formDataa;
+};
 
 const EditProjectForm = ({ initialValues, id }) => {
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ const EditProjectForm = ({ initialValues, id }) => {
         const skills = formData[key].split(',').map(skill => skill.trim());
         skills.forEach(skill => form.append('requiredSkills[]', skill));
       } else if (key === 'email') {
-        form.append('clientEmail', formData[key]);
+        form.append('clientEmail', form[key]);
       } else if (key === 'file') {
         const blob = new Blob([formData[key]], { type: 'application/pdf' });
         form.append('spec', blob, 'renewed.pdf');
@@ -89,11 +89,11 @@ const EditProjectForm = ({ initialValues, id }) => {
     // console.log('FormData:', ...form); // 用于调试，查看FormData内容
     
     
-    // const formb = createFormData();
-    // console.log('FormData entries:');
-    //   for (let [key, value] of formb.entries()) {
-    //     console.log(key, value);
-    //   }
+    const formb = createFormData();
+    console.log('FormData entries:');
+      for (let [key, value] of formb.entries()) {
+        console.log(key, value);
+      }
     
     console.log('FormData entries:');
       for (let [key, value] of form.entries()) {
@@ -101,8 +101,8 @@ const EditProjectForm = ({ initialValues, id }) => {
     }
 
     try {
-      const result = await apiCall('POST', `/v1/project/modify/${id}`, form, true);
-      if (result.message === 'Project detail modified successfully') {
+      const result = await apiCall('POST', `/v1/project/modify/${id}`, formb, true);
+      if (result.msg === 'Project updated successfully') {
         toast.success('Project updated successfully!', {
           position: 'top-right',
         });
