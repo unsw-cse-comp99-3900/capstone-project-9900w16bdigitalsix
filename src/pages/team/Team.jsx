@@ -91,7 +91,7 @@ export default function Team() {
             shape="round"
             onClick={changeList}
           >
-            {team ? 'STUDENT LIST' : 'Team LIST'}
+            {team ? 'STUDENT LIST' : 'TEAM LIST'}
           </Button>
         </Flex>
       </div>
