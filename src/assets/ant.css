@@ -1,0 +1,8 @@
+.ant-list-item {
+  padding: 10px 10px !important;
+}
+.ant-btn-primary,
+.ant-checkbox-checked .ant-checkbox-inner {
+  border-color: #6451e9 !important;
+  background: #6451e9 !important;
+}
