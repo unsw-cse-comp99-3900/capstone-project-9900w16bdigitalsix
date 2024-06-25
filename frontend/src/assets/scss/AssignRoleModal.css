@@ -28,6 +28,43 @@
   text-decoration: underline;
 }
 
+.user-role {
+  font-size: 16px;
+  color: black; /* 设置 "Current Role:" 的颜色为黑色 */
+  margin-top: 8px;
+}
+
+.user-role span {
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.role-1 {
+  background-color: #e0f7fa;
+  color: #006064;
+}
+
+.role-2 {
+  background-color: #e1bee7;
+  color: #6a1b9a;
+}
+
+.role-3 {
+  background-color: #fff9c4;
+  color: #f57f17;
+}
+
+.role-4 {
+  background-color: #ffe0b2;
+  color: #e65100;
+}
+
+.role-5 {
+  background-color: #ffcdd2;
+  color: #b71c1c;
+}
+
 .modal-body {
   margin-top: 20px;
 }
@@ -38,5 +75,5 @@
 }
 
 .role-select {
-  width: 60%; /* 让选择框占满宽度 */
+  width: 60%; /* 缩短选择框的宽度 */
 }
