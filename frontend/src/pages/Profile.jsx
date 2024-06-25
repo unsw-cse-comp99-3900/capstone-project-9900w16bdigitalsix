@@ -46,6 +46,7 @@ const Profile = (props) => {
     const [field, setField] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [alertOpen, setAlertOpen] = useState(false);
     const [alertType, setAlertType] = useState('');
     const [snackbarContent, setSnackbarContent] = useState('');
@@ -185,6 +186,12 @@ const handleFileChange = async (event) => {
             setAlertOpen(true);
             return;
         }
+        if (newPassword !== confirmPassword) {
+            setSnackbarContent('New password and confirmation password do not match.');
+            setAlertType('error');
+            setAlertOpen(true);
+            return;
+        }
 
       const payload = {
           email,
@@ -212,7 +219,7 @@ const handleFileChange = async (event) => {
     } finally {
         handleClose();
     }
-  };
+};
 
   const headerStyleLg = {
     position: "fixed",
@@ -380,33 +387,44 @@ const handleFileChange = async (event) => {
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Change Password</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        To change your password, please enter your current password and new password below.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="current-password"
-                        label="Current Password"
-                        type="password"
-                        fullWidth
-                        variant="outlined"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        sx={{ mt: 2 }}
-                    />
-                    <TextField
-                        margin="dense"
-                        id="new-password"
-                        label="New Password"
-                        type="password"
-                        fullWidth
-                        variant="outlined"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        sx={{ mt: 2 }}
-                    />
-                </DialogContent>
+                <DialogContentText>
+                    To change your password, please enter your current password and new password below.
+                </DialogContentText>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="current-password"
+                    label="Current Password"
+                    type="password"
+                    fullWidth
+                    variant="outlined"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    sx={{ mt: 2 }}
+                />
+                <TextField
+                    margin="dense"
+                    id="new-password"
+                    label="New Password"
+                    type="password"
+                    fullWidth
+                    variant="outlined"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    sx={{ mt: 2 }}
+                />
+                <TextField
+                    margin="dense"
+                    id="confirm-password"
+                    label="Confirm New Password"
+                    type="password"
+                    fullWidth
+                    variant="outlined"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    sx={{ mt: 2 }}
+                />
+            </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="secondary">Cancel</Button>
                     <Button onClick={handleChangePassword} color="primary">Save</Button>
