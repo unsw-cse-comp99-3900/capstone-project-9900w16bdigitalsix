@@ -392,21 +392,27 @@ func GetStudentInfo(ctx *gin.Context) {
 // @Router /v1/team/get/list [get]
 func GetAllTeams(c *gin.Context) {
 	var teams []models.Team
-	if err := global.DB.Find(&teams).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
-		return
-	}
+    if err := global.DB.Preload("Skills").Find(&teams).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
+        return
+    }
 
-	// 映射到返回的结构体
-	var teamResponses []response.TeamListResponse
-	for _, team := range teams {
-		teamResponses = append(teamResponses, response.TeamListResponse{
-			TeamID:   team.ID,
-			TeamName: team.Name,
-		})
-	}
+    // 映射到返回的结构体
+    var teamResponses []response.TeamListResponse
+    for _, team := range teams {
+        var teamSkills []string
+        for _, skill := range team.Skills {
+            teamSkills = append(teamSkills, skill.SkillName)
+        }
 
-	c.JSON(http.StatusOK, teamResponses)
+        teamResponses = append(teamResponses, response.TeamListResponse{
+            TeamID:    team.ID,
+            TeamName:  team.Name,
+            TeamSkills: teamSkills,
+        })
+    }
+
+    c.JSON(http.StatusOK, teamResponses)
 }
 
 // @Summary Invite User to Team

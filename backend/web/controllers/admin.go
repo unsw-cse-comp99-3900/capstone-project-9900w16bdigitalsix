@@ -32,6 +32,7 @@ func GetAllUsersInfo(c *gin.Context) {
 		userResponses = append(userResponses, response.UserListResponse{
 			UserID:    user.ID,
 			UserName:  user.Username,
+			Email:     user.Email,
 			Role:      user.Role,
 			AvatarURL: user.AvatarURL,
 		})

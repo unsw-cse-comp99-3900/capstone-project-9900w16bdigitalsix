@@ -16,27 +16,27 @@ export default function TeamTutor() {
   const [team, setTeam] = useState(true);
   const [loading, setLoading] = useState(false);
   const mounting = useRef(true);
-  let [data, setData] = useState([]);
+  const [data, setData] = useState([]);
+  const [allData, setAllData] = useState([]);
+
   const seachRef = useRef();
   const mountedRef = useRef(false);
   const loadMoreData = async () => {
     if (loading) return;
     setLoading(true);
     const url = "v1/team/get/list";
-    const studentUrl = "v1/user/student/list";
-    const params = {};
-    if (seachRef.current.input.value)
-      params.name = seachRef.current.input.value;
-    const response = await apiCall("GET", team ? url : studentUrl, params);
+    const studentUrl = "v1/student/unassigned/list";
+    const response = await apiCall("GET", team ? url : studentUrl);
     console.log("....list....", response);
-    if (response.error) {
+    if (!response || response.error) {
       setData([]);
       setLoading(false);
     } else {
       const res = response;
-      console.log(res);
+      console.log("res", res);
       setData([...res]);
       setLoading(false);
+      setAllData([...res]);
     }
     // axios
     //   .get(team ? url : studentUrl, { params, headers })
@@ -75,11 +75,44 @@ export default function TeamTutor() {
     setTeam(!team);
   };
   const seachList = () => {
-    if (seachRef.current.input.value) {
-      setData([]);
-      loadMoreData();
-    }
-  };
+     const searchTerm = seachRef.current.input.value.toLowerCase();
+     console.log(searchTerm);
+     if (searchTerm) {
+     let filtered;
+     if (team) {
+     filtered = allData.filter((item) =>
+     [item.teamName, item.teamSkills, String(item.teamId)].some((field) =>{
+        console.log("field", field);
+        if (field) {
+          if (Array.isArray(field)) {
+            field = field.join(' ');
+          }
+          return field.toLowerCase().includes(searchTerm)
+        }
+      }
+     )
+     )
+     } else {
+     filtered = allData.filter((item) =>
+     [item.userName, item.email, String(item.userId)].some((field) => {
+      if (field) {
+        if (Array.isArray(field)) {
+          field = field.join(' ');
+        }
+        return field.toLowerCase().includes(searchTerm)
+      }
+     }
+     )
+     )
+     }
+     console.log(filtered);
+     setData(filtered);
+     } else {
+     console.log(data);
+     //   setData(data);
+     loadMoreData();
+     }
+     };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
@@ -172,7 +205,16 @@ export default function TeamTutor() {
                     dataSource={data}
                     renderItem={(item) => (
                       <List.Item key={item.teamId}>
-                        <List.Item.Meta title={<a>{item.teamName}</a>} />
+                        <List.Item.Meta title={<a>{item.teamName}</a>} description={
+                            <>
+                              Skills:
+                              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                                {item.teamSkills && item.teamSkills.map((skill, index) => (
+                                  <Chip key={index} label={skill} variant="outlined" />
+                                ))}
+                              </Box>
+                            </>
+                          }/>
                       </List.Item>
                     )}
                   />
@@ -183,6 +225,7 @@ export default function TeamTutor() {
                     grid={{
                       gutter: 16,
                       column: 2,
+                      xs: 1
                     }}
                     renderItem={(item) => (
                       <List.Item key={item.userId} style={{ marginTop: '16px' }}>
