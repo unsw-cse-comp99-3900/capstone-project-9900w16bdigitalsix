@@ -1904,6 +1904,9 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
+                "email": {
+                    "type": "string"
+                },
                 "role": {
                     "type": "integer"
                 },

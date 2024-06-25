@@ -36,6 +36,7 @@ type TeamListResponse struct {
 type UserListResponse struct {
 	UserID    uint   `json:"userId"`
 	UserName  string `json:"userName"`
+	Email     string `json:"email"`
 	Role      int    `json:"role"`
 	AvatarURL string `json:"avatar"`
 }

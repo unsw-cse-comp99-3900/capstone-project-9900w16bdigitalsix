@@ -302,6 +302,8 @@ definitions:
     properties:
       avatar:
         type: string
+      email:
+        type: string
       role:
         type: integer
       userId:
