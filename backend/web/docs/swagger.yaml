@@ -282,6 +282,10 @@ definitions:
         type: integer
       teamName:
         type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
     type: object
   response.TeamMember:
     properties:

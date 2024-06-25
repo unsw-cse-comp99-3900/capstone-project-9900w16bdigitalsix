@@ -1907,6 +1907,12 @@ const docTemplate = `{
                 },
                 "teamName": {
                     "type": "string"
+                },
+                "teamSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
