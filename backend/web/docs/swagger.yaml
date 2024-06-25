@@ -212,6 +212,8 @@ definitions:
         type: string
       organization:
         type: string
+      role:
+        type: integer
       skills:
         items:
           type: string
@@ -259,6 +261,8 @@ definitions:
     type: object
   response.StudentListResponse:
     properties:
+      avatarURL:
+        type: string
       email:
         type: string
       userId:
@@ -406,7 +410,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: admin 修改用户角色
+      summary: Admin modify user role
       tags:
       - Admin
   /v1/project/create:
@@ -415,31 +419,31 @@ paths:
       - multipart/form-data
       description: 创建一个新的项目并上传文件
       parameters:
-      - description: 项目标题
+      - description: Project Title
         in: formData
         name: title
         required: true
         type: string
-      - description: 项目领域
+      - description: Project Field
         in: formData
         name: field
         required: true
         type: string
-      - description: 项目描述
+      - description: Project Description
         in: formData
         name: description
         required: true
         type: string
-      - description: 客户邮箱
+      - description: Clinet Email
         in: formData
         name: email
         required: true
         type: string
-      - description: 所需技能
+      - description: Required Skills
         in: formData
         name: requiredSkills[]
         type: string
-      - description: 上传的文件
+      - description: upload file
         in: formData
         name: file
         type: file
@@ -470,7 +474,7 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: 创建项目
+      summary: Create a new project
       tags:
       - Project
   /v1/project/delete/{projectId}:
@@ -502,7 +506,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: 删除项目
+      summary: Delete project
       tags:
       - Project
   /v1/project/detail/{projectId}:
@@ -533,7 +537,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: 根据 projectId 获取项目 detail
+      summary: Get project detail by projectID
       tags:
       - Project
   /v1/project/get/public_project/list:
@@ -554,7 +558,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: 获取公开项目列表
+      summary: Get pubilic project list
       tags:
       - Project
   /v1/project/modify/{projectId}:
@@ -621,7 +625,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: 修改项目详细信息
+      summary: Modify project detail information
       tags:
       - Project
   /v1/team/create:
@@ -1004,7 +1008,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Send reset password email
+      summary: Reset password (send email)
       tags:
       - User
   /v1/user/modify/profile:
@@ -1160,7 +1164,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: 用户注册 （发送邮件）
+      summary: User register（send email）
       tags:
       - User
   /v1/user/register/verify:
@@ -1194,7 +1198,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: 用户注册 (验证邮箱)
+      summary: User register (verify email)
       tags:
       - User
   /v1/user/reset/password:
