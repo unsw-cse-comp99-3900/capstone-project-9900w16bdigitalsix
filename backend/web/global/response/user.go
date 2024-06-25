@@ -25,6 +25,7 @@ type StudentListResponse struct {
 	Email      string   `json:"email"`
 	AvatarURL  string   `json:"avatarURL"`
 	UserSkills []string `json:"userSkills"`
+	Role       int      `json:"role"`
 }
 
 type TeamListResponse struct {

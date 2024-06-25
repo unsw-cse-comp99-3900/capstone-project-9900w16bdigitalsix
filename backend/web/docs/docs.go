@@ -1847,6 +1847,9 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "role": {
+                    "type": "integer"
+                },
                 "userId": {
                     "type": "integer"
                 },
