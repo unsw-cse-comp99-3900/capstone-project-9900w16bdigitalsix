@@ -89,7 +89,7 @@ const docTemplate = `{
                 "tags": [
                     "Admin"
                 ],
-                "summary": "admin 修改用户角色",
+                "summary": "Admin modify user role",
                 "parameters": [
                     {
                         "type": "string",
@@ -187,45 +187,45 @@ const docTemplate = `{
                 "tags": [
                     "Project"
                 ],
-                "summary": "创建项目",
+                "summary": "Create a new project",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "项目标题",
+                        "description": "Project Title",
                         "name": "title",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "项目领域",
+                        "description": "Project Field",
                         "name": "field",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "项目描述",
+                        "description": "Project Description",
                         "name": "description",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "客户邮箱",
+                        "description": "Clinet Email",
                         "name": "email",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "所需技能",
+                        "description": "Required Skills",
                         "name": "requiredSkills[]",
                         "in": "formData"
                     },
                     {
                         "type": "file",
-                        "description": "上传的文件",
+                        "description": "upload file",
                         "name": "file",
                         "in": "formData"
                     }
@@ -271,7 +271,7 @@ const docTemplate = `{
                 "tags": [
                     "Project"
                 ],
-                "summary": "删除项目",
+                "summary": "Delete project",
                 "parameters": [
                     {
                         "type": "integer",
@@ -319,7 +319,7 @@ const docTemplate = `{
                 "tags": [
                     "Project"
                 ],
-                "summary": "根据 projectId 获取项目 detail",
+                "summary": "Get project detail by projectID",
                 "parameters": [
                     {
                         "type": "integer",
@@ -366,7 +366,7 @@ const docTemplate = `{
                 "tags": [
                     "Project"
                 ],
-                "summary": "获取公开项目列表",
+                "summary": "Get pubilic project list",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -401,7 +401,7 @@ const docTemplate = `{
                 "tags": [
                     "Project"
                 ],
-                "summary": "修改项目详细信息",
+                "summary": "Modify project detail information",
                 "parameters": [
                     {
                         "type": "integer",
@@ -425,15 +425,10 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "csv",
+                        "type": "string",
                         "description": "Required Skills",
-                        "name": "requiredSkills",
-                        "in": "formData",
-                        "required": true
+                        "name": "requiredSkills[]",
+                        "in": "formData"
                     },
                     {
                         "type": "string",
@@ -453,8 +448,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "Specification File",
                         "name": "spec",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -1023,7 +1017,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Send reset password email",
+                "summary": "Reset password (send email)",
                 "parameters": [
                     {
                         "description": "Reset Password form",
@@ -1256,7 +1250,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "用户注册 （发送邮件）",
+                "summary": "User register（send email）",
                 "parameters": [
                     {
                         "description": "Register form",
@@ -1320,7 +1314,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "用户注册 (验证邮箱)",
+                "summary": "User register (verify email)",
                 "parameters": [
                     {
                         "type": "string",
@@ -1772,6 +1766,9 @@ const docTemplate = `{
                 "organization": {
                     "type": "string"
                 },
+                "role": {
+                    "type": "integer"
+                },
                 "skills": {
                     "type": "array",
                     "items": {
@@ -1844,6 +1841,9 @@ const docTemplate = `{
         "response.StudentListResponse": {
             "type": "object",
             "properties": {
+                "avatarURL": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -1852,6 +1852,12 @@ const docTemplate = `{
                 },
                 "userName": {
                     "type": "string"
+                },
+                "userSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

@@ -11,6 +11,7 @@ type ProfileResponse struct {
 	UserID       uint     `json:"userId"`
 	Name         string   `json:"name"`
 	Email        string   `json:"email"`
+	Role         int      `json:"role"`
 	Bio          string   `json:"bio"`
 	Organization string   `json:"organization"`
 	AvatarURL    string   `json:"avatarURL"`
@@ -19,9 +20,11 @@ type ProfileResponse struct {
 }
 
 type StudentListResponse struct {
-	UserID   uint   `json:"userId"`
-	UserName string `json:"userName"`
-	Email    string `json:"email"`
+	UserID     uint     `json:"userId"`
+	UserName   string   `json:"userName"`
+	Email      string   `json:"email"`
+	AvatarURL  string   `json:"avatarURL"`
+	UserSkills []string `json:"userSkills"`
 }
 
 type TeamListResponse struct {

@@ -145,7 +145,7 @@ func PasswordLogin(ctx *gin.Context) {
 }
 
 // VerifyEmail godoc
-// @Summary 用户注册 (验证邮箱)
+// @Summary User register (verify email)
 // @Description 验证邮箱，并完成用户注册
 // @Tags User
 // @Accept json
@@ -220,7 +220,7 @@ func VerifyEmail(ctx *gin.Context) {
 }
 
 // Register godoc
-// @Summary 用户注册 （发送邮件）
+// @Summary User register（send email）
 // @Description 用户注册，发送验证邮件
 // @Tags User
 // @Accept json
@@ -276,7 +276,7 @@ func Register(ctx *gin.Context) {
 }
 
 // SendEmailResetPassword godoc
-// @Summary Send reset password email
+// @Summary Reset password (send email)
 // @Description 发送重置密码邮件
 // @Tags User
 // @Accept json
@@ -599,6 +599,7 @@ func GetPersonProfile(c *gin.Context) {
 		UserID:       user.ID,
 		Name:         user.Username,
 		Email:        user.Email,
+		Role:         user.Role,
 		Bio:          user.Bio,
 		Organization: user.Organization,
 		AvatarURL:    user.AvatarURL,
@@ -619,20 +620,26 @@ func GetPersonProfile(c *gin.Context) {
 // @Router /v1/user/student/list [get]
 func GetAllStudents(c *gin.Context) {
 	var users []models.User
-	if err := global.DB.Where("role = ?", 1).Find(&users).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
-		return
-	}
+    if err := global.DB.Where("role = ?", 1).Preload("Skills").Find(&users).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
+        return
+    }
 
-	// 映射到返回的结构体
 	var userResponses []response.StudentListResponse
 	for _, user := range users {
-		userResponses = append(userResponses, response.StudentListResponse{
-			UserID:   user.ID,
-			UserName: user.Username,
-			Email:    user.Email,
-		})
-	}
+        var skills []string
+        for _, skill := range user.Skills {
+            skills = append(skills, skill.SkillName)
+        }
+
+        userResponses = append(userResponses, response.StudentListResponse{
+            UserID:    user.ID,
+            UserName:  user.Username,
+            Email:     user.Email,
+            AvatarURL: user.AvatarURL,
+            UserSkills: skills,
+        })
+    }
 
 	c.JSON(http.StatusOK, userResponses)
 }

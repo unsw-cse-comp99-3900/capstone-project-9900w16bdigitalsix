@@ -6,6 +6,11 @@ import "../styles/teamTutor.css";
 import InviteModel from "./InviteModel";
 import { apiCall } from "../helper";
 
+import Sidebar from '../layouts/Sidebar';
+import Header from '../layouts/Header';
+import { Container } from 'reactstrap';
+import { Avatar, Chip, Box } from '@mui/material';
+
 export default function TeamTutor() {
   // const navigate = useNavigate();
   const [team, setTeam] = useState(true);
@@ -82,133 +87,194 @@ export default function TeamTutor() {
   const handleClose = () => {
     setIsModalOpen(false);
   };
+
+  const contentAreaStyle = {
+    marginTop: '56px', // Adjust this value to match the Header height
+    // padding: '16px', // Optional padding for the content area
+  };
+
+  const headerStyleLg = {
+    position: "fixed",
+    top: 0,
+    // width: "100%",
+    width: "calc(100% - 260px)",
+    zIndex: 1000,
+  };
+
+  const headerStyleMd = {
+    position: "fixed",
+    top: 0,
+    width: "100%",
+    // width: "calc(100% - 260px)",
+    zIndex: 1000,
+  };
+
   return (
-    <>
-      <div className="titleBtn">
-        <Flex gap="small" wrap>
-          <Button
-            style={{ backgroundColor: "#6451e9", borderColor: "#6451e9" }}
-            type="primary"
-            shape="round"
-            onClick={changeList}
-          >
-            {team ? "STUDENT LIST" : "TEAM LIST"}
-          </Button>
-        </Flex>
-      </div>
-      <div className="seach">
-        <Input
-          ref={seachRef}
-          size="large"
-          placeholder="Seach Team"
-          prefix={<SearchOutlined />}
-        />
-        <div
-          style={{ marginLeft: "15px", cursor: "pointer" }}
-          onClick={seachList}
-        >
-          Filter
-        </div>
-      </div>
-      <div
-        id="scrollableDiv"
-        style={{
-          maxHeight: 550,
-          overflow: "auto",
-          padding: "0 16px",
-          border: "1px solid rgba(140, 140, 140, 0.35)",
-          background: "#fff",
-        }}
-      >
-        {team ? (
-          <List
-            loading={loading}
-            dataSource={data}
-            renderItem={(item) => (
-              <List.Item key={item.teamId}>
-                <List.Item.Meta title={<a>{item.teamName}</a>} />
-              </List.Item>
-            )}
-          />
-        ) : (
-          <List
-            loading={loading}
-            dataSource={data}
-            grid={{
-              gutter: 16,
-              column: 2,
-            }}
-            renderItem={(item) => (
-              <List.Item key={item.userId}>
-                <List.Item.Meta
-                  title={<a>{item.userName}</a>}
-                  description={item.email}
-                />
-              </List.Item>
-            )}
-          />
-        )}
-      </div>
-      {/* <Button type="primary" onClick={showModal}>
-        Invite
-      </Button> */}
-      <InviteModel
-        isModalOpen={isModalOpen}
-        handleClose={handleClose}
-      ></InviteModel>
-      {/* <Modal
-        title=""
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <div className="seach">
-          <Input
-            ref={seachRef}
-            size="large"
-            placeholder="Seach"
-            prefix={<SearchOutlined />}
-          />
-          <div
-            style={{ marginLeft: '15px', cursor: 'pointer' }}
-            onClick={seachList}
-          >
-            Filter
+    <main>
+      <div className="pageWrapper d-lg-flex">
+        {/********Sidebar**********/}
+        <aside className="sidebarArea shadow" id="sidebarArea">
+          <Sidebar />
+        </aside>
+        {/********Content Area**********/}
+        <div className="contentArea" style={contentAreaStyle}>
+          <div className="d-mg-none" style={headerStyleLg}>
+            {/********Header**********/}
+            <Header />
           </div>
-        </div>
-        <div
-          id="scrollableDiv"
-          style={{
-            maxHeight: 550,
-            overflow: 'auto',
-            padding: '0 16px',
-            border: '1px solid rgba(140, 140, 140, 0.35)',
-            background: '#fff',
-          }}
-        >
-          <List
-            loading={loading}
-            dataSource={data}
-            renderItem={(item, index) => (
-              <List.Item
-                key={item.id}
-                actions={[
-                  <Checkbox
-                    checked={checkedList.includes(item.id)}
-                    key={index}
-                    onChange={(e) => handleCheckboxChange(item.id, e)}
-                  />,
-                ]}
-              >
-                <List.Item.Meta
-                  title={<a>{item.name}</a>}
-                  description={item.email}
+          <div className="d-lg-none" style={headerStyleMd}>
+            {/********Header**********/}
+            <Header />
+          </div>
+          {/********Middle Content**********/}
+          <Container className="p-4 wrapper" fluid>
+            {/* add code here */}
+            <>
+              <div className="titleBtn">
+                <Flex gap="small" wrap>
+                  <Button
+                    style={{ backgroundColor: "#6451e9", borderColor: "#6451e9" }}
+                    type="primary"
+                    shape="round"
+                    onClick={changeList}
+                  >
+                    {team ? "STUDENT LIST" : "TEAM LIST"}
+                  </Button>
+                </Flex>
+              </div>
+              <div className="seach">
+                <Input
+                  ref={seachRef}
+                  size="large"
+                  placeholder={team ? "Search Team" : "Search Student"}
+                  prefix={<SearchOutlined />}
                 />
-              </List.Item>
-            )}
-          />
+                <div
+                  style={{ marginLeft: "15px", cursor: "pointer" }}
+                  onClick={seachList}
+                >
+                  Filter
+                </div>
+              </div>
+              <div
+                id="scrollableDiv"
+                style={{
+                  maxHeight: 550,
+                  overflow: "auto",
+                  padding: "0 16px",
+                  border: "1px solid rgba(140, 140, 140, 0.35)",
+                  background: "#fff",
+                }}
+              >
+                {team ? (
+                  <List
+                    loading={loading}
+                    dataSource={data}
+                    renderItem={(item) => (
+                      <List.Item key={item.teamId}>
+                        <List.Item.Meta title={<a>{item.teamName}</a>} />
+                      </List.Item>
+                    )}
+                  />
+                ) : (
+                  <List
+                    loading={loading}
+                    dataSource={data}
+                    grid={{
+                      gutter: 16,
+                      column: 2,
+                    }}
+                    renderItem={(item) => (
+                      <List.Item key={item.userId}>
+                        <List.Item.Meta
+                          avatar={
+                            <Avatar
+                              src={item.avatarURL}
+                              alt="avatar"
+                            />}
+                          title={<a>{item.userName}</a>}
+                          description={
+                            <>
+                              Email: {item.email}
+                              <br />
+                              Skills:
+                              <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
+                                {item.userSkills && item.userSkills.map((skill, index) => (
+                                  <Chip key={index} label={skill} variant="outlined" />
+                                ))}
+                              </Box>
+                            </>
+                          }
+                        />
+                      </List.Item>
+                    )}
+                  />
+                )}
+              </div>
+              {/* <Button type="primary" onClick={showModal}>
+                Invite
+              </Button> */}
+              <InviteModel
+                isModalOpen={isModalOpen}
+                handleClose={handleClose}
+              ></InviteModel>
+              {/* <Modal
+                title=""
+                open={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
+              >
+                <div className="seach">
+                  <Input
+                    ref={seachRef}
+                    size="large"
+                    placeholder="Seach"
+                    prefix={<SearchOutlined />}
+                  />
+                  <div
+                    style={{ marginLeft: '15px', cursor: 'pointer' }}
+                    onClick={seachList}
+                  >
+                    Filter
+                  </div>
+                </div>
+                <div
+                  id="scrollableDiv"
+                  style={{
+                    maxHeight: 550,
+                    overflow: 'auto',
+                    padding: '0 16px',
+                    border: '1px solid rgba(140, 140, 140, 0.35)',
+                    background: '#fff',
+                  }}
+                >
+                  <List
+                    loading={loading}
+                    dataSource={data}
+                    renderItem={(item, index) => (
+                      <List.Item
+                        key={item.id}
+                        actions={[
+                          <Checkbox
+                            checked={checkedList.includes(item.id)}
+                            key={index}
+                            onChange={(e) => handleCheckboxChange(item.id, e)}
+                          />,
+                        ]}
+                      >
+                        <List.Item.Meta
+                          title={<a>{item.name}</a>}
+                          description={item.email}
+                        />
+                      </List.Item>
+                    )}
+                  />
+                </div>
+              </Modal> */}
+            </>
+    </Container>
         </div>
-      </Modal> */}
-    </>
+      </div>
+    </main>
   );
 }
