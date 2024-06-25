@@ -28,3 +28,10 @@ type ProjectDetailResponse struct {
 	SpecLink       string          `json:"specLink"`
 	AllocatedTeam  []AllocatedTeam `json:"allocatedTeam"`
 }
+
+type ModifyProjectDetailResponse struct {
+	Message         string `json:"message"`
+	CreatedBy       string `json:"createdBy"`
+	CreatedByUserID uint   `json:"createdByUserId"`
+	CreatedByEmail  string `json:"createdByEmail"`
+}

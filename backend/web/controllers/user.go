@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
+	"path"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -143,7 +145,7 @@ func PasswordLogin(ctx *gin.Context) {
 }
 
 // VerifyEmail godoc
-// @Summary 用户注册 (验证邮箱)
+// @Summary User register (verify email)
 // @Description 验证邮箱，并完成用户注册
 // @Tags User
 // @Accept json
@@ -218,7 +220,7 @@ func VerifyEmail(ctx *gin.Context) {
 }
 
 // Register godoc
-// @Summary 用户注册 （发送邮件）
+// @Summary User register（send email）
 // @Description 用户注册，发送验证邮件
 // @Tags User
 // @Accept json
@@ -274,7 +276,7 @@ func Register(ctx *gin.Context) {
 }
 
 // SendEmailResetPassword godoc
-// @Summary Send reset password email
+// @Summary Reset password (send email)
 // @Description 发送重置密码邮件
 // @Tags User
 // @Accept json
@@ -497,9 +499,26 @@ func UpdateUserInfo(c *gin.Context) {
 		return
 	}
 
+	var filename string
+	// 生成文件名
+	if user.AvatarURL == "" {
+		filename = time.Now().Format("20060102150405") + ".png"
+	} else {
+		urlStr := user.AvatarURL
+		// 解析 URL
+		parsedURL, err := url.Parse(urlStr)
+		if err != nil {
+			zap.S().Errorf("解析 avatar url 出错")
+			return
+		}
+		// 提取路径部分并获取文件名
+		filename = path.Base(parsedURL.Path)
+	}
+
 	// 解析 base64 图片， 并保存
 	outputDir := global.ServerConfig.PicturePath
-	_, url, err := util.SaveBase64Image(profileReq.Profile.Avatarbase64, outputDir)
+
+	_, url, err := util.SaveBase64Image(profileReq.Profile.Avatarbase64, filename, outputDir)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save picture"})
 	}
@@ -580,6 +599,7 @@ func GetPersonProfile(c *gin.Context) {
 		UserID:       user.ID,
 		Name:         user.Username,
 		Email:        user.Email,
+		Role:         user.Role,
 		Bio:          user.Bio,
 		Organization: user.Organization,
 		AvatarURL:    user.AvatarURL,
@@ -590,7 +610,7 @@ func GetPersonProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, profile)
 }
 
-// @Summary Get Student List
+// @Summary Get all students List
 // @Description 返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
 // @Tags User
 // @Accept  json
@@ -600,18 +620,25 @@ func GetPersonProfile(c *gin.Context) {
 // @Router /v1/user/student/list [get]
 func GetAllStudents(c *gin.Context) {
 	var users []models.User
-	if err := global.DB.Where("role = ?", 1).Find(&users).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+	if err := global.DB.Where("role = ?", 1).Preload("Skills").Find(&users).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
 		return
 	}
 
-	// 映射到返回的结构体
 	var userResponses []response.StudentListResponse
 	for _, user := range users {
+		var skills []string
+		for _, skill := range user.Skills {
+			skills = append(skills, skill.SkillName)
+		}
+
 		userResponses = append(userResponses, response.StudentListResponse{
-			UserID:   user.ID,
-			UserName: user.Username,
-			Email:    user.Email,
+			UserID:     user.ID,
+			UserName:   user.Username,
+			Role:       user.Role,
+			Email:      user.Email,
+			AvatarURL:  user.AvatarURL,
+			UserSkills: skills,
 		})
 	}
 

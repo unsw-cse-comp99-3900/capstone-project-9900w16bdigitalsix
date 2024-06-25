@@ -15,6 +15,166 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/v1/admin/get/user/list": {
+            "get": {
+                "description": "注意 header  Authorization: Bearer \u003ctoken\u003e, 返回所有用户列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all users List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.UserListResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "{\"error\": \"Please login\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "{\"error\": \"only admin can change user role\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch users\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/modify/user/role": {
+            "post": {
+                "description": "修改用户的角色信息, 注意header  Authorization: Bearer \u003ctoken\u003e",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Admin modify user role",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "用户ID",
+                        "name": "userId",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "用户角色",
+                        "name": "Role",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\": \"User role updated successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"Bad request\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "{\"error\": \"Please login first\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "{\"error\": \"\"only admin can change user role\"\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"User not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Internal server error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/project/create": {
             "post": {
                 "description": "创建一个新的项目并上传文件",
@@ -27,52 +187,52 @@ const docTemplate = `{
                 "tags": [
                     "Project"
                 ],
-                "summary": "创建项目",
+                "summary": "Create a new project",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "项目标题",
+                        "description": "Project Title",
                         "name": "title",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "项目领域",
+                        "description": "Project Field",
                         "name": "field",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "项目描述",
+                        "description": "Project Description",
                         "name": "description",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "客户邮箱",
+                        "description": "Clinet Email",
                         "name": "email",
                         "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "所需技能",
+                        "description": "Required Skills",
                         "name": "requiredSkills[]",
                         "in": "formData"
                     },
                     {
                         "type": "file",
-                        "description": "上传的文件",
+                        "description": "upload file",
                         "name": "file",
                         "in": "formData"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"msg\": \"Project created successfully\", \"proId\": 1, \"fileName\": \"filename.pdf\", \"filePath\": \"backend/files/filename.pdf\"}",
+                        "description": "{\"msg\": \"Project created successfully\", \"projectId\": 1, \"fileName\": \"filename.pdf\", \"filePath\": \"backend/files/filename.pdf\", \"createdBy\": 1}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -102,6 +262,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/project/delete/{projectId}": {
+            "delete": {
+                "description": "根据项目ID删除项目",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Delete project",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\": bool}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": string}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": string}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/project/detail/{projectId}": {
             "get": {
                 "description": "根据项目ID获取项目的详细信息",
@@ -111,7 +319,7 @@ const docTemplate = `{
                 "tags": [
                     "Project"
                 ],
-                "summary": "根据 projectId 获取项目 detail",
+                "summary": "Get project detail by projectID",
                 "parameters": [
                     {
                         "type": "integer",
@@ -158,7 +366,7 @@ const docTemplate = `{
                 "tags": [
                     "Project"
                 ],
-                "summary": "获取公开项目列表",
+                "summary": "Get pubilic project list",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -171,6 +379,105 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "{\"error\": string}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/project/modify/{projectId}": {
+            "post": {
+                "description": "通过projectId修改项目详细信息，并更新项目的创建人",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Modify project detail information",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Project Title",
+                        "name": "title",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client Email",
+                        "name": "clientEmail",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Required Skills",
+                        "name": "requiredSkills[]",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Project Field",
+                        "name": "field",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Project Description",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Specification File",
+                        "name": "spec",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ModifyProjectDetailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"File not provided\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Project not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": Internal Error}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -710,7 +1017,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Send reset password email",
+                "summary": "Reset password (send email)",
                 "parameters": [
                     {
                         "description": "Reset Password form",
@@ -943,7 +1250,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "用户注册 （发送邮件）",
+                "summary": "User register（send email）",
                 "parameters": [
                     {
                         "description": "Register form",
@@ -1007,7 +1314,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "用户注册 (验证邮箱)",
+                "summary": "User register (verify email)",
                 "parameters": [
                     {
                         "type": "string",
@@ -1113,7 +1420,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Get Student List",
+                "summary": "Get all students List",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1421,6 +1728,23 @@ const docTemplate = `{
                 }
             }
         },
+        "response.ModifyProjectDetailResponse": {
+            "type": "object",
+            "properties": {
+                "createdBy": {
+                    "type": "string"
+                },
+                "createdByEmail": {
+                    "type": "string"
+                },
+                "createdByUserId": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "response.ProfileResponse": {
             "type": "object",
             "properties": {
@@ -1441,6 +1765,9 @@ const docTemplate = `{
                 },
                 "organization": {
                     "type": "string"
+                },
+                "role": {
+                    "type": "integer"
                 },
                 "skills": {
                     "type": "array",
@@ -1514,14 +1841,26 @@ const docTemplate = `{
         "response.StudentListResponse": {
             "type": "object",
             "properties": {
+                "avatarURL": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
+                },
+                "role": {
+                    "type": "integer"
                 },
                 "userId": {
                     "type": "integer"
                 },
                 "userName": {
                     "type": "string"
+                },
+                "userSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -1556,6 +1895,26 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "response.UserListResponse": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "userName": {
+                    "type": "string"
                 }
             }
         }
