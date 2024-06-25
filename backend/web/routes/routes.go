@@ -41,6 +41,7 @@ func AdminRouter(Router *gin.RouterGroup) {
 	{
 		AdminRouter.GET("/get/user/list", controllers.GetAllUsersInfo)
 		AdminRouter.POST("/modify/user/role", controllers.ModifyUserRole)
+<<<<<<< HEAD
 	}
 }
 
@@ -48,6 +49,8 @@ func StudentRouter(Router *gin.RouterGroup) {
 	StudentRouter := Router.Group("student")
 	{
 		StudentRouter.GET("/unassigned/list", controllers.GetAllUnassignedStudents)
+=======
+>>>>>>> origin/Role_xly
 	}
 }
 

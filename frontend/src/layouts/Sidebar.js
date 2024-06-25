@@ -30,7 +30,7 @@ const navigation = [
   },
   {
     title: "Role",
-    href: "/",//need to be implented
+    href: "/admin/role-manage",//need to be implented
     icon: "bi bi-person-check",
   },
 ];

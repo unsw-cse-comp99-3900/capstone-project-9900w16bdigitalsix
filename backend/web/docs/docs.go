@@ -488,6 +488,7 @@ const docTemplate = `{
                 }
             }
         },
+<<<<<<< HEAD
         "/v1/student/unassigned/list": {
             "get": {
                 "description": "返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
@@ -523,6 +524,8 @@ const docTemplate = `{
                 }
             }
         },
+=======
+>>>>>>> origin/Role_xly
         "/v1/team/create": {
             "post": {
                 "description": "创建 team, 并且创建人加入了 team, 后端随机生成 teamName, 存入了数据库",

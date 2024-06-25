@@ -1,0 +1,41 @@
+/* AssignRoleModal.css */
+
+.modal-content {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  margin: 20px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 18px; /* 增大字体 */
+  font-weight: bold;
+  margin-bottom: 4px; /* 增加名字和邮箱之间的间距 */
+}
+
+.user-email {
+  font-size: 16px; /* 增大字体 */
+  color: #888;
+  text-decoration: underline;
+}
+
+.modal-body {
+  margin-top: 20px;
+}
+
+.assign-role-text {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.role-select {
+  width: 60%; /* 让选择框占满宽度 */
+}
