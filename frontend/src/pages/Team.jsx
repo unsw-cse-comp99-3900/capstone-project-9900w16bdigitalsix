@@ -70,6 +70,7 @@ const Team = (props) => {
         setTeamId(res.teamId);
         setTeamName(res.teamName);
         setCurrentMember(res.teamMember);
+        setCurTeamSkills(res.teamSkills);
         setHasTeam(true);
         setErrorMessage("Success!");
         setAlertType("success");
@@ -96,7 +97,7 @@ const Team = (props) => {
         setAlertType("error");
         setShowError(true);
       } else {
-        console.log(res.teamSkills);
+        // console.log(res.teamSkills);
         setTeamId(res.teamId);
         setTeamName(res.teamName);
         setCurrentMember(res.teamMember);
