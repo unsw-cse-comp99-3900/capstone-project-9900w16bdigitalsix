@@ -21,6 +21,11 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import InviteModel from "./InviteModel";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "transparent",
@@ -74,6 +79,15 @@ const TeamProfile = ({
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [leaveDialogOpen, setLeaveDialogOpen] = useState(false);
+
+  const handleLeaveDialogOpen = () => {
+    setLeaveDialogOpen(true);
+  };
+
+  const handleLeaveDialogClose = () => {
+    setLeaveDialogOpen(false);
+  };
   // const [isInvite, setIsInvite] = useState(false);
   // console.log(currentMember);
 
@@ -118,6 +132,7 @@ const TeamProfile = ({
   const handleSaveClick = async () => {
     setEditable(false);
     try {
+      // console.log(personName);
       const body = {
         TeamSkills: personName.length > 0 ? personName : [],
         teamName: teamName,
@@ -132,7 +147,7 @@ const TeamProfile = ({
         setAlertType("error");
         setShowError(true);
       } else {
-        console.log(personName);
+        console.log(res);
         setCurTeamSkills(personName);
         setErrorMessage("Success!");
         setAlertType("success");
@@ -189,13 +204,39 @@ const TeamProfile = ({
                     <Button
                       variant="outlined"
                       color="error"
-                      onClick={handleLeaveTeam}
-                      style={{ marginRight: "8px" }}
+                      onClick={handleLeaveDialogOpen}
                     >
                       Leave
                     </Button>
-                    {/* </Item>
-                  <Item style={{ textAlign: "end" }}> */}
+                    <Dialog
+                      open={leaveDialogOpen}
+                      onClose={handleLeaveDialogClose}
+                      aria-labelledby="alert-dialog-title"
+                      aria-describedby="alert-dialog-description"
+                    >
+                      <DialogTitle id="alert-dialog-title">
+                        {"Confirm Leave"}
+                      </DialogTitle>
+                      <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                          Are you sure you want to leave this team?
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleLeaveTeam} color="error">
+                          Leave
+                        </Button>
+                        <Button
+                          onClick={handleLeaveDialogClose}
+                          color="primary"
+                          autoFocus
+                        >
+                          Cancel
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                  </Item>
+                  <Item style={{ textAlign: "end" }}>
                     {editable ? (
                       <Button
                         variant="contained"

@@ -32,6 +32,7 @@ func GetAllUsersInfo(c *gin.Context) {
 		userResponses = append(userResponses, response.UserListResponse{
 			UserID:    user.ID,
 			UserName:  user.Username,
+			Email:     user.Email,
 			Role:      user.Role,
 			AvatarURL: user.AvatarURL,
 		})
@@ -40,7 +41,7 @@ func GetAllUsersInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, userResponses)
 }
 
-// @Summary admin 修改用户角色
+// @Summary Admin modify user role
 // @Description 修改用户的角色信息, 注意header  Authorization: Bearer <token>
 // @Tags Admin
 // @Accept json
