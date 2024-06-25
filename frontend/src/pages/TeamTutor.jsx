@@ -3,7 +3,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Button, Flex, List, Input } from "antd";
 import "../styles/teamTutor.css";
 // import { useNavigate } from "react-router-dom";
-import InviteModel from "./InviteModel";
+import InviteModel from "../components/InviteModel";
 import { apiCall } from "../helper";
 
 import Sidebar from '../layouts/Sidebar';

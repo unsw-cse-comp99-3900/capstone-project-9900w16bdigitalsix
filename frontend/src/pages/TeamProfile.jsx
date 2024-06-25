@@ -20,7 +20,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
-import InviteModel from "./InviteModel";
+import InviteModel from "../components/InviteModel";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "transparent",
