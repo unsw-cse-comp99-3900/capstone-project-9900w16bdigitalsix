@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Select, Avatar, Button, message } from 'antd';
 
 import '../assets/scss/AssignRoleModal.css';
@@ -7,11 +7,33 @@ import MessageAlert from './MessageAlert';
 
 const { Option } = Select;
 
+const roleMap = {
+  1: 'Student',
+  2: 'Tutor',
+  3: 'Client',
+  4: 'Coordinator',
+  5: 'Administrator'
+};
+
+const roleColorMap = {
+  1: { background: '#e0f7fa', color: '#006064' }, // blue Student
+  2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
+  3: { background: '#fff9c4', color: '#f57f17' }, // yellow Client
+  4: { background: '#ffe0b2', color: '#e65100' }, // orange Coordinator
+  5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
+};
+
 const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
+
+  useEffect(() => {
+    if (user && user.role !== undefined) {
+      setSelectedRole(user.role);
+    }
+  }, [user]);
 
   const handleRoleChange = (value) => {
     setSelectedRole(parseInt(value, 10));
@@ -68,6 +90,9 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
           <div className="user-details">
             <div className="user-name">{user?.userName}</div>
             <div className="user-email">{user?.email}</div>
+            <div className="user-role">
+              Current Role: <span className={`role-${user?.role}`}>{roleMap[user?.role]}</span>
+            </div>
           </div>
         </div>
         <div className="modal-body">
