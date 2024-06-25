@@ -636,6 +636,30 @@ paths:
       summary: Modify project detail information
       tags:
       - Project
+  /v1/student/unassigned/list:
+    get:
+      consumes:
+      - application/json
+      description: 返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client,
+        4表示convenor, 5表示admin
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.StudentListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch users"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all students unassigned list
+      tags:
+      - User
   /v1/team/create:
     post:
       consumes:

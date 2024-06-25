@@ -644,3 +644,39 @@ func GetAllStudents(c *gin.Context) {
 
 	c.JSON(http.StatusOK, userResponses)
 }
+
+// GetAllUnassignedStudents godoc
+// @Summary Get all students unassigned list
+// @Description 返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} response.StudentListResponse
+// @Failure 500 {object} map[string]string "{"error": "Failed to fetch users"}"
+// @Router /v1/student/unassigned/list [get]
+func GetAllUnassignedStudents(c *gin.Context) {
+    var users []models.User
+    if err := global.DB.Where("role = ? AND belongs_to_group IS NULL", 1).Preload("Skills").Find(&users).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
+        return
+    }
+
+    var userResponses []response.StudentListResponse
+    for _, user := range users {
+        var skills []string
+        for _, skill := range user.Skills {
+            skills = append(skills, skill.SkillName)
+        }
+
+        userResponses = append(userResponses, response.StudentListResponse{
+            UserID:     user.ID,
+            UserName:   user.Username,
+            Role:       user.Role,
+            Email:      user.Email,
+            AvatarURL:  user.AvatarURL,
+            UserSkills: skills,
+        })
+    }
+
+    c.JSON(http.StatusOK, userResponses)
+}

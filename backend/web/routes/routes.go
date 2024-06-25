@@ -44,6 +44,13 @@ func AdminRouter(Router *gin.RouterGroup) {
 	}
 }
 
+func StudentRouter(Router *gin.RouterGroup) {
+	StudentRouter := Router.Group("student")
+	{
+		StudentRouter.GET("/unassigned/list", controllers.GetAllUnassignedStudents)
+	}
+}
+
 func GroupRouter(Router *gin.RouterGroup) {
 	groupRouter := Router.Group("team")
 	zap.S().Info("配置分组相关的 url")
