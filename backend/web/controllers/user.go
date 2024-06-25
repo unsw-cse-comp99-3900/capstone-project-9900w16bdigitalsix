@@ -620,21 +620,26 @@ func GetPersonProfile(c *gin.Context) {
 // @Router /v1/user/student/list [get]
 func GetAllStudents(c *gin.Context) {
 	var users []models.User
-	if err := global.DB.Where("role = ?", 1).Find(&users).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
-		return
-	}
+    if err := global.DB.Where("role = ?", 1).Preload("Skills").Find(&users).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
+        return
+    }
 
-	// 映射到返回的结构体
 	var userResponses []response.StudentListResponse
 	for _, user := range users {
-		userResponses = append(userResponses, response.StudentListResponse{
-			UserID:    user.ID,
-			UserName:  user.Username,
-			Email:     user.Email,
-			AvatarURL: user.AvatarURL,
-		})
-	}
+        var skills []string
+        for _, skill := range user.Skills {
+            skills = append(skills, skill.SkillName)
+        }
+
+        userResponses = append(userResponses, response.StudentListResponse{
+            UserID:    user.ID,
+            UserName:  user.Username,
+            Email:     user.Email,
+            AvatarURL: user.AvatarURL,
+            UserSkills: skills,
+        })
+    }
 
 	c.JSON(http.StatusOK, userResponses)
 }

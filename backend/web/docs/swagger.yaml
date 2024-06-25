@@ -269,6 +269,10 @@ definitions:
         type: integer
       userName:
         type: string
+      userSkills:
+        items:
+          type: string
+        type: array
     type: object
   response.TeamListResponse:
     properties:

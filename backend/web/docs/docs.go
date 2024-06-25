@@ -1852,6 +1852,12 @@ const docTemplate = `{
                 },
                 "userName": {
                     "type": "string"
+                },
+                "userSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

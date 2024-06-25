@@ -20,10 +20,11 @@ type ProfileResponse struct {
 }
 
 type StudentListResponse struct {
-	UserID   uint   `json:"userId"`
-	UserName string `json:"userName"`
-	Email    string `json:"email"`
-	AvatarURL string `json:"avatarURL"`
+	UserID     uint     `json:"userId"`
+	UserName   string   `json:"userName"`
+	Email      string   `json:"email"`
+	AvatarURL  string   `json:"avatarURL"`
+	UserSkills []string `json:"userSkills"`
 }
 
 type TeamListResponse struct {
