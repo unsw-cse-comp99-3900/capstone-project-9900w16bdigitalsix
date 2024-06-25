@@ -72,7 +72,6 @@ const Header = () => {
 
     fetchUserData();
   }, []);
-  const [sidebarOpen, setSidebarOpen] = useState(true); // 跟踪侧边栏是否展开
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const Handletoggle = () => {
@@ -80,6 +79,11 @@ const Header = () => {
   };
   const showMobilemenu = () => {
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
+  };
+
+  const handleLogout = () => {
+    localStorage.clear(); // clear localStorage
+    window.location.href = '/login';
   };
 
   return (
@@ -158,7 +162,9 @@ const Header = () => {
               Profile</DropdownItem>
             <DropdownItem divider />
             <DropdownItem
-            href="/login">
+              href="/login"
+              onClick={handleLogout}
+            >
               Logout</DropdownItem>
           </DropdownMenu>
         </Dropdown>
