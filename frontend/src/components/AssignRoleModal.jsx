@@ -7,14 +7,14 @@ import MessageAlert from './MessageAlert';
 
 const { Option } = Select;
 
-const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => { // 添加 refreshData 作为参数
+const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
 
   const handleRoleChange = (value) => {
-    setSelectedRole(parseInt(value, 10)); // 确保转换为整数
+    setSelectedRole(parseInt(value, 10));
   };
 
   const handleSubmit = async () => {
@@ -22,7 +22,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => { //
       setSnackbarContent('Please select a role');
       setAlertType('error');
       setAlertOpen(true);
-      return; // 确保没有选择角色时不会继续执行
+      return;
     }
 
     const token = localStorage.getItem('token');
@@ -30,7 +30,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => { //
       setSnackbarContent('Please login first');
       setAlertType('error');
       setAlertOpen(true);
-      return; // 确保没有token时不会继续执行
+      return;
     }
 
     const response = await apiCall('POST', 'v1/admin/modify/user/role', {
@@ -47,7 +47,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => { //
       setAlertType('success');
       setAlertOpen(true);
       onOk();
-      refreshData(); // 调用父组件传递的 refreshData 函数
+      refreshData();
     }
   };
 
