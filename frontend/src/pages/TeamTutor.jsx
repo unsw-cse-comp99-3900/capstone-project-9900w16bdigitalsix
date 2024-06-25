@@ -185,7 +185,7 @@ export default function TeamTutor() {
                       column: 2,
                     }}
                     renderItem={(item) => (
-                      <List.Item key={item.userId}>
+                      <List.Item key={item.userId} style={{ marginTop: '16px' }}>
                         <List.Item.Meta
                           avatar={
                             <Avatar
@@ -198,7 +198,7 @@ export default function TeamTutor() {
                               Email: {item.email}
                               <br />
                               Skills:
-                              <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
+                              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                                 {item.userSkills && item.userSkills.map((skill, index) => (
                                   <Chip key={index} label={skill} variant="outlined" />
                                 ))}
