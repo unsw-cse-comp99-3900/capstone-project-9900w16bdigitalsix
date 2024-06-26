@@ -51,7 +51,7 @@ const Profile = (props) => {
     const [alertType, setAlertType] = useState('');
     const [snackbarContent, setSnackbarContent] = useState('');
     const [avatar, setAvatar] = useState('');
-
+    const [isAvatar, setIsAvatar] = useState(false);
     useEffect(() => {
         const fetchUserData = async () => {
             const userId = localStorage.getItem('userId');
@@ -78,12 +78,15 @@ const Profile = (props) => {
                         const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
                         const imageDataUrl = await fileToDataUrl(imageFile);
                         setAvatar(imageDataUrl);
+                        setIsAvatar(!isAvatar);
                     } catch (imageError) {
                         console.error('Failed to fetch image:', imageError);
                         setAvatar(null);
+                        setIsAvatar(!isAvatar);
                     }
                 } else {
                     setAvatar(null);
+                    setIsAvatar(!isAvatar);
                 }
                 } else {
                     setSnackbarContent('Failed to fetch user data');
@@ -171,6 +174,7 @@ const handleFileChange = async (event) => {
     try {
         const dataUrl = await fileToDataUrl(file);
         setAvatar(dataUrl);
+        setIsAvatar(!isAvatar);
     } catch (error) {
         setSnackbarContent('Failed to upload image: ' + error.message);
         setAlertType('error');
@@ -248,11 +252,11 @@ const handleFileChange = async (event) => {
       <div className="contentArea"  style={contentAreaStyle}>
         <div className="d-mg-none" style={headerStyleLg}>
                 {/********Header**********/}
-                <Header />
+                <Header isAvatar={isAvatar} setIsAvatar={setIsAvatar}/>
             </div>
             <div className="d-lg-none" style={headerStyleMd}>
                 {/********Header**********/}
-                <Header />
+                <Header isAvatar={isAvatar} setIsAvatar={setIsAvatar}/>
             </div>
         {/********Middle Content**********/}
         <Container className="p-4 wrapper" fluid>

@@ -20,7 +20,8 @@ import { apiCall, fileToDataUrl } from '../helper';
 import MessageAlert from '../components/MessageAlert';
 import { Avatar } from '@mui/material';
 
-const Header = () => {
+const Header = (props) => {
+  const {isAvatar, setIsAvatar} = props;
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userId, setUserId] = useState('');
@@ -71,7 +72,7 @@ const Header = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [isAvatar]);
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const Handletoggle = () => {

@@ -46,7 +46,7 @@ const FullLayout = () => {
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
             {/* add code here */}
-            hey
+            dashboard
           </Container>
         </div>
       </div>
