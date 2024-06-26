@@ -164,8 +164,10 @@ const Profile = (props) => {
         };
 
         saveUserData();
+        setIsAvatar(!isAvatar);
     } else {
         setEditable(!editable);
+        setIsAvatar(!isAvatar);
     }
 };
 
@@ -252,11 +254,11 @@ const handleFileChange = async (event) => {
       <div className="contentArea"  style={contentAreaStyle}>
         <div className="d-mg-none" style={headerStyleLg}>
                 {/********Header**********/}
-                <Header isAvatar={isAvatar} setIsAvatar={setIsAvatar}/>
+                <Header isAvatar={isAvatar} setIsAvatar={setIsAvatar} avatar={avatar} setAvatar={setAvatar}/>
             </div>
             <div className="d-lg-none" style={headerStyleMd}>
                 {/********Header**********/}
-                <Header isAvatar={isAvatar} setIsAvatar={setIsAvatar}/>
+                <Header isAvatar={isAvatar} setIsAvatar={setIsAvatar} avatar={avatar} setAvatar={setAvatar}/>
             </div>
         {/********Middle Content**********/}
         <Container className="p-4 wrapper" fluid>

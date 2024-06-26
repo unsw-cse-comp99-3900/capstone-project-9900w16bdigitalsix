@@ -13,19 +13,18 @@ import {
   Dropdown,
   Button,
 } from "reactstrap";
-import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowhite.svg";
+// import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowhite.svg";
 import cap from "../assets/images/logos/cap_white.png";
-import user1 from "../assets/images/users/user1.jpg";
+// import user1 from "../assets/images/users/user1.jpg";
 import { apiCall, fileToDataUrl } from '../helper';
 import MessageAlert from '../components/MessageAlert';
 import { Avatar } from '@mui/material';
 
-const Header = (props) => {
-  const {isAvatar, setIsAvatar} = props;
+const Header = ({ isAvatar, setIsAvatar, avatar, setAvatar }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [userId, setUserId] = useState('');
-  const [avatar, setAvatar] = useState('');
+  // const [userId, setUserId] = useState('');
+  // const [avatar, setAvatar] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
@@ -45,7 +44,7 @@ const Header = (props) => {
             try {
               const imageResponse = await fetch(imagePath);
               if (!imageResponse.ok) {
-                  throw new Error('Failed to fetch image');
+                throw new Error('Failed to fetch image');
               }
               const imageBlob = await imageResponse.blob();
               const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
@@ -72,7 +71,7 @@ const Header = (props) => {
     };
 
     fetchUserData();
-  }, [isAvatar]);
+  }, [setAvatar]);
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const Handletoggle = () => {
