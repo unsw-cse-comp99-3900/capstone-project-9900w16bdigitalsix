@@ -515,12 +515,15 @@ func UpdateUserInfo(c *gin.Context) {
 		filename = path.Base(parsedURL.Path)
 	}
 
-	// 解析 base64 图片， 并保存
-	outputDir := global.ServerConfig.PicturePath
-
-	_, url, err := util.SaveBase64Image(profileReq.Profile.Avatarbase64, filename, outputDir)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save picture"})
+	url := ""
+	if (profileReq.Profile.Avatarbase64 != "") {
+		// 解析 base64 图片， 并保存
+		outputDir := global.ServerConfig.PicturePath
+		var err error
+		_, url, err = util.SaveBase64Image(profileReq.Profile.Avatarbase64, filename, outputDir)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save picture"})
+		}
 	}
 
 	// 更新用户信息
