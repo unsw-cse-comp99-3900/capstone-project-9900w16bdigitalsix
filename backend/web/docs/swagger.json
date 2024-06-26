@@ -975,7 +975,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Change Password",
                 "parameters": [
@@ -1039,7 +1039,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Reset password (send email)",
                 "parameters": [
@@ -1103,7 +1103,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Update User Profile",
                 "parameters": [
@@ -1167,7 +1167,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Get User Profile",
                 "parameters": [
@@ -1208,7 +1208,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "User Login",
                 "parameters": [
@@ -1272,7 +1272,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "User register（send email）",
                 "parameters": [
@@ -1336,7 +1336,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "User register (verify email)",
                 "parameters": [
@@ -1387,7 +1387,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Reset Password",
                 "parameters": [
@@ -1442,7 +1442,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Get all students List",
                 "responses": {

@@ -1004,7 +1004,7 @@ paths:
             type: object
       summary: Change Password
       tags:
-      - User
+      - Personal Management
   /v1/user/forget_password/send_email:
     post:
       consumes:
@@ -1046,7 +1046,7 @@ paths:
             type: object
       summary: Reset password (send email)
       tags:
-      - User
+      - Personal Management
   /v1/user/modify/profile:
     post:
       consumes:
@@ -1088,7 +1088,7 @@ paths:
             type: object
       summary: Update User Profile
       tags:
-      - User
+      - Personal Management
   /v1/user/profile/{user_id}:
     get:
       consumes:
@@ -1115,7 +1115,7 @@ paths:
             type: object
       summary: Get User Profile
       tags:
-      - User
+      - Personal Management
   /v1/user/pwd_login:
     post:
       consumes:
@@ -1160,7 +1160,7 @@ paths:
             type: object
       summary: User Login
       tags:
-      - User
+      - Personal Management
   /v1/user/register/send_email:
     post:
       consumes:
@@ -1202,7 +1202,7 @@ paths:
             type: object
       summary: User register（send email）
       tags:
-      - User
+      - Personal Management
   /v1/user/register/verify:
     get:
       consumes:
@@ -1236,7 +1236,7 @@ paths:
             type: object
       summary: User register (verify email)
       tags:
-      - User
+      - Personal Management
   /v1/user/reset/password:
     post:
       consumes:
@@ -1272,7 +1272,7 @@ paths:
             type: object
       summary: Reset Password
       tags:
-      - User
+      - Personal Management
   /v1/user/student/list:
     get:
       consumes:
@@ -1296,5 +1296,5 @@ paths:
             type: object
       summary: Get all students List
       tags:
-      - User
+      - Personal Management
 swagger: "2.0"

@@ -31,7 +31,6 @@ func UserRouter(Router *gin.RouterGroup) {
 		UserRouter.POST("/modify/profile", controllers.UpdateUserInfo)
 		UserRouter.GET("/profile/:user_id", controllers.GetPersonProfile)
 		UserRouter.GET("/student/list", controllers.GetAllStudents)
-		UserRouter.GET("/get/all/list", controllers.GetAllUsersInfo)
 	}
 }
 
