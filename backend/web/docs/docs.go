@@ -488,6 +488,41 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/student/unassigned/list": {
+            "get": {
+                "description": "返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get all students unassigned list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.StudentListResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch users\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/team/create": {
             "post": {
                 "description": "创建 team, 并且创建人加入了 team, 后端随机生成 teamName, 存入了数据库",
@@ -951,7 +986,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Change Password",
                 "parameters": [
@@ -1015,7 +1050,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Reset password (send email)",
                 "parameters": [
@@ -1079,7 +1114,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Update User Profile",
                 "parameters": [
@@ -1143,7 +1178,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Get User Profile",
                 "parameters": [
@@ -1184,7 +1219,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "User Login",
                 "parameters": [
@@ -1248,7 +1283,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "User register（send email）",
                 "parameters": [
@@ -1312,7 +1347,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "User register (verify email)",
                 "parameters": [
@@ -1363,7 +1398,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Reset Password",
                 "parameters": [
@@ -1418,7 +1453,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Get all students List",
                 "responses": {
@@ -1872,6 +1907,12 @@ const docTemplate = `{
                 },
                 "teamName": {
                     "type": "string"
+                },
+                "teamSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

@@ -282,6 +282,10 @@ definitions:
         type: integer
       teamName:
         type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
     type: object
   response.TeamMember:
     properties:
@@ -636,6 +640,30 @@ paths:
       summary: Modify project detail information
       tags:
       - Project
+  /v1/student/unassigned/list:
+    get:
+      consumes:
+      - application/json
+      description: 返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client,
+        4表示convenor, 5表示admin
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.StudentListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch users"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all students unassigned list
+      tags:
+      - User
   /v1/team/create:
     post:
       consumes:
@@ -976,7 +1004,7 @@ paths:
             type: object
       summary: Change Password
       tags:
-      - User
+      - Personal Management
   /v1/user/forget_password/send_email:
     post:
       consumes:
@@ -1018,7 +1046,7 @@ paths:
             type: object
       summary: Reset password (send email)
       tags:
-      - User
+      - Personal Management
   /v1/user/modify/profile:
     post:
       consumes:
@@ -1060,7 +1088,7 @@ paths:
             type: object
       summary: Update User Profile
       tags:
-      - User
+      - Personal Management
   /v1/user/profile/{user_id}:
     get:
       consumes:
@@ -1087,7 +1115,7 @@ paths:
             type: object
       summary: Get User Profile
       tags:
-      - User
+      - Personal Management
   /v1/user/pwd_login:
     post:
       consumes:
@@ -1132,7 +1160,7 @@ paths:
             type: object
       summary: User Login
       tags:
-      - User
+      - Personal Management
   /v1/user/register/send_email:
     post:
       consumes:
@@ -1174,7 +1202,7 @@ paths:
             type: object
       summary: User register（send email）
       tags:
-      - User
+      - Personal Management
   /v1/user/register/verify:
     get:
       consumes:
@@ -1208,7 +1236,7 @@ paths:
             type: object
       summary: User register (verify email)
       tags:
-      - User
+      - Personal Management
   /v1/user/reset/password:
     post:
       consumes:
@@ -1244,7 +1272,7 @@ paths:
             type: object
       summary: Reset Password
       tags:
-      - User
+      - Personal Management
   /v1/user/student/list:
     get:
       consumes:
@@ -1268,5 +1296,5 @@ paths:
             type: object
       summary: Get all students List
       tags:
-      - User
+      - Personal Management
 swagger: "2.0"

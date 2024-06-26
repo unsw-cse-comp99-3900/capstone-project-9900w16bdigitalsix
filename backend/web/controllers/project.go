@@ -82,7 +82,7 @@ func CreateProject(c *gin.Context) {
 		Name:        title,
 		Field:       field,
 		Description: description,
-		CreatedBy:   &clientID, // 存储创建者ID
+		Owner:   &clientID, // 存储创建者ID
 	}
 
 	// 如果有上传文件，则保存文件名和文件路径
@@ -160,7 +160,7 @@ func GetProjectList(c *gin.Context) {
 		}
 
 		client := models.User{}
-		if err := global.DB.Where("id = ?", project.CreatedBy).First(&client).Error; err != nil {
+		if err := global.DB.Where("id = ?", project.Owner).First(&client).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -170,7 +170,7 @@ func GetProjectList(c *gin.Context) {
 			Title:          project.Name,
 			ClientName:     client.Username,
 			ClientEmail:    client.Email,
-			UserID:         *project.CreatedBy,
+			UserID:         *project.Owner,
 			RequiredSkills: skills,
 			Field:          project.Field,
 			AllocatedTeam:  teams,
@@ -212,7 +212,7 @@ func GetProjectDetail(c *gin.Context) {
 	}
 
 	client := models.User{}
-	if err := global.DB.Where("id = ?", project.CreatedBy).First(&client).Error; err != nil {
+	if err := global.DB.Where("id = ?", project.Owner).First(&client).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -222,7 +222,7 @@ func GetProjectDetail(c *gin.Context) {
 		Title:          project.Name,
 		ClientName:     client.Username,
 		ClientEmail:    client.Email,
-		UserID:         *project.CreatedBy,
+		UserID:         *project.Owner,
 		RequiredSkills: skills,
 		Field:          project.Field,
 		Description:    project.Description,
@@ -339,7 +339,7 @@ func ModifyProjectDetail(c *gin.Context) {
 	project.Field = field
 	project.Description = description
 	project.FileURL = fileURL
-	project.CreatedBy = &user.ID
+	project.Owner = &user.ID
 
 	// 更新技能 关联表(project_skills）
 	var skills []models.Skill

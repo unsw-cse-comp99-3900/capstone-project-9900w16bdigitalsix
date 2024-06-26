@@ -31,6 +31,7 @@ type StudentListResponse struct {
 type TeamListResponse struct {
 	TeamID   uint   `json:"teamId"`
 	TeamName string `json:"teamName"`
+	TeamSkills []string `json:"teamSkills"`
 }
 
 type UserListResponse struct {
