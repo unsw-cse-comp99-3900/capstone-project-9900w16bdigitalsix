@@ -6,29 +6,29 @@ import {
   Nav,
   NavItem,
   NavbarBrand,
-  UncontrolledDropdown,
+  // UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
   Dropdown,
   Button,
 } from "reactstrap";
-import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowhite.svg";
+// import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowhite.svg";
 import cap from "../assets/images/logos/cap_white.png";
-import user1 from "../assets/images/users/user1.jpg";
-import { apiCall, fileToDataUrl } from '../helper';
-import MessageAlert from '../components/MessageAlert';
-import { Avatar } from '@mui/material';
+// import user1 from "../assets/images/users/user1.jpg";
+import { apiCall, fileToDataUrl } from "../helper";
+import MessageAlert from "../components/MessageAlert";
+import { Avatar } from "@mui/material";
 
-const Header = (props) => {
-  const {isAvatar, setIsAvatar} = props;
+const Header = ({ isAvatar, setIsAvatar, avatar, setAvatar }) => {
+  // const { isAvatar, setIsAvatar } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [userId, setUserId] = useState('');
-  const [avatar, setAvatar] = useState('');
+  // const [userId, setUserId] = useState("");
+  // const [avatar, setAvatar] = useState("");
   const [alertOpen, setAlertOpen] = useState(false);
-  const [alertType, setAlertType] = useState('');
-  const [snackbarContent, setSnackbarContent] = useState('');
+  const [alertType, setAlertType] = useState("");
+  const [snackbarContent, setSnackbarContent] = useState("");
 
   const handleAlertClose = () => {
     setAlertOpen(false);
@@ -36,43 +36,51 @@ const Header = (props) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const userId = localStorage.getItem('userId');
+      const userId = localStorage.getItem("userId");
       try {
-        const response = await apiCall('GET', `v1/user/profile/${userId}`, null, localStorage.getItem('token'), true);
+        const response = await apiCall(
+          "GET",
+          `v1/user/profile/${userId}`,
+          null,
+          localStorage.getItem("token"),
+          true
+        );
         if (response) {
-          const imagePath = response.avatarURL; 
+          const imagePath = response.avatarURL;
           if (imagePath) {
             try {
               const imageResponse = await fetch(imagePath);
               if (!imageResponse.ok) {
-                  throw new Error('Failed to fetch image');
+                throw new Error("Failed to fetch image");
               }
               const imageBlob = await imageResponse.blob();
-              const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
+              const imageFile = new File([imageBlob], "avatar.png", {
+                type: imageBlob.type,
+              });
               const imageDataUrl = await fileToDataUrl(imageFile);
               setAvatar(imageDataUrl);
             } catch (imageError) {
-              console.error('Failed to fetch image:', imageError);
+              console.error("Failed to fetch image:", imageError);
               setAvatar(null);
             }
           } else {
             setAvatar(null);
           }
         } else {
-          setSnackbarContent('Failed to fetch user data');
-          setAlertType('error');
+          setSnackbarContent("Failed to fetch user data");
+          setAlertType("error");
           setAlertOpen(true);
         }
       } catch (error) {
-        console.error('Failed to fetch user data:', error);
-        setSnackbarContent('Failed to fetch user data');
-        setAlertType('error');
+        console.error("Failed to fetch user data:", error);
+        setSnackbarContent("Failed to fetch user data");
+        setAlertType("error");
         setAlertOpen(true);
       }
     };
 
     fetchUserData();
-  }, [isAvatar]);
+  }, [setAvatar]);
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const Handletoggle = () => {
@@ -84,7 +92,7 @@ const Header = (props) => {
 
   const handleLogout = () => {
     localStorage.clear(); // clear localStorage
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
   return (
@@ -92,7 +100,11 @@ const Header = (props) => {
       <div className="d-flex align-items-center">
         <NavbarBrand href="/" className="d-lg-none">
           {/* <LogoWhite /> */}
-          <img src={cap} alt="small_logo" style={{ width: '30px', height: '30px' }}/>
+          <img
+            src={cap}
+            alt="small_logo"
+            style={{ width: "30px", height: "30px" }}
+          />
         </NavbarBrand>
         <Button
           color="primary"
@@ -103,11 +115,7 @@ const Header = (props) => {
         </Button>
       </div>
       <div className="hstack gap-2 d-lg-none">
-        <Button
-          color="primary"
-          size="sm"
-          onClick={Handletoggle}
-        >
+        <Button color="primary" size="sm" onClick={Handletoggle}>
           {isOpen ? (
             <i className="bi bi-x"></i>
           ) : (
@@ -150,23 +158,15 @@ const Header = (props) => {
               className="rounded-circle"
               width="30"
             ></img> */}
-            <Avatar
-                src={avatar}
-                alt="Profile"
-                sx={{ width: 30, height: 30 }}
-            />
+            <Avatar src={avatar} alt="Profile" sx={{ width: 30, height: 30 }} />
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem header>Info</DropdownItem>
-            <DropdownItem
-            href="/profile">
-              Profile</DropdownItem>
+            <DropdownItem href="/profile">Profile</DropdownItem>
             <DropdownItem divider />
-            <DropdownItem
-              href="/login"
-              onClick={handleLogout}
-            >
-              Logout</DropdownItem>
+            <DropdownItem href="/login" onClick={handleLogout}>
+              Logout
+            </DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </Collapse>
