@@ -62,10 +62,10 @@ const Profile = (props) => {
                     setName(response.name);
                     setUserId(response.userId);
                     setRole(roleMap[response.role] || 'Student');
-                    setBio(response.bio ? response.bio : 'Null');
-                    setOrganization(response.organization ? response.organization : 'Null');
+                    setBio(response.bio );
+                    setOrganization(response.organization);
                     setSkills(response.skills);
-                    setField(response.field ? response.field : 'Null');
+                    setField(response.field);
                     console.log("response:", response);
                     const imagePath = response.avatarURL; 
                 if (imagePath) {
@@ -116,11 +116,10 @@ const Profile = (props) => {
       setAlertOpen(false);
     };
 
-  const handleEditClick = () => {
-    if (editable) {
-        // Save the edited data
-        const saveUserData = async () => {
-            const payload = {
+    const handleEditClick = () => {
+        if (editable) {
+            const confirmUpdate = async () => {
+                const payload = {
                     profile: {
                         avatarBase64: avatar, // Ensure the avatar is in the correct format
                         bio: bio,
@@ -131,45 +130,55 @@ const Profile = (props) => {
                         skills: skills,
                         userId: parseInt(userId, 10)
                     }
-            };
-
-            if (!bio || !field || !name || !organization || !skills) {
-                setSnackbarContent('All fields are required. Please fill in all fields.');
-                setAlertType('error');
-                setAlertOpen(true);
-            } else if (!avatar) {
-                setSnackbarContent('Please update avatar.');
-                setAlertType('error');
-                setAlertOpen(true);
-            } else {
-                try {
-                    const response = await apiCall('POST', 'v1/user/modify/profile', payload, localStorage.getItem('token'), true);
-                    if (response.msg) {
-                        setSnackbarContent('User profile updated successfully');
-                        setAlertType('success');
+                };
+    
+                // Check if required fields are empty and ask for confirmation
+                if (!bio || !field || !name || !organization || !skills || !avatar) {
+                    if (window.confirm("Some fields are empty. Are you sure you want to update?")) {
+                        try {
+                            const response = await apiCall('POST', 'v1/user/modify/profile', payload, localStorage.getItem('token'), true);
+                            if (response.msg) {
+                                setSnackbarContent('User profile updated successfully');
+                                setAlertType('success');
+                            } else {
+                                setSnackbarContent(response.error || 'Failed to update user profile');
+                                setAlertType('error');
+                            }
+                        } catch (error) {
+                            console.error('Failed to update user profile:', error);
+                            setSnackbarContent('Failed to update user profile');
+                            setAlertType('error');
+                        } finally {
+                            setAlertOpen(true);
+                            setEditable(!editable);
+                        }
+                    }
+                } else {
+                    try {
+                        const response = await apiCall('POST', 'v1/user/modify/profile', payload, localStorage.getItem('token'), true);
+                        if (response.msg) {
+                            setSnackbarContent('User profile updated successfully');
+                            setAlertType('success');
+                        } else {
+                            setSnackbarContent(response.error || 'Failed to update user profile');
+                            setAlertType('error');
+                        }
+                    } catch (error) {
+                        console.error('Failed to update user profile:', error);
+                        setSnackbarContent('Failed to update user profile');
+                        setAlertType('error');
+                    } finally {
                         setAlertOpen(true);
                         setEditable(!editable);
-                    } else {
-                        setSnackbarContent(response.error || 'Failed to update user profile');
-                        setAlertType('error');
-                        setAlertOpen(true);
                     }
-                } catch (error) {
-                    console.error('Failed to update user profile:', error);
-                    setSnackbarContent('Failed to update user profile');
-                    setAlertType('error');
-                    setAlertOpen(true);
                 }
-            }
-        };
-
-        saveUserData();
-        setIsAvatar(!isAvatar);
-    } else {
-        setEditable(!editable);
-        setIsAvatar(!isAvatar);
-    }
-};
+            };
+    
+            confirmUpdate();
+        } else {
+            setEditable(!editable);
+        }
+    };    
 
 const handleFileChange = async (event) => {
     const file = event.target.files[0];

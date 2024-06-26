@@ -986,7 +986,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Change Password",
                 "parameters": [
@@ -1050,7 +1050,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Reset password (send email)",
                 "parameters": [
@@ -1114,7 +1114,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Update User Profile",
                 "parameters": [
@@ -1178,7 +1178,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Get User Profile",
                 "parameters": [
@@ -1219,7 +1219,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "User Login",
                 "parameters": [
@@ -1283,7 +1283,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "User register（send email）",
                 "parameters": [
@@ -1347,7 +1347,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "User register (verify email)",
                 "parameters": [
@@ -1398,7 +1398,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Reset Password",
                 "parameters": [
@@ -1453,7 +1453,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Personal Management"
                 ],
                 "summary": "Get all students List",
                 "responses": {
