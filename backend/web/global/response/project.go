@@ -6,27 +6,39 @@ type AllocatedTeam struct {
 }
 
 type GetProjectListResponse struct {
-	ProjectID      uint            `json:"projectId"`
-	Title          string          `json:"title"`
-	ClientName     string          `json:"clientName"`
-	ClientEmail    string          `json:"clientEmail"`
-	UserID         uint            `json:"userId"`
-	RequiredSkills []string        `json:"requiredSkills"`
-	Field          string          `json:"field"`
-	AllocatedTeam  []AllocatedTeam `json:"allocatedTeam"`
+	ProjectID        uint            `json:"projectId"`
+	Title            string          `json:"title"`
+	ClientID         uint            `json:"clientId"`
+	ClientName       string          `json:"clientName"`
+	ClientEmail      string          `json:"clientEmail"`
+	TutorID          uint            `json:"tutorId"`
+	TutorName        string          `json:"tutorName"`
+	TutorEmail       string          `json:"tutorEmail"`
+	CoordinatorID    uint            `json:"coorId"`
+	CoordinatorName  string          `json:"coorName"`
+	CoordinatorEmail string          `json:"coorEmail"`
+	RequiredSkills   []string        `json:"requiredSkills"`
+	Field            string          `json:"field"`
+	AllocatedTeam    []AllocatedTeam `json:"allocatedTeam"`
 }
 
 type ProjectDetailResponse struct {
-	ProjectID      uint            `json:"projectId"`
-	Title          string          `json:"title"`
-	ClientName     string          `json:"clientName"`
-	ClientEmail    string          `json:"clientEmail"`
-	UserID         uint            `json:"userId"`
-	RequiredSkills []string        `json:"requiredSkills"`
-	Field          string          `json:"field"`
-	Description    string          `json:"description"`
-	SpecLink       string          `json:"specLink"`
-	AllocatedTeam  []AllocatedTeam `json:"allocatedTeam"`
+	ProjectID        uint            `json:"projectId"`
+	Title            string          `json:"title"`
+	ClientName       string          `json:"clientName"`
+	ClientEmail      string          `json:"clientEmail"`
+	ClientID         uint            `json:"clientId"`
+	TutorID          uint            `json:"tutorId"`
+	TutorName        string          `json:"tutorName"`
+	TutorEmail       string          `json:"tutorEmail"`
+	CoordinatorID    uint            `json:"coorId"`
+	CoordinatorName  string          `json:"coorName"`
+	CoordinatorEmail string          `json:"coorEmail"`
+	RequiredSkills   []string        `json:"requiredSkills"`
+	Field            string          `json:"field"`
+	Description      string          `json:"description"`
+	SpecLink         string          `json:"specLink"`
+	AllocatedTeam    []AllocatedTeam `json:"allocatedTeam"`
 }
 
 type ModifyProjectDetailResponse struct {

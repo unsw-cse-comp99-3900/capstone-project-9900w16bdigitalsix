@@ -8,7 +8,17 @@ import (
 	"github.com/go-playground/validator"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"web/models"
 )
+
+func ExtractSkillNames(skills []models.Skill) []string {
+    skillNames := make([]string, len(skills))
+    for i, skill := range skills {
+        skillNames[i] = skill.SkillName
+    }
+    return skillNames
+}
 
 func HandleValidatorError(ctx *gin.Context, err error) {
 	errs, ok := err.(validator.ValidationErrors)

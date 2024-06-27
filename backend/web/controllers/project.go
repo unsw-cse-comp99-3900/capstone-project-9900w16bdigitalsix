@@ -82,7 +82,7 @@ func CreateProject(c *gin.Context) {
 		Name:        title,
 		Field:       field,
 		Description: description,
-		Owner:   &clientID, // 存储创建者ID
+		ClientID:    &clientID, // 存储创建者ID
 	}
 
 	// 如果有上传文件，则保存文件名和文件路径
@@ -137,47 +137,52 @@ func CreateProject(c *gin.Context) {
 // @Router /v1/project/get/public_project/list [get]
 func GetProjectList(c *gin.Context) {
 	var projects []models.Project
+    if err := global.DB.Preload("Teams").Preload("Skills").Where("is_public = ?", 1).Find(&projects).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve projects"})
+        return
+    }
 
-	if err := global.DB.Preload("Skills").Preload("Teams").Where("is_public = ?", 1).Find(&projects).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+    var projectResponses []response.ProjectDetailResponse
+    for _, project := range projects {
+        var client models.User
+        var tutor models.User
+        var coordinator models.User
 
-	var responseList []response.GetProjectListResponse
+        global.DB.First(&client, project.ClientID)
+        global.DB.First(&tutor, project.TutorID)
+        global.DB.First(&coordinator, project.CoordinatorID)
 
-	for _, project := range projects {
-		var skills []string
-		for _, skill := range project.Skills {
-			skills = append(skills, skill.SkillName)
-		}
+        allocatedTeams := []response.AllocatedTeam{}
+        for _, team := range project.Teams {
+            allocatedTeams = append(allocatedTeams, response.AllocatedTeam{
+                TeamID:   team.ID,
+                TeamName: team.Name,
+            })
+        }
 
-		var teams []response.AllocatedTeam
-		for _, team := range project.Teams {
-			teams = append(teams, response.AllocatedTeam{
-				TeamID:   team.ID,
-				TeamName: team.Name,
-			})
-		}
+        projectResponse := response.ProjectDetailResponse{
+            ProjectID:        project.ID,
+            Title:            project.Name,
+            ClientName:       client.Username,
+            ClientEmail:      client.Email,
+            ClientID:         client.ID,
+            TutorID:          tutor.ID,
+            TutorName:        tutor.Username,
+            TutorEmail:       tutor.Email,
+            CoordinatorID:    coordinator.ID,
+            CoordinatorName:  coordinator.Username,
+            CoordinatorEmail: coordinator.Email,
+            RequiredSkills:   ExtractSkillNames(project.Skills),
+            Field:            project.Field,
+            Description:      project.Description,
+            SpecLink:         project.FileURL,
+            AllocatedTeam:    allocatedTeams,
+        }
 
-		client := models.User{}
-		if err := global.DB.Where("id = ?", project.Owner).First(&client).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+        projectResponses = append(projectResponses, projectResponse)
+    }
 
-		responseList = append(responseList, response.GetProjectListResponse{
-			ProjectID:      project.ID,
-			Title:          project.Name,
-			ClientName:     client.Username,
-			ClientEmail:    client.Email,
-			UserID:         *project.Owner,
-			RequiredSkills: skills,
-			Field:          project.Field,
-			AllocatedTeam:  teams,
-		})
-	}
-
-	c.JSON(http.StatusOK, responseList)
+    c.JSON(http.StatusOK, projectResponses)
 }
 
 // @Summary Get project detail by projectID
@@ -190,47 +195,49 @@ func GetProjectList(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error": "Internal Server Error"}"
 // @Router /v1/project/detail/{projectId} [get]
 func GetProjectDetail(c *gin.Context) {
-	projectId := c.Param("projectId")
-
 	var project models.Project
-	if err := global.DB.Preload("Skills").Preload("Teams").Where("id = ?", projectId).First(&project).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
-		return
-	}
+    projectId := c.Param("projectId")
+    if err := global.DB.Preload("Teams").Preload("Skills").First(&project, projectId).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
+        return
+    }
 
-	var skills []string
-	for _, skill := range project.Skills {
-		skills = append(skills, skill.SkillName)
-	}
+    var client models.User
+    var tutor models.User
+    var coordinator models.User
 
-	var teams []response.AllocatedTeam
-	for _, team := range project.Teams {
-		teams = append(teams, response.AllocatedTeam{
-			TeamID:   team.ID,
-			TeamName: team.Name,
-		})
-	}
+    global.DB.First(&client, project.ClientID)
+    global.DB.First(&tutor, project.TutorID)
+    global.DB.First(&coordinator, project.CoordinatorID)
 
-	client := models.User{}
-	if err := global.DB.Where("id = ?", project.Owner).First(&client).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+    allocatedTeams := []response.AllocatedTeam{}
+    for _, team := range project.Teams {
+        allocatedTeams = append(allocatedTeams, response.AllocatedTeam{
+            TeamID:   team.ID,
+            TeamName: team.Name,
+        })
+    }
 
-	projectDetail := response.ProjectDetailResponse{
-		ProjectID:      project.ID,
-		Title:          project.Name,
-		ClientName:     client.Username,
-		ClientEmail:    client.Email,
-		UserID:         *project.Owner,
-		RequiredSkills: skills,
-		Field:          project.Field,
-		Description:    project.Description,
-		SpecLink:       project.FileURL,
-		AllocatedTeam:  teams,
-	}
+    response := response.ProjectDetailResponse{
+        ProjectID:        project.ID,
+        Title:            project.Name,
+        ClientName:       client.Username,
+        ClientEmail:      client.Email,
+        ClientID:         client.ID,
+        TutorID:          tutor.ID,
+        TutorName:        tutor.Username,
+        TutorEmail:       tutor.Email,
+        CoordinatorID:    coordinator.ID,
+        CoordinatorName:  coordinator.Username,
+        CoordinatorEmail: coordinator.Email,
+        RequiredSkills:   ExtractSkillNames(project.Skills),
+        Field:            project.Field,
+        Description:      project.Description,
+        SpecLink:         project.FileURL,
+        AllocatedTeam:    allocatedTeams,
+    }
 
-	c.JSON(http.StatusOK, projectDetail)
+    c.JSON(http.StatusOK, response)
 }
 
 // DeleteProject godoc
@@ -339,7 +346,7 @@ func ModifyProjectDetail(c *gin.Context) {
 	project.Field = field
 	project.Description = description
 	project.FileURL = fileURL
-	project.Owner = &user.ID
+	project.ClientID = &user.ID
 
 	// 更新技能 关联表(project_skills）
 	var skills []models.Skill
