@@ -1744,6 +1744,9 @@ const docTemplate = `{
                 "teamId": {
                     "type": "integer"
                 },
+                "teamIdShow": {
+                    "type": "integer"
+                },
                 "teamMember": {
                     "type": "array",
                     "items": {

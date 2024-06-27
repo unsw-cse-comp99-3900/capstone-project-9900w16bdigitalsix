@@ -175,6 +175,8 @@ definitions:
     properties:
       teamId:
         type: integer
+      teamIdShow:
+        type: integer
       teamMember:
         items:
           $ref: '#/definitions/response.TeamMember'

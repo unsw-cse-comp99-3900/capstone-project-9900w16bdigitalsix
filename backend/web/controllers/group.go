@@ -297,6 +297,7 @@ func GetTeamProfile(c *gin.Context) {
 
 	response := response.GetTeamProfileResponse{
 		TeamId:     team.ID,
+		TeamIdShow: team.TeamIdShow,
 		TeamName:   team.Name,
 		TeamMember: teamMembers,
 		TeamSkills: teamSkills,

@@ -24,7 +24,7 @@ type JoinGroupResponse struct {
 
 type JoinTeamResponse struct {
 	TeamId     uint         `json:"teamId"`
-	TeamIdShow uint       `json:"teamIdShow"`
+	TeamIdShow uint         `json:"teamIdShow"`
 	TeamName   string       `json:"teamName"`
 	TeamMember []TeamMember `json:"teamMember"`
 	TeamSkills []string     `json:"teamSkills"`
@@ -32,6 +32,7 @@ type JoinTeamResponse struct {
 
 type GetTeamProfileResponse struct {
 	TeamId     uint         `json:"teamId"`
+	TeamIdShow uint         `json:"teamIdShow"`
 	TeamName   string       `json:"teamName"`
 	TeamMember []TeamMember `json:"teamMember"`
 	TeamSkills []string     `json:"teamSkills"`
