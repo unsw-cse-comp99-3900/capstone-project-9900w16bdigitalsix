@@ -29,6 +29,7 @@ type User struct {
 
 type Team struct {
 	gorm.Model
+	TeamIdShow      uint
 	Name            string
 	TutorID         *uint     `gorm:"default:null"`
 	ProjectID       *uint     `gorm:"default:null"`

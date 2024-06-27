@@ -3,6 +3,7 @@ package controllers
 import (
 	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -13,11 +14,18 @@ import (
 )
 
 func ExtractSkillNames(skills []models.Skill) []string {
-    skillNames := make([]string, len(skills))
-    for i, skill := range skills {
-        skillNames[i] = skill.SkillName
-    }
-    return skillNames
+	skillNames := make([]string, len(skills))
+	for i, skill := range skills {
+		skillNames[i] = skill.SkillName
+	}
+	return skillNames
+}
+
+// GenerateRandomInt 生成6位随机 uint
+func GenerateRandomInt() uint {
+	src := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(src)
+	return uint(r.Intn(900000) + 100000) // 保证生成的整数是6位数
 }
 
 func HandleValidatorError(ctx *gin.Context, err error) {
@@ -69,12 +77,11 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 	}
 }
 
-
 func GenerateRandomNumber(r *rand.Rand) int {
-    // 定义最小和最大值
-    min := 1
-    max := 9999
-    
-    // 生成随机数
-    return r.Intn(max-min+1) + min
+	// 定义最小和最大值
+	min := 1
+	max := 9999
+
+	// 生成随机数
+	return r.Intn(max-min+1) + min
 }

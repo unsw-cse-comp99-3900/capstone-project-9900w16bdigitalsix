@@ -21,12 +21,12 @@ definitions:
     type: object
   forms.JoinTeamForm:
     properties:
-      teamId:
+      teamIdShow:
         type: integer
       userId:
         type: integer
     required:
-    - teamId
+    - teamIdShow
     - userId
     type: object
   forms.PasswordLoginForm:
@@ -127,6 +127,8 @@ definitions:
     properties:
       teamId:
         type: integer
+      teamIdShow:
+        type: integer
       teamMember:
         items:
           $ref: '#/definitions/response.TeamMember'
@@ -142,7 +144,15 @@ definitions:
         type: array
       clientEmail:
         type: string
+      clientId:
+        type: integer
       clientName:
+        type: string
+      coorEmail:
+        type: string
+      coorId:
+        type: integer
+      coorName:
         type: string
       field:
         type: string
@@ -154,8 +164,12 @@ definitions:
         type: array
       title:
         type: string
-      userId:
+      tutorEmail:
+        type: string
+      tutorId:
         type: integer
+      tutorName:
+        type: string
     type: object
   response.GetTeamProfileResponse:
     properties:
@@ -175,6 +189,8 @@ definitions:
   response.JoinTeamResponse:
     properties:
       teamId:
+        type: integer
+      teamIdShow:
         type: integer
       teamMember:
         items:
@@ -229,7 +245,15 @@ definitions:
         type: array
       clientEmail:
         type: string
+      clientId:
+        type: integer
       clientName:
+        type: string
+      coorEmail:
+        type: string
+      coorId:
+        type: integer
+      coorName:
         type: string
       description:
         type: string
@@ -245,8 +269,12 @@ definitions:
         type: string
       title:
         type: string
-      userId:
+      tutorEmail:
+        type: string
+      tutorId:
         type: integer
+      tutorName:
+        type: string
     type: object
   response.StudentInfoResponse:
     properties:
@@ -364,7 +392,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: '修改用户的角色信息, 注意header  Authorization: Bearer <token>'
+      description: '修改用户的角色信息, 注意header  Authorization: Bearer <token>，如果用户离开队伍且队伍没有其他成员，解散队伍并删除'
       parameters:
       - description: Bearer <token>
         in: header

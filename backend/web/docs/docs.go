@@ -79,7 +79,7 @@ const docTemplate = `{
         },
         "/v1/admin/modify/user/role": {
             "post": {
-                "description": "修改用户的角色信息, 注意header  Authorization: Bearer \u003ctoken\u003e",
+                "description": "修改用户的角色信息, 注意header  Authorization: Bearer \u003ctoken\u003e，如果用户离开队伍且队伍没有其他成员，解散队伍并删除",
                 "consumes": [
                     "application/json"
                 ],
@@ -1513,11 +1513,11 @@ const docTemplate = `{
         "forms.JoinTeamForm": {
             "type": "object",
             "required": [
-                "teamId",
+                "teamIdShow",
                 "userId"
             ],
             "properties": {
-                "teamId": {
+                "teamIdShow": {
                     "type": "integer"
                 },
                 "userId": {
@@ -1671,6 +1671,9 @@ const docTemplate = `{
                 "teamId": {
                     "type": "integer"
                 },
+                "teamIdShow": {
+                    "type": "integer"
+                },
                 "teamMember": {
                     "type": "array",
                     "items": {
@@ -1694,7 +1697,19 @@ const docTemplate = `{
                 "clientEmail": {
                     "type": "string"
                 },
+                "clientId": {
+                    "type": "integer"
+                },
                 "clientName": {
+                    "type": "string"
+                },
+                "coorEmail": {
+                    "type": "string"
+                },
+                "coorId": {
+                    "type": "integer"
+                },
+                "coorName": {
                     "type": "string"
                 },
                 "field": {
@@ -1712,8 +1727,14 @@ const docTemplate = `{
                 "title": {
                     "type": "string"
                 },
-                "userId": {
+                "tutorEmail": {
+                    "type": "string"
+                },
+                "tutorId": {
                     "type": "integer"
+                },
+                "tutorName": {
+                    "type": "string"
                 }
             }
         },
@@ -1744,6 +1765,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "teamId": {
+                    "type": "integer"
+                },
+                "teamIdShow": {
                     "type": "integer"
                 },
                 "teamMember": {
@@ -1827,7 +1851,19 @@ const docTemplate = `{
                 "clientEmail": {
                     "type": "string"
                 },
+                "clientId": {
+                    "type": "integer"
+                },
                 "clientName": {
+                    "type": "string"
+                },
+                "coorEmail": {
+                    "type": "string"
+                },
+                "coorId": {
+                    "type": "integer"
+                },
+                "coorName": {
                     "type": "string"
                 },
                 "description": {
@@ -1851,8 +1887,14 @@ const docTemplate = `{
                 "title": {
                     "type": "string"
                 },
-                "userId": {
+                "tutorEmail": {
+                    "type": "string"
+                },
+                "tutorId": {
                     "type": "integer"
+                },
+                "tutorName": {
+                    "type": "string"
                 }
             }
         },

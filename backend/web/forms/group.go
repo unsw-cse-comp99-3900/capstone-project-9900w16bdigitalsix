@@ -17,5 +17,5 @@ type UpdateTeamProfileForm struct {
 
 type JoinTeamForm struct {
 	UserId uint `json:"userId" binding:"required"`
-	TeamId uint `json:"teamId" binding:"required"`
+	TeamIdShow uint `json:"teamIdShow" binding:"required"`
 }

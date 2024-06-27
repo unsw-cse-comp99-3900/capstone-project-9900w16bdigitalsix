@@ -56,10 +56,13 @@ func CreateTeam(c *gin.Context) {
 	// 创建团队名称
 	teamName := fmt.Sprintf("team_%d", randomNum)
 
+	// 生成6位数的teamIdShow
+	teamIdShow := GenerateRandomInt()
 	// 创建团队
 	team := models.Team{
-		Name:    teamName,
-		Members: []models.User{user}, // 将创建者加入团队
+		Name:       teamName,
+		TeamIdShow: teamIdShow,
+		Members:    []models.User{user}, // 将创建者加入团队
 	}
 
 	if err := global.DB.Create(&team).Error; err != nil {
@@ -75,8 +78,9 @@ func CreateTeam(c *gin.Context) {
 
 	// 构建响应数据
 	response := response.CreateTeamResponse{
-		TeamID:   team.ID,
-		TeamName: team.Name,
+		TeamID:     team.ID,
+		TeamName:   team.Name,
+		TeamIdShow: teamIdShow,
 		TeamMember: []response.TeamMember{
 			{
 				UserID:     user.ID,
@@ -189,12 +193,12 @@ func JoinTeam(c *gin.Context) {
 	}
 
 	var team models.Team
-	if err := global.DB.Preload("Members.Skills").Preload("Skills").First(&team, req.TeamId).Error; err != nil {
+	if err := global.DB.Preload("Members.Skills").Preload("Skills").Where("team_id_show = ?", req.TeamIdShow).First(&team).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
 
-	user.BelongsToGroup = &req.TeamId
+	user.BelongsToGroup = &team.ID
 
 	if err := global.DB.Model(&user).Updates(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
@@ -229,6 +233,7 @@ func JoinTeam(c *gin.Context) {
 
 	response := response.JoinTeamResponse{
 		TeamId:     team.ID,
+		TeamIdShow: req.TeamIdShow,
 		TeamName:   team.Name,
 		TeamMember: teamMembers,
 		TeamSkills: teamSkills,
@@ -280,7 +285,7 @@ func GetTeamProfile(c *gin.Context) {
 			UserID:     member.ID,
 			UserName:   member.Username,
 			Email:      member.Email,
-			AvatarURL: member.AvatarURL,
+			AvatarURL:  member.AvatarURL,
 			UserSkills: userSkills,
 		})
 	}
@@ -372,9 +377,9 @@ func GetStudentInfo(ctx *gin.Context) {
 	var studentInfos []response.StudentInfoResponse
 	for _, member := range team.Members {
 		studentInfos = append(studentInfos, response.StudentInfoResponse{
-			ID:         member.ID,
-			Name:       member.Username,
-			Email:      member.Email,
+			ID:        member.ID,
+			Name:      member.Username,
+			Email:     member.Email,
 			AvatarURL: member.AvatarURL,
 		})
 	}
@@ -392,27 +397,27 @@ func GetStudentInfo(ctx *gin.Context) {
 // @Router /v1/team/get/list [get]
 func GetAllTeams(c *gin.Context) {
 	var teams []models.Team
-    if err := global.DB.Preload("Skills").Find(&teams).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
-        return
-    }
+	if err := global.DB.Preload("Skills").Find(&teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
+		return
+	}
 
-    // 映射到返回的结构体
-    var teamResponses []response.TeamListResponse
-    for _, team := range teams {
-        var teamSkills []string
-        for _, skill := range team.Skills {
-            teamSkills = append(teamSkills, skill.SkillName)
-        }
+	// 映射到返回的结构体
+	var teamResponses []response.TeamListResponse
+	for _, team := range teams {
+		var teamSkills []string
+		for _, skill := range team.Skills {
+			teamSkills = append(teamSkills, skill.SkillName)
+		}
 
-        teamResponses = append(teamResponses, response.TeamListResponse{
-            TeamID:    team.ID,
-            TeamName:  team.Name,
-            TeamSkills: teamSkills,
-        })
-    }
+		teamResponses = append(teamResponses, response.TeamListResponse{
+			TeamID:     team.ID,
+			TeamName:   team.Name,
+			TeamSkills: teamSkills,
+		})
+	}
 
-    c.JSON(http.StatusOK, teamResponses)
+	c.JSON(http.StatusOK, teamResponses)
 }
 
 // @Summary Invite User to Team
