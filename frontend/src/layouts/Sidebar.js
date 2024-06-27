@@ -32,6 +32,7 @@ const navigation = [
     title: "Role",
     href: "/admin/role-manage",//need to be implented
     icon: "bi bi-person-check",
+    roles: ["5"],
   },
 ];
 
@@ -56,6 +57,8 @@ const Sidebar = () => {
     overflowY: "auto", 
   };
 
+  const currentUserRole = localStorage.getItem("role");
+
   return (
     <div className="p-3" style={sidebarStyle}>
       <div className="d-flex align-items-center">
@@ -73,7 +76,9 @@ const Sidebar = () => {
       </div>
       <div className="pt-4 mt-2">
         <Nav vertical className="sidebarNav">
-          {navigation.map((navi, index) => (
+          {navigation
+            .filter(navi => !navi.roles || navi.roles.includes(currentUserRole))
+            .map((navi, index) => (
             <NavItem key={index} className="sidenav-bg">
               <Link
                 to={navi.href}
