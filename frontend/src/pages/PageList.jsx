@@ -14,6 +14,7 @@ import VerifyEmail from "./VerifyEmail";
 import Profile from "./Profile";
 
 // team
+import TeamRouter from "./TeamRouter";
 import Team from "./Team";
 import TeamTutor from "./TeamTutor";
 
@@ -46,7 +47,8 @@ const PageList = () => {
         <Route path="/profile" element={<Profile />} />
 
         {/* team */}
-        <Route path="/team" element={<Team token={token} setToken={setToken}/>} />
+        <Route path="/team" element={<TeamRouter token={token} setToken={setToken}/>} />
+        <Route path="/teamstudent" element={<Team token={token} setToken={setToken}/>} />
         <Route path="/teamtutor" element={<TeamTutor token={token} setToken={setToken} />} />
 
         {/* project */}

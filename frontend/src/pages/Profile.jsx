@@ -89,13 +89,13 @@ const Profile = (props) => {
                     setIsAvatar(!isAvatar);
                 }
                 } else {
-                    setSnackbarContent('Failed to fetch user data');
+                    setSnackbarContent('Failed to fetch user data 1');
                     setAlertType('error');
                     setAlertOpen(true);
                 }
             } catch (error) {
                 console.error('Failed to fetch user data:', error);
-                setSnackbarContent('Failed to fetch user data');
+                setSnackbarContent('Failed to fetch user data 2');
                 setAlertType('error');
                 setAlertOpen(true);
             }

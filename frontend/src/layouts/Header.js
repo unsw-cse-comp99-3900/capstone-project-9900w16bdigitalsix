@@ -33,45 +33,48 @@ const Header = ({ isAvatar, setIsAvatar, avatar, setAvatar }) => {
     setAlertOpen(false);
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const userId = localStorage.getItem('userId');
-      try {
-        const response = await apiCall('GET', `v1/user/profile/${userId}`, null, localStorage.getItem('token'), true);
-        if (response) {
-          const imagePath = response.avatarURL; 
-          if (imagePath) {
-            try {
-              const imageResponse = await fetch(imagePath);
-              if (!imageResponse.ok) {
-                throw new Error('Failed to fetch image');
-              }
-              const imageBlob = await imageResponse.blob();
-              const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
-              const imageDataUrl = await fileToDataUrl(imageFile);
-              setAvatar(imageDataUrl);
-            } catch (imageError) {
-              console.error('Failed to fetch image:', imageError);
-              setAvatar(null);
+  const fetchUserData = async () => {
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await apiCall('GET', `v1/user/profile/${userId}`, null, localStorage.getItem('token'), true);
+      if (response) {
+        const imagePath = response.avatarURL; 
+        if (imagePath) {
+          try {
+            const imageResponse = await fetch(imagePath);
+            if (!imageResponse.ok) {
+              throw new Error('Failed to fetch image');
             }
-          } else {
+            const imageBlob = await imageResponse.blob();
+            const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
+            const imageDataUrl = await fileToDataUrl(imageFile);
+            setAvatar(imageDataUrl);
+          } catch (imageError) {
+            console.error('Failed to fetch image:', imageError);
             setAvatar(null);
           }
         } else {
-          setSnackbarContent('Failed to fetch user data');
-          setAlertType('error');
-          setAlertOpen(true);
+          setAvatar(null);
         }
-      } catch (error) {
-        console.error('Failed to fetch user data:', error);
-        setSnackbarContent('Failed to fetch user data');
+      } else {
+        setSnackbarContent('Failed to fetch user data 222');
         setAlertType('error');
         setAlertOpen(true);
       }
-    };
-
+    } catch (error) {
+      console.error('Failed to fetch user data:', error);
+      setSnackbarContent('Failed to fetch user data 1111');
+      setAlertType('error');
+      setAlertOpen(true);
+    }
+  };
+  useEffect(() => {
     fetchUserData();
-  }, [setAvatar]);
+  }, []);
+
+  useEffect(() => {
+    fetchUserData();
+  }, [isAvatar]);
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const Handletoggle = () => {
