@@ -32,7 +32,7 @@ const navigation = [
     title: "Role",
     href: "/admin/role-manage",//need to be implented
     icon: "bi bi-person-check",
-    roles: ["5"],
+    roles: ["5", 5],
   },
 ];
 
