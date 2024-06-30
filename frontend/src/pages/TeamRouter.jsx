@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
-import Header from "./Header";
+import { useNavigate } from 'react-router-dom';
+
+import Sidebar from "../layouts/Sidebar";
+import Header from "../layouts/Header";
 import { Container } from "reactstrap";
 
 const contentAreaStyle = {
@@ -9,22 +11,32 @@ const contentAreaStyle = {
   // padding: '16px', // Optional padding for the content area
 };
 
-const FullLayout = () => {
-  const headerStyleLg = {
-    position: "fixed",
-    top: 0,
-    // width: "100%",
-    width: "calc(100% - 260px)",
-    zIndex: 1000,
-  };
+const headerStyleLg = {
+  position: "fixed",
+  top: 0,
+  // width: "100%",
+  width: "calc(100% - 260px)",
+  zIndex: 1000,
+};
 
-  const headerStyleMd = {
-    position: "fixed",
-    top: 0,
-    width: "100%",
-    // width: "calc(100% - 260px)",
-    zIndex: 1000,
-  };
+const headerStyleMd = {
+  position: "fixed",
+  top: 0,
+  width: "100%",
+  // width: "calc(100% - 260px)",
+  zIndex: 1000,
+};
+
+const TeamRouter = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const role = parseInt(localStorage.getItem("role"));
+    if (role === 1) {
+      navigate('/teamstudent');
+    } else {
+      navigate('/teamtutor');
+    }
+  }, []);
 
   return (
     <main>
@@ -54,4 +66,4 @@ const FullLayout = () => {
   );
 };
 
-export default FullLayout;
+export default TeamRouter;

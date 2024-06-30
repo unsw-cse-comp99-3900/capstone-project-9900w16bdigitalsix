@@ -21,6 +21,7 @@ const Team = (props) => {
   const [alertType, setAlertType] = useState("error");
   const [currentMember, setCurrentMember] = useState([]);
   const [curTeamSkills, setCurTeamSkills] = useState([]);
+  const [isInvite, setIsInvite] = useState(false);
 
   const userId = parseInt(localStorage.getItem("userId"));
 
@@ -55,7 +56,7 @@ const Team = (props) => {
       setAlertType("error");
       setShowError(true);
     }
-  }, [userId, teamId]);
+  }, [userId, teamId, isInvite]);
 
   const clickCreate = async () => {
     try {
@@ -69,6 +70,7 @@ const Team = (props) => {
         setTeamId(res.teamId);
         setTeamName(res.teamName);
         setCurrentMember(res.teamMember);
+        setCurTeamSkills(res.teamSkills);
         setHasTeam(true);
         setErrorMessage("Success!");
         setAlertType("success");
@@ -95,7 +97,7 @@ const Team = (props) => {
         setAlertType("error");
         setShowError(true);
       } else {
-        console.log(res.teamSkills);
+        // console.log(res.teamSkills);
         setTeamId(res.teamId);
         setTeamName(res.teamName);
         setCurrentMember(res.teamMember);
@@ -138,8 +140,24 @@ const Team = (props) => {
   };
 
   const contentAreaStyle = {
-    marginTop: '56px', // Adjust this value to match the Header height
+    marginTop: "56px", // Adjust this value to match the Header height
     // padding: '16px', // Optional padding for the content area
+  };
+
+  const headerStyleLg = {
+    position: "fixed",
+    top: 0,
+    // width: "100%",
+    width: "calc(100% - 260px)",
+    zIndex: 1000,
+  };
+
+  const headerStyleMd = {
+    position: "fixed",
+    top: 0,
+    width: "100%",
+    // width: "calc(100% - 260px)",
+    zIndex: 1000,
   };
 
   return (
@@ -152,8 +170,14 @@ const Team = (props) => {
           </aside>
           {/********Content Area**********/}
           <div className="contentArea" style={contentAreaStyle}>
-            {/********Header**********/}
-            <Header />
+            <div className="d-mg-none" style={headerStyleLg}>
+              {/********Header**********/}
+              <Header />
+            </div>
+            <div className="d-lg-none" style={headerStyleMd}>
+              {/********Header**********/}
+              <Header />
+            </div>
             {/********Middle Content**********/}
             <Container className="p-4 wrapper" fluid>
               {loading ? (
@@ -173,6 +197,8 @@ const Team = (props) => {
                         setCurrentMember={setCurrentMember}
                         curTeamSkills={curTeamSkills}
                         setCurTeamSkills={setCurTeamSkills}
+                        isInvite={isInvite}
+                        setIsInvite={setIsInvite}
                       />
                     </div>
                   ) : (

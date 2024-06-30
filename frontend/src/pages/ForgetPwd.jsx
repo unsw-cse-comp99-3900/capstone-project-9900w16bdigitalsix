@@ -47,18 +47,15 @@ const ForgetPwd = () => {
     try {
       const data = await apiCall('POST', 'v1/user/forget_password/send_email', requestBody);
         if (data.error) {
-          setSnackbarContent(data.error);
-          setAlertType('error');
-          setOpen(true);
+          if (data.error === "User not found") {
+            navigate('/reset-pwd-link-sent');
+          } else {
+            setSnackbarContent(data.error);
+            setAlertType('error');
+            setOpen(true);
+          }
         } else if (data.msg) {
-          // localStorage.setItem('token', data.token);
-          // localStorage.setItem('email', email);
-          // props.setToken(data.token);
-          // props.setEmail(email);
           navigate('/reset-pwd-link-sent');
-          // setSnackbarContent('data.msg');
-          // setAlertType('success');
-          // setOpen(true);
         }
     } catch (error) {
       console.error('Error during register:', error);
@@ -108,10 +105,7 @@ const ForgetPwd = () => {
     <MessageAlert open={open} alertType={alertType} handleClose={handleClose} snackbarContent={snackbarContent}/>
     <GradientBackground />
     </>
-
-
   )
-
 }
 
 export default ForgetPwd;

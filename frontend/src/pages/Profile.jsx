@@ -51,7 +51,6 @@ const Profile = (props) => {
     const [alertType, setAlertType] = useState('');
     const [snackbarContent, setSnackbarContent] = useState('');
     const [avatar, setAvatar] = useState('');
-
     useEffect(() => {
         const fetchUserData = async () => {
             const userId = localStorage.getItem('userId');
@@ -86,13 +85,13 @@ const Profile = (props) => {
                     setAvatar(null);
                 }
                 } else {
-                    setSnackbarContent('Failed to fetch user data');
+                    setSnackbarContent('Failed to fetch user data 1');
                     setAlertType('error');
                     setAlertOpen(true);
                 }
             } catch (error) {
                 console.error('Failed to fetch user data:', error);
-                setSnackbarContent('Failed to fetch user data');
+                setSnackbarContent('Failed to fetch user data 2');
                 setAlertType('error');
                 setAlertOpen(true);
             }
@@ -172,6 +171,7 @@ const Profile = (props) => {
             };
     
             confirmUpdate();
+            window.location.reload();
         } else {
             setEditable(!editable);
         }
@@ -263,7 +263,7 @@ const handleFileChange = async (event) => {
             </div>
             <div className="d-lg-none" style={headerStyleMd}>
                 {/********Header**********/}
-                <Header />
+                <Header/>
             </div>
         {/********Middle Content**********/}
         <Container className="p-4 wrapper" fluid>

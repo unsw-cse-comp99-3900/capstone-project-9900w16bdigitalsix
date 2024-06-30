@@ -13,17 +13,17 @@ import {
   Dropdown,
   Button,
 } from "reactstrap";
-import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowhite.svg";
+// import { ReactComponent as LogoWhite } from "../assets/images/logos/xtremelogowhite.svg";
 import cap from "../assets/images/logos/cap_white.png";
-import user1 from "../assets/images/users/user1.jpg";
+// import user1 from "../assets/images/users/user1.jpg";
 import { apiCall, fileToDataUrl } from '../helper';
 import MessageAlert from '../components/MessageAlert';
 import { Avatar } from '@mui/material';
 
 const Header = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const [userId, setUserId] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  // const [userId, setUserId] = useState('');
   const [avatar, setAvatar] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
@@ -33,43 +33,42 @@ const Header = () => {
     setAlertOpen(false);
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const userId = localStorage.getItem('userId');
-      try {
-        const response = await apiCall('GET', `v1/user/profile/${userId}`, null, localStorage.getItem('token'), true);
-        if (response) {
-          const imagePath = response.avatarURL; 
-          if (imagePath) {
-            try {
-              const imageResponse = await fetch(imagePath);
-              if (!imageResponse.ok) {
-                  throw new Error('Failed to fetch image');
-              }
-              const imageBlob = await imageResponse.blob();
-              const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
-              const imageDataUrl = await fileToDataUrl(imageFile);
-              setAvatar(imageDataUrl);
-            } catch (imageError) {
-              console.error('Failed to fetch image:', imageError);
-              setAvatar(null);
+  const fetchUserData = async () => {
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await apiCall('GET', `v1/user/profile/${userId}`, null, localStorage.getItem('token'), true);
+      if (response) {
+        const imagePath = response.avatarURL; 
+        if (imagePath) {
+          try {
+            const imageResponse = await fetch(imagePath);
+            if (!imageResponse.ok) {
+              throw new Error('Failed to fetch image');
             }
-          } else {
+            const imageBlob = await imageResponse.blob();
+            const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
+            const imageDataUrl = await fileToDataUrl(imageFile);
+            setAvatar(imageDataUrl);
+          } catch (imageError) {
+            console.error('Failed to fetch image:', imageError);
             setAvatar(null);
           }
         } else {
-          setSnackbarContent('Failed to fetch user data');
-          setAlertType('error');
-          setAlertOpen(true);
+          setAvatar(null);
         }
-      } catch (error) {
-        console.error('Failed to fetch user data:', error);
-        setSnackbarContent('Failed to fetch user data');
+      } else {
+        setSnackbarContent('Failed to fetch user data 222');
         setAlertType('error');
         setAlertOpen(true);
       }
-    };
-
+    } catch (error) {
+      console.error('Failed to fetch user data:', error);
+      setSnackbarContent('Failed to fetch user data 1111');
+      setAlertType('error');
+      setAlertOpen(true);
+    }
+  };
+  useEffect(() => {
     fetchUserData();
   }, []);
 
@@ -81,6 +80,11 @@ const Header = () => {
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
   };
 
+  const handleLogout = () => {
+    localStorage.clear(); // clear localStorage
+    window.location.href = '/login';
+  };
+
   return (
     <Navbar color="primary" dark expand="md" className="bg-gradient">
       <div className="d-flex align-items-center">
@@ -90,17 +94,16 @@ const Header = () => {
         </NavbarBrand>
         <Button
           color="primary"
-          className=" d-lg-none"
+          className="d-lg-none"
           onClick={() => showMobilemenu()}
         >
           <i className="bi bi-list"></i>
         </Button>
       </div>
-      <div className="hstack gap-2">
+      <div className="hstack gap-2 d-lg-none">
         <Button
           color="primary"
           size="sm"
-          className="d-sm-block d-md-none"
           onClick={Handletoggle}
         >
           {isOpen ? (
@@ -111,8 +114,8 @@ const Header = () => {
         </Button>
       </div>
 
-      <Collapse navbar isOpen={isOpen}>
-        <Nav className="me-auto" navbar>
+      <Collapse navbar isOpen={isOpen} className="justify-content-between">
+        <Nav navbar>
           <NavItem>
             <Link to="/project/allproject" className="nav-link">
               All Project
@@ -129,7 +132,7 @@ const Header = () => {
             </Link>
           </NavItem>
         </Nav>
-        <Nav>
+        <Nav className="ml-auto d-flex align-items-center">
           <Link to="/notification" className="nav-link">
             <div className="notification-icon">
               <i className="bi bi-bell-fill"></i>
@@ -158,7 +161,9 @@ const Header = () => {
               Profile</DropdownItem>
             <DropdownItem divider />
             <DropdownItem
-            href="/login">
+              href="/login"
+              onClick={handleLogout}
+            >
               Logout</DropdownItem>
           </DropdownMenu>
         </Dropdown>
