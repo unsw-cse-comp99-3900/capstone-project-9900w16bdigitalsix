@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container } from 'reactstrap';
 import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
+import '../assets/scss/FullLayout.css';//make sure import this
 import EditProjectForm from '../components/EditProjectForm';
 // import { apiCall } from './api'; // 确保路径正确
 import { useParams } from 'react-router-dom';
@@ -15,25 +16,6 @@ const apiCall = async (method, endpoint) => {
   });
   const data = await response.json();
   return data;
-};
-const contentAreaStyle = {
-  marginTop: '56px', // Adjust this value to match the Header height
-};
-
-const headerStyleLg = {
-  position: "fixed",
-  top: 0,
-  // width: "100%",
-  width: "calc(100% - 260px)",
-  zIndex: 1000,
-};
-
-const headerStyleMd = {
-  position: "fixed",
-  top: 0,
-  width: "100%",
-  // width: "calc(100% - 260px)",
-  zIndex: 1000,
 };
 
 const EditProject = () => {
@@ -67,15 +49,17 @@ const EditProject = () => {
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
+        {/********Sidebar**********/}
         <aside className="sidebarArea shadow" id="sidebarArea">
           <Sidebar />
         </aside>
-        <div className="contentArea" style={contentAreaStyle}>
-          <div className="d-mg-none" style={headerStyleLg}>
+        {/********Content Area**********/}
+        <div className="contentArea">
+          <div className="d-lg-none headerMd">
             {/********Header**********/}
             <Header />
           </div>
-          <div className="d-lg-none" style={headerStyleMd}>
+          <div className="d-none d-lg-block headerLg">
             {/********Header**********/}
             <Header />
           </div>
