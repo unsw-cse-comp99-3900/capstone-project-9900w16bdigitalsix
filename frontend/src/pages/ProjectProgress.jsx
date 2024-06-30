@@ -19,7 +19,6 @@ import { apiCall, fileToDataUrl } from '../helper';
 import EditUserStoryModal from '../components/EditUserStoryModal';
 import '../assets/scss/RoleManage.css'
 import '../assets/scss/FullLayout.css';//make sure import this
-
 const statusColorMap = {
   1: '#808080',   // grey
   2: '#006064',   // blue
@@ -147,9 +146,9 @@ const ProjectProgress = () => {
                     Project Id: xxx - Team Id: xxx
                   </div>
                 </div>
-                <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Tooltip title="Grade">
-                    <Button type="primary" style={{ margin: '8px' }}><StarFilled style={{ color: '#fadb14', fontSize: '20px' }} /></Button>
+                    <Button type="primary" style={{ margin: '8px', width: "20px" }}><StarFilled style={{ color: '#fadb14', fontSize: '20px' }} /></Button>
                   </Tooltip>
                   <Tooltip title="Add User Story">
                     <Button type="primary" style={{ margin: '8px' }} icon={<PlusOutlined />} />
