@@ -18,7 +18,7 @@ import Header from "../layouts/Header";
 import { apiCall, fileToDataUrl } from '../helper';
 import EditUserStoryModal from '../components/EditUserStoryModal';
 import '../assets/scss/RoleManage.css'
-
+import '../assets/scss/FullLayout.css';//make sure import this
 const statusColorMap = {
   1: '#808080',   // grey
   2: '#006064',   // blue
@@ -39,27 +39,6 @@ const roleColorMap = {
   3: { background: '#fff9c4', color: '#f57f17' }, // yellow Client
   4: { background: '#ffe0b2', color: '#e65100' }, // orange Coordinator
   5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
-};
-
-const headerStyleLg = {
-  position: "fixed",
-  top: 0,
-  // width: "100%",
-  width: "calc(100% - 260px)",
-  zIndex: 1000,
-};
-
-const contentAreaStyle = {
-  marginTop: '56px', // Adjust this value to match the Header height
-  // padding: '16px', // Optional padding for the content area
-};
-
-const headerStyleMd = {
-  position: "fixed",
-  top: 0,
-  width: "100%",
-  // width: "calc(100% - 260px)",
-  zIndex: 1000,
 };
 
 const ProjectProgress = () => {
@@ -140,14 +119,18 @@ const ProjectProgress = () => {
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
+        {/********Sidebar**********/}
         <aside className="sidebarArea shadow" id="sidebarArea">
           <Sidebar />
         </aside>
-        <div className="contentArea" style={contentAreaStyle}>
-          <div className="d-mg-none" style={headerStyleLg}>
+        {/********Content Area**********/}
+        <div className="contentArea">
+          <div className="d-lg-none headerMd">
+            {/********Header**********/}
             <Header />
           </div>
-          <div className="d-lg-none" style={headerStyleMd}>
+          <div className="d-none d-lg-block headerLg">
+            {/********Header**********/}
             <Header />
           </div>
           <Container className="p-4 wrapper" fluid>
@@ -163,9 +146,9 @@ const ProjectProgress = () => {
                     Project Id: xxx - Team Id: xxx
                   </div>
                 </div>
-                <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Tooltip title="Grade">
-                    <Button type="primary" style={{ margin: '8px' }}><StarFilled style={{ color: '#fadb14', fontSize: '20px' }} /></Button>
+                    <Button type="primary" style={{ margin: '8px', width: "20px" }}><StarFilled style={{ color: '#fadb14', fontSize: '20px' }} /></Button>
                   </Tooltip>
                   <Tooltip title="Add User Story">
                     <Button type="primary" style={{ margin: '8px' }} icon={<PlusOutlined />} />

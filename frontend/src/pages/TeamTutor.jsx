@@ -5,6 +5,7 @@ import "../styles/teamTutor.css";
 // import { useNavigate } from "react-router-dom";
 import InviteModel from "../components/InviteModel";
 import { apiCall } from "../helper";
+import '../assets/scss/FullLayout.css';//make sure import this
 
 import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
@@ -121,27 +122,6 @@ export default function TeamTutor() {
     setIsModalOpen(false);
   };
 
-  const contentAreaStyle = {
-    marginTop: '56px', // Adjust this value to match the Header height
-    // padding: '16px', // Optional padding for the content area
-  };
-
-  const headerStyleLg = {
-    position: "fixed",
-    top: 0,
-    // width: "100%",
-    width: "calc(100% - 260px)",
-    zIndex: 1000,
-  };
-
-  const headerStyleMd = {
-    position: "fixed",
-    top: 0,
-    width: "100%",
-    // width: "calc(100% - 260px)",
-    zIndex: 1000,
-  };
-
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
@@ -150,12 +130,12 @@ export default function TeamTutor() {
           <Sidebar />
         </aside>
         {/********Content Area**********/}
-        <div className="contentArea" style={contentAreaStyle}>
-          <div className="d-mg-none" style={headerStyleLg}>
+        <div className="contentArea">
+          <div className="d-lg-none headerMd">
             {/********Header**********/}
             <Header />
           </div>
-          <div className="d-lg-none" style={headerStyleMd}>
+          <div className="d-none d-lg-block headerLg">
             {/********Header**********/}
             <Header />
           </div>

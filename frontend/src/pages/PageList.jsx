@@ -49,8 +49,8 @@ const PageList = () => {
 
         {/* team */}
         <Route path="/team" element={<TeamRouter token={token} setToken={setToken}/>} />
-        <Route path="/teamstudent" element={<Team token={token} setToken={setToken}/>} />
-        <Route path="/teamtutor" element={<TeamTutor token={token} setToken={setToken} />} />
+        <Route path="/team/student" element={<Team token={token} setToken={setToken}/>} />
+        <Route path="/team/tutor" element={<TeamTutor token={token} setToken={setToken} />} />
 
         {/* project */}
         <Route path='/project/myproject' element={<ProjectList token={token} setToken={setToken}/>}/>
