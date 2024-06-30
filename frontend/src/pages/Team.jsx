@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { Container } from "reactstrap";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import MessageAlert from "../components/MessageAlert";
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
-import { Container } from "reactstrap";
 import { apiCall } from "../helper";
 import JoinTeamDialog from "./JoinTeam";
 import TeamProfile from "./TeamProfile";
-import CircularProgress from "@mui/material/CircularProgress";
+import '../assets/scss/FullLayout.css';//make sure import this
+import '../assets/scss/teamStyle.css';
+import cap from '../assets/images/logos/cap.png'
 
 const Team = (props) => {
   const [hasTeam, setHasTeam] = useState(null);
@@ -139,49 +143,28 @@ const Team = (props) => {
     }
   };
 
-  const contentAreaStyle = {
-    marginTop: "56px", // Adjust this value to match the Header height
-    // padding: '16px', // Optional padding for the content area
-  };
-
-  const headerStyleLg = {
-    position: "fixed",
-    top: 0,
-    // width: "100%",
-    width: "calc(100% - 260px)",
-    zIndex: 1000,
-  };
-
-  const headerStyleMd = {
-    position: "fixed",
-    top: 0,
-    width: "100%",
-    // width: "calc(100% - 260px)",
-    zIndex: 1000,
-  };
-
   return (
     <>
       <main>
-        <div className="pageWrapper d-lg-flex">
-          {/********Sidebar**********/}
-          <aside className="sidebarArea shadow" id="sidebarArea">
-            <Sidebar />
-          </aside>
-          {/********Content Area**********/}
-          <div className="contentArea" style={contentAreaStyle}>
-            <div className="d-mg-none" style={headerStyleLg}>
-              {/********Header**********/}
-              <Header />
-            </div>
-            <div className="d-lg-none" style={headerStyleMd}>
-              {/********Header**********/}
-              <Header />
-            </div>
-            {/********Middle Content**********/}
-            <Container className="p-4 wrapper" fluid>
+      <div className="pageWrapper d-lg-flex">
+        {/********Sidebar**********/}
+        <aside className="sidebarArea shadow" id="sidebarArea">
+          <Sidebar />
+        </aside>
+        {/********Content Area**********/}
+        <div className="contentArea">
+          <div className="d-lg-none headerMd">
+            {/********Header**********/}
+            <Header />
+          </div>
+          <div className="d-none d-lg-block headerLg">
+            {/********Header**********/}
+            <Header />
+          </div>
+          {/********Middle Content**********/}
+          <Container className="p-4 wrapper" fluid>
               {loading ? (
-                <div style={styles.loadingContainer}>
+                <div className="loadingContainer">
                   <CircularProgress />
                 </div>
               ) : (
@@ -202,47 +185,23 @@ const Team = (props) => {
                       />
                     </div>
                   ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography
-                        variant="h3"
-                        gutterBottom
-                        style={{ textAlign: "center", marginTop: "12vh" }}
-                      >
-                        You do not have your own team yet!
-                      </Typography>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "30px",
-                          marginTop: "15%",
-                          width: "20vw",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Button
-                          variant="contained"
-                          size="large"
-                          style={styles.button}
-                          onClick={clickCreate}
-                        >
-                          create a team
-                        </Button>
-                        <Button
-                          variant="contained"
-                          size="large"
-                          style={styles.button}
-                          onClick={clickJoin}
-                        >
-                          join a team
-                        </Button>
+                    <div className="noTeamContainer">
+                      <div className="noTeamBox">
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                          {/* <LogoDark /> */}
+                          <img src={cap} alt="small_logo" style={{ width: '80px', height: '80px' }}/>
+                        </div>
+                        <Typography variant="h4" gutterBottom className="noTeamMessage">
+                          You do not have your own team yet!
+                        </Typography>
+                        <div className="buttonContainer">
+                          <button className="teamButton" onClick={clickCreate}>
+                            Create a team
+                          </button>
+                          <button className="teamButton" onClick={clickJoin}>
+                            Join a team
+                          </button>
+                        </div>
                       </div>
                       <div>
                         <JoinTeamDialog
@@ -267,15 +226,6 @@ const Team = (props) => {
       />
     </>
   );
-};
-
-const styles = {
-  button: {
-    backgroundColor: "purple",
-    width: "100%",
-    padding: "20px 0",
-    fontSize: "1.25rem",
-  },
 };
 
 export default Team;
