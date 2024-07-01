@@ -96,7 +96,7 @@ const Team = (props) => {
 
   const joinTeam = async (uid, tid) => {
     try {
-      const body = { userId: uid, teamId: parseInt(tid) };
+      const body = { userId: uid, teamIdShow: parseInt(tid) };
       const res = await apiCall("PUT", "v1/team/join", body);
       if (res.error) {
         setErrorMessage("team not found");
@@ -105,6 +105,7 @@ const Team = (props) => {
       } else {
         // console.log(res.teamSkills);
         setTeamId(res.teamId);
+        setTeamIdShow(res.teamIdShow);
         setTeamName(res.teamName);
         setCurrentMember(res.teamMember);
         setCurTeamSkills(res.teamSkills);
