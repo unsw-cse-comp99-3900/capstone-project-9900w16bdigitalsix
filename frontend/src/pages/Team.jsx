@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Container } from "reactstrap";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -19,6 +18,7 @@ const Team = (props) => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [teamId, setTeamId] = useState(null);
+  const [teamIdShow, setTeamIdShow] = useState(null);
   const [teamName, setTeamName] = useState(null);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -45,6 +45,7 @@ const Team = (props) => {
       } else {
         console.log(res);
         setTeamId(res.teamId);
+        setTeamIdShow(res.teamIdShow);
         setTeamName(res.teamName);
         setCurrentMember(res.teamMember);
         setCurTeamSkills(res.teamSkills);
@@ -72,6 +73,7 @@ const Team = (props) => {
         setShowError(true);
       } else {
         setTeamId(res.teamId);
+        setTeamIdShow(res.teamIdShow);
         setTeamName(res.teamName);
         setCurrentMember(res.teamMember);
         setCurTeamSkills(res.teamSkills);
@@ -173,6 +175,7 @@ const Team = (props) => {
                     <div>
                       <TeamProfile
                         teamId={teamId}
+                        teamIdShow={teamIdShow}
                         teamName={teamName}
                         setTeamName={setTeamName}
                         leaveTeam={leaveTeam}
