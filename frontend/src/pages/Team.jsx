@@ -103,7 +103,6 @@ const Team = (props) => {
         setAlertType("error");
         setShowError(true);
       } else {
-        // console.log(res.teamSkills);
         setTeamId(res.teamId);
         setTeamIdShow(res.teamIdShow);
         setTeamName(res.teamName);
