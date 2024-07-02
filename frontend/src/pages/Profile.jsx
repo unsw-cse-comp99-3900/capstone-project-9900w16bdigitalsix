@@ -6,16 +6,12 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 
+import '../assets/scss/FullLayout.css';//make sure import this
 import '../assets/scss/UserInfo.css';
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import { apiCall, fileToDataUrl } from '../helper';
 import MessageAlert from '../components/MessageAlert';
-
-const contentAreaStyle = {
-  marginTop: '56px', // Adjust this value to match the Header height
-  // padding: '16px', // Optional padding for the content area
-};
 
 const roleMap = {
   1: 'Student',
@@ -51,7 +47,6 @@ const Profile = (props) => {
     const [alertType, setAlertType] = useState('');
     const [snackbarContent, setSnackbarContent] = useState('');
     const [avatar, setAvatar] = useState('');
-    const [isAvatar, setIsAvatar] = useState(false);
     useEffect(() => {
         const fetchUserData = async () => {
             const userId = localStorage.getItem('userId');
@@ -78,24 +73,21 @@ const Profile = (props) => {
                         const imageFile = new File([imageBlob], "avatar.png", { type: imageBlob.type });
                         const imageDataUrl = await fileToDataUrl(imageFile);
                         setAvatar(imageDataUrl);
-                        setIsAvatar(!isAvatar);
                     } catch (imageError) {
                         console.error('Failed to fetch image:', imageError);
                         setAvatar(null);
-                        setIsAvatar(!isAvatar);
                     }
                 } else {
                     setAvatar(null);
-                    setIsAvatar(!isAvatar);
                 }
                 } else {
-                    setSnackbarContent('Failed to fetch user data');
+                    setSnackbarContent('Failed to fetch user data 1');
                     setAlertType('error');
                     setAlertOpen(true);
                 }
             } catch (error) {
                 console.error('Failed to fetch user data:', error);
-                setSnackbarContent('Failed to fetch user data');
+                setSnackbarContent('Failed to fetch user data 2');
                 setAlertType('error');
                 setAlertOpen(true);
             }
@@ -175,6 +167,7 @@ const Profile = (props) => {
             };
     
             confirmUpdate();
+            window.location.reload();
         } else {
             setEditable(!editable);
         }
@@ -185,7 +178,6 @@ const handleFileChange = async (event) => {
     try {
         const dataUrl = await fileToDataUrl(file);
         setAvatar(dataUrl);
-        setIsAvatar(!isAvatar);
     } catch (error) {
         setSnackbarContent('Failed to upload image: ' + error.message);
         setAlertType('error');
@@ -236,39 +228,23 @@ const handleFileChange = async (event) => {
     }
 };
 
-  const headerStyleLg = {
-    position: "fixed",
-    top: 0,
-    // width: "100%",
-    width: "calc(100% - 260px)",
-    zIndex: 1000,
-  };
-
-  const headerStyleMd = {
-    position: "fixed",
-    top: 0,
-    width: "100%",
-    // width: "calc(100% - 260px)",
-    zIndex: 1000,
-  };
-
   return (
     <main>
-    <div className="pageWrapper d-lg-flex">
-      {/********Sidebar**********/}
-      <aside className="sidebarArea shadow" id="sidebarArea">
-        <Sidebar />
-      </aside>
-      {/********Content Area**********/}
-      <div className="contentArea"  style={contentAreaStyle}>
-        <div className="d-mg-none" style={headerStyleLg}>
-                {/********Header**********/}
-                <Header isAvatar={isAvatar} setIsAvatar={setIsAvatar} avatar={avatar} setAvatar={setAvatar}/>
-            </div>
-            <div className="d-lg-none" style={headerStyleMd}>
-                {/********Header**********/}
-                <Header isAvatar={isAvatar} setIsAvatar={setIsAvatar} avatar={avatar} setAvatar={setAvatar}/>
-            </div>
+      <div className="pageWrapper d-lg-flex">
+        {/********Sidebar**********/}
+        <aside className="sidebarArea shadow" id="sidebarArea">
+          <Sidebar />
+        </aside>
+        {/********Content Area**********/}
+        <div className="contentArea">
+          <div className="d-lg-none headerMd">
+            {/********Header**********/}
+            <Header />
+          </div>
+          <div className="d-none d-lg-block headerLg">
+            {/********Header**********/}
+            <Header />
+          </div>
         {/********Middle Content**********/}
         <Container className="p-4 wrapper" fluid>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>

@@ -33,18 +33,18 @@
 
 .avatar {
   margin-right: 16px;
-  margin-left: 15px; /* 增加左边距 */
+  margin-left: 15px;
 }
 
 .list-item-meta-title {
   padding-right: 16px;
   display: flex;
   align-items: center;
-  flex-wrap: wrap; /* 确保样式自适应 */
+  flex-wrap: wrap;
 }
 
 .list-item-meta-name {
-  margin-right: 16px; /* 增加名字和角色之间的空格 */
+  margin-right: 16px;
 }
 
 .list-item-meta-role {
@@ -68,6 +68,6 @@
 }
 
 .list-item-button {
-  margin-left: auto; /* 确保按钮位于右侧 */
-  margin-right: 15px; /* 增加右边距 */
+  margin-left: auto;
+  margin-right: 15px;
 }

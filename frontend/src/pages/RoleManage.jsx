@@ -10,6 +10,7 @@ import Header from "../layouts/Header";
 import { apiCall, fileToDataUrl } from '../helper';
 import AssignRoleModal from '../components/AssignRoleModal';
 import '../assets/scss/RoleManage.css'
+import '../assets/scss/FullLayout.css';//make sure import this
 
 const roleMap = {
   1: 'Student',
@@ -28,27 +29,6 @@ const roleColorMap = {
 };
 
 const RoleManage = () => {
-  const headerStyleLg = {
-    position: "fixed",
-    top: 0,
-    // width: "100%",
-    width: "calc(100% - 260px)",
-    zIndex: 1000,
-  };
-
-  const contentAreaStyle = {
-    marginTop: '56px', // Adjust this value to match the Header height
-    // padding: '16px', // Optional padding for the content area
-  };
-
-  const headerStyleMd = {
-    position: "fixed",
-    top: 0,
-    width: "100%",
-    // width: "calc(100% - 260px)",
-    zIndex: 1000,
-  };
-
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -118,14 +98,18 @@ const RoleManage = () => {
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
+        {/********Sidebar**********/}
         <aside className="sidebarArea shadow" id="sidebarArea">
           <Sidebar />
         </aside>
-        <div className="contentArea" style={contentAreaStyle}>
-          <div className="d-mg-none" style={headerStyleLg}>
+        {/********Content Area**********/}
+        <div className="contentArea">
+          <div className="d-lg-none headerMd">
+            {/********Header**********/}
             <Header />
           </div>
-          <div className="d-lg-none" style={headerStyleMd}>
+          <div className="d-none d-lg-block headerLg">
+            {/********Header**********/}
             <Header />
           </div>
           <Container className="p-4 wrapper" fluid>

@@ -1,12 +1,23 @@
-// CreateProject.js
-import React from 'react';
-import { Container } from 'reactstrap';
-import Sidebar from '../layouts/Sidebar';
-import Header from '../layouts/Header';
-import ProjectForm from '../components/ProjectForm';
+import React, { useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { Container } from "reactstrap";
+
+import Sidebar from "../layouts/Sidebar";
+import Header from "../layouts/Header";
 import '../assets/scss/FullLayout.css';//make sure import this
 
-const CreateProject = () => {
+const TeamRouter = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const role = parseInt(localStorage.getItem("role"));
+    if (role === 1) {
+      navigate('/team/student');
+    } else {
+      navigate('/team/tutor');
+    }
+  }, []);
+
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
@@ -26,8 +37,8 @@ const CreateProject = () => {
           </div>
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
-            <h3>Create a new project</h3>
-            <ProjectForm />
+            {/* add code here */}
+            dashboard
           </Container>
         </div>
       </div>
@@ -35,4 +46,4 @@ const CreateProject = () => {
   );
 };
 
-export default CreateProject;
+export default TeamRouter;
