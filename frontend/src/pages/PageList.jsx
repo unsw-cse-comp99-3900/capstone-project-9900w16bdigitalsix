@@ -17,12 +17,13 @@ import Profile from "./Profile";
 import TeamRouter from "./TeamRouter";
 import Team from "./Team";
 import TeamTutor from "./TeamTutor";
+import StudentTeamPreference from "./StudentTeamPreference";
 
 // project
-import ProjectList from './ProjectList';
-import CreateProject from './CreateProject';
-import EditProject from './EditProject';
-import ProjectProgress from './ProjectProgress';
+import ProjectList from "./ProjectList";
+import CreateProject from "./CreateProject";
+import EditProject from "./EditProject";
+import ProjectProgress from "./ProjectProgress";
 
 //admin
 import RoleManage from "./RoleManage";
@@ -38,28 +39,75 @@ const PageList = () => {
         <Route path="/" element={<Dashboard />} />
 
         {/* auth */}
-        <Route path="/register" element={<Register token={token} setToken={setToken} />} />
-        <Route path="/login" element={<Login token={token} setToken={setToken} role={role} setRole={setRole}/>} />
-        <Route path="/verify-email-link-sent" element={<Verify token={token} setToken={setToken}/>} />
+        <Route
+          path="/register"
+          element={<Register token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/login"
+          element={
+            <Login
+              token={token}
+              setToken={setToken}
+              role={role}
+              setRole={setRole}
+            />
+          }
+        />
+        <Route
+          path="/verify-email-link-sent"
+          element={<Verify token={token} setToken={setToken} />}
+        />
         <Route path="/verify-email-check" element={<VerifyEmail />} />
         <Route path="/forget-pwd" element={<ForgetPwd />} />
-        <Route path="/reset-pwd-link-sent" element={<ResetPwdLinkSent token={token} setToken={setToken} />} />
+        <Route
+          path="/reset-pwd-link-sent"
+          element={<ResetPwdLinkSent token={token} setToken={setToken} />}
+        />
         <Route path="/reset-pwd" element={<ResetPwd />} />
         <Route path="/profile" element={<Profile />} />
 
         {/* team */}
-        <Route path="/team" element={<TeamRouter token={token} setToken={setToken}/>} />
-        <Route path="/team/student" element={<Team token={token} setToken={setToken}/>} />
-        <Route path="/team/tutor" element={<TeamTutor token={token} setToken={setToken} />} />
+        <Route
+          path="/team"
+          element={<TeamRouter token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/team/student"
+          element={<Team token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/team/tutor"
+          element={<TeamTutor token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/team/preference"
+          element={<StudentTeamPreference token={token} setToken={setToken} />}
+        />
 
         {/* project */}
-        <Route path='/project/myproject' element={<ProjectList token={token} setToken={setToken}/>}/>
-        <Route path='project/create' element={<CreateProject token={token} setToken={setToken}/>}/>
-        <Route path="/project/edit/:id" element={<EditProject token={token} setToken={setToken}/>}/>
-        <Route path="/project/progress" element={<ProjectProgress token={token} setToken={setToken}/>}/>
+        <Route
+          path="/project/myproject"
+          element={<ProjectList token={token} setToken={setToken} />}
+        />
+        <Route
+          path="project/create"
+          element={<CreateProject token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/project/edit/:id"
+          element={<EditProject token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/project/progress"
+          element={<ProjectProgress token={token} setToken={setToken} />}
+        />
 
         {/* admin */}
-        <Route path="/admin/role-manage" element={<RoleManage token={token} setToken={setToken}/>} />
+        <Route
+          path="/admin/role-manage"
+          element={<RoleManage token={token} setToken={setToken} />}
+        />
       </Routes>
       <br />
     </>
