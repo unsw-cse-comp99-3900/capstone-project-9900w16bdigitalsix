@@ -15,6 +15,290 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/v1/admin/change/project/coordinator": {
+            "post": {
+                "description": "修改 project coordinator，注意 header 需要 Authorization: Bearer \u003ctoken\u003e",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update project coordinator",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "修改 coordinator 请求参数",
+                        "name": "ChangeProjectCoordinatorRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.ChangeProjectCoordinatorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"msg\": \"Project Coordinator updated successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "{\"error\": \"Please login\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "{\"error\": \"Only admin have permission\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Coordinator not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to update coordinator\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/change/project/tutor": {
+            "post": {
+                "description": "更新负责这个 project 的 tutor，注意 header 需要 Authorization: Bearer \u003ctoken\u003e",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update project tutor",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "修改 coordinator 请求参数",
+                        "name": "ChangeProjectTutorRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.ChangeProjectTutorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"msg\": \"Project tutor updated successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "{\"error\": \"Please login\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "{\"error\": \"Only admin have permission\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Tutor not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to update tutor\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/get/coordinator/list": {
+            "get": {
+                "description": "注意 header  Authorization: Bearer \u003ctoken\u003e, 返回所有 Coordinator 列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all coordinator List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.UserListResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "{\"error\": \"Please login\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "{\"error\": \"only admin have permission to access\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"internal server error, Failed to fetch tutors\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/get/tutor/list": {
+            "get": {
+                "description": "注意 header  Authorization: Bearer \u003ctoken\u003e, 返回所有 Tutor 列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all tutor List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.UserListResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "{\"error\": \"Please login\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "{\"error\": \"only admin have permission to access\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch tutors\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/admin/get/user/list": {
             "get": {
                 "description": "注意 header  Authorization: Bearer \u003ctoken\u003e, 返回所有用户列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
@@ -57,7 +341,7 @@ const docTemplate = `{
                         }
                     },
                     "403": {
-                        "description": "{\"error\": \"only admin can change user role\"}",
+                        "description": "{\"error\": \"only admin have permission\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -89,7 +373,7 @@ const docTemplate = `{
                 "tags": [
                     "Admin"
                 ],
-                "summary": "Admin modify user role",
+                "summary": "Modify user role",
                 "parameters": [
                     {
                         "type": "string",
@@ -177,7 +461,7 @@ const docTemplate = `{
         },
         "/v1/project/create": {
             "post": {
-                "description": "创建一个新的项目并上传文件",
+                "description": "client 创建一个新的项目并上传文件, this api makes sure only client can create the project",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -187,7 +471,7 @@ const docTemplate = `{
                 "tags": [
                     "Project"
                 ],
-                "summary": "Create a new project",
+                "summary": "Clinet create a new project",
                 "parameters": [
                     {
                         "type": "string",
@@ -391,7 +675,7 @@ const docTemplate = `{
         },
         "/v1/project/modify/{projectId}": {
             "post": {
-                "description": "通过projectId修改项目详细信息，并更新项目的创建人",
+                "description": "通过 projectId 修改项目详细信息，并更新项目的 client, this api makes sure Projects can only be assigned to clients",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -460,6 +744,15 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "{\"error\": \"File not provided\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "{\"error\": \"Project can only be assigned to client\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1496,6 +1789,36 @@ const docTemplate = `{
                 },
                 "old_password": {
                     "type": "string"
+                }
+            }
+        },
+        "forms.ChangeProjectCoordinatorRequest": {
+            "type": "object",
+            "required": [
+                "coordinatorId",
+                "projectId"
+            ],
+            "properties": {
+                "coordinatorId": {
+                    "type": "integer"
+                },
+                "projectId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "forms.ChangeProjectTutorRequest": {
+            "type": "object",
+            "required": [
+                "projectId",
+                "tutorId"
+            ],
+            "properties": {
+                "projectId": {
+                    "type": "integer"
+                },
+                "tutorId": {
+                    "type": "integer"
                 }
             }
         },

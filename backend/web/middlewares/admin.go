@@ -13,7 +13,7 @@ func IsAdmin() gin.HandlerFunc {
 		currentUser := claims.(*models.CustomClaims) // 类型断言
 		if currentUser.AuthorityId != 5 {
 			ctx.JSON(http.StatusForbidden, gin.H{
-				"msg": "only admin can change user role",
+				"msg": "only admin have permission",
 			})
 			ctx.Abort()
 			return

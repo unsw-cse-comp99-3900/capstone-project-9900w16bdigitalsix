@@ -15,8 +15,8 @@ import (
 )
 
 // CreateProject godoc
-// @Summary Create a new project
-// @Description 创建一个新的项目并上传文件
+// @Summary Clinet create a new project
+// @Description client 创建一个新的项目并上传文件, this api makes sure only client can create the project
 // @Tags Project
 // @Accept multipart/form-data
 // @Produce json
@@ -34,6 +34,26 @@ import (
 func CreateProject(c *gin.Context) {
 	var fileName string
 	var fileURL string
+
+	// 解析其他字段
+	title := c.PostForm("title")
+	field := c.PostForm("field")
+	description := c.PostForm("description")
+	email := c.PostForm("email")
+	requiredSkills := c.PostFormArray("requiredSkills[]")
+
+	// 检查客户是否存在
+	var client models.User
+	if err := global.DB.Where("email = ?", email).First(&client).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Client not found"})
+		return
+	}
+
+	// 检查客户的角色是否为客户端
+    if client.Role != 3 {
+        c.JSON(http.StatusForbidden, gin.H{"error": "Only client can create project"})
+        return
+    }
 
 	// 解析文件
 	file, err := c.FormFile("file")
@@ -61,19 +81,6 @@ func CreateProject(c *gin.Context) {
 		return
 	}
 
-	// 解析其他字段
-	title := c.PostForm("title")
-	field := c.PostForm("field")
-	description := c.PostForm("description")
-	email := c.PostForm("email")
-	requiredSkills := c.PostFormArray("requiredSkills[]")
-
-	// 检查客户是否存在
-	var client models.User
-	if err := global.DB.Where("email = ?", email).First(&client).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Client not found"})
-		return
-	}
 
 	clientID := client.ID
 
@@ -275,7 +282,7 @@ func DeleteProject(c *gin.Context) {
 
 // ModifyProjectDetail godoc
 // @Summary Modify project detail information
-// @Description 通过projectId修改项目详细信息，并更新项目的创建人
+// @Description 通过 projectId 修改项目详细信息，并更新项目的 client, this api makes sure Projects can only be assigned to clients
 // @Tags Project
 // @Accept multipart/form-data
 // @Produce json
@@ -288,6 +295,7 @@ func DeleteProject(c *gin.Context) {
 // @Param spec formData file false "Specification File"
 // @Success 200 {object} response.ModifyProjectDetailResponse
 // @Failure 400 {object} map[string]string "{"error": "File not provided"}"
+// @Failure 403 {object} map[string]string "{"error": "Project can only be assigned to client"}"
 // @Failure 404 {object} map[string]string "{"error": "Project not found"}"
 // @Failure 500 {object} map[string]string "{"error": Internal Error}"
 // @Router /v1/project/modify/{projectId} [post]
@@ -317,12 +325,19 @@ func ModifyProjectDetail(c *gin.Context) {
 	var user models.User
 	if err := global.DB.Where("email = ?", clientEmail).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Client not found"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 			return
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	// 检查客户的角色是否为 clinet
+    if user.Role != 3 {
+        c.JSON(http.StatusForbidden, gin.H{"error": "Project can only be assigned to client"})
+        return
+    }
+	
 
 	// 获取文件
 	file, err := c.FormFile("spec")

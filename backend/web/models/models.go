@@ -12,8 +12,8 @@ type User struct {
 	Password           string     `gorm:"type:varchar(255);not null"`
 	Username           string     `gorm:"type:varchar(16);not null"`
 	AvatarURL          string     `gorm:"type:varchar(255)"`
-	Gender             string     `gorm:"default:male;type:varchar(6)"`
-	Birthday           *time.Time `gorm:"type:datetime"`
+	// Gender             string     `gorm:"default:male;type:varchar(6)"`
+	// Birthday           *time.Time `gorm:"type:datetime"`
 	Bio                string     `json:"bio"`
 	Organization       string     `json:"organization"`
 	Position           string     `json:"position"`
@@ -36,6 +36,7 @@ type Team struct {
 	Members         []User    `gorm:"foreignkey:BelongsToGroup"` // a group has many students
 	PreferencedProj []Project `gorm:"many2many:team_preferenced_projects"`
 	Skills          []Skill   `gorm:"many2many:team_skills;"`
+	Sprints         []Sprint  `gorm:"foreignkey:TeamID"` // 一个团队有多个Sprint
 }
 
 type Project struct {
@@ -60,4 +61,22 @@ type Skill struct {
 	Students  []User    `gorm:"many2many:student_skills"`
 	Teams     []Team    `gorm:"many2many:team_skills;"`
 	Projects  []Project `gorm:"many2many:project_skills;"`
+}
+
+type Sprint struct {
+	TeamID      uint        `gorm:"primaryKey;not null"` // 外键，关联到团队
+	SprintNum   int         `gorm:"primaryKey;not null"` // Sprint编号，从1到3
+	StartDate   time.Time   `gorm:"type:datetime"`
+	EndDate     time.Time   `gorm:"type:datetime"`
+	Grade       int         `gorm:"not null"`                                                // 打分
+	Comment     string      `gorm:"type:text"`                                               // 评语
+	UserStories []UserStory `gorm:"foreignKey:TeamID,SprintNum;references:TeamID,SprintNum"` // 一个Sprint有多个UserStory
+}
+
+type UserStory struct {
+	gorm.Model
+	TeamID      uint   `gorm:"not null"` // 外键，关联到Sprint的TeamID
+	SprintNum   int    `gorm:"not null"` // 外键，关联到Sprint的SprintNum
+	Description string `gorm:"type:text"`
+	Status      int    `gorm:"not null"` // 1表示未完成，2表示进行中，3表示已完成
 }

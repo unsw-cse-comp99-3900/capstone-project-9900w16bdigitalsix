@@ -39,7 +39,11 @@ func AdminRouter(Router *gin.RouterGroup) {
 	AdminRouter.Use(middlewares.JWTAuth(), middlewares.IsAdmin())
 	{
 		AdminRouter.GET("/get/user/list", controllers.GetAllUsersInfo)
+		AdminRouter.GET("/get/tutor/list", controllers.GetAllTutorInfo)
+		AdminRouter.GET("/get/coordinator/list", controllers.GetAllCoordinatorInfo)
 		AdminRouter.POST("/modify/user/role", controllers.ModifyUserRole)
+		AdminRouter.POST("/change/project/coordinator", controllers.ChangeProjectCoordinator)
+		AdminRouter.POST("/change/project/tutor", controllers.ChangeProjectTutor)
 	}
 }
 

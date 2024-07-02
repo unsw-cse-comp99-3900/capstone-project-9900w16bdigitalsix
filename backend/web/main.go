@@ -14,14 +14,13 @@ func main() {
 	initialize.InitLogger()
 	initialize.InitConfig()
 	initialize.InitDB()
-	
-	global.DB.AutoMigrate(&models.User{}, &models.Team{}, &models.Project{}, &models.Skill{})
-	// 修改现有表的字段排序规则
-    global.DB.Exec("ALTER TABLE skills MODIFY skill_name VARCHAR(255) COLLATE utf8mb4_bin")
 
+	global.DB.AutoMigrate(&models.User{}, &models.Team{}, &models.Project{},
+		&models.Skill{}, &models.Sprint{}, &models.UserStory{})
+	// 修改现有表的字段排序规则
+	global.DB.Exec("ALTER TABLE skills MODIFY skill_name VARCHAR(255) COLLATE utf8mb4_bin")
 
 	Router := initialize.InitRouters()
-
 
 	// 启动服务
 	port := global.ServerConfig.Port

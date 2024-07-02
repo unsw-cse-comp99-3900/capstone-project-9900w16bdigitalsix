@@ -5,7 +5,6 @@ import (
 	"crypto/sha512"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/anaskhan96/go-password-encoder"
 	"go.uber.org/zap"
@@ -30,12 +29,12 @@ func ModelToResponse(user *model.User) *proto.UserInfoResponse {
 		Password: user.Password,
 		Email:    user.Email,
 		Username: user.Username,
-		Gender:   user.Gender,
-		Role:     uint32(user.Role),
+		// Gender:   user.Gender,
+		Role: uint32(user.Role),
 	}
-	if user.Birthday != nil {
-		userInfoRsp.Birthday = uint64(user.Birthday.Unix())
-	}
+	// if user.Birthday != nil {
+	// 	userInfoRsp.Birthday = uint64(user.Birthday.Unix())
+	// }
 	return userInfoRsp
 }
 
@@ -139,9 +138,9 @@ func (s *UserServer) UpdateUser(ctx context.Context, req *proto.UpdateUserInfo) 
 	if result.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "用户不存在")
 	}
-	user.Gender = req.Gender
-	birthday := time.Unix(int64(req.Birthday), 0)
-	user.Birthday = &birthday
+	// user.Gender = req.Gender
+	// birthday := time.Unix(int64(req.Birthday), 0)
+	// user.Birthday = &birthday
 	result = global.DB.Save(&user)
 	if result.Error != nil {
 		return nil, status.Errorf(codes.Internal, result.Error.Error())

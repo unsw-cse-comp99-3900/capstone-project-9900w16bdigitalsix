@@ -1,8 +1,6 @@
 package model
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
@@ -17,10 +15,8 @@ import (
 
 type User struct {
 	gorm.Model
-	Email    string     `gorm:"index:idx_email;unique;type:varchar(255);not null"`
-	Password string     `gorm:"type:varchar(255);not null"`
-	Username string     `gorm:"type:varchar(16);not null"`
-	Birthday *time.Time `grom:"type:datetime"`
-	Gender   string     `gorm:"default:male;type:varchar(6)"`
-	Role     int        `gorm:"default:1;type:int comment '1表示student, 2表示tutor, 3表示convenor, 4表示client, 5表示admin'"`
+	Email    string `gorm:"index:idx_email;unique;type:varchar(255);not null"`
+	Password string `gorm:"type:varchar(255);not null"`
+	Username string `gorm:"type:varchar(16);not null"`
+	Role     int    `gorm:"default:1;type:int comment '1表示student, 2表示tutor, 3表示convenor, 4表示client, 5表示admin'"`
 }
