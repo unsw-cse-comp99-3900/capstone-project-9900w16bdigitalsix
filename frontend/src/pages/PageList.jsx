@@ -26,6 +26,7 @@ import ProjectProgress from './ProjectProgress';
 
 //admin
 import RoleManage from "./RoleManage";
+import ProjectAdmin from "./ProjectAdmin"
 
 const PageList = () => {
   const [token, setToken] = React.useState(null);
@@ -57,9 +58,11 @@ const PageList = () => {
         <Route path='project/create' element={<CreateProject token={token} setToken={setToken}/>}/>
         <Route path="/project/edit/:id" element={<EditProject token={token} setToken={setToken}/>}/>
         <Route path="/project/progress" element={<ProjectProgress token={token} setToken={setToken}/>}/>
+        <Route path="/project/admin" element={<ProjectAdmin token={token} setToken={setToken}/>}/>
 
         {/* admin */}
         <Route path="/admin/role-manage" element={<RoleManage token={token} setToken={setToken}/>} />
+
       </Routes>
       <br />
     </>
