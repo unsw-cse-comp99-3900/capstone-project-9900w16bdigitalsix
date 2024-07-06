@@ -308,7 +308,7 @@ func GetTutorInfoByProjectID(c *gin.Context) {
 // @Produce json
 // @Param projectId path int true "Project ID"
 // @Param Authorization header string true "Bearer token"
-// @Success 200 {object} response.TutorInfoResponse
+// @Success 200 {object} response.CoorInfoResponse
 // @Failure 400 {object} map[string]string "{"error": Invalid projectId}"
 // @Failure 404 {object} map[string]string "{"error": "Project not found"}" or "{"error": "Coordinator not found"}"
 // @Router /v1/admin/get/coordinator/{projectId} [get]

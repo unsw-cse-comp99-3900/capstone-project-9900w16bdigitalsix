@@ -143,6 +143,17 @@ definitions:
       teamName:
         type: string
     type: object
+  response.CoorInfoResponse:
+    properties:
+      avatarURL:
+        type: string
+      coorId:
+        type: integer
+      email:
+        type: string
+      role:
+        type: integer
+    type: object
   response.CreateTeamResponse:
     properties:
       teamId:
@@ -505,7 +516,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.TutorInfoResponse'
+            $ref: '#/definitions/response.CoorInfoResponse'
         "400":
           description: '{"error": Invalid projectId}'
           schema:

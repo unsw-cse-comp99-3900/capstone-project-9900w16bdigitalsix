@@ -267,7 +267,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.TutorInfoResponse"
+                            "$ref": "#/definitions/response.CoorInfoResponse"
                         }
                     },
                     "400": {
@@ -2093,6 +2093,23 @@ const docTemplate = `{
                 },
                 "teamName": {
                     "type": "string"
+                }
+            }
+        },
+        "response.CoorInfoResponse": {
+            "type": "object",
+            "properties": {
+                "avatarURL": {
+                    "type": "string"
+                },
+                "coorId": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "integer"
                 }
             }
         },
