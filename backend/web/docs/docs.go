@@ -889,6 +889,133 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/project/preferencedBy/team/{projectId}": {
+            "get": {
+                "description": "Get the detail of teams that prefer a given project ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project Preference"
+                ],
+                "summary": "Get teams that prefer a project",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.TeamDetailResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Project not found\"}\" or \"{\"error\": \"Teams not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/project/team/allocated/{projectId}": {
+            "get": {
+                "description": "查看一个 project 被 allocated 的所有 team 的信息",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project Allocation"
+                ],
+                "summary": "Get allocated team details",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.TeamDetailResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Project not found\"}\" or \"{\"error\": \"Teams not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/project/{projectId}/preferencedBy/{teamId}/detail": {
+            "get": {
+                "description": "Get the details of a team that prefer a project",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project Preference"
+                ],
+                "summary": "Get project preferred by team detail",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "teamId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.TeamDetailResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Project not found\"}\" or \"{\"error\": \"Team not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/student/unassigned/list": {
             "get": {
                 "description": "返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
@@ -899,7 +1026,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Student"
                 ],
                 "summary": "Get all students unassigned list",
                 "responses": {
@@ -1010,6 +1137,47 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "{\"error\": \"Failed to fetch teams\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/team/get/preferences/{userId}": {
+            "get": {
+                "description": "Get the team preferences for a given user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project Preference"
+                ],
+                "summary": "Get team preferences",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.PreferenceResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"User not found\"}\" or {\"error\": \"User does not belong to any team\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1255,6 +1423,65 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "{\"error\":\"Failed to update user\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/team/preference/project/{userId}": {
+            "put": {
+                "description": "Update the team preference project for a given user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project Preference"
+                ],
+                "summary": "Update team preferences",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Preferences",
+                        "name": "preferences",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.PreferenceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated team preferences",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"body error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"User not found\"}\" or \"{\"error\": \"User does not belong to any team\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1973,6 +2200,21 @@ const docTemplate = `{
                 }
             }
         },
+        "forms.PreferenceRequest": {
+            "type": "object",
+            "required": [
+                "projectId",
+                "reason"
+            ],
+            "properties": {
+                "projectId": {
+                    "type": "integer"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            }
+        },
         "forms.Profile": {
             "type": "object",
             "properties": {
@@ -2255,6 +2497,20 @@ const docTemplate = `{
                 }
             }
         },
+        "response.PreferenceResponse": {
+            "type": "object",
+            "properties": {
+                "projectId": {
+                    "type": "integer"
+                },
+                "projectTitle": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            }
+        },
         "response.ProfileResponse": {
             "type": "object",
             "properties": {
@@ -2349,6 +2605,20 @@ const docTemplate = `{
                 }
             }
         },
+        "response.ProjectTeamMember": {
+            "type": "object",
+            "properties": {
+                "avatarURL": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "userName": {
+                    "type": "string"
+                }
+            }
+        },
         "response.StudentInfoResponse": {
             "type": "object",
             "properties": {
@@ -2385,6 +2655,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "userSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "response.TeamDetailResponse": {
+            "type": "object",
+            "properties": {
+                "preferenceReason": {
+                    "type": "string"
+                },
+                "teamId": {
+                    "type": "integer"
+                },
+                "teamMember": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ProjectTeamMember"
+                    }
+                },
+                "teamName": {
+                    "type": "string"
+                },
+                "teamSkills": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -2439,6 +2735,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "email": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 },
                 "role": {

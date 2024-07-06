@@ -68,6 +68,8 @@ func GroupRouter(Router *gin.RouterGroup) {
 		groupRouter.GET("/get/student-info/:teamName", controllers.GetStudentInfo)
 		groupRouter.GET("/get/list", controllers.GetAllTeams)
 		groupRouter.GET("/invite/:userId/:teamId", controllers.InviteUserToTeam)
+		groupRouter.PUT("/preference/project/:userId", controllers.UpdateTeamPreferences)
+		groupRouter.GET("/get/preferences/:userId", controllers.GetTeamPreferences)
 
 	}
 }
@@ -81,5 +83,8 @@ func ProjectRouter(Router *gin.RouterGroup) {
 		projectRouter.GET("/detail/:projectId", controllers.GetProjectDetail)
 		projectRouter.DELETE("/delete/:projectId", controllers.DeleteProject)
 		projectRouter.POST("/modify/:projectId", controllers.ModifyProjectDetail)
+		projectRouter.GET("/team/allocated/:projectId", controllers.GetAllocatedTeamDetail)
+		projectRouter.GET("/preferencedBy/team/:projectId", controllers.GetPreferencedByTeamsDetail)
+		projectRouter.GET("/:projectId/preferencedBy/:teamId/detail", controllers.GetProjectPreferencedByTeamDetail)
 	}
 }

@@ -47,3 +47,17 @@ type ModifyProjectDetailResponse struct {
 	CreatedByUserID uint   `json:"createdByUserId"`
 	CreatedByEmail  string `json:"createdByEmail"`
 }
+
+type ProjectTeamMember struct {
+	UserID    uint   `json:"userId"`
+	UserName  string `json:"userName"`
+	AvatarURL string `json:"avatarURL"`
+}
+
+type TeamDetailResponse struct {
+	TeamID           uint                `json:"teamId"`
+	TeamName         string              `json:"teamName"`
+	TeamMember       []ProjectTeamMember `json:"teamMember"`
+	TeamSkills       []string            `json:"teamSkills"`
+	PreferenceReason string              `json:"preferenceReason"`
+}

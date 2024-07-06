@@ -386,3 +386,158 @@ func ModifyProjectDetail(c *gin.Context) {
 		CreatedByEmail:  user.Email,
 	})
 }
+
+// @Summary Get allocated team details
+// @Description 查看一个 project 被 allocated 的所有 team 的信息
+// @Tags Project Allocation
+// @Produce json
+// @Param projectId path int true "Project ID"
+// @Success 200 {array} response.TeamDetailResponse
+// @Failure 404 {object} map[string]string "{"error": "Project not found"}" or "{"error": "Teams not found"}"
+// @Router /v1/project/team/allocated/{projectId} [get]
+func GetAllocatedTeamDetail(c *gin.Context) {
+    projectId := c.Param("projectId")
+    var project models.Project
+    if err := global.DB.First(&project, projectId).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
+        return
+    }
+
+    var teams []models.Team
+    if err := global.DB.Where("project_id = ?", project.ID).Preload("Members").Preload("Skills").Find(&teams).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Teams not found"})
+        return
+    }
+
+    var responses []response.TeamDetailResponse
+    for _, team := range teams {
+        var members []response.ProjectTeamMember
+        for _, member := range team.Members {
+            members = append(members, response.ProjectTeamMember{
+                UserID:   member.ID,
+                UserName: member.Username,
+                AvatarURL: member.AvatarURL,
+            })
+        }
+
+        var skills []string
+        for _, skill := range team.Skills {
+            skills = append(skills, skill.SkillName)
+        }
+
+        responses = append(responses, response.TeamDetailResponse{
+            TeamID:     team.ID,
+            TeamName:   team.Name,
+            TeamMember: members,
+            TeamSkills: skills,
+        })
+    }
+
+    c.JSON(http.StatusOK, responses)
+}
+
+// @Summary Get teams that prefer a project
+// @Description Get the detail of teams that prefer a given project ID
+// @Tags Project Preference
+// @Produce json
+// @Param projectId path int true "Project ID"
+// @Success 200 {array} response.TeamDetailResponse
+// @Failure 404 {object} map[string]string "{"error": "Project not found"}" or "{"error": "Teams not found"}"
+// @Router /v1/project/preferencedBy/team/{projectId} [get]
+func GetPreferencedByTeamsDetail(c *gin.Context) {
+	projectId := c.Param("projectId")
+	var project models.Project
+	if err := global.DB.First(&project, projectId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
+		return
+	}
+
+	var preferences []models.TeamPreferenceProject
+	if err := global.DB.Where("project_id = ?", project.ID).Find(&preferences).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Preferences not found"})
+		return
+	}
+
+	var teamResponse []response.TeamDetailResponse
+	for _, pref := range preferences {
+		var team models.Team
+		if err := global.DB.Preload("Members").Preload("Skills").First(&team, pref.TeamID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+			return
+		}
+
+		var members []response.ProjectTeamMember
+		for _, member := range team.Members {
+			members = append(members, response.ProjectTeamMember{
+				UserID:   member.ID,
+				UserName: member.Username,
+				AvatarURL: member.AvatarURL,
+			})
+		}
+
+		var skills []string
+		for _, skill := range team.Skills {
+			skills = append(skills, skill.SkillName)
+		}
+
+		teamResponse = append(teamResponse, response.TeamDetailResponse{
+			TeamID:     team.ID,
+			TeamName:   team.Name,
+			TeamMember: members,
+			TeamSkills: skills,
+			PreferenceReason: pref.Reason,
+		})
+	}
+
+	c.JSON(http.StatusOK, teamResponse)
+}
+
+// @Summary Get project preferred by team detail
+// @Description Get the details of a team that prefer a project
+// @Tags Project Preference
+// @Produce json
+// @Param projectId path int true "Project ID"
+// @Param teamId path int true "Team ID"
+// @Success 200 {object} response.TeamDetailResponse
+// @Failure 404 {object} map[string]string "{"error": "Project not found"}" or "{"error": "Team not found"}"
+// @Router /v1/project/{projectId}/preferencedBy/{teamId}/detail [get]
+func GetProjectPreferencedByTeamDetail(c *gin.Context) {
+	projectId := c.Param("projectId")
+	teamId := c.Param("teamId")
+
+	var preference models.TeamPreferenceProject
+	if err := global.DB.Where("project_id = ? AND team_id = ?", projectId, teamId).First(&preference).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Preference not found"})
+		return
+	}
+
+	var team models.Team
+	if err := global.DB.Preload("Members").Preload("Skills").First(&team, teamId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+		return
+	}
+
+	var members []response.ProjectTeamMember
+	for _, member := range team.Members {
+		members = append(members, response.ProjectTeamMember{
+			UserID:    member.ID,
+			UserName:  member.Username,
+			AvatarURL: member.AvatarURL,
+		})
+	}
+
+	var skills []string
+	for _, skill := range team.Skills {
+		skills = append(skills, skill.SkillName)
+	}
+
+	response := response.TeamDetailResponse{
+		TeamID:           team.ID,
+		TeamName:         team.Name,
+		TeamMember:       members,
+		TeamSkills:       skills,
+		PreferenceReason: preference.Reason,
+	}
+
+	c.JSON(http.StatusOK, response)
+}

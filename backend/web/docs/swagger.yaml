@@ -61,6 +61,16 @@ definitions:
     - email
     - password
     type: object
+  forms.PreferenceRequest:
+    properties:
+      projectId:
+        type: integer
+      reason:
+        type: string
+    required:
+    - projectId
+    - reason
+    type: object
   forms.Profile:
     properties:
       avatarBase64:
@@ -247,6 +257,15 @@ definitions:
       message:
         type: string
     type: object
+  response.PreferenceResponse:
+    properties:
+      projectId:
+        type: integer
+      projectTitle:
+        type: string
+      reason:
+        type: string
+    type: object
   response.ProfileResponse:
     properties:
       avatarURL:
@@ -309,6 +328,15 @@ definitions:
       tutorName:
         type: string
     type: object
+  response.ProjectTeamMember:
+    properties:
+      avatarURL:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+    type: object
   response.StudentInfoResponse:
     properties:
       avatarURL:
@@ -333,6 +361,23 @@ definitions:
       userName:
         type: string
       userSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.TeamDetailResponse:
+    properties:
+      preferenceReason:
+        type: string
+      teamId:
+        type: integer
+      teamMember:
+        items:
+          $ref: '#/definitions/response.ProjectTeamMember'
+        type: array
+      teamName:
+        type: string
+      teamSkills:
         items:
           type: string
         type: array
@@ -368,6 +413,8 @@ definitions:
       avatarURL:
         type: string
       email:
+        type: string
+      name:
         type: string
       role:
         type: integer
@@ -761,6 +808,36 @@ paths:
       summary: Modify user role
       tags:
       - Admin
+  /v1/project/{projectId}/preferencedBy/{teamId}/detail:
+    get:
+      description: Get the details of a team that prefer a project
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      - description: Team ID
+        in: path
+        name: teamId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TeamDetailResponse'
+        "404":
+          description: '{"error": "Project not found"}" or "{"error": "Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get project preferred by team detail
+      tags:
+      - Project Preference
   /v1/project/create:
     post:
       consumes:
@@ -984,6 +1061,60 @@ paths:
       summary: Modify project detail information
       tags:
       - Project
+  /v1/project/preferencedBy/team/{projectId}:
+    get:
+      description: Get the detail of teams that prefer a given project ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamDetailResponse'
+            type: array
+        "404":
+          description: '{"error": "Project not found"}" or "{"error": "Teams not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get teams that prefer a project
+      tags:
+      - Project Preference
+  /v1/project/team/allocated/{projectId}:
+    get:
+      description: 查看一个 project 被 allocated 的所有 team 的信息
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamDetailResponse'
+            type: array
+        "404":
+          description: '{"error": "Project not found"}" or "{"error": "Teams not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get allocated team details
+      tags:
+      - Project Allocation
   /v1/student/unassigned/list:
     get:
       consumes:
@@ -1007,7 +1138,7 @@ paths:
             type: object
       summary: Get all students unassigned list
       tags:
-      - User
+      - Student
   /v1/team/create:
     post:
       consumes:
@@ -1071,6 +1202,34 @@ paths:
       summary: Get Team List
       tags:
       - Team
+  /v1/team/get/preferences/{userId}:
+    get:
+      description: Get the team preferences for a given user
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.PreferenceResponse'
+            type: array
+        "404":
+          description: '{"error": "User not found"}" or {"error": "User does not belong
+            to any team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get team preferences
+      tags:
+      - Project Preference
   /v1/team/get/student-info/{teamName}:
     get:
       consumes:
@@ -1233,6 +1392,46 @@ paths:
       summary: Leave a team
       tags:
       - Team
+  /v1/team/preference/project/{userId}:
+    put:
+      consumes:
+      - application/json
+      description: Update the team preference project for a given user
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Preferences
+        in: body
+        name: preferences
+        required: true
+        schema:
+          $ref: '#/definitions/forms.PreferenceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated team preferences
+          schema:
+            type: string
+        "400":
+          description: '{"error": "body error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "User not found"}" or "{"error": "User does not
+            belong to any team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update team preferences
+      tags:
+      - Project Preference
   /v1/team/profile/{userId}:
     get:
       consumes:

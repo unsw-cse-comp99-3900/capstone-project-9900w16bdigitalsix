@@ -294,6 +294,7 @@ func GetTutorInfoByProjectID(c *gin.Context) {
 
 	response := response.TutorInfoResponse{
 		TutorID:   tutor.ID,
+		Name:      tutor.Username,
 		Role:      tutor.Role,
 		AvatarURL: tutor.AvatarURL,
 		Email:     tutor.Email,

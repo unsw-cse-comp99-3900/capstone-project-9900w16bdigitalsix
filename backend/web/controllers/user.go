@@ -658,7 +658,7 @@ func GetAllStudents(c *gin.Context) {
 // GetAllUnassignedStudents godoc
 // @Summary Get all students unassigned list
 // @Description 返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
-// @Tags User
+// @Tags Student
 // @Accept  json
 // @Produce  json
 // @Success 200 {array} response.StudentListResponse

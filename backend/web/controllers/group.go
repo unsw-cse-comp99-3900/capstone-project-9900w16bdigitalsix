@@ -463,3 +463,100 @@ func InviteUserToTeam(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "User invited to team successfully"})
 }
+
+// @Summary Update team preferences
+// @Description Update the team preference project for a given user
+// @Tags Project Preference
+// @Accept json
+// @Produce json
+// @Param userId path int true "User ID"
+// @Param preferences body forms.PreferenceRequest true "Preferences"
+// @Success 200 {string} string "Successfully updated team preferences"
+// @Failure 400 {object} map[string]string "{"error": "body error"}"
+// @Failure 404 {object} map[string]string "{"error": "User not found"}" or "{"error": "User does not belong to any team"}"
+// @Router /v1/team/preference/project/{userId} [put]
+func UpdateTeamPreferences(c *gin.Context) {
+	userId := c.Param("userId")
+	var user models.User
+	if err := global.DB.First(&user, userId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	if user.BelongsToGroup == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User does not belong to any team"})
+		return
+	}
+
+	var preferences []forms.PreferenceRequest
+	if err := c.ShouldBindJSON(&preferences); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	teamID := *user.BelongsToGroup
+	for _, pref := range preferences {
+		var existingPref response.TeamPreferenceProject
+		if err := global.DB.Where("team_id = ? AND project_id = ?", teamID, pref.ProjectID).First(&existingPref).Error; err != nil {
+			// Create new preference
+			newPref := response.TeamPreferenceProject{
+				TeamID:    teamID,
+				ProjectID: pref.ProjectID,
+				Reason:    pref.Reason,
+			}
+			global.DB.Create(&newPref)
+		} else {
+			// Update existing preference
+			existingPref.Reason = pref.Reason
+			global.DB.Save(&existingPref)
+		}
+	}
+
+	c.JSON(http.StatusOK, "Successfully updated team preferences")
+}
+
+
+// @Summary Get team preferences
+// @Description Get the team preferences for a given user
+// @Tags Project Preference
+// @Produce json
+// @Param userId path int true "User ID"
+// @Success 200 {array} response.PreferenceResponse
+// @Failure 404 {object} map[string]string "{"error": "User not found"}" or {"error": "User does not belong to any team"}
+// @Router /v1/team/get/preferences/{userId} [get]
+func GetTeamPreferences(c *gin.Context) {
+	userId := c.Param("userId")
+	var user models.User
+	if err := global.DB.First(&user, userId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	if user.BelongsToGroup == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User does not belong to any team"})
+		return
+	}
+
+	var preferences []models.TeamPreferenceProject
+	if err := global.DB.Where("team_id = ?", *user.BelongsToGroup).Find(&preferences).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Preferences not found"})
+		return
+	}
+
+	var responses []response.PreferenceResponse
+	for _, pref := range preferences {
+		var project models.Project
+		if err := global.DB.First(&project, pref.ProjectID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
+			return
+		}
+		var response response.PreferenceResponse
+		response.ProjectID = pref.ProjectID
+		response.ProjectTitle = project.Name
+		response.Reason = pref.Reason
+		responses = append(responses, response)
+	}
+
+	c.JSON(http.StatusOK, responses)
+}
+

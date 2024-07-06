@@ -44,3 +44,15 @@ type StudentInfoResponse struct {
 	Email     string `json:"email"`
 	AvatarURL string `json:"avatarURL"`
 }
+
+type TeamPreferenceProject struct {
+	TeamID    uint   `gorm:"primaryKey"`
+	ProjectID uint   `gorm:"primaryKey"`
+	Reason    string `gorm:"type:text"`
+}
+
+type PreferenceResponse struct {
+	ProjectID    uint   `json:"projectId"`
+	ProjectTitle string `json:"projectTitle"`
+	Reason       string `json:"reason"`
+}

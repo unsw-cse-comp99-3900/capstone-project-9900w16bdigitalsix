@@ -44,6 +44,7 @@ type UserListResponse struct {
 
 type TutorInfoResponse struct {
 	TutorID   uint   `json:"tutorId"`
+	Name      string `json:"name"`
 	Role      int    `json:"role"`
 	AvatarURL string `json:"avatarURL"`
 	Email     string `json:"email"`
