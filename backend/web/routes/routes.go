@@ -44,6 +44,8 @@ func AdminRouter(Router *gin.RouterGroup) {
 		AdminRouter.POST("/modify/user/role", controllers.ModifyUserRole)
 		AdminRouter.POST("/change/project/coordinator", controllers.ChangeProjectCoordinator)
 		AdminRouter.POST("/change/project/tutor", controllers.ChangeProjectTutor)
+		AdminRouter.GET("/get/tutor/:projectId", controllers.GetTutorInfoByProjectID)
+		AdminRouter.GET("/get/coordinator/:projectId", controllers.GetCoorInfoByProjectID)
 	}
 }
 

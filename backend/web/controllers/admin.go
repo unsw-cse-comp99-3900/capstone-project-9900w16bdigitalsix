@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -197,7 +198,7 @@ func ChangeProjectCoordinator(c *gin.Context) {
 		return
 	}
 
-    // 检查 tutor 是否存在
+	// 检查 tutor 是否存在
 	var tutor models.User
 	if err := global.DB.Where("id = ? AND role = ?", req.CoordinatorID, 4).First(&tutor).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Coordinator not found"})
@@ -239,7 +240,7 @@ func ChangeProjectTutor(c *gin.Context) {
 		return
 	}
 
-    // 检查 tutor 是否存在
+	// 检查 tutor 是否存在
 	var tutor models.User
 	if err := global.DB.Where("id = ? AND role = ?", req.TutorID, 2).First(&tutor).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tutor not found"})
@@ -259,4 +260,84 @@ func ChangeProjectTutor(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"msg": "Project tutor updated successfully"})
+}
+
+// @Summary Get tutor information by project ID
+// @Description Get tutor information by project ID
+// @Tags Admin
+// @Produce json
+// @Param projectId path int true "Project ID"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} response.TutorInfoResponse
+// @Failure 400 {object} map[string]string "{"error": Invalid projectId}"
+// @Failure 404 {object} map[string]string "{"error": "Project not found"}" or "{"error": "Tutor not found"}"
+// @Router /v1/admin/get/tutor/{projectId} [get]
+func GetTutorInfoByProjectID(c *gin.Context) {
+	projectIdStr := c.Param("projectId")
+	projectId, err := strconv.Atoi(projectIdStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid projectId"})
+		return
+	}
+
+	var project models.Project
+	if err := global.DB.First(&project, projectId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
+		return
+	}
+
+	var tutor models.User
+	if err := global.DB.First(&tutor, project.TutorID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Tutor not found"})
+		return
+	}
+
+	response := response.TutorInfoResponse{
+		TutorID:   tutor.ID,
+		Role:      tutor.Role,
+		AvatarURL: tutor.AvatarURL,
+		Email:     tutor.Email,
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// @Summary Get coordinator information by project ID
+// @Description Get coordinator information by project ID
+// @Tags Admin
+// @Produce json
+// @Param projectId path int true "Project ID"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} response.TutorInfoResponse
+// @Failure 400 {object} map[string]string "{"error": Invalid projectId}"
+// @Failure 404 {object} map[string]string "{"error": "Project not found"}" or "{"error": "Coordinator not found"}"
+// @Router /v1/admin/get/coordinator/{projectId} [get]
+func GetCoorInfoByProjectID(c *gin.Context) {
+	projectIdStr := c.Param("projectId")
+	projectId, err := strconv.Atoi(projectIdStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid projectId"})
+		return
+	}
+
+	var project models.Project
+	if err := global.DB.First(&project, projectId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
+		return
+	}
+
+	var coordinator models.User
+	if err := global.DB.First(&coordinator, project.CoordinatorID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Coordinator not found"})
+		return
+	}
+
+	response := response.CoorInfoResponse{
+		CoordinatorID: coordinator.ID,
+		Role:          coordinator.Role,
+		AvatarURL:     coordinator.AvatarURL,
+		Email:         coordinator.Email,
+	}
+
+	c.JSON(http.StatusOK, response)
 }

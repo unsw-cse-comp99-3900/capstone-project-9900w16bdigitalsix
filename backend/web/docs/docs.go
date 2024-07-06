@@ -237,6 +237,60 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/admin/get/coordinator/{projectId}": {
+            "get": {
+                "description": "Get coordinator information by project ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get coordinator information by project ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.TutorInfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": Invalid projectId}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Project not found\"}\" or \"{\"error\": \"Coordinator not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/admin/get/tutor/list": {
             "get": {
                 "description": "注意 header  Authorization: Bearer \u003ctoken\u003e, 返回所有 Tutor 列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
@@ -289,6 +343,60 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "{\"error\": \"Failed to fetch tutors\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/get/tutor/{projectId}": {
+            "get": {
+                "description": "Get tutor information by project ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get tutor information by project ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.TutorInfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": Invalid projectId}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Project not found\"}\" or \"{\"error\": \"Tutor not found\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -2304,6 +2412,23 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "response.TutorInfoResponse": {
+            "type": "object",
+            "properties": {
+                "avatarURL": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "integer"
+                },
+                "tutorId": {
+                    "type": "integer"
                 }
             }
         },

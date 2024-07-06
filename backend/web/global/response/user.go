@@ -29,8 +29,8 @@ type StudentListResponse struct {
 }
 
 type TeamListResponse struct {
-	TeamID   uint   `json:"teamId"`
-	TeamName string `json:"teamName"`
+	TeamID     uint     `json:"teamId"`
+	TeamName   string   `json:"teamName"`
 	TeamSkills []string `json:"teamSkills"`
 }
 
@@ -40,4 +40,18 @@ type UserListResponse struct {
 	Email     string `json:"email"`
 	Role      int    `json:"role"`
 	AvatarURL string `json:"avatar"`
+}
+
+type TutorInfoResponse struct {
+	TutorID   uint   `json:"tutorId"`
+	Role      int    `json:"role"`
+	AvatarURL string `json:"avatarURL"`
+	Email     string `json:"email"`
+}
+
+type CoorInfoResponse struct {
+	CoordinatorID uint   `json:"coorId"`
+	Role          int    `json:"role"`
+	AvatarURL     string `json:"avatarURL"`
+	Email         string `json:"email"`
 }
