@@ -29,6 +29,9 @@ import RoleManage from "./RoleManage";
 import ProjectAdmin from "./ProjectAdmin";
 import ProjectAdminAssign from "./ProjectAdminAssign";
 
+// notification
+import Notification from "./Notification";
+
 const PageList = () => {
   const [token, setToken] = React.useState(null);
   const [role, setRole] = React.useState(null);
@@ -65,6 +68,8 @@ const PageList = () => {
         {/* admin */}
         <Route path="/admin/role-manage" element={<RoleManage token={token} setToken={setToken}/>} />
         
+        {/* notification */}
+        <Route path="/notification" element={<Notification token={token} setToken={setToken}/>} />
 
       </Routes>
       <br />
