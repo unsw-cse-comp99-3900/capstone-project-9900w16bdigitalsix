@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Container, Card, CardTitle, CardBody, Button } from 'reactstrap';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { CardContent } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
 
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import '../assets/scss/FullLayout.css';//make sure import this
 import TutorAssign from '../components/AssignTeamTutorModal';
+import CoorAssign from '../components/AssignTeamCoorModal';
+import { apiCall} from '../helper';
 
 const ProjectAdminAssign = () => {
   const location = useLocation();
@@ -25,22 +25,63 @@ const ProjectAdminAssign = () => {
     projectId,
     requiredSkills,
     title,
-    tutorId,
-    tutorName,
-    tutorEmail,
-    coorId,
-    coorName,
-    coorEmail,
   } = item;
 
+  const [tutor, setTutor] = useState(null);
+  const [coordinator, setCoordinator] = useState(null);
   // State for the Tutor Dialog
   const [tutorDialogOpen, setTutorDialogOpen] = useState(false);
   const toggleTutorDialog = () => setTutorDialogOpen(!tutorDialogOpen);
 
   // State for the Coordinator Dialog
   const [coorDialogOpen, setCoorDialogOpen] = useState(false);
-  const toggleCoorDialog = () => setCoorDialogOpen(!coorDialogOpen);
-  console.log(item);
+const toggleCoorDialog = () => {
+  console.log("coorDialogOpen", !coorDialogOpen);
+  setCoorDialogOpen(!coorDialogOpen);
+}
+
+  const { tutorId, tutorName, tutorEmail, tutorAvatar } = tutor || {};
+  const { coorId, coorEmail, coorName, coorAvatar } = coordinator || {};
+  //console.log(item);
+
+  useEffect(() => {
+    if (projectId) {
+      fetchTutor();
+      fetchCoordinator();
+    }
+  }, [projectId]);
+
+  const fetchTutor = async () => {
+    const token = localStorage.getItem('token');
+    const result = await apiCall('GET', `v1/admin/get/tutor/${projectId}`, null, token, true);
+    if (!result.error) {
+      setTutor({
+        tutorId: result.tutorId,
+        tutorName: result.name, // Assuming the name is part of the email before '@'
+        tutorEmail: result.email,
+        tutorAvatar: result.avatarURL
+      });
+    } else {
+      console.error('Error fetching tutor info:', result.error);
+      setTutor(null);
+    }
+  };
+
+  const fetchCoordinator = async () => {
+    const token = localStorage.getItem('token');
+    const result = await apiCall('GET', `v1/admin/get/coordinator/${projectId}`, null, token, true);
+    if (!result.error) {
+      setCoordinator({
+        coorId: result.coorId,
+        coorName: result.email.split('@')[0],
+        coorEmail: result.email,
+        coorAvatar: result.avatarURL
+      });
+    } else {
+      console.error('Error fetching coordinator info:', result.error);
+      setCoordinator(null);
+    }
+  };
 
   return (
     <main>
@@ -87,68 +128,115 @@ const ProjectAdminAssign = () => {
                   <p style={{ margin: '0', fontSize: '16px', fontWeight: '400' }}><strong>Required Skills:</strong> {requiredSkills.join(', ')}</p>
                 </div>
                 <div>
-                  {tutorId !== 0 || tutorName ? (
+                <h5 style={{ margin: '30px 30px 10px 30px', fontSize: '18px', fontWeight: '600' }}>Project Tutor</h5>
+                  {tutorId || tutorName || tutorEmail ? (
                     <Card style={{
                       display: 'flex',
-                      flexDirection: 'row',  // 修改为垂直布局
-                      justifyContent: 'center',
-                      alignItems: 'flex-start',  // 左对齐
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                       padding: '8px 20px',
-                      margin: '10px 0',
+                      margin: '10px auto',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                      width: '40%'
+                      width: '70%',
+                      boxSizing: 'border-box'
                     }}>
-                      <CardContent style={{ width: '100%' }}>
-                        <div>
-                          <p style={{ margin: '0', fontSize: '16px', fontWeight: '400' }}>
-                            <strong>Name:</strong> {tutorName}<br/>
-                            <strong>Email:</strong> {tutorEmail}
-                          </p>
-                        </div>
-                      </CardContent>
-                      <Button color="primary" onClick={toggleTutorDialog} style={{ whiteSpace: 'nowrap', alignSelf: 'flex-start', marginTop: '10px' }}>Change</Button>
-                                       
-                      <Dialog
-                        open={tutorDialogOpen}
-                        onClose={toggleTutorDialog}
-                        maxWidth="md"
-                        fullWidth={true}
-                      >
-                        <DialogTitle>Assign Tutor</DialogTitle>
-                        <DialogContent style={{ height: '100%', minHeight: '400px' }}>
-                          <TutorAssign projectId={projectId}/>
-                        </DialogContent>
-                      </Dialog>
+                      <div style={{ minWidth: '60px', marginRight: '20px' }}>
+                        <Avatar
+                          src={tutorAvatar}
+                          alt="Coor Avatar"
+                          style={{ width: '60px', height: '60px' }}
+                          imgProps={{ onError: (e) => { e.target.onerror = null; e.target.src = 'https://example.com/default-avatar.png'; } }}
+                        />
+                      </div>
+                    
+                      <div style={{ flexGrow: 1, minWidth: '160px', flexBasis: '50%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
+                        <p style={{ margin: '0', fontSize: '14px', fontWeight: '400' }}>
+                          <strong>Name:</strong> {tutorName}<br />
+                          <strong>Email:</strong> {tutorEmail}
+                        </p>
+                      </div>
+                    
+                      <Button color="primary" onClick={toggleTutorDialog} style={{ whiteSpace: 'nowrap', alignSelf: 'center', padding: '6px 12px', fontSize: '14px' }}>
+                        Change
+                      </Button>                                                          
                     </Card>
                   ) : (
-                    <Button color="primary" className="mb-3 btn-lg" style={{ display: 'block' }} onClick={toggleTutorDialog}>Assign Tutor</Button>
+                    <Button color="primary" className="mb-3 btn-lg" style={{ display: 'block', margin:'30px' }} onClick={toggleTutorDialog}>Assign Tutor</Button>
                   )}
                 </div>
-                  <div>
-                  {coorId === 0 ? (
-                    <>
-                      <Button color="secondary" className="btn-lg" style={{ display: 'block' }} onClick={toggleCoorDialog}>Assign Coordinator</Button>
-                      <Dialog open={coorDialogOpen} onClose={toggleCoorDialog}>
-                        <DialogTitle>{"Assign Coordinator"}</DialogTitle>
-                        <DialogContent>
-                          <DialogContentText>
-                            Please enter the details to assign a coordinator.
-                          </DialogContentText>
-                          {/* Additional form inputs can be placed here */}
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={toggleCoorDialog} color="primary">Save</Button>
-                          <Button onClick={toggleCoorDialog} color="secondary">Cancel</Button>
-                        </DialogActions>
-                      </Dialog>
-                    </>
+                <div>
+                  <h5 style={{ margin: '30px 30px 10px 30px', fontSize: '18px', fontWeight: '600' }}>Project Coordinator</h5>
+                  {coorId || coorName || coorEmail ? (
+                    <Card style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '8px 20px',
+                      margin: '10px auto',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      width: '70%',
+                      boxSizing: 'border-box'
+                    }}>
+                      <div style={{ minWidth: '60px', marginRight: '20px' }}>
+                        <Avatar
+                          src={coorAvatar}
+                          alt="Coor Avatar"
+                          style={{ width: '60px', height: '60px' }}
+                          imgProps={{ onError: (e) => { e.target.onerror = null; e.target.src = 'https://example.com/default-avatar.png'; } }}
+                        />
+                      </div>
+
+                      <div style={{ flexGrow: 1, minWidth: '160px', flexBasis: '50%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
+                        <p style={{ margin: '0', fontSize: '14px', fontWeight: '400' }}>
+                          <strong>Name:</strong> {coorName}<br />
+                          <strong>Email:</strong> {coorEmail}
+                        </p>
+                      </div>
+
+                      <Button color="primary" onClick={toggleCoorDialog} style={{ whiteSpace: 'nowrap', alignSelf: 'center', padding: '6px 12px', fontSize: '14px' }}>
+                        Change
+                      </Button>
+                    </Card>
                   ) : (
-                    <p style={{ margin: '0', fontSize: '16px', fontWeight: '400' }}><strong>Coordinator Name:</strong> {coorName}</p>
+                    <Button color="primary" className="mb-3 btn-lg" style={{ display: 'block', margin:'30px' }} onClick={toggleCoorDialog}>Assign Coordinator</Button>
                   )}
                 </div>
+
               </CardBody>
             </Card>
           </Container>
+          <Dialog
+            open={coorDialogOpen}
+            onClose={() => {
+              toggleCoorDialog();
+              fetchCoordinator();
+            }}
+            maxWidth="md"
+            fullWidth={true}
+          >
+            <DialogTitle>Assign Coordinator</DialogTitle>
+            <DialogContent style={{ height: '100%', minHeight: '400px' }}>
+              <CoorAssign projectId={projectId}/>
+            </DialogContent>
+          </Dialog>
+          <Dialog
+            open={tutorDialogOpen}
+            onClose={() => {
+              toggleTutorDialog();
+              fetchTutor();
+            }}
+            maxWidth="md"
+            fullWidth={true}
+          >
+            <DialogTitle>Assign Tutor</DialogTitle>
+            <DialogContent style={{ height: '100%', minHeight: '400px' }}>
+              <TutorAssign projectId={projectId}/>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </main>

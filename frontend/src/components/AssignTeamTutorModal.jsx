@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button, Input, List, Avatar } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
-import { apiCall, fileToDataUrl } from '../helper';
+import { apiCall } from '../helper';
+import MessageAlert from './MessageAlert';
 
 const TutorAssign = ({ projectId }) => {
   const [loading, setLoading] = useState(false);
@@ -10,12 +11,18 @@ const TutorAssign = ({ projectId }) => {
   const [filteredTutors, setFilteredTutors] = useState([]);
   const searchRef = useRef();
   const [selectedTutor, setSelectedTutor] = useState(null);
+  const [snackbarContent, setSnackbarContent] = useState('');
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertType, setAlertType] = useState('');
 
   const loadTutors = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
     const data = await apiCall('GET', 'v1/admin/get/tutor/list', null, token, true);
-    if (!data.error) {
+    if (!data){
+      setTutors([]);
+      setFilteredTutors([]);
+    } else if (!data.error) {
       setTutors(data);
       setFilteredTutors(data);
     } else {
@@ -28,6 +35,10 @@ const TutorAssign = ({ projectId }) => {
     loadTutors();
   }, []);
 
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
+
   const assignTutor = async (tutor) => {
     setSelectedTutor(tutor);
     const token = localStorage.getItem('token');
@@ -37,11 +48,15 @@ const TutorAssign = ({ projectId }) => {
     };
     const data = await apiCall('POST', 'v1/admin/change/project/tutor', requestBody, token, true);
     if (data && !data.error) {
-      console.log('Project tutor updated successfully:', data);
-      // 可以在这里添加后续操作，比如关闭列表、显示成功消息等
+      //console.log('Project tutor updated successfully:', data);
+      setSnackbarContent('Project tutor updated successfully');
+      setAlertType('success');
+      setAlertOpen(true);
     } else {
-      console.error('Failed to update project tutor:', data.error);
-      // 显示错误消息
+      //console.error('Failed to update project tutor:', data.error);
+      setSnackbarContent('Failed to update project tutor');
+      setAlertType('error');
+      setAlertOpen(true);
     }
   };
 
@@ -79,6 +94,12 @@ const TutorAssign = ({ projectId }) => {
           </List.Item>
         )}
       />
+        <MessageAlert
+      open={alertOpen}
+      alertType={alertType}
+      handleClose={handleAlertClose}
+      snackbarContent={snackbarContent}
+        />
     </>
   );
 };
