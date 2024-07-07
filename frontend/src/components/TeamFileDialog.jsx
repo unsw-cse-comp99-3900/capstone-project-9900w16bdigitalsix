@@ -66,102 +66,124 @@ const TeamFile = ({ open, handleClose }) => {
     { teamId: 1, teamName: "goodTeam", teamSkills: ["python", "javascript"] },
   ];
 
+  const [open2, setOpen2] = useState(false);
+  const handleClose2 = () => {
+    setOpen2(false);
+  };
+
+  const handleClick2 = () => {
+    setOpen2(true);
+  };
+
   return (
-    <React.Fragment>
-      <BootstrapDialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-      >
-        <DialogTitle
-          sx={{ m: 0, p: 2, textDecoration: "underline" }}
-          id="customized-dialog-title"
+    <>
+      <React.Fragment>
+        <BootstrapDialog
+          onClose={handleClose}
+          aria-labelledby="customized-dialog-title"
+          open={open}
         >
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <HoverDiv
-              onClick={() => handleClick("Preference List")}
-              style={{
-                color: selected === "Preference List" ? "blue" : "inherit",
-              }}
-            >
-              Preference List
-            </HoverDiv>
-            <div style={{ display: "flex" }}>
+          <DialogTitle
+            sx={{ m: 0, p: 2, textDecoration: "underline" }}
+            id="customized-dialog-title"
+          >
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
               <HoverDiv
-                onClick={() => handleClick("Allocated Team")}
+                onClick={() => handleClick("Preference List")}
                 style={{
-                  color: selected === "Allocated Team" ? "blue" : "inherit",
+                  color: selected === "Preference List" ? "blue" : "inherit",
                 }}
               >
-                Allocated Team
+                Preference List
               </HoverDiv>
-              <div>
-                <IconButton
-                  aria-label="close"
-                  onClick={handleClose}
-                  sx={{
-                    left: 4,
-                    right: 0,
-                    color: (theme) => theme.palette.grey[500],
+              <div style={{ display: "flex" }}>
+                <HoverDiv
+                  onClick={() => handleClick("Allocated Team")}
+                  style={{
+                    color: selected === "Allocated Team" ? "blue" : "inherit",
                   }}
                 >
-                  <CloseIcon />
-                </IconButton>
+                  Allocated Team
+                </HoverDiv>
+                <div>
+                  <IconButton
+                    aria-label="close"
+                    onClick={handleClose}
+                    sx={{
+                      left: 4,
+                      right: 0,
+                      color: (theme) => theme.palette.grey[500],
+                    }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </div>
               </div>
             </div>
-          </div>
-        </DialogTitle>
+          </DialogTitle>
 
-        <DialogContent dividers>
-          <div className="search">
-            <Input
-              ref={seachRef}
-              size="large"
-              placeholder="Search Team"
-              prefix={<SearchOutlined />}
-              onChange={searchList}
-              style={{ minWidth: "50vw" }}
-            />
-          </div>
-          <List sx={{ width: "100%" }}>
-            {currentTeam.map((team) => {
-              return (
-                <React.Fragment key={team.teamId}>
-                  <div style={{ display: "flex", direction: "row" }}>
-                    <ListItem alignItems="flex-start" style={{ flex: 7 }}>
-                      <ListItemText
-                        primary={`${team.teamName} `}
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              UserId: {team.teamId} / User Skills:
-                            </Typography>
-                            {` ${
-                              team.teamSkills ? team.teamSkills.join(", ") : " "
-                            }`}
-                          </React.Fragment>
-                        }
-                      />
-                    </ListItem>
-                    <ListItem style={{ textAlign: "right", flex: 1 }}>
-                      <Button size="small" variant="contained">
-                        Approve
-                      </Button>
-                    </ListItem>
-                  </div>
-                  <Divider component="li" />
-                </React.Fragment>
-              );
-            })}
-          </List>
-        </DialogContent>
-      </BootstrapDialog>
-    </React.Fragment>
+          <DialogContent dividers>
+            <div className="search">
+              <Input
+                ref={seachRef}
+                size="large"
+                placeholder="Search Team"
+                prefix={<SearchOutlined />}
+                onChange={searchList}
+                style={{ minWidth: "50vw" }}
+              />
+            </div>
+            <List sx={{ width: "100%" }}>
+              {currentTeam.map((team) => {
+                return (
+                  <React.Fragment key={team.teamId}>
+                    <div
+                      style={{ display: "flex", direction: "row" }}
+                      onClick={handleClick2}
+                    >
+                      <ListItem alignItems="flex-start" style={{ flex: 7 }}>
+                        <ListItemText
+                          primary={`${team.teamName} `}
+                          secondary={
+                            <React.Fragment>
+                              <Typography
+                                sx={{ display: "inline" }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                              >
+                                UserId: {team.teamId} / User Skills:
+                              </Typography>
+                              {` ${
+                                team.teamSkills
+                                  ? team.teamSkills.join(", ")
+                                  : " "
+                              }`}
+                            </React.Fragment>
+                          }
+                        />
+                      </ListItem>
+                      <ListItem style={{ textAlign: "right", flex: 1 }}>
+                        <Button size="small" variant="contained">
+                          Approve
+                        </Button>
+                      </ListItem>
+                    </div>
+                    <Divider component="li" />
+                  </React.Fragment>
+                );
+              })}
+            </List>
+          </DialogContent>
+        </BootstrapDialog>
+      </React.Fragment>
+
+      <div>
+        <Dialog open={open2} onClose={handleClose2}>
+          <DialogTitle>TeamName: sdsd</DialogTitle>
+        </Dialog>
+      </div>
+    </>
   );
 };
 
