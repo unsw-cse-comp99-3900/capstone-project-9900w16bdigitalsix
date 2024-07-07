@@ -52,6 +52,7 @@ type TutorInfoResponse struct {
 
 type CoorInfoResponse struct {
 	CoordinatorID uint   `json:"coorId"`
+	Name          string `json:"name"`
 	Role          int    `json:"role"`
 	AvatarURL     string `json:"avatarURL"`
 	Email         string `json:"email"`

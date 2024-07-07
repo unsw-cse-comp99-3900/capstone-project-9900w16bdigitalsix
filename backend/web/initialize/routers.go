@@ -31,5 +31,6 @@ func InitRouters() *gin.Engine {
 	routes.ProjectRouter(ApiGroup)
 	routes.AdminRouter(ApiGroup)
 	routes.StudentRouter(ApiGroup)
+	routes.NotificationRouter(ApiGroup)
 	return Router
 }

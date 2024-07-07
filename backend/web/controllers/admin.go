@@ -114,8 +114,7 @@ func GetAllCoordinatorInfo(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer <token>"
-// @Param userId body uint true "用户ID"
-// @Param Role body int true "用户角色"
+// @Param data body forms.ModifyUserRoleRequest true "User ID, Role, and Notification"
 // @Success 200 {object} map[string]string "{"message": "User role updated successfully"}"
 // @Failure 400 {object} map[string]string "{"error": "Bad request"}"
 // @Failure 401 {object} map[string]string "{"error": "Please login first"}"
@@ -124,10 +123,7 @@ func GetAllCoordinatorInfo(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error": "Internal server error"}"
 // @Router /v1/admin/modify/user/role [post]
 func ModifyUserRole(c *gin.Context) {
-	var req struct {
-		UserID uint `json:"userId" binding:"required"`
-		Role   int  `json:"role" binding:"required"`
-	}
+	var req forms.ModifyUserRoleRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -175,7 +171,13 @@ func ModifyUserRole(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User role updated successfully"})
+	// 调用通知处理函数
+	if err := handleNotification(req.Notification.Content, req.Notification.To.Users); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User role and notification updated successfully"})
 }
 
 // @Summary Update project coordinator
@@ -217,7 +219,13 @@ func ChangeProjectCoordinator(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"msg": "Project coordinator updated successfully"})
+	// 调用通知处理函数
+	if err := handleNotification(req.Notification.Content, req.Notification.To.Users); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"msg": "Project coordinator updated and notification sent successfully"})
 }
 
 // @Summary Update project tutor
@@ -259,7 +267,13 @@ func ChangeProjectTutor(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"msg": "Project tutor updated successfully"})
+	// 调用通知处理函数
+	if err := handleNotification(req.Notification.Content, req.Notification.To.Users); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"msg": "Project tutor updated and notification sent successfully"})
 }
 
 // @Summary Get tutor information by project ID
@@ -335,6 +349,7 @@ func GetCoorInfoByProjectID(c *gin.Context) {
 
 	response := response.CoorInfoResponse{
 		CoordinatorID: coordinator.ID,
+		Name:          coordinator.Username,
 		Role:          coordinator.Role,
 		AvatarURL:     coordinator.AvatarURL,
 		Email:         coordinator.Email,

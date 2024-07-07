@@ -23,6 +23,7 @@ type User struct {
 	TutorProjects      []Project `gorm:"foreignkey:TutorID"`       // a tutor responsible for many projects
 	CoordinatorProject []Project `gorm:"foreignkey:CoordinatorID"` // a coordinator responsible for many projects
 	Skills             []Skill   `gorm:"many2many:student_skills"` // a student has many skills, a skill can have many students
+	Notifications      []Notification  `gorm:"many2many:user_notifications"`
 }
 
 type Team struct {
@@ -66,6 +67,18 @@ type Skill struct {
 	Students  []User    `gorm:"many2many:student_skills"`
 	Teams     []Team    `gorm:"many2many:team_skills;"`
 	Projects  []Project `gorm:"many2many:project_skills;"`
+}
+
+// Notification model
+type Notification struct {
+	gorm.Model
+	Content    string    `gorm:"type:text"`
+	Users      []User    `gorm:"many2many:user_notifications"`
+}
+
+type UserNotifications struct {
+	UserID         uint `gorm:"primaryKey"`
+	NotificationID uint `gorm:"primaryKey"`
 }
 
 type Sprint struct {

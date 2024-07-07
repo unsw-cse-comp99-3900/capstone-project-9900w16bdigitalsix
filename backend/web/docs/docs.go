@@ -491,21 +491,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "用户ID",
-                        "name": "userId",
+                        "description": "User ID, Role, and Notification",
+                        "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "description": "用户角色",
-                        "name": "Role",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
+                            "$ref": "#/definitions/forms.ModifyUserRoleRequest"
                         }
                     }
                 ],
@@ -557,6 +548,94 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "{\"error\": \"Internal server error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notification/clear/all/{userId}": {
+            "delete": {
+                "description": "Clears all notifications for a user by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Clear all notifications for a user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"msg\": \"Clear all notifications successfully for the user}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notification/get/all/{userId}": {
+            "get": {
+                "description": "Retrieves all notifications for a user by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Get all notifications for a user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.NotificationResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"internal server error\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -2130,12 +2209,16 @@ const docTemplate = `{
         "forms.ChangeProjectCoordinatorRequest": {
             "type": "object",
             "required": [
-                "coordinatorId",
+                "coorId",
+                "notification",
                 "projectId"
             ],
             "properties": {
-                "coordinatorId": {
+                "coorId": {
                     "type": "integer"
+                },
+                "notification": {
+                    "$ref": "#/definitions/forms.Notification"
                 },
                 "projectId": {
                     "type": "integer"
@@ -2145,10 +2228,14 @@ const docTemplate = `{
         "forms.ChangeProjectTutorRequest": {
             "type": "object",
             "required": [
+                "notification",
                 "projectId",
                 "tutorId"
             ],
             "properties": {
+                "notification": {
+                    "$ref": "#/definitions/forms.Notification"
+                },
                 "projectId": {
                     "type": "integer"
                 },
@@ -2180,6 +2267,54 @@ const docTemplate = `{
                 },
                 "userId": {
                     "type": "integer"
+                }
+            }
+        },
+        "forms.ModifyUserRoleRequest": {
+            "type": "object",
+            "required": [
+                "notification",
+                "role",
+                "userId"
+            ],
+            "properties": {
+                "notification": {
+                    "$ref": "#/definitions/forms.Notification"
+                },
+                "role": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "forms.Notification": {
+            "type": "object",
+            "required": [
+                "content",
+                "to"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "to": {
+                    "$ref": "#/definitions/forms.NotificationTo"
+                }
+            }
+        },
+        "forms.NotificationTo": {
+            "type": "object",
+            "required": [
+                "users"
+            ],
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -2350,6 +2485,9 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "role": {
                     "type": "integer"
                 }
@@ -2493,6 +2631,17 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.NotificationResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
                     "type": "string"
                 }
             }

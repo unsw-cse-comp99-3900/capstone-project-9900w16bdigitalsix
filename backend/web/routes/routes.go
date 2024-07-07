@@ -88,3 +88,11 @@ func ProjectRouter(Router *gin.RouterGroup) {
 		projectRouter.GET("/:projectId/preferencedBy/:teamId/detail", controllers.GetProjectPreferencedByTeamDetail)
 	}
 }
+
+func NotificationRouter(Router *gin.RouterGroup) {
+	notificationRouter := Router.Group("notification")
+	{
+		notificationRouter.GET("/get/all/:userId", controllers.GetUserNotifications)
+		notificationRouter.DELETE("/clear/all/:userId", controllers.ClearUserNotifications)
+	}
+}

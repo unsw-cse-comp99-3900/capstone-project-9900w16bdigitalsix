@@ -14,21 +14,27 @@ definitions:
     type: object
   forms.ChangeProjectCoordinatorRequest:
     properties:
-      coordinatorId:
+      coorId:
         type: integer
+      notification:
+        $ref: '#/definitions/forms.Notification'
       projectId:
         type: integer
     required:
-    - coordinatorId
+    - coorId
+    - notification
     - projectId
     type: object
   forms.ChangeProjectTutorRequest:
     properties:
+      notification:
+        $ref: '#/definitions/forms.Notification'
       projectId:
         type: integer
       tutorId:
         type: integer
     required:
+    - notification
     - projectId
     - tutorId
     type: object
@@ -48,6 +54,38 @@ definitions:
     required:
     - teamIdShow
     - userId
+    type: object
+  forms.ModifyUserRoleRequest:
+    properties:
+      notification:
+        $ref: '#/definitions/forms.Notification'
+      role:
+        type: integer
+      userId:
+        type: integer
+    required:
+    - notification
+    - role
+    - userId
+    type: object
+  forms.Notification:
+    properties:
+      content:
+        type: string
+      to:
+        $ref: '#/definitions/forms.NotificationTo'
+    required:
+    - content
+    - to
+    type: object
+  forms.NotificationTo:
+    properties:
+      users:
+        items:
+          type: integer
+        type: array
+    required:
+    - users
     type: object
   forms.PasswordLoginForm:
     properties:
@@ -161,6 +199,8 @@ definitions:
         type: integer
       email:
         type: string
+      name:
+        type: string
       role:
         type: integer
     type: object
@@ -255,6 +295,13 @@ definitions:
       createdByUserId:
         type: integer
       message:
+        type: string
+    type: object
+  response.NotificationResponse:
+    properties:
+      content:
+        type: string
+      createdAt:
         type: string
     type: object
   response.PreferenceResponse:
@@ -754,18 +801,12 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: 用户ID
+      - description: User ID, Role, and Notification
         in: body
-        name: userId
+        name: data
         required: true
         schema:
-          type: integer
-      - description: 用户角色
-        in: body
-        name: Role
-        required: true
-        schema:
-          type: integer
+          $ref: '#/definitions/forms.ModifyUserRoleRequest'
       produces:
       - application/json
       responses:
@@ -808,6 +849,64 @@ paths:
       summary: Modify user role
       tags:
       - Admin
+  /v1/notification/clear/all/{userId}:
+    delete:
+      consumes:
+      - application/json
+      description: Clears all notifications for a user by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg": "Clear all notifications successfully for the user}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Clear all notifications for a user
+      tags:
+      - Notification
+  /v1/notification/get/all/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all notifications for a user by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.NotificationResponse'
+            type: array
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all notifications for a user
+      tags:
+      - Notification
   /v1/project/{projectId}/preferencedBy/{teamId}/detail:
     get:
       description: Get the details of a team that prefer a project
