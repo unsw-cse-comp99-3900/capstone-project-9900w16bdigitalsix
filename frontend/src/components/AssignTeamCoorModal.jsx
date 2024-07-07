@@ -5,7 +5,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { apiCall } from '../helper';
 import MessageAlert from './MessageAlert';
 
-const CoorAssign = ({ projectId }) => {
+const CoorAssign = ({ projectId, projectName }) => {
   const [loading, setLoading] = useState(false);
   const [coordinators, setCoordinators] = useState([]);
   const [filteredCoordinators, setFilteredCoordinators] = useState([]);
@@ -26,7 +26,7 @@ const CoorAssign = ({ projectId }) => {
       setCoordinators(data);
       setFilteredCoordinators(data);
     } else {
-      console.error('Failed to fetch Coordinator data:', data.error);
+      console.error('Failed to fetch coor data:', data.error);
     }
     setLoading(false);
   };
@@ -44,7 +44,15 @@ const CoorAssign = ({ projectId }) => {
     const token = localStorage.getItem('token');
     const requestBody = {
       projectId: projectId,
-      coordinatorId: coordinator.userId
+      coorId: coordinator.userId,
+      notification: {
+        content: `You have been assigned as a Coordinator for the project: ${projectName}`,
+        to: {
+          users: [
+            coordinator.userId
+          ]
+        }
+      },
     };
     const data = await apiCall('POST', 'v1/admin/change/project/coordinator', requestBody, token, true);
     if (data && !data.error) {

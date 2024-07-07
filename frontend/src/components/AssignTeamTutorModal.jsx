@@ -5,7 +5,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { apiCall } from '../helper';
 import MessageAlert from './MessageAlert';
 
-const TutorAssign = ({ projectId }) => {
+const TutorAssign = ({ projectId, projectName }) => {
   const [loading, setLoading] = useState(false);
   const [tutors, setTutors] = useState([]);
   const [filteredTutors, setFilteredTutors] = useState([]);
@@ -44,7 +44,15 @@ const TutorAssign = ({ projectId }) => {
     const token = localStorage.getItem('token');
     const requestBody = {
       projectId: projectId,
-      tutorId: tutor.userId
+      tutorId: tutor.userId,
+      notification: {
+        content: `You have been assigned as a Tutor for the project: ${projectName}`,
+        to: {
+          users: [
+            tutor.userId
+          ]
+        }
+      },
     };
     const data = await apiCall('POST', 'v1/admin/change/project/tutor', requestBody, token, true);
     if (data && !data.error) {
