@@ -73,7 +73,7 @@ const toggleCoorDialog = () => {
     if (!result.error) {
       setCoordinator({
         coorId: result.coorId,
-        coorName: result.email.split('@')[0],
+        coorName: result.name,
         coorEmail: result.email,
         coorAvatar: result.avatarURL
       });
