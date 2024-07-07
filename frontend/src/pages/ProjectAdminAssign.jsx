@@ -220,7 +220,7 @@ const toggleCoorDialog = () => {
           >
             <DialogTitle>Assign Coordinator</DialogTitle>
             <DialogContent style={{ height: '100%', minHeight: '400px' }}>
-              <CoorAssign projectId={projectId}/>
+              <CoorAssign projectId={projectId} projectName={title}/>
             </DialogContent>
           </Dialog>
           <Dialog
@@ -234,7 +234,7 @@ const toggleCoorDialog = () => {
           >
             <DialogTitle>Assign Tutor</DialogTitle>
             <DialogContent style={{ height: '100%', minHeight: '400px' }}>
-              <TutorAssign projectId={projectId}/>
+              <TutorAssign projectId={projectId} projectName={title}/>
             </DialogContent>
           </Dialog>
         </div>
