@@ -43,8 +43,10 @@ const StudentTeamPreference = () => {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
-  const [count, setCount] = useState(1);
+  // const [count, setCount] = useState(1);
   const [open, setOpen] = useState(false);
+  const [preferences, setPreferences] = useState([]);
+  const userId = parseInt(localStorage.getItem("userId"));
 
   const SelectProject = () => {
     const [project, setProject] = React.useState("");
@@ -62,7 +64,7 @@ const StudentTeamPreference = () => {
           setAlertType("error");
           setShowError(true);
         } else {
-          console.log(res);
+          // console.log(res);
           setAllProjects(res);
         }
       } catch (error) {
@@ -126,27 +128,58 @@ const StudentTeamPreference = () => {
   const handleClickOpen = () => {
     setOpen(true);
   };
-  const handleCloseAlert = () => {
-    setOpen(false);
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setShowError(false);
   };
+
+  useEffect(() => {
+    const getTeamPreference = async () => {
+      try {
+        const res = await apiCall("GET", `v1/team/get/preferences/${userId}`);
+        if (res.error) {
+          setErrorMessage(res.error);
+          setAlertType("error");
+          setShowError(true);
+        } else {
+          console.log(res);
+          setPreferences(res);
+        }
+      } catch (error) {
+        setErrorMessage(error.message || error.toString());
+        setAlertType("error");
+        setShowError(true);
+      }
+    };
+    try {
+      getTeamPreference();
+    } catch (error) {
+      setErrorMessage(error.message || error.toString());
+      setAlertType("error");
+      setShowError(true);
+    }
+  }, [userId]);
 
   const createData = (preNum, project, reason) => {
     return { preNum, project, reason };
   };
 
-  const rows = [
+  const [rows, setRows] = useState([
     createData(1, <SelectProject />, <ReasonField />),
     createData(2, <SelectProject />, <ReasonField />),
     createData(3, <SelectProject />, <ReasonField />),
     createData(4, <SelectProject />, <ReasonField />),
-  ];
-
-  const oneRow = () => {
-    return <>1</>;
-  };
+  ]);
 
   const addOneMore = () => {
-    setCount(count + 1);
+    const newRows = [...rows];
+    newRows.push(
+      createData(preferences.length + 1, <SelectProject />, <ReasonField />)
+    );
+    setRows(newRows);
   };
 
   const handleClose = (event, reason) => {
