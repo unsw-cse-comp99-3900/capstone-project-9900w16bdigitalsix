@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Container } from "reactstrap";
 import Box from "@mui/material/Box";
@@ -20,6 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import "../assets/scss/FullLayout.css"; //make sure import this
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
+import TeamFile from "../components/TeamFileDialog";
 
 const Item = styled(Paper)(({ theme }) => ({
   // backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -31,18 +32,33 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const createData = (preNum, project, reason) => {
-  return { preNum, project, reason };
-};
-
-const rows = [
-  createData(1, 159, 6.0),
-  createData(2, 237, 9.0),
-  createData(3, 262, 16.0),
-  createData(4, 305, 3.7),
-];
-
 const StudentTeamPreference = () => {
+  const [count, setCount] = useState(1);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const createData = (preNum, project, reason) => {
+    return { preNum, project, reason };
+  };
+
+  const rows = [
+    createData(1, 159, 6.0),
+    createData(2, 237, 9.0),
+    createData(3, 262, 16.0),
+    createData(4, 305, 3.7),
+    createData(5, 305, 3.7),
+  ];
+
+  const addOneMore = () => {
+    setCount(count + 1);
+  };
+
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
@@ -65,13 +81,16 @@ const StudentTeamPreference = () => {
             {/* add code here */}
             <Box sx={{ width: "100%" }}>
               <Stack spacing={2}>
-                {/* <Item sx={{ textAlign: "left" }}>
-                  <Button variant="outlined" href="#outlined-buttons">
-                    Back
-                  </Button>
-                </Item> */}
                 <Item>
-                  <Typography variant="h4" gutterBottom fontWeight={"bold"}>
+                  <Typography
+                    variant="h4"
+                    gutterBottom
+                    fontWeight={"bold"}
+                    textAlign="left"
+                  >
+                    Preference List
+                  </Typography>
+                  <Typography variant="h5" gutterBottom fontWeight={"bold"}>
                     You must select at least 7 preferences
                   </Typography>
                 </Item>
@@ -136,10 +155,20 @@ const StudentTeamPreference = () => {
                     sx={{ justifyContent: "center" }}
                   >
                     <Button variant="outlined">⬅️ Back</Button>
-                    <Button variant="outlined">✚ Add one</Button>
+                    <Button variant="outlined" onClick={addOneMore}>
+                      ✚ Add one
+                    </Button>
                     <Button variant="contained" endIcon={<SendIcon />}>
                       save
                     </Button>
+                    <Button
+                      variant="contained"
+                      endIcon={<SendIcon />}
+                      onClick={handleClickOpen}
+                    >
+                      teamProfile
+                    </Button>
+                    <TeamFile open={open} handleClose={handleClose} />
                   </Stack>
                 </Item>
               </Stack>
