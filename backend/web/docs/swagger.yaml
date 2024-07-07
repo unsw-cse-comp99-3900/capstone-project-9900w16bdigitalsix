@@ -87,6 +87,13 @@ definitions:
     required:
     - users
     type: object
+  forms.NotificationToTeam:
+    properties:
+      teamId:
+        type: integer
+    required:
+    - teamId
+    type: object
   forms.PasswordLoginForm:
     properties:
       email:
@@ -174,6 +181,16 @@ definitions:
         type: string
     required:
     - email
+    type: object
+  forms.TeamNotification:
+    properties:
+      content:
+        type: string
+      to:
+        $ref: '#/definitions/forms.NotificationToTeam'
+    required:
+    - content
+    - to
     type: object
   forms.UpdateTeamProfileForm:
     properties:
@@ -301,7 +318,7 @@ definitions:
     properties:
       content:
         type: string
-      createdAt:
+      updatedAt:
         type: string
     type: object
   response.PreferenceResponse:
@@ -1558,6 +1575,114 @@ paths:
       summary: Get Team Profile
       tags:
       - Team
+  /v1/team/project/allocation:
+    put:
+      consumes:
+      - application/json
+      description: Allocate a project to a team and send notification to team members
+      parameters:
+      - description: Project ID
+        in: body
+        name: projectId
+        required: true
+        schema:
+          type: integer
+      - description: Team ID
+        in: body
+        name: teamId
+        required: true
+        schema:
+          type: integer
+      - description: Notification Content and To
+        in: body
+        name: notification
+        required: true
+        schema:
+          $ref: '#/definitions/forms.TeamNotification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Project allocated and notification sent successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'error: Error message'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'error: Team not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'error: Internal server error'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Agree to allocate a Project to a Team
+      tags:
+      - Project Allocation
+  /v1/team/project/reject:
+    put:
+      consumes:
+      - application/json
+      description: 检查团队是否已经被分配了项目，如果已经分配了项目，则取消分配并发送通知
+      parameters:
+      - description: Project ID
+        in: body
+        name: projectId
+        required: true
+        schema:
+          type: integer
+      - description: Team ID
+        in: body
+        name: teamId
+        required: true
+        schema:
+          type: integer
+      - description: Notification Content and To
+        in: body
+        name: notification
+        required: true
+        schema:
+          $ref: '#/definitions/forms.TeamNotification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Allocation canceled and notification sent successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'error: Error message'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'error: Team not found or not allocated'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'error: Internal server error'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Reject a team allocation
+      tags:
+      - Project Allocation
   /v1/team/update/profile/{teamId}:
     put:
       consumes:

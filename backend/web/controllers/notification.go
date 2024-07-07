@@ -33,7 +33,7 @@ func GetUserNotifications(c *gin.Context) {
 	for _, notification := range notifications {
 		notificationResponse = append(notificationResponse, response.NotificationResponse{
 			Content:   notification.Content,
-			CreatedAt: notification.CreatedAt,
+			UpdatedAt: notification.UpdatedAt,
 		})
 	}
 

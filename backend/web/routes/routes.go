@@ -70,6 +70,8 @@ func GroupRouter(Router *gin.RouterGroup) {
 		groupRouter.GET("/invite/:userId/:teamId", controllers.InviteUserToTeam)
 		groupRouter.PUT("/preference/project/:userId", controllers.UpdateTeamPreferences)
 		groupRouter.GET("/get/preferences/:userId", controllers.GetTeamPreferences)
+		groupRouter.PUT("/project/allocation", controllers.ProjectAllocation)
+		groupRouter.PUT("/project/reject", controllers.RejectProjectAllocation)
 
 	}
 }

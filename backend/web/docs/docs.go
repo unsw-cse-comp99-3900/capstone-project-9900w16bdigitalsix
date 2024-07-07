@@ -1612,6 +1612,170 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/team/project/allocation": {
+            "put": {
+                "description": "Allocate a project to a team and send notification to team members",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project Allocation"
+                ],
+                "summary": "Agree to allocate a Project to a Team",
+                "parameters": [
+                    {
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Team ID",
+                        "name": "teamId",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Notification Content and To",
+                        "name": "notification",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.TeamNotification"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "message: Project allocated and notification sent successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "error: Error message",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "error: Team not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "error: Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/team/project/reject": {
+            "put": {
+                "description": "检查团队是否已经被分配了项目，如果已经分配了项目，则取消分配并发送通知",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project Allocation"
+                ],
+                "summary": "Reject a team allocation",
+                "parameters": [
+                    {
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Team ID",
+                        "name": "teamId",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Notification Content and To",
+                        "name": "notification",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.TeamNotification"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "message: Allocation canceled and notification sent successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "error: Error message",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "error: Team not found or not allocated",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "error: Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/team/update/profile/{teamId}": {
             "put": {
                 "description": "更新团队的资料和技能",
@@ -2318,6 +2482,17 @@ const docTemplate = `{
                 }
             }
         },
+        "forms.NotificationToTeam": {
+            "type": "object",
+            "required": [
+                "teamId"
+            ],
+            "properties": {
+                "teamId": {
+                    "type": "integer"
+                }
+            }
+        },
         "forms.PasswordLoginForm": {
             "type": "object",
             "required": [
@@ -2445,6 +2620,21 @@ const docTemplate = `{
             "properties": {
                 "email": {
                     "type": "string"
+                }
+            }
+        },
+        "forms.TeamNotification": {
+            "type": "object",
+            "required": [
+                "content",
+                "to"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "to": {
+                    "$ref": "#/definitions/forms.NotificationToTeam"
                 }
             }
         },
@@ -2641,7 +2831,7 @@ const docTemplate = `{
                 "content": {
                     "type": "string"
                 },
-                "createdAt": {
+                "updatedAt": {
                     "type": "string"
                 }
             }

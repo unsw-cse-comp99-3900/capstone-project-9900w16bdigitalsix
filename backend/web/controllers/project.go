@@ -12,6 +12,7 @@ import (
 	"web/global"
 	"web/global/response"
 	"web/models"
+	"web/forms"
 )
 
 // CreateProject godoc
@@ -404,7 +405,7 @@ func GetAllocatedTeamDetail(c *gin.Context) {
     }
 
     var teams []models.Team
-    if err := global.DB.Where("project_id = ?", project.ID).Preload("Members").Preload("Skills").Find(&teams).Error; err != nil {
+    if err := global.DB.Where("allocated_project = ?", project.ID).Preload("Members").Preload("Skills").Find(&teams).Error; err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Teams not found"})
         return
     }
@@ -425,11 +426,18 @@ func GetAllocatedTeamDetail(c *gin.Context) {
             skills = append(skills, skill.SkillName)
         }
 
+		var preference models.TeamPreferenceProject
+        if err := global.DB.Where("team_id = ? AND project_id = ?", team.ID, project.ID).First(&preference).Error; err != nil {
+            c.JSON(http.StatusNotFound, gin.H{"error": "Preference reason not found"})
+            return
+        }
+
         responses = append(responses, response.TeamDetailResponse{
             TeamID:     team.ID,
             TeamName:   team.Name,
             TeamMember: members,
             TeamSkills: skills,
+			PreferenceReason: preference.Reason,
         })
     }
 
@@ -540,4 +548,106 @@ func GetProjectPreferencedByTeamDetail(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+// @Summary Agree to allocate a Project to a Team
+// @Description Allocate a project to a team and send notification to team members
+// @Tags Project Allocation
+// @Accept json
+// @Produce json
+// @Param projectId body int true "Project ID"
+// @Param teamId body int true "Team ID"
+// @Param notification body forms.TeamNotification true "Notification Content and To"
+// @Success 200 {object} map[string]string "message: Project allocated and notification sent successfully"
+// @Failure 400 {object} map[string]string "error: Error message"
+// @Failure 404 {object} map[string]string "error: Team not found"
+// @Failure 500 {object} map[string]string "error: Internal server error"
+// @Router /v1/team/project/allocation [put]
+func ProjectAllocation(c *gin.Context) {
+    var req forms.ProjectAllocationRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    // 更新团队的 AllocatedProject 字段
+    var team models.Team
+    if err := global.DB.Preload("Members").First(&team, req.TeamID).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+        return
+    }
+    team.AllocatedProject = &req.ProjectID
+    if err := global.DB.Save(&team).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update team"})
+        return
+    }
+
+    // 收集用户ID
+    userIds := make([]uint, len(team.Members))
+    for i, member := range team.Members {
+        userIds[i] = member.ID
+    }
+
+    // 处理通知
+    if err := handleNotification(req.Notification.Content, userIds); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to handle notification"})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "Project allocated and notification sent successfully"})
+}
+
+
+// @Summary Reject a team allocation
+// @Description 检查团队是否已经被分配了项目，如果已经分配了项目，则取消分配并发送通知
+// @Tags Project Allocation
+// @Accept json
+// @Produce json
+// @Param projectId body int true "Project ID"
+// @Param teamId body int true "Team ID"
+// @Param notification body forms.TeamNotification true "Notification Content and To"
+// @Success 200 {object} map[string]string "message: Allocation canceled and notification sent successfully"
+// @Failure 400 {object} map[string]string "error: Error message"
+// @Failure 404 {object} map[string]string "error: Team not found or not allocated"
+// @Failure 500 {object} map[string]string "error: Internal server error"
+// @Router /v1/team/project/reject [put]
+func RejectProjectAllocation(c *gin.Context) {
+    var req forms.ProjectAllocationRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    var team models.Team
+    if err := global.DB.Preload("Members").First(&team, req.TeamID).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+        return
+    }
+
+    // 检查团队是否已经被分配了项目
+    if team.AllocatedProject == nil || *team.AllocatedProject != req.ProjectID {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Team not allocated to this project"})
+        return
+    }
+
+    // 取消分配，将 allocatedProject 字段清空
+    team.AllocatedProject = nil
+    if err := global.DB.Save(&team).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update team"})
+        return
+    }
+
+    // 收集用户ID
+    userIds := make([]uint, len(team.Members))
+    for i, member := range team.Members {
+        userIds[i] = member.ID
+    }
+
+    // 处理通知
+    if err := handleNotification(req.Notification.Content, userIds); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to handle notification"})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "Allocation canceled and notification sent successfully"})
 }
