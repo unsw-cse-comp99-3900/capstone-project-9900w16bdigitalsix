@@ -28,6 +28,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
+  const selectedRoleName = roleMap[selectedRole];
 
   useEffect(() => {
     if (user && user.role !== undefined) {
@@ -57,7 +58,15 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
 
     const response = await apiCall('POST', 'v1/admin/modify/user/role', {
       userId: user.userId,
-      role: selectedRole
+      role: selectedRole,
+      notification: {
+        content: `Your role has been changed to ${selectedRoleName}.`,
+        to: {
+          users: [
+            user.userId
+          ]
+        }
+      },
     }, token, true);
 
     if (response.error) {
