@@ -39,90 +39,113 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
+  return (
+    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+      <InputLabel>Project</InputLabel>
+      <Select
+        value={value}
+        label="Project"
+        onChange={(event) => onChange(event, index)}
+      >
+        <MenuItem value="">
+          <em>None</em>
+        </MenuItem>
+        {allProjects.map((proj) => (
+          <MenuItem key={proj.projectId} value={proj.projectId}>
+            P{proj.projectId} &nbsp;&nbsp;{proj.title}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+};
+
+const ReasonField = ({ value, onChange, index }) => {
+  return (
+    <TextField
+      label="Reason"
+      multiline
+      maxRows={4}
+      onChange={(event) => onChange(event, index)}
+      value={value}
+    />
+  );
+};
+
 const StudentTeamPreference = () => {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
-  // const [count, setCount] = useState(1);
   const [open, setOpen] = useState(false);
   const [preferences, setPreferences] = useState([]);
+  const [rows, setRows] = useState([]);
+  const [allProjects, setAllProjects] = useState([]);
+
   const userId = parseInt(localStorage.getItem("userId"));
 
-  const SelectProject = () => {
-    const [project, setProject] = React.useState("");
-    const [allProjects, setAllProjects] = useState([]);
+  const getAllPublicProjects = async () => {
+    try {
+      const res = await apiCall("GET", "v1/project/get/public_project/list");
+      if (res.error) {
+        setErrorMessage(res.error);
+        setAlertType("error");
+        setShowError(true);
+      } else {
+        // console.log(res);
+        setAllProjects(res);
+      }
+    } catch (error) {
+      setErrorMessage(error);
+      setAlertType("error");
+      setShowError(true);
+    }
+  };
 
-    const handleChange = (event) => {
-      setProject(event.target.value);
-    };
-
-    const getAllPublicProjects = async () => {
+  useEffect(() => {
+    const getTeamPreference = async () => {
       try {
-        const res = await apiCall("GET", "v1/project/get/public_project/list");
+        const res = await apiCall("GET", `v1/team/get/preferences/${userId}`);
         if (res.error) {
           setErrorMessage(res.error);
           setAlertType("error");
           setShowError(true);
         } else {
           // console.log(res);
-          setAllProjects(res);
+          setPreferences(res);
         }
       } catch (error) {
-        setErrorMessage(error);
+        setErrorMessage(error.message || error.toString());
         setAlertType("error");
         setShowError(true);
       }
     };
+    try {
+      getAllPublicProjects();
+    } catch (error) {
+      setErrorMessage(error.message || error.toString());
+      setAlertType("error");
+      setShowError(true);
+    }
+    try {
+      getTeamPreference();
+    } catch (error) {
+      setErrorMessage(error.message || error.toString());
+      setAlertType("error");
+      setShowError(true);
+    }
+  }, [userId]);
 
-    useEffect(() => {
-      try {
-        getAllPublicProjects();
-      } catch (error) {
-        setErrorMessage(error);
-        setAlertType("error");
-        setShowError(true);
-      }
-    }, []);
-
-    return (
-      <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-        <InputLabel id="demo-select-small-label">Project</InputLabel>
-        <Select
-          labelId="demo-select-small-label"
-          id="demo-select-small"
-          value={project}
-          label="Project"
-          onChange={handleChange}
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          {allProjects.map((proj) => (
-            <MenuItem key={proj.projectId} value={proj.projectId}>
-              P{proj.projectId} &nbsp;&nbsp;{proj.title}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    );
+  const handleSelectProjectChange = (event, index) => {
+    const newRows = [...rows];
+    newRows[index].projectId = event.target.value;
+    setRows(newRows);
   };
 
-  const ReasonField = () => {
-    const [reason, setReason] = useState("");
-    const handleChange = (event) => {
-      setReason(event.target.value);
-    };
-
-    return (
-      <TextField
-        id="outlined-multiline-flexible"
-        label="Reason"
-        multiline
-        maxRows={4}
-        onChange={handleChange}
-        value={reason}
-      />
-    );
+  const handleReasonFieldChange = (event, index) => {
+    const newRows = [...rows];
+    newRows[index].reason = event.target.value;
+    setRows(newRows);
   };
 
   const handleClickOpen = () => {
@@ -137,49 +160,22 @@ const StudentTeamPreference = () => {
   };
 
   useEffect(() => {
-    const getTeamPreference = async () => {
-      try {
-        const res = await apiCall("GET", `v1/team/get/preferences/${userId}`);
-        if (res.error) {
-          setErrorMessage(res.error);
-          setAlertType("error");
-          setShowError(true);
-        } else {
-          console.log(res);
-          setPreferences(res);
-        }
-      } catch (error) {
-        setErrorMessage(error.message || error.toString());
-        setAlertType("error");
-        setShowError(true);
-      }
-    };
-    try {
-      getTeamPreference();
-    } catch (error) {
-      setErrorMessage(error.message || error.toString());
-      setAlertType("error");
-      setShowError(true);
+    if (preferences.length > 0) {
+      setRows(
+        preferences.map((pre, index) => ({
+          preNum: index + 1,
+          projectId: pre.projectId,
+          reason: pre.reason,
+        }))
+      );
+    } else {
+      setRows([{ preNum: 1, projectId: "", reason: "" }]);
     }
-  }, [userId]);
+  }, [preferences]);
 
-  const createData = (preNum, project, reason) => {
-    return { preNum, project, reason };
-  };
-
-  const [rows, setRows] = useState([
-    createData(1, <SelectProject />, <ReasonField />),
-    createData(2, <SelectProject />, <ReasonField />),
-    createData(3, <SelectProject />, <ReasonField />),
-    createData(4, <SelectProject />, <ReasonField />),
-  ]);
-
+  console.log(preferences);
   const addOneMore = () => {
-    const newRows = [...rows];
-    newRows.push(
-      createData(preferences.length + 1, <SelectProject />, <ReasonField />)
-    );
-    setRows(newRows);
+    setRows([...rows, { preNum: rows.length + 1, projectId: "", reason: "" }]);
   };
 
   const handleClose = (event, reason) => {
@@ -246,7 +242,7 @@ const StudentTeamPreference = () => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {rows.map((row) => (
+                          {rows.map((row, index) => (
                             <TableRow
                               key={row.preNum}
                               sx={{
@@ -268,13 +264,24 @@ const StudentTeamPreference = () => {
                                 align="center"
                                 style={{ width: "30%" }}
                               >
-                                {row.project}
+                                <SelectProjectModal
+                                  value={row.projectId}
+                                  onChange={(event) =>
+                                    handleSelectProjectChange(event, index)
+                                  }
+                                  allProjects={allProjects}
+                                />
                               </TableCell>
                               <TableCell
                                 align="center"
                                 style={{ width: "40%" }}
                               >
-                                {row.reason}
+                                <ReasonField
+                                  value={row.reason}
+                                  onChange={(event) =>
+                                    handleReasonFieldChange(event, index)
+                                  }
+                                />
                               </TableCell>
                               <TableCell
                                 align="center"
