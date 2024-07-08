@@ -32,6 +32,9 @@ import ProjectAdminAssign from "./ProjectAdminAssign";
 // notification
 import Notification from "./Notification";
 
+// test
+import TestProjectDetail from "./TestProjectDetail";
+
 const PageList = () => {
   const [token, setToken] = React.useState(null);
   const [role, setRole] = React.useState(null);
@@ -61,7 +64,7 @@ const PageList = () => {
         <Route path='/project/myproject' element={<ProjectList token={token} setToken={setToken}/>}/>
         <Route path='project/create' element={<CreateProject token={token} setToken={setToken}/>}/>
         <Route path="/project/edit/:id" element={<EditProject token={token} setToken={setToken}/>}/>
-        <Route path="/project/progress" element={<ProjectProgress token={token} setToken={setToken}/>}/>
+        <Route path="/project/progress/:projectId/:teamId" element={<ProjectProgress token={token} setToken={setToken}/>}/>
         <Route path="/project/admin" element={<ProjectAdmin token={token} setToken={setToken}/>}/>
         <Route path="/project/admin/:projectId" element={<ProjectAdminAssign token={token} setToken={setToken}/>}/>
 
@@ -71,6 +74,8 @@ const PageList = () => {
         {/* notification */}
         <Route path="/notification" element={<Notification token={token} setToken={setToken}/>} />
 
+        {/* test */}
+        <Route path="/testProjectDetail" element={<TestProjectDetail token={token} setToken={setToken}/>} />
       </Routes>
       <br />
     </>
