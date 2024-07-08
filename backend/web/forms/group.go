@@ -21,5 +21,5 @@ type JoinTeamForm struct {
 
 type PreferenceRequest struct {
 	ProjectID uint   `json:"projectId" binding:"required"`
-	Reason    string `json:"reason" binding:"required"`
+	Reason    string `json:"reason"`
 }
