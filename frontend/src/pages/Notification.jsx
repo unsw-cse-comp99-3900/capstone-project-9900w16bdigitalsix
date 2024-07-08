@@ -24,7 +24,6 @@ import '../assets/scss/FullLayout.css';//make sure import this
 const Notification = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [hovered, setHovered] = useState(false);
   const token = localStorage.getItem('token');
@@ -55,16 +54,14 @@ const Notification = () => {
     console.log("userId:", userId);
     if (!response) {
       setData([]);
-      setFilteredData([]);
       setLoading(false);
     } else if (response.error) {
       setData([]);
-      setFilteredData([]);
       setLoading(false);
     } else {
       const res = Array.isArray(response) ? response : [];
-      setData(res);
-      setFilteredData(res);
+      const sortedData = res.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      setData(sortedData);
       setLoading(false);
     }
   };
@@ -73,6 +70,12 @@ const Notification = () => {
   useEffect(() => {
     loadUserData();
   }, []);
+
+  const formatDate = (isoString) => {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const date = new Date(isoString);
+    return date.toLocaleDateString('en-GB', options).replace(',', ''); // Adjust locale and format as needed
+  };
 
   return (
     <main>
@@ -118,7 +121,7 @@ const Notification = () => {
               <CardBody className="">
                 <List
                   loading={loading}
-                  dataSource={filteredData}
+                  dataSource={data}
                   renderItem={(item) => (
                     <List.Item className="list-item" key={item.userId}>
                       <div
@@ -142,7 +145,7 @@ const Notification = () => {
                         description={
                           <div className="list-item-meta-description">
                             <div className="list-item-meta-id" style={{ fontSize: '14px', color: '#888', fontStyle: 'italic' }}>
-                              date
+                            {formatDate(item.updatedAt)}
                             </div>
                           </div>
                         }
