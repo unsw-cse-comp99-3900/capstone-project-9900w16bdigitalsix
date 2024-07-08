@@ -124,9 +124,6 @@ const StudentTeamPreference = () => {
       }
       if (res.error) {
         return;
-        // setErrorMessage("111");
-        // setAlertType("error");
-        // setShowError(true);
       } else {
         if (res && res.length > 0) {
           setRows(
@@ -174,34 +171,7 @@ const StudentTeamPreference = () => {
   };
 
   // =========================
-  // const [currentTeam, setCurrentTeam] = useState([]);
-
-  // const getAllAppliedTeams = async () => {
-  //   try {
-  //     const res = await apiCall(
-  //       "GET",
-  //       `v1/project/preferencedBy/team/${projectId}`
-  //     );
-  //     if (res === null) {
-  //       return;
-  //     }
-  //     if (res.error) {
-  //       setErrorMessage(res.error);
-  //       setAlertType("error");
-  //       setShowError(true);
-  //     } else {
-  //       console.log(res);
-  //       setCurrentTeam(res);
-  //     }
-  //   } catch (error) {
-  //     setErrorMessage(error.message || error.toString());
-  //     setAlertType("error");
-  //     setShowError(true);
-  //   }
-  // };
-
   const handleClickOpen = () => {
-    // getAllAppliedTeams();
     setOpen(true);
   };
   // =========================
@@ -263,7 +233,6 @@ const StudentTeamPreference = () => {
         setAlertType("error");
         setShowError(true);
       } else {
-        // console.log(res);
         setErrorMessage("Success Update Preferences!");
         setAlertType("success");
         setShowError(true);
@@ -431,9 +400,6 @@ const StudentTeamPreference = () => {
                         handleClose={handleClose}
                         projectId={projectId}
                         handleClickOpen={handleClickOpen}
-                        // currentTeam={currentTeam}
-                        // setCurrentTeam={setCurrentTeam}
-                        // getAllAppliedTeams={getAllAppliedTeams}
                       />
                       {/* ======================== */}
                     </Stack>

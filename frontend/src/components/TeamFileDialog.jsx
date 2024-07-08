@@ -29,15 +29,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const TeamFile = ({
-  open,
-  handleClose,
-  projectId,
-  handleClickOpen,
-  // currentTeam,
-  // setCurrentTeam,
-  // getAllAppliedTeams,
-}) => {
+const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const HoverDiv = styled("div")`
     cursor: pointer;
     &:hover {
@@ -70,10 +62,6 @@ const TeamFile = ({
   //   }
   // };
 
-  // const currentTeam = [
-  //   { teamId: 1, teamName: "goodTeam", teamSkills: ["python", "javascript"] },
-  // ];
-
   const [currentTeam, setCurrentTeam] = useState([]);
 
   const getAllAppliedTeams = async () => {
@@ -87,9 +75,6 @@ const TeamFile = ({
       }
       if (res.error) {
         setCurrentTeam([]);
-        // setErrorMessage(res.error);
-        // setAlertType("error");
-        // setShowError(true);
       } else {
         console.log(res);
         setCurrentTeam(res);
