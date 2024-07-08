@@ -16,31 +16,60 @@ import (
 )
 
 func handleNotification(notificationContent string, userIds []uint) error {
-	var notification models.Notification
-	if err := global.DB.Where("content = ?", notificationContent).First(&notification).Error; err != nil {
-		// 如果没有找到相同内容的通知，则创建新通知
-		notification = models.Notification{
-			Content: notificationContent,
+	var existingNotifications []models.Notification
+
+	// 查找相同内容的通知
+	if err := global.DB.Preload("Users").Where("content = ?", notificationContent).Find(&existingNotifications).Error; err != nil {
+		return err
+	}
+
+	// 检查是否存在针对相同用户的相同通知内容
+	var matchedNotification *models.Notification
+	for _, notification := range existingNotifications {
+		notificationUserIDs := make(map[uint]bool)
+		for _, user := range notification.Users {
+			notificationUserIDs[user.ID] = true
 		}
-		if err := global.DB.Create(&notification).Error; err != nil {
-			return err
+
+		allUsersMatch := true
+		for _, userID := range userIds {
+			if !notificationUserIDs[userID] {
+				allUsersMatch = false
+				break
+			}
 		}
-	} else {
-		// 如果找到了相同内容的通知，则更新 updatedAt 字段
-		notification.UpdatedAt = time.Now()
-		if err := global.DB.Save(&notification).Error; err != nil {
-			return err
+
+		if allUsersMatch {
+			matchedNotification = &notification
+			break
 		}
 	}
 
-	// 关联用户
-	for _, userID := range userIds {
-		if err := global.DB.Model(&notification).Association("Users").Append(&models.User{Model: gorm.Model{ID: userID}}); err != nil {
+	if matchedNotification != nil {
+		// 更新 existing notification 的 updatedAt 字段
+		matchedNotification.UpdatedAt = time.Now()
+		if err := global.DB.Save(matchedNotification).Error; err != nil {
 			return err
+		}
+	} else {
+		// 创建新通知
+		newNotification := models.Notification{
+			Content: notificationContent,
+		}
+		if err := global.DB.Create(&newNotification).Error; err != nil {
+			return err
+		}
+
+		// 关联用户
+		for _, userID := range userIds {
+			if err := global.DB.Model(&newNotification).Association("Users").Append(&models.User{Model: gorm.Model{ID: userID}}); err != nil {
+				return err
+			}
 		}
 	}
 
 	return nil
+
 }
 
 func ExtractSkillNames(skills []models.Skill) []string {
