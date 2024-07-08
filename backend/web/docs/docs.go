@@ -1539,7 +1539,10 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/forms.PreferenceRequest"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/forms.PreferenceRequest"
+                            }
                         }
                     }
                 ],

@@ -470,7 +470,7 @@ func InviteUserToTeam(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param userId path int true "User ID"
-// @Param preferences body forms.PreferenceRequest true "Preferences"
+// @Param preferences body []forms.PreferenceRequest true "Preferences"
 // @Success 200 {string} string "Successfully updated team preferences"
 // @Failure 400 {object} map[string]string "{"error": "body error"}"
 // @Failure 404 {object} map[string]string "{"error": "User not found"}" or "{"error": "User does not belong to any team"}"

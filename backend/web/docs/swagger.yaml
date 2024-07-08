@@ -1524,7 +1524,9 @@ paths:
         name: preferences
         required: true
         schema:
-          $ref: '#/definitions/forms.PreferenceRequest'
+          items:
+            $ref: '#/definitions/forms.PreferenceRequest'
+          type: array
       produces:
       - application/json
       responses:
