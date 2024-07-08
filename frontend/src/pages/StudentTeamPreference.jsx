@@ -86,6 +86,7 @@ const StudentTeamPreference = () => {
 
   // =======================
   const [open, setOpen] = useState(false);
+  const projectId = 7;
   // =======================
 
   const [rows, setRows] = useState([]);
@@ -396,7 +397,11 @@ const StudentTeamPreference = () => {
                       >
                         teamProfile
                       </Button>
-                      <TeamFile open={open} handleClose={handleClose} />
+                      <TeamFile
+                        open={open}
+                        handleClose={handleClose}
+                        projectId={projectId}
+                      />
                       {/* ======================== */}
                     </Stack>
                   </Item>

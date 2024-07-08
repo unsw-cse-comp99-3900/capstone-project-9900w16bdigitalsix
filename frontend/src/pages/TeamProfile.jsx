@@ -155,7 +155,7 @@ const TeamProfile = ({
         setShowError(true);
       }
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }

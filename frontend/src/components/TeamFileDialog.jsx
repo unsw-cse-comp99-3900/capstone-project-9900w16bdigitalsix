@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
@@ -17,6 +17,9 @@ import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 
+import { apiCall } from "../helper";
+import MessageAlert from "../components/MessageAlert";
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -26,7 +29,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const TeamFile = ({ open, handleClose }) => {
+const TeamFile = ({ open, handleClose, projectId }) => {
   const HoverDiv = styled("div")`
     cursor: pointer;
     &:hover {
@@ -35,36 +38,71 @@ const TeamFile = ({ open, handleClose }) => {
   `;
 
   const [selected, setSelected] = useState("Preference List");
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [alertType, setAlertType] = useState("error");
 
-  const handleClick = (name) => {
-    setSelected(name);
-  };
+  // const [data, setData] = useState([]);
+  // const [filteredData, setFilteredData] = useState([]);
+  // const seachRef = useRef();
 
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const seachRef = useRef();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  // const searchList = () => {
+  //   const searchTerm = seachRef.current.input.value.toLowerCase();
+  //   if (searchTerm) {
+  //     const filtered = data.filter(
+  //       (item) =>
+  //         (item.userId && item.userId.toString().includes(searchTerm)) ||
+  //         (item.userName && item.userName.toLowerCase().includes(searchTerm)) ||
+  //         (item.email && item.email.toLowerCase().includes(searchTerm))
+  //     );
+  //     setFilteredData(filtered);
+  //   } else {
+  //     setFilteredData(data);
+  //   }
+  // };
 
-  const searchList = () => {
-    const searchTerm = seachRef.current.input.value.toLowerCase();
-    if (searchTerm) {
-      const filtered = data.filter(
-        (item) =>
-          (item.userId && item.userId.toString().includes(searchTerm)) ||
-          (item.userName && item.userName.toLowerCase().includes(searchTerm)) ||
-          (item.email && item.email.toLowerCase().includes(searchTerm))
+  // const currentTeam = [
+  //   { teamId: 1, teamName: "goodTeam", teamSkills: ["python", "javascript"] },
+  // ];
+
+  const [currentTeam, setCurrentTeam] = useState([]);
+
+  const getAllAppliedTeams = async () => {
+    try {
+      const res = await apiCall(
+        "GET",
+        `v1/project/preferencedBy/team/${projectId}`
       );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(data);
+      if (res === null) {
+        return;
+      }
+      if (res.error) {
+        setErrorMessage(res.error);
+        setAlertType("error");
+        setShowError(true);
+      } else {
+        console.log(res);
+        setCurrentTeam(res);
+      }
+    } catch (error) {
+      setErrorMessage(error.message || error.toString());
+      setAlertType("error");
+      setShowError(true);
     }
   };
 
-  const currentTeam = [
-    { teamId: 1, teamName: "goodTeam", teamSkills: ["python", "javascript"] },
-  ];
+  const handleClick = (name) => {
+    setSelected(name);
+    if (name === "Preference List") {
+      console.log("Preference List");
+    } else if (name === "Allocated Team") {
+      console.log("Allocated Team");
+    }
+  };
+
+  useEffect(() => {
+    getAllAppliedTeams();
+  }, [projectId]);
 
   const [open2, setOpen2] = useState(false);
   const handleClose2 = () => {
@@ -73,6 +111,13 @@ const TeamFile = ({ open, handleClose }) => {
 
   const handleClick2 = () => {
     setOpen2(true);
+  };
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setShowError(false);
   };
 
   return (
@@ -125,54 +170,65 @@ const TeamFile = ({ open, handleClose }) => {
           <DialogContent dividers>
             <div className="search">
               <Input
-                ref={seachRef}
+                // ref={seachRef}
                 size="large"
                 placeholder="Search Team"
                 prefix={<SearchOutlined />}
-                onChange={searchList}
+                // onChange={searchList}
                 style={{ minWidth: "50vw" }}
               />
             </div>
             <List sx={{ width: "100%" }}>
-              {currentTeam.map((team) => {
-                return (
-                  <React.Fragment key={team.teamId}>
-                    <div
-                      style={{ display: "flex", direction: "row" }}
-                      onClick={handleClick2}
-                    >
-                      <ListItem alignItems="flex-start" style={{ flex: 7 }}>
-                        <ListItemText
-                          primary={`${team.teamName} `}
-                          secondary={
-                            <React.Fragment>
-                              <Typography
-                                sx={{ display: "inline" }}
-                                component="span"
-                                variant="body2"
-                                color="text.primary"
-                              >
-                                UserId: {team.teamId} / User Skills:
-                              </Typography>
-                              {` ${
-                                team.teamSkills
-                                  ? team.teamSkills.join(", ")
-                                  : " "
-                              }`}
-                            </React.Fragment>
-                          }
-                        />
-                      </ListItem>
-                      <ListItem style={{ textAlign: "right", flex: 1 }}>
-                        <Button size="small" variant="contained">
-                          Approve
-                        </Button>
-                      </ListItem>
-                    </div>
-                    <Divider component="li" />
-                  </React.Fragment>
-                );
-              })}
+              {currentTeam.length > 0 ? (
+                currentTeam.map((team) => {
+                  return (
+                    <React.Fragment key={team.teamId}>
+                      <div
+                        style={{ display: "flex", direction: "row" }}
+                        onClick={handleClick2}
+                      >
+                        <ListItem alignItems="flex-start" style={{ flex: 7 }}>
+                          <ListItemText
+                            primary={`${team.teamName} `}
+                            secondary={
+                              <React.Fragment>
+                                <Typography
+                                  sx={{ display: "inline" }}
+                                  component="span"
+                                  variant="body2"
+                                  color="text.primary"
+                                >
+                                  UserId: {team.teamId} / User Skills:
+                                </Typography>
+                                {` ${
+                                  team.teamSkills
+                                    ? team.teamSkills.join(", ")
+                                    : " "
+                                }`}
+                              </React.Fragment>
+                            }
+                          />
+                        </ListItem>
+                        <ListItem style={{ textAlign: "right", flex: 1 }}>
+                          <Button size="small" variant="contained">
+                            Approve
+                          </Button>
+                        </ListItem>
+                      </div>
+                      <Divider component="li" />
+                    </React.Fragment>
+                  );
+                })
+              ) : (
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  // fontWeight={"bold"}
+                  textAlign="center"
+                >
+                  No Teams Found
+                </Typography>
+              )}
             </List>
           </DialogContent>
         </BootstrapDialog>
@@ -183,6 +239,13 @@ const TeamFile = ({ open, handleClose }) => {
           <DialogTitle>TeamName: sdsd</DialogTitle>
         </Dialog>
       </div>
+
+      <MessageAlert
+        open={showError}
+        alertType={alertType}
+        handleClose={handleCloseAlert}
+        snackbarContent={errorMessage}
+      />
     </>
   );
 };

@@ -57,7 +57,7 @@ const Team = (props) => {
     try {
       isTeam();
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }
@@ -84,7 +84,7 @@ const Team = (props) => {
         localStorage.setItem("teamId", res.teamId);
       }
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }
@@ -115,7 +115,7 @@ const Team = (props) => {
         localStorage.setItem("teamId", res.teamId);
       }
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }
@@ -139,7 +139,7 @@ const Team = (props) => {
         setDialogOpen(false);
       }
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }
