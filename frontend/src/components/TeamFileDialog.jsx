@@ -29,7 +29,15 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const TeamFile = ({ open, handleClose, projectId }) => {
+const TeamFile = ({
+  open,
+  handleClose,
+  projectId,
+  handleClickOpen,
+  // currentTeam,
+  // setCurrentTeam,
+  // getAllAppliedTeams,
+}) => {
   const HoverDiv = styled("div")`
     cursor: pointer;
     &:hover {
@@ -41,6 +49,7 @@ const TeamFile = ({ open, handleClose, projectId }) => {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
+  const userRole = parseInt(localStorage.getItem("role"));
 
   // const [data, setData] = useState([]);
   // const [filteredData, setFilteredData] = useState([]);
@@ -77,9 +86,10 @@ const TeamFile = ({ open, handleClose, projectId }) => {
         return;
       }
       if (res.error) {
-        setErrorMessage(res.error);
-        setAlertType("error");
-        setShowError(true);
+        setCurrentTeam([]);
+        // setErrorMessage(res.error);
+        // setAlertType("error");
+        // setShowError(true);
       } else {
         console.log(res);
         setCurrentTeam(res);
@@ -95,14 +105,16 @@ const TeamFile = ({ open, handleClose, projectId }) => {
     setSelected(name);
     if (name === "Preference List") {
       console.log("Preference List");
+      getAllAppliedTeams();
     } else if (name === "Allocated Team") {
       console.log("Allocated Team");
     }
   };
 
   useEffect(() => {
+    setSelected("Preference List");
     getAllAppliedTeams();
-  }, [projectId]);
+  }, [handleClickOpen]);
 
   const [open2, setOpen2] = useState(false);
   const handleClose2 = () => {
@@ -118,6 +130,14 @@ const TeamFile = ({ open, handleClose, projectId }) => {
       return;
     }
     setShowError(false);
+  };
+
+  const handleApproveTeam = async (teamId) => {
+    console.log("approve", teamId);
+  };
+
+  const handleRejectTeam = async (teamId) => {
+    console.log("reject", teamId);
   };
 
   return (
@@ -183,13 +203,14 @@ const TeamFile = ({ open, handleClose, projectId }) => {
                 currentTeam.map((team) => {
                   return (
                     <React.Fragment key={team.teamId}>
-                      <div
-                        style={{ display: "flex", direction: "row" }}
-                        onClick={handleClick2}
-                      >
-                        <ListItem alignItems="flex-start" style={{ flex: 7 }}>
+                      <div style={{ display: "flex", direction: "row" }}>
+                        <ListItem
+                          alignItems="flex-start"
+                          style={{ flex: 7 }}
+                          onClick={handleClick2}
+                        >
                           <ListItemText
-                            primary={`${team.teamName} `}
+                            primary={`TeamName: ${team.teamName} `}
                             secondary={
                               <React.Fragment>
                                 <Typography
@@ -198,21 +219,49 @@ const TeamFile = ({ open, handleClose, projectId }) => {
                                   variant="body2"
                                   color="text.primary"
                                 >
-                                  UserId: {team.teamId} / User Skills:
+                                  No. of TeamMembers: {team.teamMember.length}
                                 </Typography>
-                                {` ${
-                                  team.teamSkills
+                                <br />
+                                <Typography
+                                  sx={{ display: "inline" }}
+                                  component="span"
+                                  variant="body2"
+                                  color="text.primary"
+                                >
+                                  TeamSkills:{" "}
+                                  {team.teamSkills
                                     ? team.teamSkills.join(", ")
-                                    : " "
-                                }`}
+                                    : " "}{" "}
+                                </Typography>
                               </React.Fragment>
                             }
                           />
                         </ListItem>
                         <ListItem style={{ textAlign: "right", flex: 1 }}>
-                          <Button size="small" variant="contained">
-                            Approve
-                          </Button>
+                          {userRole === 4 && selected === "Preference List" ? (
+                            <Button
+                              size="small"
+                              variant="contained"
+                              onClick={() => {
+                                handleApproveTeam(team.teamId);
+                              }}
+                            >
+                              Approve
+                            </Button>
+                          ) : userRole === 3 &&
+                            selected === "Allocated Team" ? (
+                            <Button
+                              size="small"
+                              variant="contained"
+                              onClick={() => {
+                                handleRejectTeam(team.teamId);
+                              }}
+                            >
+                              Reject
+                            </Button>
+                          ) : (
+                            ""
+                          )}
                         </ListItem>
                       </div>
                       <Divider component="li" />
