@@ -444,13 +444,13 @@ func GetAllocatedTeamDetail(c *gin.Context) {
     c.JSON(http.StatusOK, responses)
 }
 
-// @Summary Get teams that prefer a project
-// @Description Get the detail of teams that prefer a given project ID
+// @Summary Get  unallocated teams that prefer a project
+// @Description Get the detail of unallocated teams that prefer a given project ID
 // @Tags Project Preference
 // @Produce json
 // @Param projectId path int true "Project ID"
 // @Success 200 {array} response.TeamDetailResponse
-// @Failure 404 {object} map[string]string "{"error": "Project not found"}" or "{"error": "Teams not found"}"
+// @Failure 404 {object} map[string]string "{"error": "Project not found"}" or "{"error": "Teams not found"}" or ""No unallocated teams found""
 // @Router /v1/project/preferencedBy/team/{projectId} [get]
 func GetPreferencedByTeamsDetail(c *gin.Context) {
 	projectId := c.Param("projectId")
@@ -474,27 +474,35 @@ func GetPreferencedByTeamsDetail(c *gin.Context) {
 			return
 		}
 
-		var members []response.ProjectTeamMember
-		for _, member := range team.Members {
-			members = append(members, response.ProjectTeamMember{
-				UserID:   member.ID,
-				UserName: member.Username,
-				AvatarURL: member.AvatarURL,
+		// 检查团队是否没有被分配项目
+		if team.AllocatedProject == nil {
+			var members []response.ProjectTeamMember
+			for _, member := range team.Members {
+				members = append(members, response.ProjectTeamMember{
+					UserID:    member.ID,
+					UserName:  member.Username,
+					AvatarURL: member.AvatarURL,
+				})
+			}
+
+			var skills []string
+			for _, skill := range team.Skills {
+				skills = append(skills, skill.SkillName)
+			}
+
+			teamResponse = append(teamResponse, response.TeamDetailResponse{
+				TeamID:          team.ID,
+				TeamName:        team.Name,
+				TeamMember:      members,
+				TeamSkills:      skills,
+				PreferenceReason: pref.Reason,
 			})
 		}
+	}
 
-		var skills []string
-		for _, skill := range team.Skills {
-			skills = append(skills, skill.SkillName)
-		}
-
-		teamResponse = append(teamResponse, response.TeamDetailResponse{
-			TeamID:     team.ID,
-			TeamName:   team.Name,
-			TeamMember: members,
-			TeamSkills: skills,
-			PreferenceReason: pref.Reason,
-		})
+	if len(teamResponse) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "No unallocated teams found"})
+		return
 	}
 
 	c.JSON(http.StatusOK, teamResponse)

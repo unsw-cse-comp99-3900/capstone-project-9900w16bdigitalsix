@@ -1179,7 +1179,8 @@ paths:
       - Project
   /v1/project/preferencedBy/team/{projectId}:
     get:
-      description: Get the detail of teams that prefer a given project ID
+      description: Get the detail of unallocated teams that prefer a given project
+        ID
       parameters:
       - description: Project ID
         in: path
@@ -1196,12 +1197,13 @@ paths:
               $ref: '#/definitions/response.TeamDetailResponse'
             type: array
         "404":
-          description: '{"error": "Project not found"}" or "{"error": "Teams not found"}'
+          description: '{"error": "Project not found"}" or "{"error": "Teams not found"}"
+            or ""No unallocated teams found'
           schema:
             additionalProperties:
               type: string
             type: object
-      summary: Get teams that prefer a project
+      summary: Get  unallocated teams that prefer a project
       tags:
       - Project Preference
   /v1/project/team/allocated/{projectId}:

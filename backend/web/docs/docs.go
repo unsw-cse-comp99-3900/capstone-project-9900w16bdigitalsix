@@ -970,14 +970,14 @@ const docTemplate = `{
         },
         "/v1/project/preferencedBy/team/{projectId}": {
             "get": {
-                "description": "Get the detail of teams that prefer a given project ID",
+                "description": "Get the detail of unallocated teams that prefer a given project ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Project Preference"
                 ],
-                "summary": "Get teams that prefer a project",
+                "summary": "Get  unallocated teams that prefer a project",
                 "parameters": [
                     {
                         "type": "integer",
@@ -998,7 +998,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "{\"error\": \"Project not found\"}\" or \"{\"error\": \"Teams not found\"}",
+                        "description": "{\"error\": \"Project not found\"}\" or \"{\"error\": \"Teams not found\"}\" or \"\"No unallocated teams found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {

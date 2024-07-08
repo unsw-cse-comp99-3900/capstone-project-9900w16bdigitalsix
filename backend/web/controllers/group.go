@@ -488,13 +488,20 @@ func UpdateTeamPreferences(c *gin.Context) {
 		return
 	}
 
+	teamID := *user.BelongsToGroup
+
+	// 删除 team_preference_projects 表中关于这个团队的所有记录
+	if err := global.DB.Where("team_id = ?", teamID).Delete(&models.TeamPreferenceProject{}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete existing preferences"})
+		return
+	}
+
 	var preferences []forms.PreferenceRequest
 	if err := c.ShouldBindJSON(&preferences); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	teamID := *user.BelongsToGroup
 	for _, pref := range preferences {
 		var existingPref response.TeamPreferenceProject
 		if err := global.DB.Where("team_id = ? AND project_id = ?", teamID, pref.ProjectID).First(&existingPref).Error; err != nil {
