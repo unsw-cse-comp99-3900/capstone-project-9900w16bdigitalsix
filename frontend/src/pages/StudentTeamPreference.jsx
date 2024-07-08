@@ -40,9 +40,6 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
-  // if (!allProjects) {
-  //   return;
-  // }
   const isValidValue = allProjects.some((proj) => proj.projectId === value);
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
@@ -86,8 +83,11 @@ const StudentTeamPreference = () => {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
+
+  // =======================
   const [open, setOpen] = useState(false);
-  // const [preferences, setPreferences] = useState([]);
+  // =======================
+
   const [rows, setRows] = useState([]);
   const [allProjects, setAllProjects] = useState([]);
 
@@ -96,73 +96,66 @@ const StudentTeamPreference = () => {
   const getAllPublicProjects = async () => {
     try {
       const res = await apiCall("GET", "v1/project/get/public_project/list");
+      if (res === null) {
+        return;
+      }
       if (res.error) {
         setErrorMessage(res.error);
         setAlertType("error");
         setShowError(true);
       } else {
-        // console.log(res);
         setAllProjects(res);
       }
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
+      setAlertType("error");
+      setShowError(true);
+    }
+  };
+
+  const getTeamPreference = async () => {
+    try {
+      const res = await apiCall("GET", `v1/team/get/preferences/${userId}`);
+      if (res === null) {
+        setRows([{ preNum: 1, projectId: "", reason: "" }]);
+        return;
+      }
+      if (res.error) {
+        setErrorMessage(res.error);
+        setAlertType("error");
+        setShowError(true);
+      } else {
+        if (res && res.length > 0) {
+          setRows(
+            res.map((pre, index) => ({
+              preNum: index + 1,
+              projectId: pre.projectId,
+              reason: pre.reason,
+            }))
+          );
+        } else {
+          setRows([{ preNum: 1, projectId: "", reason: "" }]);
+        }
+      }
+    } catch (error) {
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }
   };
 
   useEffect(() => {
-    const getTeamPreference = async () => {
+    const fetchData = async () => {
       try {
-        const res = await apiCall("GET", `v1/team/get/preferences/${userId}`);
-        if (res.error) {
-          setErrorMessage(res.error);
-          setAlertType("error");
-          setShowError(true);
-        } else {
-          // console.log(res);
-          // setPreferences(res);
-
-          if (res.length > 0) {
-            setRows(
-              res.map((pre, index) => ({
-                preNum: index + 1,
-                projectId: pre.projectId,
-                reason: pre.reason,
-              }))
-            );
-          } else {
-            setRows([{ preNum: 1, projectId: "", reason: "" }]);
-          }
-
-          // setRows(
-          //   res.map((pre, index) => ({
-          //     preNum: index + 1,
-          //     projectId: pre.projectId,
-          //     reason: pre.reason,
-          //   }))
-          // );
-        }
+        await getAllPublicProjects();
+        await getTeamPreference();
       } catch (error) {
         setErrorMessage(error.message || error.toString());
         setAlertType("error");
         setShowError(true);
       }
     };
-    try {
-      getAllPublicProjects();
-    } catch (error) {
-      setErrorMessage(error.message || error.toString());
-      setAlertType("error");
-      setShowError(true);
-    }
-    try {
-      getTeamPreference();
-    } catch (error) {
-      setErrorMessage(error.message || error.toString());
-      setAlertType("error");
-      setShowError(true);
-    }
+    fetchData();
   }, [userId]);
 
   const handleSelectProjectChange = (event, index) => {
@@ -177,9 +170,11 @@ const StudentTeamPreference = () => {
     setRows(newRows);
   };
 
+  // =========================
   const handleClickOpen = () => {
     setOpen(true);
   };
+  // =========================
 
   const handleCloseAlert = (event, reason) => {
     if (reason === "clickaway") {
@@ -187,22 +182,6 @@ const StudentTeamPreference = () => {
     }
     setShowError(false);
   };
-
-  // useEffect(() => {
-  //   if (preferences.length > 0) {
-  //     setRows(
-  //       preferences.map((pre, index) => ({
-  //         preNum: index + 1,
-  //         projectId: pre.projectId,
-  //         reason: pre.reason,
-  //       }))
-  //     );
-  //   } else {
-  //     setRows([{ preNum: 1, projectId: "", reason: "" }]);
-  //   }
-  // }, [preferences]);
-
-  // console.log(preferences);
 
   const addOneMore = () => {
     setRows([...rows, { preNum: rows.length + 1, projectId: "", reason: "" }]);
@@ -218,7 +197,6 @@ const StudentTeamPreference = () => {
   };
 
   const submitPreference = async () => {
-    // console.log(rows);
     const seenProjectIds = new Set();
     for (const preference of rows) {
       if (preference.projectId === "") {
@@ -244,7 +222,6 @@ const StudentTeamPreference = () => {
       projectId: row.projectId,
       reason: row.reason,
     }));
-    // console.log(body);
     try {
       const res = await apiCall(
         "PUT",
@@ -268,15 +245,14 @@ const StudentTeamPreference = () => {
     }
   };
 
+  // ============================
   const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setShowError(false);
+    setOpen(false);
   };
+  // ============================
 
-  if (!rows) {
-    return;
+  if (rows.length === 0) {
+    setRows([{ preNum: 1, projectId: "", reason: "" }]);
   }
 
   return (
@@ -411,6 +387,8 @@ const StudentTeamPreference = () => {
                       >
                         save
                       </Button>
+
+                      {/* ======================= */}
                       <Button
                         variant="contained"
                         endIcon={<SendIcon />}
@@ -419,6 +397,7 @@ const StudentTeamPreference = () => {
                         teamProfile
                       </Button>
                       <TeamFile open={open} handleClose={handleClose} />
+                      {/* ======================== */}
                     </Stack>
                   </Item>
                 </Stack>
