@@ -17,13 +17,13 @@ type User struct {
 	Position           string `json:"position"`
 	Field              string `json:"field"`
 	Phone              string
-	Role               int       `gorm:"default:1;type:int comment '1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin'"`
-	BelongsToGroup     *uint     `gorm:"default:null"`
-	ClientProjects     []Project `gorm:"foreignkey:ClientID"`      // a client/coordinator can create/responsible for many projects
-	TutorProjects      []Project `gorm:"foreignkey:TutorID"`       // a tutor responsible for many projects
-	CoordinatorProject []Project `gorm:"foreignkey:CoordinatorID"` // a coordinator responsible for many projects
-	Skills             []Skill   `gorm:"many2many:student_skills"` // a student has many skills, a skill can have many students
-	Notifications      []Notification  `gorm:"many2many:user_notifications"`
+	Role               int            `gorm:"default:1;type:int comment '1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin'"`
+	BelongsToGroup     *uint          `gorm:"default:null"`
+	ClientProjects     []Project      `gorm:"foreignkey:ClientID"`      // a client/coordinator can create/responsible for many projects
+	TutorProjects      []Project      `gorm:"foreignkey:TutorID"`       // a tutor responsible for many projects
+	CoordinatorProject []Project      `gorm:"foreignkey:CoordinatorID"` // a coordinator responsible for many projects
+	Skills             []Skill        `gorm:"many2many:student_skills"` // a student has many skills, a skill can have many students
+	Notifications      []Notification `gorm:"many2many:user_notifications"`
 }
 
 type Team struct {
@@ -56,6 +56,7 @@ type Project struct {
 
 // Preference model
 type TeamPreferenceProject struct {
+	ID        uint   `gorm:"primaryKey"`
 	TeamID    uint   `gorm:"primaryKey"`
 	ProjectID uint   `gorm:"primaryKey"`
 	Reason    string `gorm:"type:text"`
@@ -72,8 +73,8 @@ type Skill struct {
 // Notification model
 type Notification struct {
 	gorm.Model
-	Content    string    `gorm:"type:text"`
-	Users      []User    `gorm:"many2many:user_notifications"`
+	Content string `gorm:"type:text"`
+	Users   []User `gorm:"many2many:user_notifications"`
 }
 
 type UserNotifications struct {
