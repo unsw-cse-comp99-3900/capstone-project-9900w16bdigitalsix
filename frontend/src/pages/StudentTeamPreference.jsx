@@ -40,22 +40,31 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
+  // if (!allProjects) {
+  //   return;
+  // }
+  const isValidValue = allProjects.some((proj) => proj.projectId === value);
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
       <InputLabel>Project</InputLabel>
       <Select
-        value={value}
+        // value={value}
+        value={isValidValue ? value : ""}
         label="Project"
         onChange={(event) => onChange(event, index)}
       >
         <MenuItem value="">
           <em>None</em>
         </MenuItem>
-        {allProjects.map((proj) => (
-          <MenuItem key={proj.projectId} value={proj.projectId}>
-            P{proj.projectId} &nbsp;&nbsp;{proj.title}
-          </MenuItem>
-        ))}
+        {allProjects && allProjects.length > 0 ? (
+          allProjects.map((proj) => (
+            <MenuItem key={proj.projectId} value={proj.projectId}>
+              P{proj.projectId} &nbsp;&nbsp;{proj.title}
+            </MenuItem>
+          ))
+        ) : (
+          <MenuItem disabled>No Projects Available</MenuItem>
+        )}
       </Select>
     </FormControl>
   );
@@ -78,7 +87,7 @@ const StudentTeamPreference = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
   const [open, setOpen] = useState(false);
-  const [preferences, setPreferences] = useState([]);
+  // const [preferences, setPreferences] = useState([]);
   const [rows, setRows] = useState([]);
   const [allProjects, setAllProjects] = useState([]);
 
@@ -112,7 +121,27 @@ const StudentTeamPreference = () => {
           setShowError(true);
         } else {
           // console.log(res);
-          setPreferences(res);
+          // setPreferences(res);
+
+          if (res.length > 0) {
+            setRows(
+              res.map((pre, index) => ({
+                preNum: index + 1,
+                projectId: pre.projectId,
+                reason: pre.reason,
+              }))
+            );
+          } else {
+            setRows([{ preNum: 1, projectId: "", reason: "" }]);
+          }
+
+          // setRows(
+          //   res.map((pre, index) => ({
+          //     preNum: index + 1,
+          //     projectId: pre.projectId,
+          //     reason: pre.reason,
+          //   }))
+          // );
         }
       } catch (error) {
         setErrorMessage(error.message || error.toString());
@@ -159,23 +188,84 @@ const StudentTeamPreference = () => {
     setShowError(false);
   };
 
-  useEffect(() => {
-    if (preferences.length > 0) {
-      setRows(
-        preferences.map((pre, index) => ({
-          preNum: index + 1,
-          projectId: pre.projectId,
-          reason: pre.reason,
-        }))
-      );
-    } else {
-      setRows([{ preNum: 1, projectId: "", reason: "" }]);
-    }
-  }, [preferences]);
+  // useEffect(() => {
+  //   if (preferences.length > 0) {
+  //     setRows(
+  //       preferences.map((pre, index) => ({
+  //         preNum: index + 1,
+  //         projectId: pre.projectId,
+  //         reason: pre.reason,
+  //       }))
+  //     );
+  //   } else {
+  //     setRows([{ preNum: 1, projectId: "", reason: "" }]);
+  //   }
+  // }, [preferences]);
 
-  console.log(preferences);
+  // console.log(preferences);
+
   const addOneMore = () => {
     setRows([...rows, { preNum: rows.length + 1, projectId: "", reason: "" }]);
+  };
+
+  const deleteOneRow = (index) => {
+    const newRows = rows.filter((_, i) => i !== index);
+    const updatedRows = newRows.map((row, idx) => ({
+      ...row,
+      preNum: idx + 1,
+    }));
+    setRows(updatedRows);
+  };
+
+  const submitPreference = async () => {
+    // console.log(rows);
+    const seenProjectIds = new Set();
+    for (const preference of rows) {
+      if (preference.projectId === "") {
+        setErrorMessage(
+          "Please select all project fields or delete empty fields"
+        );
+        setAlertType("error");
+        setShowError(true);
+        return;
+      }
+      if (seenProjectIds.has(preference.projectId)) {
+        setErrorMessage(
+          "Duplicate projectId found. Please ensure do not select duplicate projects."
+        );
+        setAlertType("error");
+        setShowError(true);
+        return;
+      }
+      seenProjectIds.add(preference.projectId);
+    }
+
+    const body = rows.map((row) => ({
+      projectId: row.projectId,
+      reason: row.reason,
+    }));
+    // console.log(body);
+    try {
+      const res = await apiCall(
+        "PUT",
+        `v1/team/preference/project/${userId}`,
+        body
+      );
+      if (res.error) {
+        setErrorMessage(res.error);
+        setAlertType("error");
+        setShowError(true);
+      } else {
+        // console.log(res);
+        setErrorMessage("Success Update Preferences!");
+        setAlertType("success");
+        setShowError(true);
+      }
+    } catch (error) {
+      setErrorMessage(error.message || error.toString());
+      setAlertType("error");
+      setShowError(true);
+    }
   };
 
   const handleClose = (event, reason) => {
@@ -184,6 +274,10 @@ const StudentTeamPreference = () => {
     }
     setShowError(false);
   };
+
+  if (!rows) {
+    return;
+  }
 
   return (
     <>
@@ -287,7 +381,10 @@ const StudentTeamPreference = () => {
                                 align="center"
                                 style={{ width: "15%" }}
                               >
-                                <IconButton aria-label="delete">
+                                <IconButton
+                                  aria-label="delete"
+                                  onClick={() => deleteOneRow(index)}
+                                >
                                   <DeleteIcon />
                                 </IconButton>
                               </TableCell>
@@ -307,7 +404,11 @@ const StudentTeamPreference = () => {
                       <Button variant="outlined" onClick={addOneMore}>
                         ✚ Add one
                       </Button>
-                      <Button variant="contained" endIcon={<SendIcon />}>
+                      <Button
+                        variant="contained"
+                        endIcon={<SendIcon />}
+                        onClick={submitPreference}
+                      >
                         save
                       </Button>
                       <Button
