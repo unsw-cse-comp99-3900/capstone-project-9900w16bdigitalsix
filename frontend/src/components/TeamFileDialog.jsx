@@ -45,6 +45,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const [open2, setOpen2] = useState(false);
   const [teamName, setTeamName] = useState("");
   const [teamSkills, setTeamSkills] = useState("");
+  const [teamMember, setTeamMember] = useState([]);
+  const [preReason, setPreReason] = useState("");
   const userRole = parseInt(localStorage.getItem("role"));
 
   // const [data, setData] = useState([]);
@@ -154,6 +156,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
         console.log(res);
         setTeamName(res.teamName);
         setTeamSkills(res.teamSkills);
+        setTeamMember(res.teamMember);
+        setPreReason(res.preferenceReason);
       }
     } catch (error) {
       return;
@@ -369,10 +373,108 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
 
       <div>
         <Dialog open={open2} onClose={handleClose2}>
-          {/* style={{ minWidth: "45vw" }} */}
-          <DialogTitle>TeamName: {teamName ? teamName : "--"}</DialogTitle>
-          <DialogContent>
-            TeamSkills: {teamSkills ? teamSkills.join(", ") : "--"}
+          <div style={{ display: "flex" }}>
+            <DialogTitle style={{ minWidth: "40vw", paddingBottom: 2 }}>
+              TeamName: {teamName ? teamName : "N/A"}
+            </DialogTitle>
+            <IconButton
+              aria-label="close"
+              onClick={handleClose2}
+              sx={{
+                left: 4,
+                right: 0,
+                color: (theme) => theme.palette.grey[500],
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </div>
+          <DialogContent style={{ paddingTop: 0 }}>
+            <Typography
+              sx={{ display: "inline" }}
+              component="span"
+              // variant="body"
+              color="text.primary"
+            >
+              TeamSkills: {teamSkills ? teamSkills.join(", ") : "N/A"}
+            </Typography>
+          </DialogContent>
+          <DialogContent dividers>
+            <Typography
+              sx={{ display: "inline" }}
+              component="span"
+              // variant="body"
+              color="text.primary"
+            >
+              Team members:
+            </Typography>
+            <List sx={{ width: "100%" }}>
+              {teamMember.map((member, index) => {
+                return (
+                  <React.Fragment key={member.userId}>
+                    <ListItem alignItems="flex-start">
+                      <ListItemAvatar>
+                        <Avatar alt={member.userName} src={member.avatarURL}>
+                          {/* {member.userName.charAt(0)} */}
+                          {member.avatarURL === ""
+                            ? (member.avatarURL = member.userName.charAt(0))
+                            : member.avatarURL}
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={`${member.userName} (${member.userEmail})`}
+                        secondary={
+                          <React.Fragment>
+                            <Typography
+                              sx={{ display: "inline" }}
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              UserId: {member.userId}
+                            </Typography>{" "}
+                            <br />
+                            <Typography
+                              sx={{ display: "inline" }}
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              User Skills:
+                            </Typography>
+                            {` ${
+                              member.userSkills
+                                ? member.userSkills.join(", ")
+                                : " "
+                            }`}
+                          </React.Fragment>
+                        }
+                      />
+                    </ListItem>
+                    {/* <Divider variant="inset" component="li" /> */}
+                  </React.Fragment>
+                );
+              })}
+            </List>
+          </DialogContent>
+          <DialogContent dividers>
+            <Typography
+              sx={{ display: "inline" }}
+              component="span"
+              // variant="body"
+              color="text.primary"
+            >
+              Preference Reason:
+            </Typography>{" "}
+            <br />
+            <Typography
+              sx={{ display: "inline" }}
+              component="span"
+              // variant="body"
+              color="text.primary"
+            >
+              &nbsp;&nbsp;{preReason}
+            </Typography>
           </DialogContent>
         </Dialog>
       </div>
