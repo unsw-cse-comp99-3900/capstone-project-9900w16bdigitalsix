@@ -41,6 +41,10 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
+  const [currentTeam, setCurrentTeam] = useState([]);
+  const [open2, setOpen2] = useState(false);
+  const [teamName, setTeamName] = useState("");
+  const [teamSkills, setTeamSkills] = useState("");
   const userRole = parseInt(localStorage.getItem("role"));
 
   // const [data, setData] = useState([]);
@@ -62,8 +66,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   //   }
   // };
 
-  const [currentTeam, setCurrentTeam] = useState([]);
-
   const getAllAppliedTeams = async () => {
     try {
       const res = await apiCall(
@@ -71,6 +73,30 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
         `v1/project/preferencedBy/team/${projectId}`
       );
       if (res === null) {
+        setCurrentTeam([]);
+        return;
+      }
+      if (res.error) {
+        setCurrentTeam([]);
+      } else {
+        // console.log(res);
+        setCurrentTeam(res);
+      }
+    } catch (error) {
+      setErrorMessage(error.message || error.toString());
+      setAlertType("error");
+      setShowError(true);
+    }
+  };
+
+  const getAllAllocatedTeams = async () => {
+    try {
+      const res = await apiCall(
+        "GET",
+        `v1/project/team/allocated/${projectId}`
+      );
+      if (res === null) {
+        setCurrentTeam([]);
         return;
       }
       if (res.error) {
@@ -92,7 +118,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       // console.log("Preference List");
       getAllAppliedTeams();
     } else if (name === "Allocated Team") {
-      console.log("Allocated Team");
+      // console.log("Allocated Team");
+      getAllAllocatedTeams();
     }
   };
 
@@ -101,7 +128,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     getAllAppliedTeams();
   }, [handleClickOpen]);
 
-  const [open2, setOpen2] = useState(false);
   const handleClose2 = () => {
     setOpen2(false);
   };
@@ -126,6 +152,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
         return;
       } else {
         console.log(res);
+        setTeamName(res.teamName);
+        setTeamSkills(res.teamSkills);
       }
     } catch (error) {
       return;
@@ -139,11 +167,59 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   };
 
   const handleApproveTeam = async (teamId) => {
-    console.log("approve", teamId);
+    // console.log("approve", teamId);
+    const notification = {
+      content: `Your team has been allocated the project P${projectId}`,
+      to: { teamId: teamId },
+    };
+    const body = {
+      projectId: projectId,
+      teamId: teamId,
+      notification: notification,
+    };
+    try {
+      const res = await apiCall("PUT", `v1/team/project/allocation`, body);
+      // console.log(res);
+      if (res === null) {
+        return;
+      }
+      if (res.error) {
+        return;
+      } else {
+        // console.log(res);
+        getAllAppliedTeams();
+      }
+    } catch (error) {
+      return;
+    }
   };
 
   const handleRejectTeam = async (teamId) => {
     console.log("reject", teamId);
+    const notification = {
+      content: `Your team has been rejected by the project P${projectId}`,
+      to: { teamId: teamId },
+    };
+    const body = {
+      projectId: projectId,
+      teamId: teamId,
+      notification: notification,
+    };
+    try {
+      const res = await apiCall("PUT", `v1/team/project/reject`, body);
+      // console.log(res);
+      if (res === null) {
+        return;
+      }
+      if (res.error) {
+        return;
+      } else {
+        // console.log(res);
+        getAllAllocatedTeams();
+      }
+    } catch (error) {
+      return;
+    }
   };
 
   return (
@@ -294,7 +370,10 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       <div>
         <Dialog open={open2} onClose={handleClose2}>
           {/* style={{ minWidth: "45vw" }} */}
-          <DialogTitle>TeamName: sdsd</DialogTitle>
+          <DialogTitle>TeamName: {teamName ? teamName : "--"}</DialogTitle>
+          <DialogContent>
+            TeamSkills: {teamSkills ? teamSkills.join(", ") : "--"}
+          </DialogContent>
         </Dialog>
       </div>
 
