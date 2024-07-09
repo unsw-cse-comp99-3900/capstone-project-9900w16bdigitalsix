@@ -76,7 +76,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       if (res.error) {
         setCurrentTeam([]);
       } else {
-        console.log(res);
+        // console.log(res);
         setCurrentTeam(res);
       }
     } catch (error) {
@@ -89,7 +89,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const handleClick = (name) => {
     setSelected(name);
     if (name === "Preference List") {
-      console.log("Preference List");
+      // console.log("Preference List");
       getAllAppliedTeams();
     } else if (name === "Allocated Team") {
       console.log("Allocated Team");
@@ -106,15 +106,36 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     setOpen2(false);
   };
 
-  const handleClick2 = () => {
-    setOpen2(true);
-  };
-
   const handleCloseAlert = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setShowError(false);
+  };
+
+  const fetchTeamProfile = async (teamId) => {
+    try {
+      const res = await apiCall(
+        "GET",
+        `v1/project/${projectId}/preferencedBy/${teamId}/detail`
+      );
+      if (res === null) {
+        return;
+      }
+      if (res.error) {
+        return;
+      } else {
+        console.log(res);
+      }
+    } catch (error) {
+      return;
+    }
+  };
+
+  const handleClickFetchFile = (teamId) => {
+    setOpen2(true);
+    // console.log("fetch profile", teamId);
+    fetchTeamProfile(teamId);
   };
 
   const handleApproveTeam = async (teamId) => {
@@ -192,7 +213,9 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                         <ListItem
                           alignItems="flex-start"
                           style={{ flex: 7 }}
-                          onClick={handleClick2}
+                          onClick={() => {
+                            handleClickFetchFile(team.teamId);
+                          }}
                         >
                           <ListItemText
                             primary={`TeamName: ${team.teamName} `}
@@ -270,6 +293,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
 
       <div>
         <Dialog open={open2} onClose={handleClose2}>
+          {/* style={{ minWidth: "45vw" }} */}
           <DialogTitle>TeamName: sdsd</DialogTitle>
         </Dialog>
       </div>
