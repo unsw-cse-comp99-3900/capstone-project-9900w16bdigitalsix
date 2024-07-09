@@ -62,6 +62,7 @@ const names = [
 
 const TeamProfile = ({
   teamId,
+  teamIdShow,
   teamName,
   setTeamName,
   leaveTeam,
@@ -154,7 +155,7 @@ const TeamProfile = ({
         setShowError(true);
       }
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }
@@ -195,7 +196,7 @@ const TeamProfile = ({
                   </Item>
                   <Item style={{ textAlign: "left" }}>
                     <Typography variant="h6" gutterBottom color="grey">
-                      Team Id: {teamId}
+                      Team Id: {teamIdShow}
                     </Typography>
                   </Item>
                 </Grid>
