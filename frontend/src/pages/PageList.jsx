@@ -110,6 +110,7 @@ const PageList = () => {
           path="/project/progress/:projectId/:teamId"
           element={<ProjectProgress token={token} setToken={setToken} />}
         />
+        <Route path="/project/admin" element={<ProjectAdmin token={token} setToken={setToken}/>}/>
         <Route path="/project/admin/:projectId" element={<ProjectAdminAssign token={token} setToken={setToken}/>}/>
 
         {/* admin */}
