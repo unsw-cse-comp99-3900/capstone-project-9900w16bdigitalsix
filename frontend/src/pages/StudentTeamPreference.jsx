@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import { Outlet } from "react-router-dom";
 import { Container } from "reactstrap";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -20,7 +19,6 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-// import TextField from "@mui/material/TextField";
 import { Input } from "antd";
 
 import "../assets/scss/FullLayout.css"; //make sure import this
