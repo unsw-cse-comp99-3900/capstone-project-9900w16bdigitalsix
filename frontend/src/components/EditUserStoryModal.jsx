@@ -15,15 +15,7 @@ const roleMap = {
   5: 'Administrator'
 };
 
-const roleColorMap = {
-  1: { background: '#e0f7fa', color: '#006064' }, // blue Student
-  2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
-  3: { background: '#fff9c4', color: '#f57f17' }, // yellow Client
-  4: { background: '#ffe0b2', color: '#e65100' }, // orange Coordinator
-  5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
-};
-
-const EditUserStoryModal = ({ visible, user, onOk, onCancel, refreshData }) => {
+const EditUserStoryModal = ({ title, visible, user, onOk, onCancel, refreshData, sprintData }) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
@@ -76,7 +68,7 @@ const EditUserStoryModal = ({ visible, user, onOk, onCancel, refreshData }) => {
   return (
     <>
       <Modal
-        title="Edit User Story - Sprint X"
+        title={title}
         visible={visible}
         onOk={handleSubmit}
         onCancel={onCancel}

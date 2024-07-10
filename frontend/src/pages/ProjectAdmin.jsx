@@ -31,8 +31,11 @@ const ProjectAdmin = () => {
     const response = await apiCall('GET', 'v1/project/get/public_project/list');
   
     console.log("response:", response)
-  
-    if (response.error) {
+    if (!response){
+      setData([]);
+      setFilteredData([]);
+      setLoading(false);
+    } else if (response.error) {
       setData([]);
       setFilteredData([]);
       setLoading(false);

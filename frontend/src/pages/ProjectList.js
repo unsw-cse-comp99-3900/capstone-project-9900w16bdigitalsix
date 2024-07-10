@@ -55,7 +55,6 @@ const ProjectList = () => {
       clientTitle: 'Client Title',
       skills: 'Required Skills',
       field: 'Field',
-      imgSrc: 'path_to_your_image_4.jpg',
     },
     {
       title: 'Project Title',
@@ -63,7 +62,6 @@ const ProjectList = () => {
       clientTitle: 'Client Title',
       skills: 'Required Skills',
       field: 'Field',
-      imgSrc: 'path_to_your_image_5.jpg',
     },
     {
       title: 'Project Title',
@@ -71,7 +69,6 @@ const ProjectList = () => {
       clientTitle: 'Client Title',
       skills: 'Required Skills',
       field: 'Field',
-      imgSrc: 'path_to_your_image_6.jpg',
     },
   ];
 

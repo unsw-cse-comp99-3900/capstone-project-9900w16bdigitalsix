@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Container } from "reactstrap";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -10,15 +9,16 @@ import Header from "../layouts/Header";
 import { apiCall } from "../helper";
 import JoinTeamDialog from "./JoinTeam";
 import TeamProfile from "./TeamProfile";
-import '../assets/scss/FullLayout.css';//make sure import this
-import '../assets/scss/teamStyle.css';
-import cap from '../assets/images/logos/cap.png'
+import "../assets/scss/FullLayout.css"; //make sure import this
+import "../assets/scss/teamStyle.css";
+import cap from "../assets/images/logos/cap.png";
 
 const Team = (props) => {
   const [hasTeam, setHasTeam] = useState(null);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [teamId, setTeamId] = useState(null);
+  const [teamIdShow, setTeamIdShow] = useState(null);
   const [teamName, setTeamName] = useState(null);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -45,6 +45,7 @@ const Team = (props) => {
       } else {
         console.log(res);
         setTeamId(res.teamId);
+        setTeamIdShow(res.teamIdShow);
         setTeamName(res.teamName);
         setCurrentMember(res.teamMember);
         setCurTeamSkills(res.teamSkills);
@@ -56,7 +57,7 @@ const Team = (props) => {
     try {
       isTeam();
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }
@@ -72,6 +73,7 @@ const Team = (props) => {
         setShowError(true);
       } else {
         setTeamId(res.teamId);
+        setTeamIdShow(res.teamIdShow);
         setTeamName(res.teamName);
         setCurrentMember(res.teamMember);
         setCurTeamSkills(res.teamSkills);
@@ -82,7 +84,7 @@ const Team = (props) => {
         localStorage.setItem("teamId", res.teamId);
       }
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }
@@ -94,15 +96,15 @@ const Team = (props) => {
 
   const joinTeam = async (uid, tid) => {
     try {
-      const body = { userId: uid, teamId: parseInt(tid) };
+      const body = { userId: uid, teamIdShow: parseInt(tid) };
       const res = await apiCall("PUT", "v1/team/join", body);
       if (res.error) {
         setErrorMessage("team not found");
         setAlertType("error");
         setShowError(true);
       } else {
-        // console.log(res.teamSkills);
         setTeamId(res.teamId);
+        setTeamIdShow(res.teamIdShow);
         setTeamName(res.teamName);
         setCurrentMember(res.teamMember);
         setCurTeamSkills(res.teamSkills);
@@ -113,7 +115,7 @@ const Team = (props) => {
         localStorage.setItem("teamId", res.teamId);
       }
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }
@@ -137,7 +139,7 @@ const Team = (props) => {
         setDialogOpen(false);
       }
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }
@@ -146,23 +148,23 @@ const Team = (props) => {
   return (
     <>
       <main>
-      <div className="pageWrapper d-lg-flex">
-        {/********Sidebar**********/}
-        <aside className="sidebarArea shadow" id="sidebarArea">
-          <Sidebar />
-        </aside>
-        {/********Content Area**********/}
-        <div className="contentArea">
-          <div className="d-lg-none headerMd">
-            {/********Header**********/}
-            <Header />
-          </div>
-          <div className="d-none d-lg-block headerLg">
-            {/********Header**********/}
-            <Header />
-          </div>
-          {/********Middle Content**********/}
-          <Container className="p-4 wrapper" fluid>
+        <div className="pageWrapper d-lg-flex">
+          {/********Sidebar**********/}
+          <aside className="sidebarArea shadow" id="sidebarArea">
+            <Sidebar />
+          </aside>
+          {/********Content Area**********/}
+          <div className="contentArea">
+            <div className="d-lg-none headerMd">
+              {/********Header**********/}
+              <Header />
+            </div>
+            <div className="d-none d-lg-block headerLg">
+              {/********Header**********/}
+              <Header />
+            </div>
+            {/********Middle Content**********/}
+            <Container className="p-4 wrapper" fluid>
               {loading ? (
                 <div className="loadingContainer">
                   <CircularProgress />
@@ -173,6 +175,7 @@ const Team = (props) => {
                     <div>
                       <TeamProfile
                         teamId={teamId}
+                        teamIdShow={teamIdShow}
                         teamName={teamName}
                         setTeamName={setTeamName}
                         leaveTeam={leaveTeam}
@@ -187,11 +190,21 @@ const Team = (props) => {
                   ) : (
                     <div className="noTeamContainer">
                       <div className="noTeamBox">
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <div
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
                           {/* <LogoDark /> */}
-                          <img src={cap} alt="small_logo" style={{ width: '80px', height: '80px' }}/>
+                          <img
+                            src={cap}
+                            alt="small_logo"
+                            style={{ width: "80px", height: "80px" }}
+                          />
                         </div>
-                        <Typography variant="h4" gutterBottom className="noTeamMessage">
+                        <Typography
+                          variant="h4"
+                          gutterBottom
+                          className="noTeamMessage"
+                        >
                           You do not have your own team yet!
                         </Typography>
                         <div className="buttonContainer">
