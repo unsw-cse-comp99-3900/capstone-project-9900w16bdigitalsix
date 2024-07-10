@@ -46,6 +46,8 @@ const GradeModal = ({ title, sprintData, visible, onOk, onCancel }) => {
           placeholder="Comment"
           autoSize={{ minRows: 3, maxRows: 6 }}
           style={{ marginBottom: '16px', borderColor: '#CBCBCB'}}
+          onMouseOver={(e) => { e.target.style.borderColor = 'black'; }}  // 鼠标悬停时边框颜色变化
+          onMouseOut={(e) => { e.target.style.borderColor = '#CBCBCB'; }}
         />
       </CardBody>
     ))

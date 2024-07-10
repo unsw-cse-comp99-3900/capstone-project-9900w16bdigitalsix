@@ -10,7 +10,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Flex, List, Input, Modal, Avatar, Tooltip, Typography } from 'antd';
-import { StarFilled, TrophyFilled, PlusOutlined } from '@ant-design/icons';
+import { StarFilled, TrophyFilled, PlusOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Sidebar from "../layouts/Sidebar";
@@ -56,6 +56,8 @@ const sprintData = [
 
 const ProjectProgress = (props) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const { item } = location.state || {};
 
   const { projectId, teamId } = useParams();
@@ -163,6 +165,10 @@ const ProjectProgress = (props) => {
   const handleGradeCancel = () => {
     setIsGradeModalVisible(false);
   };  
+
+  const clickReport = () => {
+    navigate(`/project/report/${projectId}/${teamId}`);
+  };
 
   const renderSprints = () => {
     return sprintData.map((sprint) => (
@@ -284,6 +290,15 @@ const ProjectProgress = (props) => {
                       <StarFilled style={{ color: '#fadb14', fontSize: '20px' }} />
                     </Button>
                   </Tooltip>
+                  <Tooltip title="Report">
+                    <Button
+                      type="primary"
+                      style={{ margin: '8px', width: "20px" }}
+                      onClick={clickReport}
+                    >
+                      <FileTextOutlined style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }} />
+                    </Button>
+                    </Tooltip>
                 </div>
               </CardTitle>
                 {renderSprints()}
