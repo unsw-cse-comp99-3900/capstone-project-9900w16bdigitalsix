@@ -5,7 +5,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { apiCall } from '../helper';
 import MessageAlert from './MessageAlert';
 
-const TutorAssign = ({ projectId, projectName }) => {
+const TutorAssign = ({ projectId, projectName, assignedTutorId, toggleTutorDialog }) => {
   const [loading, setLoading] = useState(false);
   const [tutors, setTutors] = useState([]);
   const [filteredTutors, setFilteredTutors] = useState([]);
@@ -37,6 +37,7 @@ const TutorAssign = ({ projectId, projectName }) => {
 
   const handleAlertClose = () => {
     setAlertOpen(false);
+    toggleTutorDialog();
   };
 
   const assignTutor = async (tutor) => {
@@ -60,6 +61,7 @@ const TutorAssign = ({ projectId, projectName }) => {
       setSnackbarContent('Project tutor updated successfully');
       setAlertType('success');
       setAlertOpen(true);
+      loadTutors();
     } else {
       //console.error('Failed to update project tutor:', data.error);
       setSnackbarContent('Failed to update project tutor');
@@ -93,12 +95,18 @@ const TutorAssign = ({ projectId, projectName }) => {
         dataSource={filteredTutors}
         renderItem={(tutor) => (
           <List.Item key={tutor.userId}>
-            <Avatar src={tutor.avatar || ''} size={48} />
+            <Avatar src={tutor.avatar || ''} size={48} style={{margin:'10px'}}/>
             <List.Item.Meta
               title={<span style={{ fontSize: '16px', fontWeight: 'bold' }}>{tutor.userName}</span>}
               description={<div>Email: {tutor.email}</div>}
             />
-            <Button type="primary" onClick={() => assignTutor(tutor)}>Assign</Button>
+            <Button 
+              type="primary" 
+              onClick={() => assignTutor(tutor)}
+              disabled={tutor.userId === assignedTutorId}
+              >
+              {tutor.userId === assignedTutorId ? 'Assigned' : 'Assign'}
+            </Button>
           </List.Item>
         )}
       />

@@ -109,7 +109,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
           <Select
             className="role-select"
             placeholder="Select a role"
-            value={selectedRole !== null ? selectedRole.toString() : undefined} // 确保显示选项文字
+            value={selectedRole !== null ? selectedRole.toString() : undefined}
             onChange={handleRoleChange}
           >
             <Option value="1">Student</Option>
