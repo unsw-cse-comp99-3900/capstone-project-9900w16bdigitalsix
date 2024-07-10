@@ -527,18 +527,31 @@ func GetProjectPreferencedByTeamDetail(c *gin.Context) {
 		return
 	}
 
+	// var team models.Team
+	// if err := global.DB.Preload("Members").Preload("Skills").First(&team, teamId).Error; err != nil {
+	// 	c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+	// 	return
+	// }
+
 	var team models.Team
-	if err := global.DB.Preload("Members").Preload("Skills").First(&team, teamId).Error; err != nil {
+	if err := global.DB.Preload("Members.Skills").Preload("Skills").First(&team, teamId).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
 
 	var members []response.ProjectTeamMember
 	for _, member := range team.Members {
+		var userSkills []string
+		for _, skill := range member.Skills {
+			userSkills = append(userSkills, skill.SkillName)
+		}
+
 		members = append(members, response.ProjectTeamMember{
 			UserID:    member.ID,
 			UserName:  member.Username,
 			AvatarURL: member.AvatarURL,
+			UserEmail: member.Email,
+			UserSkills: userSkills,
 		})
 	}
 

@@ -49,9 +49,11 @@ type ModifyProjectDetailResponse struct {
 }
 
 type ProjectTeamMember struct {
-	UserID    uint   `json:"userId"`
-	UserName  string `json:"userName"`
-	AvatarURL string `json:"avatarURL"`
+	UserID     uint     `json:"userId"`
+	UserName   string   `json:"userName"`
+	UserEmail  string   `json:"userEmail"`
+	UserSkills []string `json:"userSkills"`
+	AvatarURL  string   `json:"avatarURL"`
 }
 
 type TeamDetailResponse struct {
