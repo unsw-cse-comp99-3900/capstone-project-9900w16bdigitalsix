@@ -5,7 +5,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { apiCall } from '../helper';
 import MessageAlert from './MessageAlert';
 
-const CoorAssign = ({ projectId, projectName }) => {
+const CoorAssign = ({ projectId, projectName, assignedCoorId, toggleCoorDialog }) => {
   const [loading, setLoading] = useState(false);
   const [coordinators, setCoordinators] = useState([]);
   const [filteredCoordinators, setFilteredCoordinators] = useState([]);
@@ -37,6 +37,7 @@ const CoorAssign = ({ projectId, projectName }) => {
 
   const handleAlertClose = () => {
     setAlertOpen(false);
+    toggleCoorDialog(); 
   };
 
   const assignCoordinator = async (coordinator) => {
@@ -59,6 +60,7 @@ const CoorAssign = ({ projectId, projectName }) => {
       setSnackbarContent('Project coordinator updated successfully');
       setAlertType('success');
       setAlertOpen(true);
+      loadCoordinators();
     } else {
       setSnackbarContent('Failed to update project coordinator');
       setAlertType('error');
@@ -91,12 +93,18 @@ const CoorAssign = ({ projectId, projectName }) => {
         dataSource={filteredCoordinators}
         renderItem={(coordinator) => (
           <List.Item key={coordinator.userId}>
-            <Avatar src={coordinator.avatar || ''} size={48} />
+            <Avatar src={coordinator.avatar || ''} size={48} style={{margin:'10px'}}/>
             <List.Item.Meta
               title={<span style={{ fontSize: '16px', fontWeight: 'bold' }}>{coordinator.userName}</span>}
               description={<div>Email: {coordinator.email}</div>}
             />
-            <Button type="primary" onClick={() => assignCoordinator(coordinator)}>Assign</Button>
+            <Button 
+              type="primary" 
+              onClick={() => assignCoordinator(coordinator)} 
+              disabled={coordinator.userId === assignedCoorId}
+            >
+              {coordinator.userId === assignedCoorId ? 'Assigned' : 'Assign'}
+            </Button>
           </List.Item>
         )}
       />

@@ -31,18 +31,20 @@ const ProjectAdminAssign = () => {
   const [coordinator, setCoordinator] = useState(null);
   // State for the Tutor Dialog
   const [tutorDialogOpen, setTutorDialogOpen] = useState(false);
-  const toggleTutorDialog = () => setTutorDialogOpen(!tutorDialogOpen);
-
+  const toggleTutorDialog = () => {
+    setTutorDialogOpen(!tutorDialogOpen);
+    fetchTutor();
+  }
   // State for the Coordinator Dialog
   const [coorDialogOpen, setCoorDialogOpen] = useState(false);
 const toggleCoorDialog = () => {
   console.log("coorDialogOpen", !coorDialogOpen);
+  fetchCoordinator();
   setCoorDialogOpen(!coorDialogOpen);
 }
 
   const { tutorId, tutorName, tutorEmail, tutorAvatar } = tutor || {};
   const { coorId, coorEmail, coorName, coorAvatar } = coordinator || {};
-  //console.log(item);
 
   useEffect(() => {
     if (projectId) {
@@ -57,7 +59,7 @@ const toggleCoorDialog = () => {
     if (!result.error) {
       setTutor({
         tutorId: result.tutorId,
-        tutorName: result.name, // Assuming the name is part of the email before '@'
+        tutorName: result.name,
         tutorEmail: result.email,
         tutorAvatar: result.avatarURL
       });
@@ -220,7 +222,7 @@ const toggleCoorDialog = () => {
           >
             <DialogTitle>Assign Coordinator</DialogTitle>
             <DialogContent style={{ height: '100%', minHeight: '400px' }}>
-              <CoorAssign projectId={projectId} projectName={title}/>
+              <CoorAssign projectId={projectId} projectName={title} assignedCoorId={coordinator?.coorId} toggleCoorDialog={toggleCoorDialog}/>
             </DialogContent>
           </Dialog>
           <Dialog
@@ -234,7 +236,7 @@ const toggleCoorDialog = () => {
           >
             <DialogTitle>Assign Tutor</DialogTitle>
             <DialogContent style={{ height: '100%', minHeight: '400px' }}>
-              <TutorAssign projectId={projectId} projectName={title}/>
+              <TutorAssign projectId={projectId} projectName={title} assignedTutorId={tutor?.tutorId} toggleTutorDialog={toggleTutorDialog}/>
             </DialogContent>
           </Dialog>
         </div>

@@ -36,6 +36,9 @@ import Notification from "./Notification";
 // test
 import TestProjectDetail from "./TestProjectDetail";
 
+// report
+import GenerateReport from "./GenerateReport";
+
 const PageList = () => {
   const [token, setToken] = React.useState(null);
   const [role, setRole] = React.useState(null);
@@ -124,6 +127,13 @@ const PageList = () => {
 
         {/* test */}
         <Route path="/testProjectDetail" element={<TestProjectDetail token={token} setToken={setToken}/>} />
+
+        {/* generate report */}
+        <Route
+          path="/project/report/:projectId/:teamId"
+          element={<GenerateReport token={token} setToken={setToken} />}
+        />
+
       </Routes>
       <br />
     </>
