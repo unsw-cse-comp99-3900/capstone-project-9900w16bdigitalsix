@@ -9,12 +9,15 @@ import {
 } from "reactstrap";
 import { Button, Flex, List, Input, Modal, Avatar, Tooltip, Typography } from 'antd';
 import TextField from '@mui/material/TextField';
+import Textarea from '@mui/joy/Textarea';
+import { styled } from '@mui/joy/styles';
 
 import { apiCall } from '../helper';
 import MessageAlert from './MessageAlert';
 
 
 const GradeModal = ({ title, sprintData, visible, onOk, onCancel }) => {
+
   const renderSprints = () => {
     return sprintData.map((sprint) => (
       <CardBody key={sprint.sprintId}>
@@ -30,6 +33,7 @@ const GradeModal = ({ title, sprintData, visible, onOk, onCancel }) => {
         </Typography.Title>
         {/* list of user story */}
         <TextField
+          id={`grade-${sprint.sprintName}`}
           label="Grade"
           type="text"
           fullWidth
@@ -37,16 +41,11 @@ const GradeModal = ({ title, sprintData, visible, onOk, onCancel }) => {
           // value="{}"
           // onChange={e => setPassword(e.target.value)}
         /> 
-        <TextField
-          label="Comment"
-          type="text"
-          multiline
-          minRows={3}
-          variant="outlined"
-          fullWidth
-          style={{ marginBottom: '16px' }}
-          // value="{}"
-          // onChange={e => setPassword(e.target.value)}
+        <Input.TextArea
+          id={`comment-${sprint.sprintName}`}
+          placeholder="Comment"
+          autoSize={{ minRows: 3, maxRows: 6 }}
+          style={{ marginBottom: '16px', borderColor: '#CBCBCB'}}
         />
       </CardBody>
     ))
@@ -64,6 +63,7 @@ const GradeModal = ({ title, sprintData, visible, onOk, onCancel }) => {
           <Button key="submit" type="primary" onClick={onOk}>Save</Button>
         ]}
         style={{ marginLeft: '8px', transform: 'none' }}
+        centered
       >
         <div className="modal-content">
           {renderSprints()}
