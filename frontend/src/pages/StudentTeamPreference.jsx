@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+// import { Outlet } from "react-router-dom";
 import { Container } from "reactstrap";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -20,7 +20,8 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
+// import TextField from "@mui/material/TextField";
+import { Input } from "antd";
 
 import "../assets/scss/FullLayout.css"; //make sure import this
 import Sidebar from "../layouts/Sidebar";
@@ -42,13 +43,26 @@ const Item = styled(Paper)(({ theme }) => ({
 const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
   const isValidValue = allProjects.some((proj) => proj.projectId === value);
   return (
-    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+    <FormControl
+      sx={{ m: 1, minWidth: "20vw", textAlign: "left" }}
+      size="small"
+    >
       <InputLabel>Project</InputLabel>
       <Select
         // value={value}
         value={isValidValue ? value : ""}
         label="Project"
         onChange={(event) => onChange(event, index)}
+        sx={{
+          maxWidth: "20vw",
+          ".MuiSelect-select": {
+            display: "block",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            minWidth: "10vw",
+          },
+        }}
       >
         <MenuItem value="">
           <em>None</em>
@@ -56,7 +70,17 @@ const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
         {allProjects && allProjects.length > 0 ? (
           allProjects.map((proj) => (
             <MenuItem key={proj.projectId} value={proj.projectId}>
-              P{proj.projectId} &nbsp;&nbsp;{proj.title}
+              <Typography
+                sx={{
+                  display: "block",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  minWidth: "10vw",
+                }}
+              >
+                P{proj.projectId} &nbsp;&nbsp;{proj.title}
+              </Typography>
             </MenuItem>
           ))
         ) : (
@@ -69,12 +93,19 @@ const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
 
 const ReasonField = ({ value, onChange, index }) => {
   return (
-    <TextField
-      label="Reason"
-      multiline
-      maxRows={4}
+    <Input.TextArea
+      // label="Reason"
+      placeholder="Reason"
+      // multiline="true"
+      autoSize={{ minRows: 3, maxRows: 4 }}
       onChange={(event) => onChange(event, index)}
       value={value}
+      onMouseOver={(e) => {
+        e.target.style.borderColor = "black";
+      }}
+      onMouseOut={(e) => {
+        e.target.style.borderColor = "#CBCBCB";
+      }}
     />
   );
 };

@@ -445,7 +445,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                             {` ${
                               member.userSkills
                                 ? member.userSkills.join(", ")
-                                : " "
+                                : "N/A"
                             }`}
                           </React.Fragment>
                         }
