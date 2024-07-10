@@ -17,6 +17,8 @@ import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import { apiCall, fileToDataUrl } from '../helper';
 import EditUserStoryModal from '../components/EditUserStoryModal';
+import CreateUserStoryModal from "../components/CreateUserStoryModal";
+
 import GradeModal from "../components/GradeModal";
 
 import '../assets/scss/RoleManage.css'
@@ -67,6 +69,7 @@ const ProjectProgress = (props) => {
   const [calendarModalVisible, setCalendarModalVisible] = useState(false);
   const [dates, setDates] = useState([]);
   const [sprintNo, setSprintNo] = useState(null);
+  const [description, setDescription] = useState('');
 
   // for delete modal
   const toggleDeleteModal = () => setDeleteModalVisible(!deleteModalVisible);
@@ -100,8 +103,10 @@ const ProjectProgress = (props) => {
     const response = await apiCall('GET', 'v1/admin/get/user/list', null, token, true);
   
     //console.log("response:", response)
-  
-    if (response.error) {
+    if (!response) {
+      setData([]);
+      setLoading(false);
+    } else if (response.error) {
       setData([]);
       setLoading(false);
     } else {
@@ -298,7 +303,9 @@ const ProjectProgress = (props) => {
           <EditUserStoryModal
             title={`Edit User Story - Sprint ${sprintNo}`}
             visible={isEditModalVisible}
-            user={selectedUser}
+            defaultDes={description}
+            description={description}
+            setDescription={setDescription}
             onOk={handleEditOk}
             onCancel={handleEditCancel}
             refreshData={loadUserData} // update function
@@ -307,7 +314,9 @@ const ProjectProgress = (props) => {
           <EditUserStoryModal
             title={`Create User Story - Sprint ${sprintNo}`}
             visible={isCreateModalVisible}
-            user={selectedUser}
+            defaultDes=""
+            description={description}
+            setDescription={setDescription}
             onOk={handleCreateOk}
             onCancel={handleCreateCancel}
             refreshData={loadUserData} // update function

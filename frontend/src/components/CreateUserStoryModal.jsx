@@ -16,7 +16,7 @@ const roleMap = {
   5: 'Administrator'
 };
 
-const EditUserStoryModal = ({ title, visible, defaultDes, description, setDescription, onOk, onCancel, refreshData }) => {
+const CreateUserStoryModal = ({ title, visible, defaultDes, description, setDescription, onOk, onCancel, refreshData }) => {
   const [selectedSprint, setSelectedSprint] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
@@ -37,13 +37,27 @@ const EditUserStoryModal = ({ title, visible, defaultDes, description, setDescri
       setAlertOpen(true);
       return;
     }
+
+    const response = await apiCall('GET', 'v1/project/get/public_project/list', {}, token, true);
+
+    if (response.error) {
+      setSnackbarContent(response.error);
+      setAlertType('error');
+      setAlertOpen(true);
+    } else {
+      setSnackbarContent('Submit successfully');
+      setAlertType('success');
+      setAlertOpen(true);
+      onOk();
+      refreshData();
+    }
   };
 
   return (
     <>
       <Modal
         title={title}
-        open={visible}
+        visible={visible}
         onOk={handleSubmit}
         onCancel={onCancel}
         footer={[
@@ -65,4 +79,4 @@ const EditUserStoryModal = ({ title, visible, defaultDes, description, setDescri
   );
 };
 
-export default EditUserStoryModal;
+export default CreateUserStoryModal;
