@@ -38,7 +38,6 @@ const ProjectDetails = () => {
   const getProjectDetail = async () => {
     try {
       const res = await apiCall("GET", `v1/project/detail/${projectId}`);
-      console.log(res);
       if (res === null) {
         return;
       }
@@ -64,6 +63,8 @@ const ProjectDetails = () => {
 
   // this function used to get all teams that have already been allocated to a specific project
   const getAllAllocatedTeams = async () => {
+    const userId = parseInt(localStorage.getItem("userId"));
+    const userRole = parseInt(localStorage.getItem("role"));
     try {
       const res = await apiCall(
         "GET",
@@ -75,8 +76,19 @@ const ProjectDetails = () => {
       }
       if (res.error) {
         setCurrentTeam([]);
-      } else {
+        return;
+      }
+      if (userRole !== 1) {
         setCurrentTeam(res);
+        return;
+      }
+      if (userRole === 1) {
+        setCurrentTeam(
+          res.filter((team) => {
+            return team.teamMember.some((user) => user.userId === userId);
+          })
+        );
+        return;
       }
     } catch (error) {
       return;
