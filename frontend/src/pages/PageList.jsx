@@ -24,6 +24,7 @@ import ProjectList from "./ProjectList";
 import CreateProject from "./CreateProject";
 import EditProject from "./EditProject";
 import ProjectProgress from "./ProjectProgress";
+import ProjectDetails from "./ProjectDetails";
 
 //admin
 import RoleManage from "./RoleManage";
@@ -101,6 +102,10 @@ const PageList = () => {
         <Route
           path="/project/progress"
           element={<ProjectProgress token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/project/details"
+          element={<ProjectDetails token={token} setToken={setToken} />}
         />
 
         {/* admin */}
