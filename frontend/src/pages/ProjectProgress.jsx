@@ -24,11 +24,12 @@ import GradeModal from "../components/GradeModal";
 import '../assets/scss/RoleManage.css'
 import '../assets/scss/FullLayout.css';//make sure import this
 import Calendar from "../components/Calendar";
+import MessageAlert from '../components/MessageAlert';
 
 
 const statusColorMap = {
   1: '#808080',   // grey
-  2: '#006064',   // blue
+  2: '#88D2FF',   // blue
   3: '#52c41a'    // green
 };
 
@@ -62,22 +63,50 @@ const ProjectProgress = (props) => {
 
   const { projectId, teamId } = useParams();
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
+  const [storys, setStorys] = useState([]);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+  const [description, setDescription] = useState('');
+
   const [isGradeModalVisible, setIsGradeModalVisible] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [calendarModalVisible, setCalendarModalVisible] = useState(false);
   const [dates, setDates] = useState([]);
   const [sprintNo, setSprintNo] = useState(null);
-  const [description, setDescription] = useState('');
+  const token = localStorage.getItem('token');
+  const [userStoryId, setUserStoryId] = useState(null);
+  const [userStoryStatus, setUserStoryStatus] = useState(null);
+  // for messageAlert component
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertType, setAlertType] = useState('');
+  const [snackbarContent, setSnackbarContent] = useState('');
+
 
   // for delete modal
   const toggleDeleteModal = () => setDeleteModalVisible(!deleteModalVisible);
-  const handleDelete = () => {
-    console.log('Deleting item:');
+  const handleDeleteClick = (id) => {
     toggleDeleteModal();
+    setUserStoryId(id);
+  }
+  const handleDelete = async() => {
+    console.log('Deleting item:');
+    const response = await apiCall('DELETE', `v1/progress/delete/${userStoryId}`, null, token, true);
+    if (!response) {
+      setSnackbarContent("null");
+      setAlertType('error');
+      setAlertOpen(true);
+    } else if (response.error) {
+      setSnackbarContent(response.error);
+      setAlertType('error');
+      setAlertOpen(true);
+    } else {
+      setSnackbarContent('Delete successfully');
+      setAlertType('success');
+      setAlertOpen(true);
+      toggleDeleteModal();
+      loadUserData();
+    }
   };
 
   // for calendar modal
@@ -95,25 +124,34 @@ const ProjectProgress = (props) => {
   const loadUserData = async () => {
     if (loading) return;
     setLoading(true);
-    const token = localStorage.getItem('token');
     if (!token) {
       console.error("Token not found in localStorage");
       setLoading(false);
       return;
     }
   
-    const response = await apiCall('GET', 'v1/admin/get/user/list', null, token, true);
-  
-    //console.log("response:", response)
+    const response = await apiCall('GET', `v1/progress/get/detail/${item.teamId}`, null, token, true);
+    console.log("response", response);
     if (!response) {
-      setData([]);
+      setData(null);
       setLoading(false);
     } else if (response.error) {
-      setData([]);
+      setData(null);
       setLoading(false);
     } else {
-      const res = Array.isArray(response) ? response : [];
-      setData(res);
+      setData(response);
+      const allUserStories = response.sprints.reduce((acc, sprint) => {
+        // Map each user story with its sprint number
+        const userStoriesWithIndexes = sprint.userStoryList.map((story, index) => ({
+          ...story,
+          sprintNum: sprint.sprintNum,
+          globalIndex: acc.length + index + 1
+        }));
+        // Concatenate mapped user stories to accumulator
+        return acc.concat(userStoriesWithIndexes);
+      }, []);
+      console.log("allUserStories", allUserStories);
+      setStorys(allUserStories);
       setLoading(false);
     }
   };
@@ -124,27 +162,31 @@ const ProjectProgress = (props) => {
   }, []);
 
   // for edit user story modal
-  const showEditModal = (user, sprintNumber) => {
-    setSelectedUser(user);
+  const handleUserStoryClick = (story, sprintNumber) => {
     setIsEditModalVisible(true);
+    setDescription(story.userStoryDescription);
     setSprintNo(sprintNumber);
+    setUserStoryId(story.userStoryId);
+    setUserStoryStatus(story.userStoryStatus);
   };
-  
+
   const handleEditOk = () => {
     setIsEditModalVisible(false);
   };
   
   const handleEditCancel = () => {
     setIsEditModalVisible(false);
-  };  
+  };
 
   // for create user story modal
   const showCreateModal = (sprintNumber) => {
     setIsCreateModalVisible(true);
     setSprintNo(sprintNumber);
+    setDescription('');
+    setUserStoryStatus(1);
   };
 
-  const handleCreateOk = () => {
+  const handleCreateOk = async() => {
     setIsCreateModalVisible(false);
   };
   
@@ -201,30 +243,31 @@ const ProjectProgress = (props) => {
         {/* list of user story */}
         <List
           loading={loading}
-          dataSource={data}
-          renderItem={(item) => (
-            <List.Item className="list-item" key={item.userId}>
+          dataSource={storys.filter(story => story.sprintNum === sprint.sprintNumber)}
+          renderItem={(story, index) => (
+            <List.Item className="list-item" key={story.userStoryId}>
               <List.Item.Meta
-                onClick={() => showEditModal(item, sprint.sprintNumber)}
+                onClick={() => handleUserStoryClick(story, sprint.sprintNumber)}
                 style={{ marginLeft: '20px', cursor: 'pointer' }}
                 title={
                   <div className="list-item-meta-title">
-                    <span className="list-item-meta-name" style={{ fontSize: '16px', fontWeight: 'bold' }}>User Story X</span>
-                    <span className="list-item-meta-role" style={{ backgroundColor: roleColorMap[item.role].background, color: roleColorMap[item.role].color }}>
-                      {roleMap[item.role]}
+                    <span className="list-item-meta-name" style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                      {`User Story ${story.globalIndex}`}
                     </span>
                   </div>
                 }
                 description={
                   <div className="list-item-meta-description">
-                    <div className="list-item-meta-id">Description</div>
+                    <div className="list-item-meta-id">
+                    {story.userStoryDescription}
+                    </div>
                   </div>
                 }
               />
               <Tooltip title='To Do'>
                 <div
                   style={{ 
-                    backgroundColor: statusColorMap[1],
+                    backgroundColor: statusColorMap[story.userStoryStatus],
                     borderRadius: '50%',
                     width: '20px',
                     height: '20px',
@@ -236,7 +279,7 @@ const ProjectProgress = (props) => {
                 <Button
                   type="secondary"
                   className="list-item-button"
-                  onClick={() => toggleDeleteModal()}
+                  onClick={() => handleDeleteClick(story.userStoryId)}
                   style={{ color:"red", border: "0", margin: "1px" }}
                 >
                   <i class="bi bi-trash3-fill"></i>
@@ -313,33 +356,39 @@ const ProjectProgress = (props) => {
             onOk={handleGradeOk}
             onCancel={handleGradeCancel}
           />
-
           {/* edit user story */}
           <EditUserStoryModal
             title={`Edit User Story - Sprint ${sprintNo}`}
             visible={isEditModalVisible}
-            defaultDes={description}
             description={description}
             setDescription={setDescription}
             onOk={handleEditOk}
             onCancel={handleEditCancel}
             refreshData={loadUserData} // update function
+            sprintNo={`${sprintNo}`}
+            teamId={item.teamId}
+            userStoryId={userStoryId}
+            userStoryStatus={userStoryStatus}
+            setUserStoryStatus={setUserStoryStatus}
           />
           {/* create user story */}
-          <EditUserStoryModal
+          <CreateUserStoryModal
             title={`Create User Story - Sprint ${sprintNo}`}
             visible={isCreateModalVisible}
-            defaultDes=""
             description={description}
             setDescription={setDescription}
             onOk={handleCreateOk}
             onCancel={handleCreateCancel}
             refreshData={loadUserData} // update function
+            sprintNo={`${sprintNo}`}
+            teamId={item.teamId}
+            userStoryStatus={userStoryStatus}
+            setUserStoryStatus={setUserStoryStatus}
           />
           {/* delete modal */}
           <Modal
             title="Confirm Delete"
-            visible={deleteModalVisible}
+            open={deleteModalVisible}
             onOk={handleDelete}
             onCancel={toggleDeleteModal}
             okText="Delete"
@@ -351,7 +400,7 @@ const ProjectProgress = (props) => {
           {/* sprint duration calendar */}
           <Modal
             title="Select Sprint Duration"
-            visible={calendarModalVisible}
+            open={calendarModalVisible}
             onOk={handleCalendar}
             onCancel={toggleCalendarModal}
             okText="Save"
@@ -362,6 +411,12 @@ const ProjectProgress = (props) => {
           </Modal>
         </div>
       </div>
+      <MessageAlert
+        open={alertOpen}
+        alertType={alertType}
+        handleClose={() => setAlertOpen(false)}
+        snackbarContent={snackbarContent}
+      />
     </main>
   );
 };
