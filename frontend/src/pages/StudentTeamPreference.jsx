@@ -257,8 +257,19 @@ const StudentTeamPreference = () => {
         `v1/team/preference/project/${userId}`,
         body
       );
+      if (
+        res.error ===
+        "Team already allocated a project, cannot update preferences"
+      ) {
+        setErrorMessage(
+          "already been allocated a project, cannot update preferences!"
+        );
+        setAlertType("error");
+        setShowError(true);
+        return;
+      }
       if (res.error) {
-        setErrorMessage("Failed to update");
+        setErrorMessage("Failed to update,check and try again!");
         setAlertType("error");
         setShowError(true);
       } else {

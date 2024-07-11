@@ -42,6 +42,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const [currentTeam, setCurrentTeam] = useState([]);
   const [open2, setOpen2] = useState(false);
   const [teamName, setTeamName] = useState("");
+  const [teamIdShow, setTeamIdShow] = useState("");
   const [teamSkills, setTeamSkills] = useState("");
   const [teamMember, setTeamMember] = useState([]);
   const [preReason, setPreReason] = useState("");
@@ -153,6 +154,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       } else {
         console.log(res);
         setTeamName(res.teamName);
+        setTeamIdShow(res.teamIdShow);
         setTeamSkills(res.teamSkills);
         setTeamMember(res.teamMember);
         setPreReason(res.preferenceReason);
@@ -305,6 +307,14 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                                   variant="body2"
                                   color="text.primary"
                                 >
+                                  TeamId: {team.teamIdShow} <br />
+                                </Typography>
+                                <Typography
+                                  sx={{ display: "inline" }}
+                                  component="span"
+                                  variant="body2"
+                                  color="text.primary"
+                                >
                                   No. of TeamMembers: {team.teamMember.length}
                                 </Typography>
                                 <br />
@@ -394,6 +404,15 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
               // variant="body"
               color="text.primary"
             >
+              TeamId: {teamIdShow}
+            </Typography>{" "}
+            <br />
+            <Typography
+              sx={{ display: "inline" }}
+              component="span"
+              // variant="body"
+              color="text.primary"
+            >
               TeamSkills: {teamSkills ? teamSkills.join(", ") : "N/A"}
             </Typography>
           </DialogContent>
@@ -412,11 +431,18 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                   <React.Fragment key={member.userId}>
                     <ListItem alignItems="flex-start">
                       <ListItemAvatar>
-                        <Avatar alt={member.userName} src={member.avatarURL}>
-                          {/* {member.userName.charAt(0)} */}
-                          {member.avatarURL === ""
+                        <Avatar
+                          alt={member.userName.charAt(0)}
+                          src={
+                            member.avatarURL === ""
+                              ? (member.avatarURL = member.userName.charAt(0))
+                              : member.avatarURL
+                          }
+                        >
+                          {member.userName.charAt(0)}
+                          {/* {member.avatarURL === ""
                             ? (member.avatarURL = member.userName.charAt(0))
-                            : member.avatarURL}
+                            : member.avatarURL} */}
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText
