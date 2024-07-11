@@ -46,6 +46,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const [teamSkills, setTeamSkills] = useState("");
   const [teamMember, setTeamMember] = useState([]);
   const [preReason, setPreReason] = useState("");
+  const [searchKey, setSearchKey] = useState("");
+  const [isFilter, setIsFilter] = useState(false);
   const userRole = parseInt(localStorage.getItem("role"));
 
   // this function used to get all teams that prefer a specific project
@@ -105,6 +107,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
 
   useEffect(() => {
     setSelected("Preference List");
+    setIsFilter(false);
+    setSearchKey("");
     getAllAppliedTeams();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleClickOpen]);
@@ -201,6 +205,27 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     }
   };
 
+  // this function is used to search teams that satisfy the search requirements
+  const handleSearchTeams = async () => {
+    const trimmedSearchKey = searchKey.trim();
+    if (trimmedSearchKey === "") {
+      return;
+    }
+    if (!isFilter) {
+      console.log(trimmedSearchKey);
+      setIsFilter(true);
+      // to do 返回搜索结果
+    } else {
+      setSearchKey("");
+      setIsFilter(false);
+      if (selected === "Preference List") {
+        getAllAppliedTeams();
+      } else if (selected === "Allocated Team") {
+        getAllAllocatedTeams();
+      }
+    }
+  };
+
   return (
     <>
       <React.Fragment>
@@ -263,6 +288,21 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                 size="large"
                 placeholder="Search Team"
                 prefix={<SearchOutlined />}
+                value={searchKey}
+                onChange={(e) => {
+                  setSearchKey(e.target.value);
+                }}
+                suffix={
+                  <Button
+                    size="small"
+                    type="primary"
+                    onClick={() => {
+                      handleSearchTeams();
+                    }}
+                  >
+                    {isFilter ? "Clear" : "Filter"}
+                  </Button>
+                }
               />
             </div>
             {/* the list component is used to show all teams that prefer or have been allocated a specific project */}
