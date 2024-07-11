@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 	"web/forms"
 	"web/global"
 	"web/models"
@@ -11,7 +12,7 @@ import (
 
 // @Summary Create user story
 // @Description Create a new user story for a given team and sprint, User Story Status (1: not started, 2: in progress, 3: completed)
-// @Tags Progress
+// @Tags Project Progress
 // @Accept json
 // @Produce json
 // @Param UserStoryReq body forms.UserStoryReq true "UserStoryReq"
@@ -60,7 +61,7 @@ func CreateUserStory(c *gin.Context) {
 
 // @Summary Edit user story
 // @Description Edit an existing user story, User Story Status (1: not started, 2: in progress, 3: completed)
-// @Tags Progress
+// @Tags Project Progress
 // @Accept json
 // @Produce json
 // @Param UserStoryReq body forms.UserStoryReq true "UserStoryReq"
@@ -92,4 +93,76 @@ func EditUserStory(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User story updated successfully"})
+}
+
+// @Summary Delete user story
+// @Description Delete an existing user story
+// @Tags Project Progress
+// @Accept json
+// @Produce json
+// @Param userStoryId path int true "User Story ID"
+// @Success 200 {object} map[string]interface{} "{"message": "User story deleted successfully"}"
+// @Failure 404 {object} map[string]string "{"error": "User story not found"}"
+// @Router /v1/progress/delete/userStory/{userStoryId} [delete]
+func DeleteUserStory(c *gin.Context) {
+	userStoryId := c.Param("userStoryId")
+
+	var userStory models.UserStory
+	if err := global.DB.Where("id = ?", userStoryId).First(&userStory).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User story not found"})
+		return
+	}
+
+	if err := global.DB.Delete(&userStory).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete user story"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User story deleted successfully"})
+}
+
+// @Summary Edit sprint start and end dates
+// @Description Edit the start and end dates of an existing sprint，日期格式 YYYY-MM-DD
+// @Tags Progress
+// @Accept json
+// @Produce json
+// @Param sprint body forms.EditSprintDateReq true "Sprint Date"
+// @Success 200 {object} map[string]interface{} "{"message": "Sprint dates updated successfully"}"
+// @Failure 400 {object} map[string]string "{"error": "invalid request body"}"
+// @Failure 404 {object} map[string]string "{"error": "Sprint not found"}"
+// @Router /v1/progress/edit/sprint/date [post]
+func EditSprintDate(c *gin.Context) {
+	var req forms.EditSprintDateReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	var sprint models.Sprint
+	if err := global.DB.Where("team_id = ? AND sprint_num = ?", req.TeamId, req.SprintNum).First(&sprint).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Sprint not found"})
+		return
+	}
+
+	startDate, err := time.Parse("2006-01-02", req.StartDate)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid start date format"})
+		return
+	}
+
+	endDate, err := time.Parse("2006-01-02", req.EndDate)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid end date format"})
+		return
+	}
+
+	sprint.StartDate = &startDate
+	sprint.EndDate = &endDate
+
+	if err := global.DB.Save(&sprint).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update sprint dates"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Sprint dates updated successfully"})
 }

@@ -45,6 +45,22 @@ definitions:
     required:
     - user_id
     type: object
+  forms.EditSprintDateReq:
+    properties:
+      endDate:
+        type: string
+      sprintNum:
+        type: integer
+      startDate:
+        type: string
+      teamId:
+        type: integer
+    required:
+    - endDate
+    - sprintNum
+    - startDate
+    - teamId
+    type: object
   forms.JoinTeamForm:
     properties:
       teamIdShow:
@@ -980,7 +996,35 @@ paths:
             type: object
       summary: Create user story
       tags:
-      - Progress
+      - Project Progress
+  /v1/progress/delete/userStory/{userStoryId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing user story
+      parameters:
+      - description: User Story ID
+        in: path
+        name: userStoryId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "User story deleted successfully"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: '{"error": "User story not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete user story
+      tags:
+      - Project Progress
   /v1/progress/edit/{userStoryId}:
     post:
       consumes:
@@ -1015,6 +1059,41 @@ paths:
               type: string
             type: object
       summary: Edit user story
+      tags:
+      - Project Progress
+  /v1/progress/edit/sprint/date:
+    post:
+      consumes:
+      - application/json
+      description: Edit the start and end dates of an existing sprint，日期格式 YYYY-MM-DD
+      parameters:
+      - description: Sprint Date
+        in: body
+        name: sprint
+        required: true
+        schema:
+          $ref: '#/definitions/forms.EditSprintDateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Sprint dates updated successfully"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: '{"error": "invalid request body"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Sprint not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Edit sprint start and end dates
       tags:
       - Progress
   /v1/project/{projectId}/preferencedBy/{teamId}/detail:

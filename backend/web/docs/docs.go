@@ -656,7 +656,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Progress"
+                    "Project Progress"
                 ],
                 "summary": "Create user story",
                 "parameters": [
@@ -690,6 +690,101 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/progress/delete/userStory/{userStoryId}": {
+            "delete": {
+                "description": "Delete an existing user story",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project Progress"
+                ],
+                "summary": "Delete user story",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User Story ID",
+                        "name": "userStoryId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\": \"User story deleted successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"User story not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/progress/edit/sprint/date": {
+            "post": {
+                "description": "Edit the start and end dates of an existing sprint，日期格式 YYYY-MM-DD",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Progress"
+                ],
+                "summary": "Edit sprint start and end dates",
+                "parameters": [
+                    {
+                        "description": "Sprint Date",
+                        "name": "sprint",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.EditSprintDateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\": \"Sprint dates updated successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"invalid request body\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Sprint not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/progress/edit/{userStoryId}": {
             "post": {
                 "description": "Edit an existing user story, User Story Status (1: not started, 2: in progress, 3: completed)",
@@ -700,7 +795,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Progress"
+                    "Project Progress"
                 ],
                 "summary": "Edit user story",
                 "parameters": [
@@ -2533,6 +2628,29 @@ const docTemplate = `{
             ],
             "properties": {
                 "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "forms.EditSprintDateReq": {
+            "type": "object",
+            "required": [
+                "endDate",
+                "sprintNum",
+                "startDate",
+                "teamId"
+            ],
+            "properties": {
+                "endDate": {
+                    "type": "string"
+                },
+                "sprintNum": {
+                    "type": "integer"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "teamId": {
                     "type": "integer"
                 }
             }
