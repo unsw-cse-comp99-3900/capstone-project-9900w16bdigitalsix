@@ -1,0 +1,14 @@
+::v-deep .ant-card-meta-title,
+.ant-card-meta-detail {
+  margin-bottom: 0 !important;
+}
+.seach {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  width: 92%;
+  margin: 20px 0;
+}
+::v-deep .ant-tag {
+  background-color: red !important;
+}
