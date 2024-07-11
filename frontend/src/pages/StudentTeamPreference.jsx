@@ -29,7 +29,6 @@ import { apiCall } from "../helper";
 import MessageAlert from "../components/MessageAlert";
 
 const Item = styled(Paper)(({ theme }) => ({
-  // backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   backgroundColor: "transparent",
   boxShadow: "none",
   ...theme.typography.body2,
@@ -38,6 +37,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+// this component is the select component used to select all available projects
 const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
   const isValidValue = allProjects.some((proj) => proj.projectId === value);
   return (
@@ -47,7 +47,6 @@ const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
     >
       <InputLabel>Project</InputLabel>
       <Select
-        // value={value}
         value={isValidValue ? value : ""}
         label="Project"
         onChange={(event) => onChange(event, index)}
@@ -89,12 +88,11 @@ const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
   );
 };
 
+// this component is the input area used to fill in the preference reason
 const ReasonField = ({ value, onChange, index }) => {
   return (
     <Input.TextArea
-      // label="Reason"
       placeholder="Reason"
-      // multiline="true"
       autoSize={{ minRows: 3, maxRows: 4 }}
       onChange={(event) => onChange(event, index)}
       value={value}
@@ -123,6 +121,7 @@ const StudentTeamPreference = () => {
 
   const userId = parseInt(localStorage.getItem("userId"));
 
+  // this function used to fetch all projects that are public
   const getAllPublicProjects = async () => {
     try {
       const res = await apiCall("GET", "v1/project/get/public_project/list");
@@ -131,9 +130,6 @@ const StudentTeamPreference = () => {
       }
       if (res.error) {
         return;
-        // setErrorMessage(res.error);
-        // setAlertType("error");
-        // setShowError(true);
       } else {
         setAllProjects(res);
       }
@@ -144,6 +140,7 @@ const StudentTeamPreference = () => {
     }
   };
 
+  // this function used to fetch a specific team's preference list
   const getTeamPreference = async () => {
     try {
       const res = await apiCall("GET", `v1/team/get/preferences/${userId}`);
@@ -185,14 +182,17 @@ const StudentTeamPreference = () => {
       }
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
+  // used to process select project
   const handleSelectProjectChange = (event, index) => {
     const newRows = [...rows];
     newRows[index].projectId = event.target.value;
     setRows(newRows);
   };
 
+  // used to process the reason textfield change
   const handleReasonFieldChange = (event, index) => {
     const newRows = [...rows];
     newRows[index].reason = event.target.value;
@@ -212,10 +212,12 @@ const StudentTeamPreference = () => {
     setShowError(false);
   };
 
+  // used to add one more preference
   const addOneMore = () => {
     setRows([...rows, { preNum: rows.length + 1, projectId: "", reason: "" }]);
   };
 
+  // used to delete a preference
   const deleteOneRow = (index) => {
     const newRows = rows.filter((_, i) => i !== index);
     const updatedRows = newRows.map((row, idx) => ({
@@ -225,6 +227,7 @@ const StudentTeamPreference = () => {
     setRows(updatedRows);
   };
 
+  // used to submit the preference list
   const submitPreference = async () => {
     const seenProjectIds = new Set();
     for (const preference of rows) {
@@ -331,6 +334,7 @@ const StudentTeamPreference = () => {
                     </Typography>
                   </Item>
                   <Item>
+                    {/* the table below is used to record team's preference list */}
                     <TableContainer component={Paper}>
                       <Table sx={{ width: "100%" }} aria-label="simple table">
                         <TableHead>
@@ -350,6 +354,7 @@ const StudentTeamPreference = () => {
                             ></TableCell>
                           </TableRow>
                         </TableHead>
+                        {/* the table body is for teams to select projects and fill in the reanson field */}
                         <TableBody>
                           {rows.map((row, index) => (
                             <TableRow
