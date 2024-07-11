@@ -28,6 +28,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
+  const selectedRoleName = roleMap[selectedRole];
 
   useEffect(() => {
     if (user && user.role !== undefined) {
@@ -57,7 +58,15 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
 
     const response = await apiCall('POST', 'v1/admin/modify/user/role', {
       userId: user.userId,
-      role: selectedRole
+      role: selectedRole,
+      notification: {
+        content: `Your role has been changed to ${selectedRoleName}.`,
+        to: {
+          users: [
+            user.userId
+          ]
+        }
+      },
     }, token, true);
 
     if (response.error) {
@@ -100,7 +109,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
           <Select
             className="role-select"
             placeholder="Select a role"
-            value={selectedRole !== null ? selectedRole.toString() : undefined} // 确保显示选项文字
+            value={selectedRole !== null ? selectedRole.toString() : undefined}
             onChange={handleRoleChange}
           >
             <Option value="1">Student</Option>

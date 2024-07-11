@@ -28,6 +28,17 @@ import ProjectDetails from "./ProjectDetails";
 
 //admin
 import RoleManage from "./RoleManage";
+import ProjectAdmin from "./ProjectAdmin";
+import ProjectAdminAssign from "./ProjectAdminAssign";
+
+// notification
+import Notification from "./Notification";
+
+// test
+import TestProjectDetail from "./TestProjectDetail";
+
+// report
+import GenerateReport from "./GenerateReport";
 
 const PageList = () => {
   const [token, setToken] = React.useState(null);
@@ -100,8 +111,16 @@ const PageList = () => {
           element={<EditProject token={token} setToken={setToken} />}
         />
         <Route
-          path="/project/progress"
+          path="/project/progress/:projectId/:teamId"
           element={<ProjectProgress token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/project/admin"
+          element={<ProjectAdmin token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/project/admin/:projectId"
+          element={<ProjectAdminAssign token={token} setToken={setToken} />}
         />
         <Route
           path="/project/details"
@@ -112,6 +131,24 @@ const PageList = () => {
         <Route
           path="/admin/role-manage"
           element={<RoleManage token={token} setToken={setToken} />}
+        />
+
+        {/* notification */}
+        <Route
+          path="/notification"
+          element={<Notification token={token} setToken={setToken} />}
+        />
+
+        {/* test */}
+        <Route
+          path="/testProjectDetail"
+          element={<TestProjectDetail token={token} setToken={setToken} />}
+        />
+
+        {/* generate report */}
+        <Route
+          path="/project/report/:projectId/:teamId"
+          element={<GenerateReport token={token} setToken={setToken} />}
         />
       </Routes>
       <br />
