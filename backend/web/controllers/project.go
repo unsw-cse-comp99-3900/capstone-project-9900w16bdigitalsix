@@ -365,9 +365,22 @@ func ModifyProjectDetail(c *gin.Context) {
 	// 更新技能 关联表(project_skills）
 	var skills []models.Skill
 	if len(requiredSkills) > 0 {
-		if err := global.DB.Where("skill_name IN ?", requiredSkills).Find(&skills).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
+		for _, skillName := range requiredSkills {
+			var skill models.Skill
+			if err := global.DB.Where("skill_name = ?", skillName).First(&skill).Error; err != nil {
+				if err == gorm.ErrRecordNotFound {
+					// 如果技能不存在，则创建新技能
+					skill = models.Skill{SkillName: skillName}
+					if err := global.DB.Create(&skill).Error; err != nil {
+						c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create new skill"})
+						return
+					}
+				} else {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+					return
+				}
+			}
+			skills = append(skills, skill)
 		}
 		global.DB.Model(&project).Association("Skills").Replace(skills)
 	}

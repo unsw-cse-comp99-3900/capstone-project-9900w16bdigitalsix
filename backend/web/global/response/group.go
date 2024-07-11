@@ -56,3 +56,11 @@ type PreferenceResponse struct {
 	ProjectTitle string `json:"projectTitle"`
 	Reason       string `json:"reason"`
 }
+
+type Team struct {
+	TeamId     uint         `json:"teamId"`
+	TeamIdShow uint         `json:"teamIdShow"`
+	TeamName   string       `json:"teamName"`
+	TeamMember []TeamMember `json:"teamMember"`
+	TeamSkills []string     `json:"teamSkills"`
+}

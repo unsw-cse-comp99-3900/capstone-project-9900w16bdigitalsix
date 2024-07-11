@@ -111,3 +111,11 @@ func ProgressRouter(Router *gin.RouterGroup) {
 		progressRouter.GET("/get/detail/:teamId", controllers.GetProgressDetail)
     }
 }
+
+func SearchRouter(Router *gin.RouterGroup) {
+	// searchRouter := Router.Group("search")
+    {
+        // searchRouter.GET("/v1/search/team/detail/:searchKey", controllers.SearchTeams)
+     
+    }
+}
