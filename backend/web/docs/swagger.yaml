@@ -45,6 +45,20 @@ definitions:
     required:
     - user_id
     type: object
+  forms.EditGradeReq:
+    properties:
+      notification:
+        $ref: '#/definitions/forms.TeamNotification'
+      sprints:
+        items:
+          $ref: '#/definitions/forms.EditSprintGrade'
+        type: array
+      teamId:
+        type: integer
+    required:
+    - sprints
+    - teamId
+    type: object
   forms.EditSprintDateReq:
     properties:
       endDate:
@@ -60,6 +74,19 @@ definitions:
     - sprintNum
     - startDate
     - teamId
+    type: object
+  forms.EditSprintGrade:
+    properties:
+      comment:
+        type: string
+      grade:
+        type: integer
+      sprintNum:
+        type: integer
+    required:
+    - comment
+    - grade
+    - sprintNum
     type: object
   forms.JoinTeamForm:
     properties:
@@ -321,6 +348,13 @@ definitions:
           type: string
         type: array
     type: object
+  response.GradeResponse:
+    properties:
+      sprints:
+        items:
+          $ref: '#/definitions/response.SprintGrade'
+        type: array
+    type: object
   response.JoinTeamResponse:
     properties:
       teamId:
@@ -388,6 +422,41 @@ definitions:
       userId:
         type: integer
     type: object
+  response.ProgressDetailResponse:
+    properties:
+      clientEmail:
+        type: string
+      clientId:
+        type: integer
+      clientName:
+        type: string
+      coorEmail:
+        type: string
+      coorId:
+        type: integer
+      coorName:
+        type: string
+      projectId:
+        type: integer
+      sprints:
+        items:
+          $ref: '#/definitions/response.SprintDetail'
+        type: array
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamName:
+        type: string
+      title:
+        type: string
+      tutorEmail:
+        type: string
+      tutorId:
+        type: integer
+      tutorName:
+        type: string
+    type: object
   response.ProjectDetailResponse:
     properties:
       allocatedTeam:
@@ -441,6 +510,30 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  response.SprintDetail:
+    properties:
+      endDate:
+        type: string
+      sprintGrade:
+        type: integer
+      sprintNum:
+        type: integer
+      startDate:
+        type: string
+      userStoryList:
+        items:
+          $ref: '#/definitions/response.UserStoryDetail'
+        type: array
+    type: object
+  response.SprintGrade:
+    properties:
+      comment:
+        type: string
+      grade:
+        type: integer
+      sprintNum:
+        type: integer
     type: object
   response.StudentInfoResponse:
     properties:
@@ -540,6 +633,15 @@ definitions:
         type: integer
       userName:
         type: string
+    type: object
+  response.UserStoryDetail:
+    properties:
+      userStoryDescription:
+        type: string
+      userStoryId:
+        type: integer
+      userStoryStatus:
+        type: integer
     type: object
 info:
   contact: {}
@@ -1061,11 +1163,46 @@ paths:
       summary: Edit user story
       tags:
       - Project Progress
+  /v1/progress/edit/grade:
+    post:
+      consumes:
+      - application/json
+      description: Edit the grade and comment of an existing sprint
+      parameters:
+      - description: Edit Grade
+        in: body
+        name: grade
+        required: true
+        schema:
+          $ref: '#/definitions/forms.EditGradeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Grade updated successfully"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: '{"error": "invalid request body"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Sprint not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Edit grade
+      tags:
+      - Project Progress
   /v1/progress/edit/sprint/date:
     post:
       consumes:
       - application/json
-      description: Edit the start and end dates of an existing sprint，日期格式 YYYY-MM-DD
+      description: Edit the start and end dates of an existing sprint，日期格式 RFC3339
       parameters:
       - description: Sprint Date
         in: body
@@ -1095,7 +1232,73 @@ paths:
             type: object
       summary: Edit sprint start and end dates
       tags:
-      - Progress
+      - Project Progress
+  /v1/progress/get/detail/{teamId}:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定团队的项目进度详细信息
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ProgressDetailResponse'
+        "400":
+          description: '{"error": "invalid team ID"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "no details found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get project progress detail
+      tags:
+      - Project Progress
+  /v1/progress/get/grade/{teamId}:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定团队的所有 Sprint 的成绩和评论
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GradeResponse'
+        "400":
+          description: '{"error": "invalid team ID"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "no grades found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all sprint grades of a team
+      tags:
+      - Project Progress
   /v1/project/{projectId}/preferencedBy/{teamId}/detail:
     get:
       description: Get the details of a team that prefer a project

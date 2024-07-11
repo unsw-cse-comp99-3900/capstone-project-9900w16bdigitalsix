@@ -732,9 +732,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/progress/edit/sprint/date": {
+        "/v1/progress/edit/grade": {
             "post": {
-                "description": "Edit the start and end dates of an existing sprint，日期格式 YYYY-MM-DD",
+                "description": "Edit the grade and comment of an existing sprint",
                 "consumes": [
                     "application/json"
                 ],
@@ -742,7 +742,60 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Progress"
+                    "Project Progress"
+                ],
+                "summary": "Edit grade",
+                "parameters": [
+                    {
+                        "description": "Edit Grade",
+                        "name": "grade",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.EditGradeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\": \"Grade updated successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"invalid request body\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Sprint not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/progress/edit/sprint/date": {
+            "post": {
+                "description": "Edit the start and end dates of an existing sprint，日期格式 RFC3339",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project Progress"
                 ],
                 "summary": "Edit sprint start and end dates",
                 "parameters": [
@@ -828,6 +881,106 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "{\"error\": \"User story not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/progress/get/detail/{teamId}": {
+            "get": {
+                "description": "获取指定团队的项目进度详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project Progress"
+                ],
+                "summary": "Get project progress detail",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "teamId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ProgressDetailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"invalid team ID\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"no details found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/progress/get/grade/{teamId}": {
+            "get": {
+                "description": "获取指定团队的所有 Sprint 的成绩和评论",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project Progress"
+                ],
+                "summary": "Get all sprint grades of a team",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "teamId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GradeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"invalid team ID\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"no grades found\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -2632,6 +2785,27 @@ const docTemplate = `{
                 }
             }
         },
+        "forms.EditGradeReq": {
+            "type": "object",
+            "required": [
+                "sprints",
+                "teamId"
+            ],
+            "properties": {
+                "notification": {
+                    "$ref": "#/definitions/forms.TeamNotification"
+                },
+                "sprints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/forms.EditSprintGrade"
+                    }
+                },
+                "teamId": {
+                    "type": "integer"
+                }
+            }
+        },
         "forms.EditSprintDateReq": {
             "type": "object",
             "required": [
@@ -2651,6 +2825,25 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "teamId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "forms.EditSprintGrade": {
+            "type": "object",
+            "required": [
+                "comment",
+                "grade",
+                "sprintNum"
+            ],
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "integer"
+                },
+                "sprintNum": {
                     "type": "integer"
                 }
             }
@@ -3045,6 +3238,17 @@ const docTemplate = `{
                 }
             }
         },
+        "response.GradeResponse": {
+            "type": "object",
+            "properties": {
+                "sprints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.SprintGrade"
+                    }
+                }
+            }
+        },
         "response.JoinTeamResponse": {
             "type": "object",
             "properties": {
@@ -3148,6 +3352,59 @@ const docTemplate = `{
                 }
             }
         },
+        "response.ProgressDetailResponse": {
+            "type": "object",
+            "properties": {
+                "clientEmail": {
+                    "type": "string"
+                },
+                "clientId": {
+                    "type": "integer"
+                },
+                "clientName": {
+                    "type": "string"
+                },
+                "coorEmail": {
+                    "type": "string"
+                },
+                "coorId": {
+                    "type": "integer"
+                },
+                "coorName": {
+                    "type": "string"
+                },
+                "projectId": {
+                    "type": "integer"
+                },
+                "sprints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.SprintDetail"
+                    }
+                },
+                "teamId": {
+                    "type": "integer"
+                },
+                "teamIdShow": {
+                    "type": "integer"
+                },
+                "teamName": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "tutorEmail": {
+                    "type": "string"
+                },
+                "tutorId": {
+                    "type": "integer"
+                },
+                "tutorName": {
+                    "type": "string"
+                }
+            }
+        },
         "response.ProjectDetailResponse": {
             "type": "object",
             "properties": {
@@ -3227,6 +3484,43 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "response.SprintDetail": {
+            "type": "object",
+            "properties": {
+                "endDate": {
+                    "type": "string"
+                },
+                "sprintGrade": {
+                    "type": "integer"
+                },
+                "sprintNum": {
+                    "type": "integer"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "userStoryList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.UserStoryDetail"
+                    }
+                }
+            }
+        },
+        "response.SprintGrade": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "integer"
+                },
+                "sprintNum": {
+                    "type": "integer"
                 }
             }
         },
@@ -3379,6 +3673,20 @@ const docTemplate = `{
                 },
                 "userName": {
                     "type": "string"
+                }
+            }
+        },
+        "response.UserStoryDetail": {
+            "type": "object",
+            "properties": {
+                "userStoryDescription": {
+                    "type": "string"
+                },
+                "userStoryId": {
+                    "type": "integer"
+                },
+                "userStoryStatus": {
+                    "type": "integer"
                 }
             }
         }

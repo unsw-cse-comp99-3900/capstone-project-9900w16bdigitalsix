@@ -106,5 +106,8 @@ func ProgressRouter(Router *gin.RouterGroup) {
 		progressRouter.POST("/edit/:userStoryId", controllers.EditUserStory)
 		progressRouter.DELETE("/delete/:userStoryId", controllers.DeleteUserStory)
 		progressRouter.POST("/edit/sprint/date", controllers.EditSprintDate)
+		progressRouter.POST("/edit/grade", controllers.EditGrade)
+		progressRouter.GET("/get/grade/:teamId", controllers.GetGrades)
+		progressRouter.GET("/get/detail/:teamId", controllers.GetProgressDetail)
     }
 }
