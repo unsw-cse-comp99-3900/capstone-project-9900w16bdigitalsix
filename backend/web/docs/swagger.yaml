@@ -200,6 +200,26 @@ definitions:
       teamName:
         type: string
     type: object
+  forms.UserStoryReq:
+    properties:
+      sprintNum:
+        type: integer
+      teamId:
+        type: integer
+      userStoryDescription:
+        type: string
+      userStoryStatus:
+        enum:
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - sprintNum
+    - teamId
+    - userStoryDescription
+    - userStoryStatus
+    type: object
   response.AllocatedTeam:
     properties:
       teamId:
@@ -931,6 +951,36 @@ paths:
       summary: Get all notifications for a user
       tags:
       - Notification
+  /v1/progress/create/userstory:
+    post:
+      consumes:
+      - application/json
+      description: 'Create a new user story for a given team and sprint, User Story
+        Status (1: not started, 2: in progress, 3: completed)'
+      parameters:
+      - description: UserStoryReq
+        in: body
+        name: UserStoryReq
+        required: true
+        schema:
+          $ref: '#/definitions/forms.UserStoryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"userStoryId": 123}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: '{"error": "invalid request body"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create user story
+      tags:
+      - Progress
   /v1/project/{projectId}/preferencedBy/{teamId}/detail:
     get:
       description: Get the details of a team that prefer a project

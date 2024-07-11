@@ -98,3 +98,11 @@ func NotificationRouter(Router *gin.RouterGroup) {
 		notificationRouter.DELETE("/clear/all/:userId", controllers.ClearUserNotifications)
 	}
 }
+
+func ProgressRouter(Router *gin.RouterGroup) {
+	progressRouter := Router.Group("progress")
+    {
+        progressRouter.POST("/create/userstory", controllers.CreateUserStory)
+		progressRouter.POST("/edit/:userStoryId", controllers.EditUserStory)
+    }
+}

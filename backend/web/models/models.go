@@ -83,12 +83,12 @@ type UserNotifications struct {
 }
 
 type Sprint struct {
-	TeamID      uint        `gorm:"primaryKey;not null"` // 外键，关联到团队
-	SprintNum   int         `gorm:"primaryKey;not null"` // Sprint编号，从1到3
-	StartDate   time.Time   `gorm:"type:datetime"`
-	EndDate     time.Time   `gorm:"type:datetime"`
-	Grade       int         `gorm:"not null"`                                                // 打分
-	Comment     string      `gorm:"type:text"`                                               // 评语
+	TeamID      uint       `gorm:"primaryKey;not null"`                                     // 外键，关联到团队
+	SprintNum   int        `gorm:"primaryKey;not null comment '1 表示未开始， 2 表示进行中， 3 表示已完成'"` // Sprint编号，从1到3
+	StartDate   *time.Time `gorm:"type:datetime"`
+	EndDate     *time.Time `gorm:"type:datetime"`
+	Grade       *int
+	Comment     *string     `gorm:"type:text"`                                               // 评语
 	UserStories []UserStory `gorm:"foreignKey:TeamID,SprintNum;references:TeamID,SprintNum"` // 一个Sprint有多个UserStory
 }
 
