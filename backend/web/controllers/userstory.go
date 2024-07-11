@@ -59,15 +59,11 @@ func CreateUserStory(c *gin.Context) {
 }
 
 // @Summary Edit user story
-// @Description Edit an existing user story
+// @Description Edit an existing user story, User Story Status (1: not started, 2: in progress, 3: completed)
 // @Tags Progress
 // @Accept json
 // @Produce json
-// @Param teamId body int true "Team ID"
-// @Param sprintNum body int true "Sprint Number"
-// @Param userStoryId body int true "User Story ID"
-// @Param userStoryDescription body string true "User Story Description"
-// @Param userStoryStatus body int true "User Story Status (1: not started, 2: in progress, 3: completed)"
+// @Param UserStoryReq body forms.UserStoryReq true "UserStoryReq"
 // @Success 200 {object} map[string]interface{} "{"message": "User story updated successfully"}"
 // @Failure 400 {object} map[string]string "{"error": "invalid request body"}"
 // @Failure 404 {object} map[string]string "{"error": "User story not found"}"

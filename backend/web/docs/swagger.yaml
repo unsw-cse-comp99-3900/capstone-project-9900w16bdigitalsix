@@ -981,6 +981,42 @@ paths:
       summary: Create user story
       tags:
       - Progress
+  /v1/progress/edit/{userStoryId}:
+    post:
+      consumes:
+      - application/json
+      description: 'Edit an existing user story, User Story Status (1: not started,
+        2: in progress, 3: completed)'
+      parameters:
+      - description: UserStoryReq
+        in: body
+        name: UserStoryReq
+        required: true
+        schema:
+          $ref: '#/definitions/forms.UserStoryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "User story updated successfully"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: '{"error": "invalid request body"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "User story not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Edit user story
+      tags:
+      - Progress
   /v1/project/{projectId}/preferencedBy/{teamId}/detail:
     get:
       description: Get the details of a team that prefer a project

@@ -679,6 +679,59 @@
                 }
             }
         },
+        "/v1/progress/edit/{userStoryId}": {
+            "post": {
+                "description": "Edit an existing user story, User Story Status (1: not started, 2: in progress, 3: completed)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Progress"
+                ],
+                "summary": "Edit user story",
+                "parameters": [
+                    {
+                        "description": "UserStoryReq",
+                        "name": "UserStoryReq",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.UserStoryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\": \"User story updated successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"invalid request body\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"User story not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/project/create": {
             "post": {
                 "description": "client 创建一个新的项目并上传文件, this api makes sure only client can create the project",
