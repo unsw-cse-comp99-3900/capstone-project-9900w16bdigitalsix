@@ -1570,6 +1570,24 @@ const docTemplate = `{
                                 "type": "string"
                             }
                         }
+                    },
+                    "409": {
+                        "description": "{\"error\": \"Team already allocated a project, cannot update preferences\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to retrieve team\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             }
@@ -2516,8 +2534,7 @@ const docTemplate = `{
         "forms.PreferenceRequest": {
             "type": "object",
             "required": [
-                "projectId",
-                "reason"
+                "projectId"
             ],
             "properties": {
                 "projectId": {
@@ -2953,11 +2970,20 @@ const docTemplate = `{
                 "avatarURL": {
                     "type": "string"
                 },
+                "userEmail": {
+                    "type": "string"
+                },
                 "userId": {
                     "type": "integer"
                 },
                 "userName": {
                     "type": "string"
+                },
+                "userSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -3011,6 +3037,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "teamId": {
+                    "type": "integer"
+                },
+                "teamIdShow": {
                     "type": "integer"
                 },
                 "teamMember": {

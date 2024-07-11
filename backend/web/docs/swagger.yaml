@@ -114,7 +114,6 @@ definitions:
         type: string
     required:
     - projectId
-    - reason
     type: object
   forms.Profile:
     properties:
@@ -396,10 +395,16 @@ definitions:
     properties:
       avatarURL:
         type: string
+      userEmail:
+        type: string
       userId:
         type: integer
       userName:
         type: string
+      userSkills:
+        items:
+          type: string
+        type: array
     type: object
   response.StudentInfoResponse:
     properties:
@@ -434,6 +439,8 @@ definitions:
       preferenceReason:
         type: string
       teamId:
+        type: integer
+      teamIdShow:
         type: integer
       teamMember:
         items:
@@ -1545,6 +1552,19 @@ paths:
         "404":
           description: '{"error": "User not found"}" or "{"error": "User does not
             belong to any team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: '{"error": "Team already allocated a project, cannot update
+            preferences"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Failed to retrieve team"}'
           schema:
             additionalProperties:
               type: string

@@ -474,6 +474,8 @@ func InviteUserToTeam(c *gin.Context) {
 // @Success 200 {string} string "Successfully updated team preferences"
 // @Failure 400 {object} map[string]string "{"error": "body error"}"
 // @Failure 404 {object} map[string]string "{"error": "User not found"}" or "{"error": "User does not belong to any team"}"
+// @Failure 409 {object} map[string]string "{"error": "Team already allocated a project, cannot update preferences"}"
+// @Failure 500 {object} map[string]string "{"error": "Failed to retrieve team"}"
 // @Router /v1/team/preference/project/{userId} [put]
 func UpdateTeamPreferences(c *gin.Context) {
 	userId := c.Param("userId")
@@ -489,6 +491,17 @@ func UpdateTeamPreferences(c *gin.Context) {
 	}
 
 	teamID := *user.BelongsToGroup
+
+	var team models.Team
+    if err := global.DB.First(&team, teamID).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve team"})
+        return
+    }
+
+    if team.AllocatedProject != nil {
+        c.JSON(http.StatusConflict, gin.H{"error": "Team already allocated a project, cannot update preferences"})
+        return
+    }
 
 	// 删除 team_preference_projects 表中关于这个团队的所有记录
 	if err := global.DB.Where("team_id = ?", teamID).Delete(&models.TeamPreferenceProject{}).Error; err != nil {
