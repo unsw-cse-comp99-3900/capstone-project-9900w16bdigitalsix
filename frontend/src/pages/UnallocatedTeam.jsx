@@ -1,15 +1,21 @@
-import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
+import { Outlet, useNavigate } from "react-router-dom";
 import { SearchOutlined } from '@ant-design/icons';
-import { Button, Flex, List, Input, Avatar } from 'antd';
-import { useNavigate } from 'react-router-dom';
-// import { apiCall } from '../../helper';
-export default function Notification() {
+import { Button, List, Input, Avatar } from 'antd';
+import Sidebar from "../layouts/Sidebar";
+import Header from "../layouts/Header";
+import { Container } from "reactstrap";
+import axios from 'axios';
+import '../assets/scss/FullLayout.css'; // Make sure to import this file
+import { width } from '@mui/system';
+
+const FullLayout = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   let [data, setData] = useState([]);
   const seachRef = useRef();
   const mountedRef = useRef(false);
+
   const loadMoreData = async () => {
     if (loading) return;
     setLoading(true);
@@ -19,24 +25,7 @@ export default function Notification() {
     };
     if (seachRef.current.input.value)
       params.name = seachRef.current.input.value;
-    // const response = await apiCall(
-    //   'GET',
-    //   team ? url : studentUrl,
-    //   null,
-    //   null,
-    //   null,
-    //   params
-    // );
-    // console.log('....list....', response);
-    // if (response.error) {
-    //   setData([]);
-    //   setLoading(false);
-    // } else {
-    //   const res = response;
-    //   console.log(res);
-    //   setData([...res]);
-    //   setLoading(false);
-    // }
+
     axios
       .get('http://110.141.48.210:3000/mock/13/v1/team/profile/:userId', {
         params,
@@ -53,93 +42,92 @@ export default function Notification() {
         console.error('Error fetching data:', error);
       });
   };
+
   useEffect(() => {
     if (!mountedRef.current) {
       mountedRef.current = true;
       console.log('...token..');
-      // if (!localStorage.getItem('token')) {
-      //   navigate('/login');
-      //   return;
-      // }
       loadMoreData();
     }
   }, [mountedRef]);
+
   const seachList = () => {
-    // const searchTerm = seachRef.current.input.value.toLowerCase();
-    // console.log(searchTerm);
-    // if (searchTerm) {
-    //   let filtered;
-    //   if (team) {
-    //     filtered = data.filter((item) =>
-    //       [item.userName, String(item.userId)].some((field) =>
-    //         field.toLowerCase().includes(searchTerm)
-    //       )
-    //     );
-    //   } else {
-    //     filtered = data.filter((item) =>
-    //       [
-    //         item.userName,
-    //         item.email,
-    //         String(item.userId),
-    //         item.userSkills,
-    //       ].some(
-    //         (field) => {
-    //           if (field) {
-    //             return field.toLowerCase().includes(searchTerm);
-    //           }
-    //         }
-    //       )
-    //     )
-    //   }
-    //   setData(filtered);
-    // } else {
-    //   loadMoreData();
-    // }
+    // The code for the search function can be put here
   };
+
   return (
-    <>
-      <div className="seach">
-        <Input
-          ref={seachRef}
-          size="large"
-          placeholder="Seach Team"
-          prefix={<SearchOutlined />}
-        />
-        <div
-          style={{ marginLeft: '15px', cursor: 'pointer' }}
-          onClick={seachList}
-        >
-          Filter
+    <main>
+      <div className="pageWrapper d-lg-flex">
+        {/********Sidebar**********/}
+        <aside className="sidebarArea shadow" id="sidebarArea">
+          <Sidebar />
+        </aside>
+        {/********Content Area**********/}
+        <div className="contentArea">
+          <div className="d-lg-none headerMd">
+            {/********Header**********/}
+            <Header />
+          </div>
+          <div className="d-none d-lg-block headerLg">
+            {/********Header**********/}
+            <Header />
+          </div>
+          {/********Middle Content**********/}
+          <Container className="p-4 wrapper" fluid>
+            {/* Component content start */}
+            <>
+            <div className="seach" style={{width: '100%', display: 'flex', justifyContent: 'flex-start'}}>
+              <div style={{width: '88%'}}>
+              <Input
+                ref={seachRef}
+                size="large"
+                placeholder="Seach Team"
+                prefix={<SearchOutlined />}
+              />
+              </div>
+              <div
+                style={{ marginLeft: '15px', cursor: 'pointer' }}
+                onClick={seachList}
+              >
+                Filter
+              </div>
+            </div>
+            <div
+              id="scrollableDiv"
+              style={{
+                maxHeight: 550,
+                overflow: 'auto',
+                padding: '0 16px',
+                width: '88%',
+                border: '1px solid rgba(140, 140, 140, 0.35)',
+                background: '#fff',
+              }}
+            >
+              <List
+                loading={loading}
+                dataSource={data}
+                renderItem={(item) => (
+                  <List.Item key={item.id}>
+                    <List.Item.Meta
+                      avatar={
+                        <Avatar
+                          src={'https://randomuser.me/api/portraits/women/28.jpg'}
+                        />
+                      }
+                      title={<a>{item.userName}</a>}
+                      description={item.email}
+                    />
+                  </List.Item>
+                )}
+              />
+            </div>
+            </>
+            {/* End of component content */}
+          </Container>
         </div>
       </div>
-      <div
-        id="scrollableDiv"
-        style={{
-          maxHeight: 550,
-          overflow: 'auto',
-          padding: '0 16px',
-          border: '1px solid rgba(140, 140, 140, 0.35)',
-          background: '#fff',
-        }}
-      >
-        <List
-          loading={loading}
-          dataSource={data}
-          renderItem={(item) => (
-            <List.Item key={item.id}>
-              <List.Item.Meta
-                avatar={
-                  <Avatar
-                    src={'https://randomuser.me/api/portraits/women/28.jpg'}
-                  />
-                }
-                title={<a>{item.userName}</a>}
-                description={item.email}
-              />
-            </List.Item>
-          )}
-        />
-      </div>
-    </>
+    </main>
   );
-}
+};
+
+export default FullLayout;
