@@ -67,6 +67,7 @@ func GroupRouter(Router *gin.RouterGroup) {
 		groupRouter.DELETE("/leave/:userId", controllers.LeaveTeam)
 		groupRouter.GET("/get/student-info/:teamName", controllers.GetStudentInfo)
 		groupRouter.GET("/get/list", controllers.GetAllTeams)
+		groupRouter.GET("/get/unallocated/list", controllers.GetUnallocatedTeams)
 		groupRouter.GET("/invite/:userId/:teamId", controllers.InviteUserToTeam)
 		groupRouter.PUT("/preference/project/:userId", controllers.UpdateTeamPreferences)
 		groupRouter.GET("/get/preferences/:userId", controllers.GetTeamPreferences)
@@ -113,9 +114,9 @@ func ProgressRouter(Router *gin.RouterGroup) {
 }
 
 func SearchRouter(Router *gin.RouterGroup) {
-	// searchRouter := Router.Group("search")
+	searchRouter := Router.Group("search")
     {
-        // searchRouter.GET("/v1/search/team/detail/:searchKey", controllers.SearchTeams)
+        searchRouter.POST("/team/list/detail", controllers.SearchUnallocatedTeams)
      
     }
 }

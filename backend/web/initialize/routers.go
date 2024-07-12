@@ -18,11 +18,11 @@ func InitRouters() *gin.Engine {
 	Router.Use(middlewares.CORS())
 	//swagger 文档
 	Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	// 静态文件
+	// static files
 	imagesPath := global.ServerConfig.PicturePath
 	filePath := global.ServerConfig.FilePath
 	Router.Static("/images", imagesPath)
-	Router.Static("files", filePath)
+	Router.Static("/files", filePath)
 
 	ApiGroup := Router.Group("v1")
 	routes.UserRouter(ApiGroup)

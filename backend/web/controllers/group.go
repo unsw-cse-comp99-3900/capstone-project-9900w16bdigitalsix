@@ -413,6 +413,41 @@ func GetAllTeams(c *gin.Context) {
 
 		teamResponses = append(teamResponses, response.TeamListResponse{
 			TeamID:     team.ID,
+			TeamIdShow: team.TeamIdShow,
+			TeamName:   team.Name,
+			TeamSkills: teamSkills,
+		})
+	}
+
+	c.JSON(http.StatusOK, teamResponses)
+}
+
+// @Summary Get Unallocated Team List
+// @Description Get all unallocated teams
+// @Tags Team
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} response.TeamListResponse
+// @Failure 500 {object} map[string]string "{"error": "Failed to fetch teams"}"
+// @Router /v1/team/get/unallocated-list [get]
+func GetUnallocatedTeams(c *gin.Context) {
+	var teams []models.Team
+	// 只获取未分配项目的团队
+	if err := global.DB.Preload("Skills").Where("allocated_project IS NULL").Find(&teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
+		return
+	}
+
+	var teamResponses []response.TeamListResponse
+	for _, team := range teams {
+		var teamSkills []string
+		for _, skill := range team.Skills {
+			teamSkills = append(teamSkills, skill.SkillName)
+		}
+
+		teamResponses = append(teamResponses, response.TeamListResponse{
+			TeamID:     team.ID,
+			TeamIdShow: team.TeamIdShow,
 			TeamName:   team.Name,
 			TeamSkills: teamSkills,
 		})

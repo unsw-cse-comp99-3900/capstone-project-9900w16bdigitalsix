@@ -217,6 +217,18 @@ definitions:
     - new_password_confirm
     - token
     type: object
+  forms.SearchTeamRequest:
+    properties:
+      projectId:
+        type: integer
+      searchList:
+        items:
+          type: string
+        type: array
+    required:
+    - projectId
+    - searchList
+    type: object
   forms.SendEmailResetPwdForm:
     properties:
       email:
@@ -511,9 +523,28 @@ definitions:
           type: string
         type: array
     type: object
+  response.SearchTeamResponse:
+    properties:
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamMember:
+        items:
+          $ref: '#/definitions/response.TeamMember2'
+        type: array
+      teamName:
+        type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
+    type: object
   response.SprintDetail:
     properties:
       endDate:
+        type: string
+      sprintComment:
         type: string
       sprintGrade:
         type: integer
@@ -586,6 +617,8 @@ definitions:
     properties:
       teamId:
         type: integer
+      teamIdShow:
+        type: integer
       teamName:
         type: string
       teamSkills:
@@ -607,6 +640,17 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  response.TeamMember2:
+    properties:
+      avatarURL:
+        type: string
+      email:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
     type: object
   response.TutorInfoResponse:
     properties:
@@ -1099,7 +1143,7 @@ paths:
       summary: Create user story
       tags:
       - Project Progress
-  /v1/progress/delete/userStory/{userStoryId}:
+  /v1/progress/delete/{userStoryId}:
     delete:
       consumes:
       - application/json
@@ -1608,6 +1652,36 @@ paths:
       summary: Get allocated team details
       tags:
       - Project Allocation
+  /v1/search/team/detail:
+    post:
+      consumes:
+      - application/json
+      description: Search unallocated team list based on project preference
+      parameters:
+      - description: Request Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/forms.SearchTeamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.SearchTeamResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search preference project unallocated team list
+      tags:
+      - Search
   /v1/student/unassigned/list:
     get:
       consumes:
@@ -1750,6 +1824,29 @@ paths:
               type: string
             type: object
       summary: Get student list information by team name
+      tags:
+      - Team
+  /v1/team/get/unallocated-list:
+    get:
+      consumes:
+      - application/json
+      description: Get all unallocated teams
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Unallocated Team List
       tags:
       - Team
   /v1/team/invite/{userId}/{teamId}:

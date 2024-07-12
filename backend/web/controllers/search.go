@@ -1,77 +1,116 @@
 package controllers
 
-// import (
-// 	"net/http"
-// 	"strings"
-// 	"web/global"
-// 	"web/models"
-// 	"web/global/response"
+import (
+	"net/http"
+	"strconv"
+	"strings"
 
-// 	"github.com/gin-gonic/gin"
-// )
+	"github.com/gin-gonic/gin"
 
-// // @Summary 搜索团队
-// // @Description 通过searchKey在teamIdShow、teamName和teamSkills中进行模糊匹配
-// // @Tags Team
-// // @Accept json
-// // @Produce json
-// // @Param searchKey query string true "Search Key"
-// // @Success 200 {array} response.Team
-// // @Failure 400 {object} map[string]string "{"error": "invalid search key"}"
-// // @Router /v1/search/team/detail/{searchKey} [get]
-// func SearchTeams(c *gin.Context) {
-// 	searchKey := c.Query("searchKey")
-// 	if searchKey == "" {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid search key"})
-// 		return
-// 	}
+	"web/forms"
+	"web/global"
+	"web/global/response"
+	"web/models"
+)
 
-// 	var teams []models.Team
-// 	if err := global.DB.Preload("Members").Preload("Skills").Find(&teams).Error; err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch teams"})
-// 		return
-// 	}
+// @Summary Search preference project unallocated team list
+// @Description Search unallocated team list based on project preference
+// @Tags Search
+// @Accept  json
+// @Produce  json
+// @Param body body forms.SearchTeamRequest true "Request Body"
+// @Success 200 {array} response.SearchTeamResponse
+// @Failure 500 {object} map[string]string "{"error": "Failed to fetch teams"}"
+// @Router /v1/search/team/detail [post]
+func SearchUnallocatedTeams(c *gin.Context) {
+	var req forms.SearchTeamRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
 
-// 	var responseTeams []response.Team
-// 	for _, team := range teams {
-// 		if matchesSearchKey(team, searchKey) {
-// 			var members []response.TeamMember
-// 			for _, member := range team.Members {
-// 				members = append(members, response.TeamMember{
-// 					UserId:     member.ID,
-// 					UserEmail:  member.Email,
-// 					UserSkills: "", // 需要从其他地方获取用户技能
-// 					UserName:   member.Username,
-// 					Avatar:     member.AvatarURL,
-// 				})
-// 			}
-// 			var teamSkills []string
-// 			for _, skill := range team.Skills {
-// 				teamSkills = append(teamSkills, skill.SkillName)
-// 			}
-// 			responseTeams = append(responseTeams, response.Team{
-// 				TeamId:     team.ID,
-// 				TeamIdShow: team.TeamIdShow,
-// 				TeamName:   team.Name,
-// 				TeamMember: members,
-// 				TeamSkills: teamSkills,
-// 			})
-// 		}
-// 	}
+	var teams []models.Team
 
-// 	c.JSON(http.StatusOK, responseTeams)
-// }
+	// search by teamIdShow
+	if len(req.SearchList) == 1 {
+		if idShow, err := strconv.Atoi(req.SearchList[0]); err == nil {
+			if fetchTeamsByIDShow(c, req.ProjectId, uint(idShow), &teams) {
+				return
+			}
+		}
+	}
 
-// func matchesSearchKey(team models.Team, searchKey string) bool {
-// 	searchKey = strings.ToLower(searchKey)
-// 	if strings.Contains(strings.ToLower(team.Name), searchKey) ||
-// 		strings.Contains(strings.ToLower(team.TeamIdShow), searchKey) {
-// 		return true
-// 	}
-// 	for _, skill := range team.Skills {
-// 		if strings.Contains(strings.ToLower(skill.SkillName), searchKey) {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
+	// search by teamSkills
+	if fetchTeamsBySkills(c, req.ProjectId, req.SearchList, &teams) {
+		return
+	}
+
+	c.JSON(http.StatusOK, formatSearchTeamResponse(teams))
+}
+
+func fetchTeamsByIDShow(c *gin.Context, projectId uint, idShow uint, teams *[]models.Team) bool {
+	if err := global.DB.Preload("Skills").Preload("Members").
+		Joins("JOIN team_preference_projects ON team_preference_projects.team_id = teams.id").
+		Where("team_preference_projects.project_id = ? AND teams.allocated_project IS NULL AND teams.team_id_show = ?", projectId, idShow).
+		Find(teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
+		return true
+	}
+
+	if len(*teams) > 0 {
+		c.JSON(http.StatusOK, formatSearchTeamResponse(*teams))
+		return true
+	}
+
+	return false
+}
+
+func fetchTeamsBySkills(c *gin.Context, projectId uint, searchList []string, teams *[]models.Team) bool {
+	query := global.DB.Preload("Skills").Preload("Members").
+		Joins("JOIN team_preference_projects ON team_preference_projects.team_id = teams.id").
+		Where("team_preference_projects.project_id = ? AND teams.allocated_project IS NULL", projectId)
+
+	for _, searchTerm := range searchList {
+		searchTerm = strings.ToLower(searchTerm)
+		// query = query.Where("EXISTS (SELECT 1 FROM team_skills ts JOIN skills s ON ts.skill_id = s.id WHERE ts.team_id = teams.id AND LOWER(s.skill_name) LIKE ?)", "%"+searchTerm+"%")
+		existsQuery := "EXISTS (SELECT 1 FROM team_skills ts JOIN skills s ON ts.skill_id = s.id WHERE ts.team_id = teams.id AND LOWER(s.skill_name) LIKE ?)"
+		query = query.Where(existsQuery, "%"+searchTerm+"%")
+
+	}
+
+	if err := query.Find(teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
+		return true
+	}
+
+	return false
+}
+
+func formatSearchTeamResponse(teams []models.Team) []response.SearchTeamResponse {
+	var teamResponses []response.SearchTeamResponse
+	for _, team := range teams {
+		var teamSkills []string
+		for _, skill := range team.Skills {
+			teamSkills = append(teamSkills, skill.SkillName)
+		}
+
+		var teamMembers []response.TeamMember2
+		for _, member := range team.Members {
+			teamMembers = append(teamMembers, response.TeamMember2{
+				UserID:    member.ID,
+				UserName:  member.Username,
+				Email:     member.Email,
+				AvatarURL: member.AvatarURL,
+			})
+		}
+
+		teamResponses = append(teamResponses, response.SearchTeamResponse{
+			TeamId:     team.ID,
+			TeamIdShow: team.TeamIdShow,
+			TeamName:   team.Name,
+			TeamMember: teamMembers,
+			TeamSkills: teamSkills,
+		})
+	}
+	return teamResponses
+}

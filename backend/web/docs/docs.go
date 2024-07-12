@@ -690,7 +690,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/progress/delete/userStory/{userStoryId}": {
+        "/v1/progress/delete/{userStoryId}": {
             "delete": {
                 "description": "Delete an existing user story",
                 "consumes": [
@@ -1440,6 +1440,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/search/team/detail": {
+            "post": {
+                "description": "Search unallocated team list based on project preference",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Search preference project unallocated team list",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.SearchTeamRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.SearchTeamResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch teams\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/student/unassigned/list": {
             "get": {
                 "description": "返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
@@ -1646,6 +1692,41 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "{\"error\": \"Team not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/team/get/unallocated-list": {
+            "get": {
+                "description": "Get all unallocated teams",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Get Unallocated Team List",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.TeamListResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch teams\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -3040,6 +3121,24 @@ const docTemplate = `{
                 }
             }
         },
+        "forms.SearchTeamRequest": {
+            "type": "object",
+            "required": [
+                "projectId",
+                "searchList"
+            ],
+            "properties": {
+                "projectId": {
+                    "type": "integer"
+                },
+                "searchList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "forms.SendEmailResetPwdForm": {
             "type": "object",
             "required": [
@@ -3487,10 +3586,39 @@ const docTemplate = `{
                 }
             }
         },
+        "response.SearchTeamResponse": {
+            "type": "object",
+            "properties": {
+                "teamId": {
+                    "type": "integer"
+                },
+                "teamIdShow": {
+                    "type": "integer"
+                },
+                "teamMember": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.TeamMember2"
+                    }
+                },
+                "teamName": {
+                    "type": "string"
+                },
+                "teamSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "response.SprintDetail": {
             "type": "object",
             "properties": {
                 "endDate": {
+                    "type": "string"
+                },
+                "sprintComment": {
                     "type": "string"
                 },
                 "sprintGrade": {
@@ -3602,6 +3730,9 @@ const docTemplate = `{
                 "teamId": {
                     "type": "integer"
                 },
+                "teamIdShow": {
+                    "type": "integer"
+                },
                 "teamName": {
                     "type": "string"
                 },
@@ -3633,6 +3764,23 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "response.TeamMember2": {
+            "type": "object",
+            "properties": {
+                "avatarURL": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "userName": {
+                    "type": "string"
                 }
             }
         },

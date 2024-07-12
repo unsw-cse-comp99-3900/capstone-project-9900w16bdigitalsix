@@ -57,10 +57,17 @@ type PreferenceResponse struct {
 	Reason       string `json:"reason"`
 }
 
-type Team struct {
-	TeamId     uint         `json:"teamId"`
-	TeamIdShow uint         `json:"teamIdShow"`
-	TeamName   string       `json:"teamName"`
-	TeamMember []TeamMember `json:"teamMember"`
-	TeamSkills []string     `json:"teamSkills"`
+type TeamMember2 struct {
+	UserID    uint   `json:"userId"`
+	UserName  string `json:"userName"`
+	Email     string `json:"email"`
+	AvatarURL string `json:"avatarURL"`
+}
+
+type SearchTeamResponse struct {
+	TeamId     uint          `json:"teamId"`
+	TeamIdShow uint          `json:"teamIdShow"`
+	TeamName   string        `json:"teamName"`
+	TeamMember []TeamMember2 `json:"teamMember"`
+	TeamSkills []string      `json:"teamSkills"`
 }

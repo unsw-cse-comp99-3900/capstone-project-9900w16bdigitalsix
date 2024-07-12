@@ -6,8 +6,8 @@ import (
 	"time"
 	"web/forms"
 	"web/global"
-	"web/models"
 	"web/global/response"
+	"web/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -105,7 +105,7 @@ func EditUserStory(c *gin.Context) {
 // @Param userStoryId path int true "User Story ID"
 // @Success 200 {object} map[string]interface{} "{"message": "User story deleted successfully"}"
 // @Failure 404 {object} map[string]string "{"error": "User story not found"}"
-// @Router /v1/progress/delete/userStory/{userStoryId} [delete]
+// @Router /v1/progress/delete/{userStoryId} [delete]
 func DeleteUserStory(c *gin.Context) {
 	userStoryId := c.Param("userStoryId")
 
@@ -348,10 +348,11 @@ func GetProgressDetail(c *gin.Context) {
 		}
 
 		sprintDetail := response.SprintDetail{
-			SprintNum:   sprint.SprintNum,
-			SprintGrade: sprint.Grade,
-			StartDate:   startDate,
-			EndDate:     endDate,
+			SprintNum:     sprint.SprintNum,
+			SprintGrade:   sprint.Grade,
+			SprintComment: *sprint.Comment,
+			StartDate:     startDate,
+			EndDate:       endDate,
 			UserStoryList: []response.UserStoryDetail{},
 		}
 

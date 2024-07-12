@@ -23,3 +23,8 @@ type PreferenceRequest struct {
 	ProjectID uint   `json:"projectId" binding:"required"`
 	Reason    string `json:"reason"`
 }
+
+type SearchTeamRequest struct {
+	ProjectId  uint     `json:"projectId" binding:"required"`
+	SearchList []string `json:"searchList" binding:"required"`
+}

@@ -31,6 +31,7 @@ type ProgressDetailResponse struct {
 type SprintDetail struct {
 	SprintNum     int               `json:"sprintNum"`
 	SprintGrade   *int              `json:"sprintGrade"`
+	SprintComment string            `json:"sprintComment"`
 	StartDate     string            `json:"startDate"`
 	EndDate       string            `json:"endDate"`
 	UserStoryList []UserStoryDetail `json:"userStoryList"`
