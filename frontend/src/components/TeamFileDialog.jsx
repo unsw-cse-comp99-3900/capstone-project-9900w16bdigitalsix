@@ -319,7 +319,10 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                       <div style={{ display: "flex", direction: "row" }}>
                         <ListItem
                           alignItems="flex-start"
-                          style={{ flex: 7 }}
+                          style={{
+                            flex: 7,
+                            cursor: "pointer",
+                          }}
                           onClick={() => {
                             handleClickFetchFile(team.teamId);
                           }}
