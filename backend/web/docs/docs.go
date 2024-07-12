@@ -1034,7 +1034,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
+                        "type": "array",
                         "description": "Required Skills",
                         "name": "requiredSkills[]",
                         "in": "formData"
@@ -1241,9 +1241,9 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
+                        "type": "array",
                         "description": "Required Skills",
-                        "name": "requiredSkills[]",
+                        "name": "requiredSkills",
                         "in": "formData"
                     },
                     {

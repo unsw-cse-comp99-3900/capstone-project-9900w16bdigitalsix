@@ -1359,7 +1359,7 @@ paths:
       - description: Required Skills
         in: formData
         name: requiredSkills[]
-        type: string
+        type: array
       - description: upload file
         in: formData
         name: file
@@ -1502,8 +1502,8 @@ paths:
         type: string
       - description: Required Skills
         in: formData
-        name: requiredSkills[]
-        type: string
+        name: requiredSkills
+        type: array
       - description: Project Field
         in: formData
         name: field

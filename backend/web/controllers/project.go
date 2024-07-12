@@ -25,7 +25,7 @@ import (
 // @Param field formData string true "Project Field"
 // @Param description formData string true "Project Description"
 // @Param email formData string true "Clinet Email"
-// @Param requiredSkills[] formData string false "Required Skills"
+// @Param requiredSkills[] formData array false "Required Skills" items(type=string)
 // @Param file formData file false "upload file"
 // @Success 200 {object} map[string]interface{} "{"msg": "Project created successfully", "projectId": 1, "fileName": "filename.pdf", "filePath": "backend/files/filename.pdf", "createdBy": 1}"
 // @Failure 400 {object} map[string]interface{} "{"error": "Invalid email"}"
@@ -289,7 +289,7 @@ func DeleteProject(c *gin.Context) {
 // @Param projectId path int true "Project ID"
 // @Param title formData string true "Project Title"
 // @Param clientEmail formData string true "Client Email"
-// @Param requiredSkills[] formData string false "Required Skills"
+// @Param requiredSkills formData array false "Required Skills" items(type=string)
 // @Param field formData string true "Project Field"
 // @Param description formData string true "Project Description"
 // @Param spec formData file false "Specification File"

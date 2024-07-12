@@ -1023,7 +1023,7 @@
                         "required": true
                     },
                     {
-                        "type": "string",
+                        "type": "array",
                         "description": "Required Skills",
                         "name": "requiredSkills[]",
                         "in": "formData"
@@ -1230,9 +1230,9 @@
                         "required": true
                     },
                     {
-                        "type": "string",
+                        "type": "array",
                         "description": "Required Skills",
-                        "name": "requiredSkills[]",
+                        "name": "requiredSkills",
                         "in": "formData"
                     },
                     {
