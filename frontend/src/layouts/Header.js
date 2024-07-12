@@ -19,6 +19,7 @@ import cap from "../assets/images/logos/cap_white.png";
 import { apiCall, fileToDataUrl } from '../helper';
 import MessageAlert from '../components/MessageAlert';
 import { Avatar } from '@mui/material';
+import '../assets/scss/bell.css';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +29,7 @@ const Header = () => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
+  const [notificationCount, setNotificationCount] = useState(0);
 
   const handleAlertClose = () => {
     setAlertOpen(false);
@@ -61,6 +63,14 @@ const Header = () => {
         setAlertType('error');
         setAlertOpen(true);
       }
+
+      const notifications = await apiCall('GET', `v1/notification/get/all/${userId}`);
+      if(notifications){
+        setNotificationCount(notifications.length);
+      }
+      else{
+        setNotificationCount(0);
+      }
     } catch (error) {
       console.error('Failed to fetch user data:', error);
       setSnackbarContent('Failed to fetch user data 1111');
@@ -68,6 +78,7 @@ const Header = () => {
       setAlertOpen(true);
     }
   };
+  
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -134,8 +145,13 @@ const Header = () => {
         </Nav>
         <Nav className="ml-auto d-flex align-items-center">
           <Link to="/notification" className="nav-link">
-            <div className="notification-icon">
-              <i className="bi bi-bell-fill"></i>
+            <div className="notification">
+              {notificationCount > 0 && (
+                <div className="notification-count">{notificationCount}</div>
+              )}
+              <div className="bell-container">
+                <div className="bell"></div>
+              </div>
             </div>
           </Link>
         </Nav>
