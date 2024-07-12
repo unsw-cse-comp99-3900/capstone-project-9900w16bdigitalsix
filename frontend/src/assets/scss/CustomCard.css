@@ -1,91 +1,102 @@
 .custom-card {
-    background-color: #E6F0FA; /* Light blue background */
-    border: 1px solid #B0C4DE; /* Border color */
-  }
-  
-  .custom-card-header {
-    height: 150px;
-    background-color: #9aceea; /* Light blue header background */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    text-align: center;
-    color: white; /* Header text color */
-  }
-  
-  .custom-card-title {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal; /* Ensure text wraps */
-  }
-  
-  .avatar {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    background-color: #87CEFA; /* Avatar background color */
-    border-radius: 30%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-    flex-shrink: 0;
-  }
-  
-  .avatar span {
-    color: white;
-    font-size: 20px;
-  }
-  
-  .custom-card-body {
-    color: #333333; /* Body text color */
-  }
-  
-  .client-info {
-    overflow: hidden;
-  }
-  
-  .client-name,
-  .client-title {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .skills-container {
-    max-height: 3em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-  
-  .skill-badge {
-    background-color: #f0f0f0;
-    padding: 5px 10px;
-    border-radius: 15px;
-    display: inline-block;
-    font-size: 14px;
-  }
-  
-  .field-container {
-    display: flex;
-    justify-content: center; /* Center horizontally */
-    margin-top: 10px;
-  }
-  
-  .field-badge {
-    background-color: #e6dada; /* Silver background */
-    padding: 10px 20px; /* Padding to make it similar length to card */
-    border-radius: 15px;
-    display: inline-block;
-    font-size: 14px;
-    color: #333333; /* Field text color */
-    text-align: center;
-    margin-bottom: 10px;
-    width: 70%; /* Make it similar to card width */
-  }
-  
+  background-color: #E6F0FA; /* Light blue background */
+  border: 1px solid #B0C4DE; /* Border color */
+}
+
+.custom-card-header {
+  height: 150px;
+  background-color: #9aceea; /* Light blue header background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  text-align: center;
+  color: white; /* Header text color */
+}
+
+.custom-card-title {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal; /* Ensure text wraps */
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  background-color: #87CEFA; /* Avatar background color */
+  border-radius: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.avatar span {
+  color: white;
+  font-size: 20px;
+}
+
+.custom-card-body {
+  color: #333333; /* Body text color */
+}
+
+.client-info {
+  overflow: hidden;
+}
+
+.client-name,
+.client-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  max-height: 60px;
+  overflow: hidden;
+  position: relative;
+}
+
+.skill-badge {
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 15px;
+  display: inline-block;
+  font-size: 12px;
+  margin: 2px;
+}
+
+.more-skills {
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 15px;
+  display: inline-block;
+  font-size: 12px;
+  color: #999999;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #E6F0FA;
+  padding: 0 5px;
+}
+
+.field-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  margin-top: 10px;
+}
+
+.field-badge {
+  background-color: #d3e4f0; /* Silver background */
+  padding: 10px 20px;
+  border-radius: 15px;
+  display: inline-block;
+  font-size: 14px;
+  color: #333333; /* Field text color */
+  text-align: center;
+  width: 90%;
+}
