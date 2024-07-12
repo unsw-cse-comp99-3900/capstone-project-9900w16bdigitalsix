@@ -11,7 +11,7 @@ import '../assets/scss/FullLayout.css'; // Make sure to import this
 import '../assets/scss/reportStyle.css';
 import capstoneIcon from '../assets/images/logos/cap.png';
 
-const GenerateReport = () => {
+const GenerateProgressReport = () => {
   const [showCharts, setShowCharts] = useState(false);
 
   useEffect(() => {
@@ -350,4 +350,4 @@ const pieOptions = {
   );
 };
 
-export default GenerateReport;
+export default GenerateProgressReport;

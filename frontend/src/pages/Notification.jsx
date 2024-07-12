@@ -36,6 +36,7 @@ const Notification = () => {
     const response = await apiCall('DELETE', `v1/notification/clear/all/${userId}`, null, token, true);
     loadUserData();
     toggleDeleteModal();
+    window.location.reload();
   };
 
   

@@ -12,7 +12,7 @@ const TestProjectDetail = () => {
     projectId: '1',
     title:'ma111',
     teamId:'1',
-    teamIdShow:'11111',
+    teamIdShow:'533906',
     teamName:"digitalSix",
   }
   const handleClick = () => {

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
 import { Container } from "reactstrap";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -20,7 +19,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
+import { Input } from "antd";
 
 import "../assets/scss/FullLayout.css"; //make sure import this
 import Sidebar from "../layouts/Sidebar";
@@ -30,7 +29,6 @@ import { apiCall } from "../helper";
 import MessageAlert from "../components/MessageAlert";
 
 const Item = styled(Paper)(({ theme }) => ({
-  // backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   backgroundColor: "transparent",
   boxShadow: "none",
   ...theme.typography.body2,
@@ -39,16 +37,29 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+// this component is the select component used to select all available projects
 const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
   const isValidValue = allProjects.some((proj) => proj.projectId === value);
   return (
-    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+    <FormControl
+      sx={{ m: 1, minWidth: "20vw", textAlign: "left" }}
+      size="small"
+    >
       <InputLabel>Project</InputLabel>
       <Select
-        // value={value}
         value={isValidValue ? value : ""}
         label="Project"
         onChange={(event) => onChange(event, index)}
+        sx={{
+          maxWidth: "20vw",
+          ".MuiSelect-select": {
+            display: "block",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            minWidth: "10vw",
+          },
+        }}
       >
         <MenuItem value="">
           <em>None</em>
@@ -56,7 +67,17 @@ const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
         {allProjects && allProjects.length > 0 ? (
           allProjects.map((proj) => (
             <MenuItem key={proj.projectId} value={proj.projectId}>
-              P{proj.projectId} &nbsp;&nbsp;{proj.title}
+              <Typography
+                sx={{
+                  display: "block",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  minWidth: "10vw",
+                }}
+              >
+                P{proj.projectId} &nbsp;&nbsp;{proj.title}
+              </Typography>
             </MenuItem>
           ))
         ) : (
@@ -67,14 +88,20 @@ const SelectProjectModal = ({ value, onChange, index, allProjects }) => {
   );
 };
 
+// this component is the input area used to fill in the preference reason
 const ReasonField = ({ value, onChange, index }) => {
   return (
-    <TextField
-      label="Reason"
-      multiline
-      maxRows={4}
+    <Input.TextArea
+      placeholder="Reason"
+      autoSize={{ minRows: 3, maxRows: 4 }}
       onChange={(event) => onChange(event, index)}
       value={value}
+      onMouseOver={(e) => {
+        e.target.style.borderColor = "black";
+      }}
+      onMouseOut={(e) => {
+        e.target.style.borderColor = "#CBCBCB";
+      }}
     />
   );
 };
@@ -94,6 +121,7 @@ const StudentTeamPreference = () => {
 
   const userId = parseInt(localStorage.getItem("userId"));
 
+  // this function used to fetch all projects that are public
   const getAllPublicProjects = async () => {
     try {
       const res = await apiCall("GET", "v1/project/get/public_project/list");
@@ -102,9 +130,6 @@ const StudentTeamPreference = () => {
       }
       if (res.error) {
         return;
-        // setErrorMessage(res.error);
-        // setAlertType("error");
-        // setShowError(true);
       } else {
         setAllProjects(res);
       }
@@ -115,6 +140,7 @@ const StudentTeamPreference = () => {
     }
   };
 
+  // this function used to fetch a specific team's preference list
   const getTeamPreference = async () => {
     try {
       const res = await apiCall("GET", `v1/team/get/preferences/${userId}`);
@@ -156,14 +182,17 @@ const StudentTeamPreference = () => {
       }
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
+  // used to process select project
   const handleSelectProjectChange = (event, index) => {
     const newRows = [...rows];
     newRows[index].projectId = event.target.value;
     setRows(newRows);
   };
 
+  // used to process the reason textfield change
   const handleReasonFieldChange = (event, index) => {
     const newRows = [...rows];
     newRows[index].reason = event.target.value;
@@ -183,10 +212,12 @@ const StudentTeamPreference = () => {
     setShowError(false);
   };
 
+  // used to add one more preference
   const addOneMore = () => {
     setRows([...rows, { preNum: rows.length + 1, projectId: "", reason: "" }]);
   };
 
+  // used to delete a preference
   const deleteOneRow = (index) => {
     const newRows = rows.filter((_, i) => i !== index);
     const updatedRows = newRows.map((row, idx) => ({
@@ -196,6 +227,7 @@ const StudentTeamPreference = () => {
     setRows(updatedRows);
   };
 
+  // used to submit the preference list
   const submitPreference = async () => {
     const seenProjectIds = new Set();
     for (const preference of rows) {
@@ -228,8 +260,19 @@ const StudentTeamPreference = () => {
         `v1/team/preference/project/${userId}`,
         body
       );
+      if (
+        res.error ===
+        "Team already allocated a project, cannot update preferences"
+      ) {
+        setErrorMessage(
+          "already been allocated a project, cannot update preferences!"
+        );
+        setAlertType("error");
+        setShowError(true);
+        return;
+      }
       if (res.error) {
-        setErrorMessage("Failed to update");
+        setErrorMessage("Failed to update,check and try again!");
         setAlertType("error");
         setShowError(true);
       } else {
@@ -291,6 +334,7 @@ const StudentTeamPreference = () => {
                     </Typography>
                   </Item>
                   <Item>
+                    {/* the table below is used to record team's preference list */}
                     <TableContainer component={Paper}>
                       <Table sx={{ width: "100%" }} aria-label="simple table">
                         <TableHead>
@@ -310,6 +354,7 @@ const StudentTeamPreference = () => {
                             ></TableCell>
                           </TableRow>
                         </TableHead>
+                        {/* the table body is for teams to select projects and fill in the reanson field */}
                         <TableBody>
                           {rows.map((row, index) => (
                             <TableRow

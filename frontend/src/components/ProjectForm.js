@@ -1,4 +1,3 @@
-// ProjectForm.js
 import React, { useState } from 'react';
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
@@ -37,7 +36,7 @@ const ProjectForm = () => {
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (files) {
-      setFormData({ ...formData, file: files[0] });
+      setFormData({ ...formData, [name]: files[0] });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -47,7 +46,6 @@ const ProjectForm = () => {
     e.preventDefault();
 
     // Validate form data
-    
     if (!formData.title) {
       setAlertMessage('Project title is required.');
       setAlertType('error');
@@ -80,14 +78,23 @@ const ProjectForm = () => {
     }
 
     const form = new FormData();
-    form.append('title', formData.title);
-    form.append('field', formData.field);
-    form.append('description', formData.description);
-    form.append('email', formData.email);
-    form.append('requiredSkills[]', formData.requiredSkills.split(',').map(skill => skill.trim()));
-    if (formData.file) {
-      const blob = new Blob([formData.file], { type: 'application/pdf' });
-      form.append('spec', blob, formData.file.name);
+    for (const key in formData) {
+      if (key === 'requiredSkills') {
+        const skills = formData[key].split(',').map(skill => skill.trim());
+        skills.forEach(skill => form.append('requiredSkills[]', skill));
+      } else if (key === 'email') {
+        form.append('email', formData[key]);
+      } else if (key === 'file') {
+        const blob = new Blob([formData[key]], { type: 'application/pdf' });
+        form.append('spec', blob, 'project_spec.pdf');
+      } else {
+        form.append(key, formData[key]);
+      }
+    }
+
+    console.log('FormData entries:');
+    for (let [key, value] of form.entries()) {
+      console.log(key, value);
     }
 
     try {
@@ -120,7 +127,7 @@ const ProjectForm = () => {
     <div>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
-          <Label for="title">Project title</Label>
+          <Label for="title">Project title (15 words maximum)</Label>
           <Input
             type="text"
             name="title"
