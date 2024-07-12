@@ -124,7 +124,7 @@ const PageList = () => {
           element={<ProjectAdminAssign token={token} setToken={setToken} />}
         />
         <Route
-          path="/project/details"
+          path="/project/details/:projectId"
           element={<ProjectDetails token={token} setToken={setToken} />}
         />
         <Route path="/project/allproject" element={<AllProject token={token} setToken={setToken}/>}/>
