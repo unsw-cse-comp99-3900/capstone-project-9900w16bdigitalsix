@@ -17,6 +17,10 @@ import MessageAlert from './MessageAlert';
 
 
 const GradeModal = ({ title, sprintData, visible, onCancel, gradeComment, setGradeComment, teamId, loadUserData }) => {
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertType, setAlertType] = useState('');
+  const [snackbarContent, setSnackbarContent] = useState('');
+
   const token = localStorage.getItem('token');
   const role = localStorage.getItem('role');
   // handle change for grade or comment
@@ -72,6 +76,15 @@ const GradeModal = ({ title, sprintData, visible, onCancel, gradeComment, setGra
     }
     console.log("requestBody", requestBody);
     const response = await apiCall('POST', `v1/progress/edit/grade`, requestBody, token, true);
+    console.log("response111", response);
+    if (response.error){
+      setSnackbarContent("Student team has not start the graded sprint.");
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    } else {
+
+    }
     loadUserData();
   };
 
@@ -137,6 +150,12 @@ const GradeModal = ({ title, sprintData, visible, onCancel, gradeComment, setGra
           {renderSprints()}
         </div>
       </Modal>
+      <MessageAlert
+        open={alertOpen}
+        alertType={alertType}
+        handleClose={() => setAlertOpen(false)}
+        snackbarContent={snackbarContent}
+      />
     </>
   );
 };
