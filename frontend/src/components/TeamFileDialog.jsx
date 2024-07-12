@@ -216,9 +216,27 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       const trimmedSearcList = searchList
         .map((word) => word.trim())
         .filter((word) => word !== "");
-      console.log(trimmedSearcList);
       setIsFilter(true);
-      // to do 返回搜索结果
+      const body = {
+        projectId: projectId,
+        searchList: trimmedSearcList,
+      };
+      try {
+        const res = await apiCall("POST", `v1/search/team/list/detail`, body);
+        // console.log(res);
+        if (res === null) {
+          setCurrentTeam([]);
+          return;
+        }
+        if (res.error) {
+          setCurrentTeam([]);
+          return;
+        } else {
+          setCurrentTeam(res);
+        }
+      } catch (error) {
+        return;
+      }
     } else {
       setSearchKey("");
       setIsFilter(false);
