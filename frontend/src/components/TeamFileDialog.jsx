@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
@@ -42,30 +42,15 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const [currentTeam, setCurrentTeam] = useState([]);
   const [open2, setOpen2] = useState(false);
   const [teamName, setTeamName] = useState("");
+  const [teamIdShow, setTeamIdShow] = useState("");
   const [teamSkills, setTeamSkills] = useState("");
   const [teamMember, setTeamMember] = useState([]);
   const [preReason, setPreReason] = useState("");
+  const [searchKey, setSearchKey] = useState("");
+  const [isFilter, setIsFilter] = useState(false);
   const userRole = parseInt(localStorage.getItem("role"));
 
-  // const [data, setData] = useState([]);
-  // const [filteredData, setFilteredData] = useState([]);
-  // const seachRef = useRef();
-
-  // const searchList = () => {
-  //   const searchTerm = seachRef.current.input.value.toLowerCase();
-  //   if (searchTerm) {
-  //     const filtered = data.filter(
-  //       (item) =>
-  //         (item.userId && item.userId.toString().includes(searchTerm)) ||
-  //         (item.userName && item.userName.toLowerCase().includes(searchTerm)) ||
-  //         (item.email && item.email.toLowerCase().includes(searchTerm))
-  //     );
-  //     setFilteredData(filtered);
-  //   } else {
-  //     setFilteredData(data);
-  //   }
-  // };
-
+  // this function used to get all teams that prefer a specific project
   const getAllAppliedTeams = async () => {
     try {
       const res = await apiCall(
@@ -79,7 +64,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       if (res.error) {
         setCurrentTeam([]);
       } else {
-        // console.log(res);
         setCurrentTeam(res);
       }
     } catch (error) {
@@ -89,6 +73,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     }
   };
 
+  // this function used to get all teams that have already been allocated to a specific project
   const getAllAllocatedTeams = async () => {
     try {
       const res = await apiCall(
@@ -102,7 +87,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       if (res.error) {
         setCurrentTeam([]);
       } else {
-        // console.log(res);
         setCurrentTeam(res);
       }
     } catch (error) {
@@ -115,17 +99,18 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const handleClick = (name) => {
     setSelected(name);
     if (name === "Preference List") {
-      // console.log("Preference List");
       getAllAppliedTeams();
     } else if (name === "Allocated Team") {
-      // console.log("Allocated Team");
       getAllAllocatedTeams();
     }
   };
 
   useEffect(() => {
     setSelected("Preference List");
+    setIsFilter(false);
+    setSearchKey("");
     getAllAppliedTeams();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleClickOpen]);
 
   const handleClose2 = () => {
@@ -139,6 +124,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     setShowError(false);
   };
 
+  // this function is used to fetch a specific team's details
   const fetchTeamProfile = async (teamId) => {
     try {
       const res = await apiCall(
@@ -151,8 +137,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       if (res.error) {
         return;
       } else {
-        console.log(res);
         setTeamName(res.teamName);
+        setTeamIdShow(res.teamIdShow);
         setTeamSkills(res.teamSkills);
         setTeamMember(res.teamMember);
         setPreReason(res.preferenceReason);
@@ -164,12 +150,11 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
 
   const handleClickFetchFile = (teamId) => {
     setOpen2(true);
-    // console.log("fetch profile", teamId);
     fetchTeamProfile(teamId);
   };
 
+  // this function is used to approve team's preference of a project
   const handleApproveTeam = async (teamId) => {
-    // console.log("approve", teamId);
     const notification = {
       content: `Your team has been allocated the project P${projectId}`,
       to: { teamId: teamId },
@@ -181,14 +166,12 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     };
     try {
       const res = await apiCall("PUT", `v1/team/project/allocation`, body);
-      // console.log(res);
       if (res === null) {
         return;
       }
       if (res.error) {
         return;
       } else {
-        // console.log(res);
         getAllAppliedTeams();
       }
     } catch (error) {
@@ -196,8 +179,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     }
   };
 
+  // this function is used to reject team's preference of a project
   const handleRejectTeam = async (teamId) => {
-    console.log("reject", teamId);
     const notification = {
       content: `Your team has been rejected by the project P${projectId}`,
       to: { teamId: teamId },
@@ -209,18 +192,37 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     };
     try {
       const res = await apiCall("PUT", `v1/team/project/reject`, body);
-      // console.log(res);
       if (res === null) {
         return;
       }
       if (res.error) {
         return;
       } else {
-        // console.log(res);
         getAllAllocatedTeams();
       }
     } catch (error) {
       return;
+    }
+  };
+
+  // this function is used to search teams that satisfy the search requirements
+  const handleSearchTeams = async () => {
+    const trimmedSearchKey = searchKey.trim();
+    if (trimmedSearchKey === "") {
+      return;
+    }
+    if (!isFilter) {
+      const searchList = trimmedSearchKey.split(/, */);
+      const trimmedSearcList = searchList
+        .map((word) => word.trim())
+        .filter((word) => word !== "");
+      console.log(trimmedSearcList);
+      setIsFilter(true);
+      // to do 返回搜索结果
+    } else {
+      setSearchKey("");
+      setIsFilter(false);
+      getAllAppliedTeams();
     }
   };
 
@@ -233,10 +235,16 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
           open={open}
         >
           <DialogTitle
-            sx={{ m: 0, p: 2, textDecoration: "underline" }}
+            sx={{
+              m: 0,
+              p: 2,
+              textDecoration: "underline",
+              minWidth: "48vw",
+              display: "flex",
+            }}
             id="customized-dialog-title"
           >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div style={{ marginRight: "18vw" }}>
               <HoverDiv
                 onClick={() => handleClick("Preference List")}
                 style={{
@@ -245,43 +253,64 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
               >
                 Preference List
               </HoverDiv>
-              <div style={{ display: "flex" }}>
-                <HoverDiv
-                  onClick={() => handleClick("Allocated Team")}
-                  style={{
-                    color: selected === "Allocated Team" ? "blue" : "inherit",
-                  }}
-                >
-                  Allocated Team
-                </HoverDiv>
-                <div>
-                  <IconButton
-                    aria-label="close"
-                    onClick={handleClose}
-                    sx={{
-                      left: 4,
-                      right: 0,
-                      color: (theme) => theme.palette.grey[500],
-                    }}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </div>
-              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+              }}
+            >
+              <HoverDiv
+                onClick={() => handleClick("Allocated Team")}
+                style={{
+                  color: selected === "Allocated Team" ? "blue" : "inherit",
+                }}
+              >
+                Allocated Team
+              </HoverDiv>
+              <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{
+                  left: 8,
+                  right: 0,
+                  color: (theme) => theme.palette.grey[500],
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
             </div>
           </DialogTitle>
 
           <DialogContent dividers>
-            <div className="search">
-              <Input
-                // ref={seachRef}
-                size="large"
-                placeholder="Search Team"
-                prefix={<SearchOutlined />}
-                // onChange={searchList}
-                style={{ minWidth: "50vw" }}
-              />
-            </div>
+            {/* this is search component used to search teams that satisfy the requirements */}
+            {selected === "Preference List" ? (
+              <div className="search">
+                <Input
+                  size="large"
+                  placeholder="Search Team (separated by comma)"
+                  prefix={<SearchOutlined />}
+                  value={searchKey}
+                  onChange={(e) => {
+                    setSearchKey(e.target.value);
+                  }}
+                  suffix={
+                    <Button
+                      size="small"
+                      type="primary"
+                      onClick={() => {
+                        handleSearchTeams();
+                      }}
+                    >
+                      {isFilter ? "Clear" : "Filter"}
+                    </Button>
+                  }
+                />
+              </div>
+            ) : (
+              <></>
+            )}
+
+            {/* the list component is used to show all teams that prefer or have been allocated a specific project */}
             <List sx={{ width: "100%" }}>
               {currentTeam.length > 0 ? (
                 currentTeam.map((team) => {
@@ -290,7 +319,10 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                       <div style={{ display: "flex", direction: "row" }}>
                         <ListItem
                           alignItems="flex-start"
-                          style={{ flex: 7 }}
+                          style={{
+                            flex: 7,
+                            cursor: "pointer",
+                          }}
                           onClick={() => {
                             handleClickFetchFile(team.teamId);
                           }}
@@ -299,6 +331,14 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                             primary={`TeamName: ${team.teamName} `}
                             secondary={
                               <React.Fragment>
+                                <Typography
+                                  sx={{ display: "inline" }}
+                                  component="span"
+                                  variant="body2"
+                                  color="text.primary"
+                                >
+                                  TeamId: {team.teamIdShow} <br />
+                                </Typography>
                                 <Typography
                                   sx={{ display: "inline" }}
                                   component="span"
@@ -355,12 +395,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                   );
                 })
               ) : (
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  // fontWeight={"bold"}
-                  textAlign="center"
-                >
+                <Typography variant="h6" gutterBottom textAlign="center">
                   No Teams Found
                 </Typography>
               )}
@@ -370,9 +405,10 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       </React.Fragment>
 
       <div>
+        {/* this dialog is used to show a specific team's details */}
         <Dialog open={open2} onClose={handleClose2}>
           <div style={{ display: "flex" }}>
-            <DialogTitle style={{ minWidth: "40vw", paddingBottom: 2 }}>
+            <DialogTitle style={{ minWidth: "36vw", paddingBottom: 2 }}>
               TeamName: {teamName ? teamName : "N/A"}
             </DialogTitle>
             <IconButton
@@ -391,7 +427,14 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
             <Typography
               sx={{ display: "inline" }}
               component="span"
-              // variant="body"
+              color="text.primary"
+            >
+              TeamId: {teamIdShow}
+            </Typography>{" "}
+            <br />
+            <Typography
+              sx={{ display: "inline" }}
+              component="span"
               color="text.primary"
             >
               TeamSkills: {teamSkills ? teamSkills.join(", ") : "N/A"}
@@ -401,7 +444,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
             <Typography
               sx={{ display: "inline" }}
               component="span"
-              // variant="body"
               color="text.primary"
             >
               Team members:
@@ -412,11 +454,15 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                   <React.Fragment key={member.userId}>
                     <ListItem alignItems="flex-start">
                       <ListItemAvatar>
-                        <Avatar alt={member.userName} src={member.avatarURL}>
-                          {/* {member.userName.charAt(0)} */}
-                          {member.avatarURL === ""
-                            ? (member.avatarURL = member.userName.charAt(0))
-                            : member.avatarURL}
+                        <Avatar
+                          alt={member.userName.charAt(0)}
+                          src={
+                            member.avatarURL === ""
+                              ? (member.avatarURL = member.userName.charAt(0))
+                              : member.avatarURL
+                          }
+                        >
+                          {member.userName.charAt(0)}
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText
@@ -449,7 +495,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                         }
                       />
                     </ListItem>
-                    {/* <Divider variant="inset" component="li" /> */}
                   </React.Fragment>
                 );
               })}
@@ -459,7 +504,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
             <Typography
               sx={{ display: "inline" }}
               component="span"
-              // variant="body"
               color="text.primary"
             >
               Preference Reason:
@@ -468,7 +512,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
             <Typography
               sx={{ display: "inline" }}
               component="span"
-              // variant="body"
               color="text.primary"
             >
               &nbsp;&nbsp;{preReason}

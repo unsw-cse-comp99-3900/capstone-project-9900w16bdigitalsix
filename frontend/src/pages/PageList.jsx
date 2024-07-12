@@ -24,6 +24,7 @@ import ProjectList from "./ProjectList";
 import CreateProject from "./CreateProject";
 import EditProject from "./EditProject";
 import ProjectProgress from "./ProjectProgress";
+import ProjectDetails from "./ProjectDetails";
 import AllProject from "./AllProject"
 
 //admin
@@ -43,7 +44,7 @@ import GenerateProgressReport from "./GenerateProgressReport";
 const PageList = () => {
   const [token, setToken] = React.useState(null);
   const [role, setRole] = React.useState(null);
-
+  
   const userId = localStorage.getItem("userId");
   return (
     <>
@@ -114,8 +115,18 @@ const PageList = () => {
           path="/project/progress/:projectId/:teamId"
           element={<ProjectProgress token={token} setToken={setToken} />}
         />
-        <Route path="/project/admin" element={<ProjectAdmin token={token} setToken={setToken}/>}/>
-        <Route path="/project/admin/:projectId" element={<ProjectAdminAssign token={token} setToken={setToken}/>}/>
+        <Route
+          path="/project/admin"
+          element={<ProjectAdmin token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/project/admin/:projectId"
+          element={<ProjectAdminAssign token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/project/details"
+          element={<ProjectDetails token={token} setToken={setToken} />}
+        />
         <Route path="/project/allproject" element={<AllProject token={token} setToken={setToken}/>}/>
 
         {/* admin */}
@@ -123,19 +134,24 @@ const PageList = () => {
           path="/admin/role-manage"
           element={<RoleManage token={token} setToken={setToken} />}
         />
-        
+
         {/* notification */}
-        <Route path="/notification" element={<Notification token={token} setToken={setToken}/>} />
+        <Route
+          path="/notification"
+          element={<Notification token={token} setToken={setToken} />}
+        />
 
         {/* test */}
-        <Route path="/testProjectDetail" element={<TestProjectDetail token={token} setToken={setToken}/>} />
+        <Route
+          path="/testProjectDetail"
+          element={<TestProjectDetail token={token} setToken={setToken} />}
+        />
 
         {/* generate report */}
         <Route
           path="/project/report/:projectId/:teamId"
           element={<GenerateProgressReport token={token} setToken={setToken} />}
         />
-
       </Routes>
       <br />
     </>
