@@ -38,6 +38,7 @@ const ProjectDetails = () => {
   const getProjectDetail = async () => {
     try {
       const res = await apiCall("GET", `v1/project/detail/${projectId}`);
+      console.log(res);
       if (res === null) {
         return;
       }

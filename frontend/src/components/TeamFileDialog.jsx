@@ -212,17 +212,17 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       return;
     }
     if (!isFilter) {
-      console.log(trimmedSearchKey);
+      const searchList = trimmedSearchKey.split(/, */);
+      const trimmedSearcList = searchList
+        .map((word) => word.trim())
+        .filter((word) => word !== "");
+      console.log(trimmedSearcList);
       setIsFilter(true);
       // to do 返回搜索结果
     } else {
       setSearchKey("");
       setIsFilter(false);
-      if (selected === "Preference List") {
-        getAllAppliedTeams();
-      } else if (selected === "Allocated Team") {
-        getAllAllocatedTeams();
-      }
+      getAllAppliedTeams();
     }
   };
 
@@ -283,28 +283,33 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
 
           <DialogContent dividers>
             {/* this is search component used to search teams that satisfy the requirements */}
-            <div className="search">
-              <Input
-                size="large"
-                placeholder="Search Team"
-                prefix={<SearchOutlined />}
-                value={searchKey}
-                onChange={(e) => {
-                  setSearchKey(e.target.value);
-                }}
-                suffix={
-                  <Button
-                    size="small"
-                    type="primary"
-                    onClick={() => {
-                      handleSearchTeams();
-                    }}
-                  >
-                    {isFilter ? "Clear" : "Filter"}
-                  </Button>
-                }
-              />
-            </div>
+            {selected === "Preference List" ? (
+              <div className="search">
+                <Input
+                  size="large"
+                  placeholder="Search Team (separated by comma)"
+                  prefix={<SearchOutlined />}
+                  value={searchKey}
+                  onChange={(e) => {
+                    setSearchKey(e.target.value);
+                  }}
+                  suffix={
+                    <Button
+                      size="small"
+                      type="primary"
+                      onClick={() => {
+                        handleSearchTeams();
+                      }}
+                    >
+                      {isFilter ? "Clear" : "Filter"}
+                    </Button>
+                  }
+                />
+              </div>
+            ) : (
+              <></>
+            )}
+
             {/* the list component is used to show all teams that prefer or have been allocated a specific project */}
             <List sx={{ width: "100%" }}>
               {currentTeam.length > 0 ? (
