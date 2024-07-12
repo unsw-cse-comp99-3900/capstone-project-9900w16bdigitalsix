@@ -38,7 +38,7 @@ import Notification from "./Notification";
 import TestProjectDetail from "./TestProjectDetail";
 
 // report
-import GenerateReport from "./GenerateReport";
+import GenerateProgressReport from "./GenerateProgressReport";
 
 const PageList = () => {
   const [token, setToken] = React.useState(null);
@@ -133,7 +133,7 @@ const PageList = () => {
         {/* generate report */}
         <Route
           path="/project/report/:projectId/:teamId"
-          element={<GenerateReport token={token} setToken={setToken} />}
+          element={<GenerateProgressReport token={token} setToken={setToken} />}
         />
 
       </Routes>
