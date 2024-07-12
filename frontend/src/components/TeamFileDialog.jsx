@@ -47,11 +47,11 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const [teamMember, setTeamMember] = useState([]);
   const [preReason, setPreReason] = useState("");
   const [searchKey, setSearchKey] = useState("");
-  const [isFilter, setIsFilter] = useState(false);
   const userRole = parseInt(localStorage.getItem("role"));
 
   // this function used to get all teams that prefer a specific project
   const getAllAppliedTeams = async () => {
+    setSearchKey("");
     try {
       const res = await apiCall(
         "GET",
@@ -107,7 +107,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
 
   useEffect(() => {
     setSelected("Preference List");
-    setIsFilter(false);
     setSearchKey("");
     getAllAppliedTeams();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -208,40 +207,34 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   // this function is used to search teams that satisfy the search requirements
   const handleSearchTeams = async () => {
     const trimmedSearchKey = searchKey.trim();
-    if (trimmedSearchKey === "") {
-      return;
-    }
-    if (!isFilter) {
-      const searchList = trimmedSearchKey.split(/, */);
-      const trimmedSearcList = searchList
-        .map((word) => word.trim())
-        .filter((word) => word !== "");
-      setIsFilter(true);
-      const body = {
-        projectId: projectId,
-        searchList: trimmedSearcList,
-      };
-      try {
-        const res = await apiCall("POST", `v1/search/team/list/detail`, body);
-        // console.log(res);
-        if (res === null) {
-          setCurrentTeam([]);
-          return;
-        }
-        if (res.error) {
-          setCurrentTeam([]);
-          return;
-        } else {
-          setCurrentTeam(res);
-        }
-      } catch (error) {
+    const searchList = trimmedSearchKey.split(/, */);
+    const trimmedSearcList = searchList
+      .map((word) => word.trim())
+      .filter((word) => word !== "");
+    const body = {
+      projectId: projectId,
+      searchList: trimmedSearcList,
+    };
+    try {
+      const res = await apiCall("POST", `v1/search/team/list/detail`, body);
+      if (res === null) {
+        setCurrentTeam([]);
         return;
       }
-    } else {
-      setSearchKey("");
-      setIsFilter(false);
-      getAllAppliedTeams();
+      if (res.error) {
+        setCurrentTeam([]);
+        return;
+      } else {
+        setCurrentTeam(res);
+      }
+    } catch (error) {
+      return;
     }
+  };
+
+  const handleClearSearch = () => {
+    setSearchKey("");
+    getAllAppliedTeams();
   };
 
   return (
@@ -312,15 +305,26 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                     setSearchKey(e.target.value);
                   }}
                   suffix={
-                    <Button
-                      size="small"
-                      type="primary"
-                      onClick={() => {
-                        handleSearchTeams();
-                      }}
-                    >
-                      {isFilter ? "Clear" : "Filter"}
-                    </Button>
+                    <>
+                      <Button
+                        size="small"
+                        type="primary"
+                        onClick={() => {
+                          handleSearchTeams();
+                        }}
+                      >
+                        Filter
+                      </Button>
+                      <Button
+                        size="small"
+                        type="primary"
+                        onClick={() => {
+                          handleClearSearch();
+                        }}
+                      >
+                        clear
+                      </Button>
+                    </>
                   }
                 />
               </div>
