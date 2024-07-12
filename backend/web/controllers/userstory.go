@@ -347,10 +347,15 @@ func GetProgressDetail(c *gin.Context) {
 			endDate = sprint.EndDate.Format("2006-01-02")
 		}
 
+		sprintComment := ""
+		if sprint.Comment != nil {
+			sprintComment = *sprint.Comment
+		}
+
 		sprintDetail := response.SprintDetail{
 			SprintNum:     sprint.SprintNum,
 			SprintGrade:   sprint.Grade,
-			SprintComment: *sprint.Comment,
+			SprintComment: sprintComment,
 			StartDate:     startDate,
 			EndDate:       endDate,
 			UserStoryList: []response.UserStoryDetail{},
