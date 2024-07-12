@@ -33,22 +33,6 @@ const statusColorMap = {
   3: '#52c41a'    // green
 };
 
-const roleMap = {
-  1: 'Student',
-  2: 'Tutor',
-  3: 'Client',
-  4: 'Coordinator',
-  5: 'Administrator'
-};
-
-const roleColorMap = {
-  1: { background: '#e0f7fa', color: '#006064' }, // blue Student
-  2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
-  3: { background: '#fff9c4', color: '#f57f17' }, // yellow Client
-  4: { background: '#ffe0b2', color: '#e65100' }, // orange Coordinator
-  5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
-};
-
 const sprintData = [
   { sprintNumber: 1, sprintName: 'Sprint 1' },
   { sprintNumber: 2, sprintName: 'Sprint 2' },
@@ -74,14 +58,17 @@ const ProjectProgress = (props) => {
   const [calendarModalVisible, setCalendarModalVisible] = useState(false);
   const [dates, setDates] = useState([]);
   const [sprintNo, setSprintNo] = useState(null);
-  const token = localStorage.getItem('token');
   const [userStoryId, setUserStoryId] = useState(null);
   const [userStoryStatus, setUserStoryStatus] = useState(null);
+  const [gradeComment, setGradeComment] = useState(null);
   // for messageAlert component
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
 
+  // get localstorage
+  const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
 
   // for delete modal
   const toggleDeleteModal = () => setDeleteModalVisible(!deleteModalVisible);
@@ -113,12 +100,30 @@ const ProjectProgress = (props) => {
   const toggleCalendarModal = (sprintNumber) => {
     setCalendarModalVisible(!calendarModalVisible);
     setSprintNo(sprintNumber);
+    setDates([]);
     console.log("sprintNumber", sprintNumber);
   };
 
-  const handleCalendar = () => {
+  const handleCalendar = async() => {
     console.log('change calendar:');
+    const requestBody = {
+      endDate: dates[1].format('YYYY-MM-DD'),
+      sprintNum: parseInt(sprintNo, 10),
+      startDate: dates[0].format('YYYY-MM-DD'),
+      teamId: parseInt(item.teamId, 10),
+    };
+    const response = await apiCall('POST', `v1/progress/edit/sprint/date`, requestBody, token, true);
+    if(response.error){
+      setSnackbarContent(response.error);
+      setAlertType('error');
+      setAlertOpen(true);
+    } else {
+      setSnackbarContent("Change successfully");
+      setAlertType('success');
+      setAlertOpen(true);
+    }
     toggleCalendarModal();
+    loadUserData();
   };
 
   const loadUserData = async () => {
@@ -152,7 +157,23 @@ const ProjectProgress = (props) => {
       }, []);
       console.log("allUserStories", allUserStories);
       setStorys(allUserStories);
+
+      // update grade and comment
+      let grades = [];
+      let comments = [];
+      for (let sprintNum = 1; sprintNum <= 3; sprintNum++) {
+        let sprint = response.sprints.find(s => s.sprintNum === sprintNum);
+        if (sprint) {
+            grades.push(sprint.sprintGrade ? sprint.sprintGrade : '');
+            comments.push(sprint.sprintComment ? sprint.sprintComment : '');
+        } else {
+            grades.push('');
+            comments.push('');
+        }
+      }
+      setGradeComment({grades: grades, comments: comments});
       setLoading(false);
+      console.log("{grades: grades, comments: comments}", {grades: grades, comments: comments});
     }
   };
   
@@ -213,83 +234,107 @@ const ProjectProgress = (props) => {
   };
 
   const renderSprints = () => {
-    return sprintData.map((sprint) => (
-      <CardBody className="">
-        <Typography.Title
-          level={5}
-          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'bold' }}
-        >
-          {/* sprint title & calendar & date */}
-          <div>
-            {sprint.sprintName}
-            <Tooltip title='Select Sprint Duration' placement="right">
+    return sprintData.map((sprint, index) => {
+      const currentSprint = data?.sprints?.find(s => s.sprintNum === sprint.sprintNumber);
+      const startDate = currentSprint ? currentSprint.startDate : null;
+      const endDate = currentSprint ? currentSprint.endDate : null;
+      const sprintGrade = currentSprint ? currentSprint.sprintGrade : null;
+      // 生成dates数组
+      const datesRender = [];
+      if (startDate) datesRender.push(startDate);
+      if (endDate) datesRender.push(endDate);
+
+      return (
+        <CardBody className="">
+          <Typography.Title
+            level={5}
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'bold' }}
+          >
+            {/* sprint title & calendar & date */}
+            <div>
+              {sprint.sprintName}
+              <span style={{ fontSize: '14px', color: '#888', fontStyle: 'italic', marginLeft: '5px' }}>
+                {sprintGrade ? `(${sprintGrade} / 100)` : '(. / 100)'}
+              </span>
+              <Tooltip title='Select Sprint Duration' placement="right">
+                {parseInt(role, 10) === 1 && (
+                  <Button
+                    type="primary"
+                    style={{ margin: '8px', width: "20px", background: 'transparent' }}
+                    onClick={() => toggleCalendarModal(sprint.sprintNumber)}
+                  >
+                    <i class="bi bi-calendar-fill" style={{ color: 'black', fontSize: '20px' }}></i>
+                  </Button>
+                )}
+              </Tooltip>
+              <div className="list-item-meta-id" style={{ fontSize: '14px', color: '#888', fontStyle: 'italic' }}>
+              {startDate && endDate ? `(${startDate}, ${endDate})` : '(Date to be determined)'}
+              </div>
+            </div>
+            {/* add user story */}
+            <Tooltip title="Add User Story">
+            {parseInt(role, 10) === 1 && (
               <Button
                 type="primary"
-                style={{ margin: '8px', width: "20px", background: 'transparent' }}
-                onClick={() => toggleCalendarModal(sprint.sprintNumber)}
-              >
-                <i class="bi bi-calendar-fill" style={{ color: 'black', fontSize: '20px' }}></i>
-              </Button>
-            </Tooltip>
-            <div className="list-item-meta-id" style={{ fontSize: '14px', color: '#888', fontStyle: 'italic' }}>
-              (Date to be determined)
-            </div>
-          </div>
-          {/* add user story */}
-          <Tooltip title="Add User Story">
-            <Button type="primary" style={{ margin: '8px' }} icon={<PlusOutlined />} onClick={() => showCreateModal(sprint.sprintNumber)}/>
-          </Tooltip>
-        </Typography.Title>
-        {/* list of user story */}
-        <List
-          loading={loading}
-          dataSource={storys.filter(story => story.sprintNum === sprint.sprintNumber)}
-          renderItem={(story, index) => (
-            <List.Item className="list-item" key={story.userStoryId}>
-              <List.Item.Meta
-                onClick={() => handleUserStoryClick(story, sprint.sprintNumber)}
-                style={{ marginLeft: '20px', cursor: 'pointer' }}
-                title={
-                  <div className="list-item-meta-title">
-                    <span className="list-item-meta-name" style={{ fontSize: '16px', fontWeight: 'bold' }}>
-                      {`User Story ${story.globalIndex}`}
-                    </span>
-                  </div>
-                }
-                description={
-                  <div className="list-item-meta-description">
-                    <div className="list-item-meta-id">
-                    {story.userStoryDescription}
-                    </div>
-                  </div>
-                }
+                style={{ margin: '8px' }}
+                icon={<PlusOutlined />}
+                onClick={() => showCreateModal(sprint.sprintNumber)}
               />
-              <Tooltip title='To Do'>
-                <div
-                  style={{ 
-                    backgroundColor: statusColorMap[story.userStoryStatus],
-                    borderRadius: '50%',
-                    width: '20px',
-                    height: '20px',
-                    marginRight: '8px' }}
-                ></div>
-              </Tooltip>
-              {/* delete user story */}
-              <Tooltip title='Delete'>
-                <Button
-                  type="secondary"
-                  className="list-item-button"
-                  onClick={() => handleDeleteClick(story.userStoryId)}
-                  style={{ color:"red", border: "0", margin: "1px" }}
-                >
-                  <i class="bi bi-trash3-fill"></i>
-                </Button>
-              </Tooltip>
-            </List.Item>
-          )}
-        />
-      </CardBody>
-    ))
+            )}
+            </Tooltip>
+          </Typography.Title>
+          {/* list of user story */}
+          <List
+            loading={loading}
+            dataSource={storys.filter(story => story.sprintNum === sprint.sprintNumber)}
+            renderItem={(story, index) => (
+              <List.Item className="list-item" key={story.userStoryId}>
+                <List.Item.Meta
+                  onClick={() => handleUserStoryClick(story, sprint.sprintNumber)}
+                  style={{ marginLeft: '20px', cursor: 'pointer' }}
+                  title={
+                    <div className="list-item-meta-title">
+                      <span className="list-item-meta-name" style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                        {`User Story ${story.globalIndex}`}
+                      </span>
+                    </div>
+                  }
+                  description={
+                    <div className="list-item-meta-description">
+                      <div className="list-item-meta-id">
+                      {story.userStoryDescription}
+                      </div>
+                    </div>
+                  }
+                />
+                <Tooltip title='To Do'>
+                  <div
+                    style={{ 
+                      backgroundColor: statusColorMap[story.userStoryStatus],
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
+                      marginRight: '10px' }}
+                  ></div>
+                </Tooltip>
+                {/* delete user story */}
+                <Tooltip title='Delete'>
+                {parseInt(role, 10) === 1 && (
+                  <Button
+                    type="secondary"
+                    className="list-item-button"
+                    onClick={() => handleDeleteClick(story.userStoryId)}
+                    style={{ color:"red", border: "0", margin: "1px" }}
+                  >
+                    <i class="bi bi-trash3-fill"></i>
+                  </Button>
+                )}
+                </Tooltip>
+              </List.Item>
+            )}
+          />
+        </CardBody>
+    )});
   };
 
   // main screen
@@ -355,6 +400,10 @@ const ProjectProgress = (props) => {
             visible={isGradeModalVisible}
             onOk={handleGradeOk}
             onCancel={handleGradeCancel}
+            gradeComment={gradeComment}
+            setGradeComment={setGradeComment}
+            teamId={item.teamId}
+            loadUserData={loadUserData}
           />
           {/* edit user story */}
           <EditUserStoryModal
@@ -407,7 +456,10 @@ const ProjectProgress = (props) => {
             cancelText="Cancel"
             centered
           >
-            <Calendar dates={dates} setDates={setDates}/>
+            <Calendar 
+              dates={dates}
+              setDates={setDates}
+            />
           </Modal>
         </div>
       </div>

@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, DatePicker, Space } from 'antd';
+import moment from 'moment';
 
 const { RangePicker } = DatePicker;
 
+const convertToMomentArray = (dateStrings) => {
+  const moments = dateStrings.map(dateString => moment(dateString));
+  console.log("Converted moments:", moments);
+  return moments;
+};
+
 const Calendar = (props) => {
-  const {onChange, dates, setDates} = props;
+  const { onChange, dates, setDates } = props;
   const [open, setOpen] = useState(false);
 
   const handleChange = (inputDates) => {
@@ -16,11 +23,14 @@ const Calendar = (props) => {
     setOpen(open);
   };
 
+  const handleClickSave = () => {
+      setOpen(!open);
+  }
   return (
     <div style={{ padding: 24 }}>
       <Space direction="vertical">
-        <Button type="primary" onClick={() => setOpen(!open)}>
-          {dates.length ? `Selected: ${dates[0].format('YYYY-MM-DD')} - ${dates[1].format('YYYY-MM-DD')}` : 'Select Date Range'}
+        <Button type="primary" onClick={handleClickSave}>
+          {dates?.length ? `Selected: ${dates[0].format('YYYY-MM-DD')} - ${dates[1].format('YYYY-MM-DD')}` : 'Select Date Range'}
         </Button>
         {open && (
           <RangePicker
