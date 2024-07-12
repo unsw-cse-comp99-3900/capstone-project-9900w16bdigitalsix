@@ -4,8 +4,6 @@ import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import { Input, Avatar } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
@@ -101,6 +99,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     }
   };
 
+  // this function is used to handle when click "preference" and "allocated"
   const handleClick = (name) => {
     setSelected(name);
     if (name === "Preference List") {
@@ -237,6 +236,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     }
   };
 
+  // this function is used to clear the search input field and seach results
   const handleClearSearch = () => {
     setSearchKey("");
     getAllAppliedTeams();
@@ -257,13 +257,11 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                 p: 2,
                 paddingTop: 0,
                 textDecoration: "underline",
-                // minWidth: "48vw",
                 display: "flex",
                 justifyContent: "space-between",
               }}
               id="customized-dialog-title"
             >
-              {/* <div> */}
               <HoverDiv
                 onClick={() => handleClick("Preference List")}
                 style={{
@@ -272,12 +270,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
               >
                 Preference List
               </HoverDiv>
-              {/* </div> */}
-              {/* <div
-                style={{
-                  display: "flex",
-                }}
-              > */}
               <HoverDiv
                 onClick={() => handleClick("Allocated Team")}
                 style={{
@@ -287,18 +279,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
               >
                 Allocated Team
               </HoverDiv>
-              {/* <IconButton
-                  aria-label="close"
-                  onClick={handleClose}
-                  sx={{
-                    left: 8,
-                    right: 0,
-                    color: (theme) => theme.palette.grey[500],
-                  }}
-                >
-                  <CloseIcon />
-                </IconButton> */}
-              {/* </div> */}
             </DialogTitle>
 
             <DialogContent dividers>
@@ -445,17 +425,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
               <DialogTitle style={{ paddingTop: 0 }}>
                 TeamName: {teamName ? teamName : "N/A"}
               </DialogTitle>
-              {/* <IconButton
-                aria-label="close"
-                onClick={handleClose2}
-                sx={{
-                  left: 4,
-                  right: 0,
-                  color: (theme) => theme.palette.grey[500],
-                }}
-              >
-                <CloseIcon />
-              </IconButton> */}
             </div>
             <DialogContent style={{ paddingTop: 0 }}>
               <Typography
