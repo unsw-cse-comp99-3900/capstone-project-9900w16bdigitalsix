@@ -266,6 +266,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                 onClick={() => handleClick("Preference List")}
                 style={{
                   color: selected === "Preference List" ? "blue" : "inherit",
+                  marginRight: "5vw",
                 }}
               >
                 Preference List
