@@ -21,7 +21,7 @@ import (
 // @Param body body forms.SearchTeamRequest true "Request Body"
 // @Success 200 {array} response.SearchTeamResponse
 // @Failure 500 {object} map[string]string "{"error": "Failed to fetch teams"}"
-// @Router /v1/search/team/detail [post]
+// @Router /v1/search/team/list/detail [post]
 func SearchUnallocatedTeams(c *gin.Context) {
 	var req forms.SearchTeamRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

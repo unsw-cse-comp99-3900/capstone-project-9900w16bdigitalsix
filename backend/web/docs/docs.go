@@ -1440,7 +1440,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/search/team/detail": {
+        "/v1/search/team/list/detail": {
             "post": {
                 "description": "Search unallocated team list based on project preference",
                 "consumes": [

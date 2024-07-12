@@ -1652,7 +1652,7 @@ paths:
       summary: Get allocated team details
       tags:
       - Project Allocation
-  /v1/search/team/detail:
+  /v1/search/team/list/detail:
     post:
       consumes:
       - application/json
