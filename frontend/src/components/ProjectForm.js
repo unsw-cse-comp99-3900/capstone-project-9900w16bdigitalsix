@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import MessageAlert from '../components/MessageAlert';
@@ -27,11 +27,23 @@ const ProjectForm = () => {
     file: null,
   });
 
+  const [role, setRole] = useState(null);
+
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('error');
   const [alertMessage, setAlertMessage] = useState('');
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem('role');
+    const storedEmail = localStorage.getItem('email');
+    setRole(parseInt(storedRole, 10));
+
+    if (storedRole === '3') {
+      setFormData((prevData) => ({ ...prevData, email: storedEmail }));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -159,17 +171,19 @@ const ProjectForm = () => {
             onChange={handleChange}
           />
         </FormGroup>
-        <FormGroup>
-          <Label for="email">Email</Label>
-          <Input
-            type="email"
-            name="email"
-            id="email"
-            placeholder="Enter client email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </FormGroup>
+        {(role === 4 || role === 5) && (
+          <FormGroup>
+            <Label for="email">Email</Label>
+            <Input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Enter client email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </FormGroup>
+        )}
         <FormGroup>
           <Label for="requiredSkills">Required skills (please use ", " to separate each item)</Label>
           <Input
