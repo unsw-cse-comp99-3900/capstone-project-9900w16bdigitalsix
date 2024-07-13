@@ -774,7 +774,16 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "{\"error\": \"Sprint not found\"}",
+                        "description": "{\"error\": \"Team not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to create sprint\"}\" or \"{\"error\": \"failed to fetch sprint\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {

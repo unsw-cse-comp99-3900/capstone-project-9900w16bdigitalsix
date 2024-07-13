@@ -1234,7 +1234,14 @@ paths:
               type: string
             type: object
         "404":
-          description: '{"error": "Sprint not found"}'
+          description: '{"error": "Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Failed to create sprint"}" or "{"error": "failed
+            to fetch sprint"}'
           schema:
             additionalProperties:
               type: string

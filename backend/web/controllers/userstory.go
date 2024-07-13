@@ -10,6 +10,7 @@ import (
 	"web/models"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // @Summary Create user story
@@ -177,7 +178,8 @@ func EditSprintDate(c *gin.Context) {
 // @Param grade body forms.EditGradeReq true "Edit Grade"
 // @Success 200 {object} map[string]interface{} "{"message": "Grade updated successfully"}"
 // @Failure 400 {object} map[string]string "{"error": "invalid request body"}"
-// @Failure 404 {object} map[string]string "{"error": "Sprint not found"}"
+// @Failure 404 {object} map[string]string "{"error": "Team not found"}"
+// @Failure 500 {object} map[string]string "{"error": "Failed to create sprint"}" or "{"error": "failed to fetch sprint"}"
 // @Router /v1/progress/edit/grade [post]
 func EditGrade(c *gin.Context) {
 	var req forms.EditGradeReq
@@ -187,21 +189,32 @@ func EditGrade(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("Parsed request: %+v\n", req)
-
 	for _, sprint := range req.Sprints {
 		var s models.Sprint
 		if err := global.DB.Where("team_id = ? AND sprint_num = ?", req.TeamId, sprint.SprintNum).First(&s).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Sprint not found"})
-			return
-		}
-
-		s.Grade = sprint.Grade
-		s.Comment = sprint.Comment
-
-		if err := global.DB.Save(&s).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update sprint"})
-			return
+			if err == gorm.ErrRecordNotFound {
+				// create new sprint
+				s = models.Sprint{
+					TeamID:    req.TeamId,
+					SprintNum: sprint.SprintNum,
+					Grade:     sprint.Grade,
+					Comment:   sprint.Comment,
+				}
+				if err := global.DB.Create(&s).Error; err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create sprint"})
+					return
+				}
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch sprint"})
+				return
+			}
+		} else {
+			s.Grade = sprint.Grade
+			s.Comment = sprint.Comment
+			if err := global.DB.Save(&s).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update sprint"})
+				return
+			}
 		}
 	}
 
