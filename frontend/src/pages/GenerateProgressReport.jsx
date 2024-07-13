@@ -6,20 +6,109 @@ import { Container, Card, CardBody, CardTitle, CardText, Row, Col } from "reacts
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import '../assets/scss/FullLayout.css'; // Make sure to import this
 import '../assets/scss/reportStyle.css';
-import capstoneIcon from '../assets/images/logos/cap.png';
+import { apiCall } from "../helper";
 
 const GenerateProgressReport = () => {
   const [showCharts, setShowCharts] = useState(false);
+  // get localstorage
+  const token = localStorage.getItem('token');
+  //get userId, teamId from router
+  const { projectId, teamId } = useParams();
+  // project basic informations
+  const [title, setTitle] = useState("");
+  const [clientName, setClientName] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const [tutorName, setTutorName] = useState("");
+  const [tutorEmail, setTutorEmail] = useState("");
+  const [coorName, setCoorName] = useState("");
+  const [coorEmail, setCoorEmail] = useState("");
+  const [field, setField] = useState("");
+  const [requiredSkills, setRequiredSkills] = useState([]);
+  const [description, setDiscription] = useState("");
+  const [specLink, setSpecLink] = useState("");
+  const [sprints, setSprints] = useState([]);
+
+  // this function is used to fetch a specific project detail
+  const getProjectDetail = async () => {
+    try {
+      const res = await apiCall("GET", `v1/project/detail/${projectId}`);
+      console.log(res);
+      if (res === null) {
+        return;
+      }
+      if (res.error) {
+        return;
+      } else {
+        setTitle(res.title);
+        setClientName(res.clientName);
+        setClientEmail(res.clientEmail);
+        setTutorName(res.tutorName);
+        setTutorEmail(res.tutorEmail);
+        setCoorName(res.coorName);
+        setCoorEmail(res.coorEmail);
+        setField(res.field);
+        setRequiredSkills(res.requiredSkills);
+        setDiscription(res.description);
+        setSpecLink(res.specLink);
+      }
+    } catch (error) {
+      return;
+    }
+  };
+
+  const getProgresstDetail = async () => {
+    try {
+      const data = await apiCall('GET', `v1/progress/get/detail/${teamId}`);
+      setSprints(data.sprints);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    }
+  };
+
+  // form for userstory status
+  const userstoryStatus = (status) => {
+    switch (status) {
+      case 1: return "Todo";
+      case 2: return "In Progress";
+      case 3: return "Done";
+    }
+  };
+
+  // caculate average sprint score
+  const calculateAverageScore = () => {
+    const totalScore = sprints.reduce((total, current) => total + current.sprintGrade, 0);
+    return sprints.length ? (totalScore / sprints.length).toFixed(2) : 0;
+  };
+
+  // caculate total days
+  const getTotalDays = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return (end - start) / (1000 * 60 * 60 * 24);
+  };
+
+  // caculate total days of all sprints
+  const calculateTotalProjectDays = () => {
+    return sprints.reduce((total, sprint) => {
+      if (sprint.startDate && sprint.endDate) {
+        return total + getTotalDays(sprint.startDate, sprint.endDate);
+      }
+      return total;
+    }, 0);
+  };
 
   useEffect(() => {
+    getProjectDetail();
+    getProgresstDetail();
     const timer = setTimeout(() => setShowCharts(true), 1000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Sample data
+  // Sample datas
   const sprintData = {
     labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
     datasets: [
@@ -215,17 +304,6 @@ const pieOptions = {
     },
   };
 
-  const reportInfo = {
-    projectName: "Manhattan Project",
-    reportDate: "1954-8-27",
-    client: "Government of United State of America",
-    tutor: "Major General Leslie Groves",
-    coordinator: "J. Robert Oppenheimer",
-    teamMembers: "Enrico Fermi, Richard Feynman, Niels Bohr, James Chadwick, Ernest Lawrence, Hans Bethe",
-    field: "Nuclear Physics",
-    description: "The project aimed to develop the first nuclear weapons during World War II.",
-    skills: "Physics, Chemistry, Mathematics, Engineering, Security Protocols"
-  };
 
   return (
     <main>
@@ -294,24 +372,46 @@ const pieOptions = {
                       <Row>
                         <Col md="6">
                         <CardTitle tag="h5">Project Overview</CardTitle>
-                          <CardText><strong>Field:</strong> {reportInfo.field}</CardText>
-                          <CardText><strong>Description:</strong> {reportInfo.description}</CardText>
-                          <CardText><strong>Required Skills:</strong> {reportInfo.skills}</CardText>
+                        <CardText style = {{textAlign: 'justify'}}>
+                          <strong>Project Name:</strong> {title}<br />
+                          <strong>Field:</strong> {field}<br />
+                          <strong>Description:</strong> {description}<br />
+                          <strong>Required Skills:</strong> {requiredSkills.join(', ')}<br />
+                          Client: {clientName} - <span class="light-text">{clientEmail}</span><br />
+                          Tutor: {tutorName} - <span class="light-text">{tutorEmail}</span><br />
+                          Coordinator: {coorName} - <span class="light-text">{coorEmail}</span><br />
+                          <a href={specLink} target="_blank" rel="noopener noreferrer">Click here to view project specification document</a>
+                        </CardText>
                         </Col>
                         <Col md="6">
                           <CardTitle tag="h5">Sprint Details and User Stories:</CardTitle>
                           <ul>
-                            <li>Sprint 1: Start Date - End Date, Score: 20, User Stories: todo, inprogress, done</li>
-                            <li>Sprint 2: Start Date - End Date, Score: 15, User Stories: todo, inprogress, done</li>
-                            <li>Sprint 3: Start Date - End Date, Score: 25, User Stories: todo, inprogress, done</li>
-                            <li>Sprint 4: Start Date - End Date, Score: 10, User Stories: todo, inprogress, done</li>
+                            {sprints.map((sprint, index) => (
+                              <li key={index} style = {{textAlign: 'justify'}}>
+                                Sprint {sprint.sprintNum}: {sprint.startDate && sprint.endDate ? `${sprint.startDate} - ${sprint.endDate}` : '(Date to be determined)'},
+                                <ul>
+                                  {sprint.userStoryList.map((story) => (
+                                    <li key={story.userStoryId}>
+                                      User Story {story.userStoryId}: {story.userStoryDescription}<br />
+                                      Status: {userstoryStatus(story.userStoryStatus)}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </li>
+                            ))}
                           </ul>
                         </Col>
                       </Row>
                       <Row>
                         <Col md="6">
                         <CardTitle tag="h5">Time Tracking</CardTitle>
-                        <strong>Actual vs Planned Hours:</strong>
+                        <ul>
+                          {sprints.map((sprint, index) => (
+                            <li key={index}>
+                              Sprint {sprint.sprintNum}: {sprint.startDate && sprint.endDate ? `${sprint.startDate} - ${sprint.endDate}` : '(Date to be determined)'},
+                            </li>
+                          ))}
+                        </ul>
                       <ul>
                         <li>Sprint 1: Completion Time - xx%, Overtime - xx%</li>
                         <li>Sprint 2: Completion Time - xx%, Overtime - xx%</li>
@@ -320,22 +420,24 @@ const pieOptions = {
                       </ul>
                         </Col>
                         <Col md="6">
-                          
-                          <strong>Performance Metrics: Sprint Scores:</strong>
+                          <CardTitle tag="h5">Performance Metrics</CardTitle>
+                          <strong>Sprint Scores:</strong>
                           <ul>
-                            <li>Sprint 1: Score - 20</li>
-                            <li>Sprint 2: Score - 15</li>
-                            <li>Sprint 3: Score - 25</li>
-                            <li>Sprint 4: Score - 10</li>
+                            {sprints.map((sprint, index) => (
+                              <li key={index}>
+                                Sprint {sprint.sprintNum}: Score - {sprint.sprintGrade}
+                              </li>
+                            ))}
                           </ul>
                           <strong>Sprint Comments:</strong>
                           <ul>
-                            <li>Sprint 1: Excellent progress.</li>
-                            <li>Sprint 2: Needs improvement.</li>
-                            <li>Sprint 3: Outstanding work.</li>
-                            <li>Sprint 4: Below expectations.</li>
+                            {sprints.map((sprint, index) => (
+                              <li key={index}>
+                                Sprint {sprint.sprintNum}: {sprint.sprintComment}
+                              </li>
+                            ))}
                           </ul>
-                          <strong>Average Sprint Score:</strong> 17.5
+                          <strong>Average Sprint Score:</strong> {calculateAverageScore()}
                         </Col>
                       </Row>
                     </CardText>
