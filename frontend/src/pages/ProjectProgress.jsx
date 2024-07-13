@@ -124,8 +124,8 @@ const ProjectProgress = (props) => {
       setAlertType('success');
       setAlertOpen(true);
     }
-    toggleCalendarModal();
     loadUserData();
+    toggleCalendarModal();
   };
 
   const loadUserData = async () => {
@@ -287,7 +287,7 @@ const ProjectProgress = (props) => {
           </Typography.Title>
           {/* list of user story */}
           <List
-            loading={loading}
+            // loading={loading}
             dataSource={storys.filter(story => story.sprintNum === sprint.sprintNumber)}
             renderItem={(story, index) => (
               <List.Item className="list-item" key={story.userStoryId}>
