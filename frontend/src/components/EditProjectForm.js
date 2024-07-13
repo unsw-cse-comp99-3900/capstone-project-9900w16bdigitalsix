@@ -51,6 +51,16 @@ const EditProjectForm = ({ initialValues, id }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+    if (name === 'title') {
+      const wordCount = value.trim().split(/\s+/).length;
+      if (wordCount > 20) {
+        setAlertMessage('Project title cannot exceed 20 words.');
+        setAlertType('error');
+        setAlertOpen(true);
+        return;
+      }
+    }
+
     if (files) {
       setFormData({ ...formData, [name]: files[0] });
       setFileName(files[0].name); // 保存原始文件名
@@ -62,6 +72,14 @@ const EditProjectForm = ({ initialValues, id }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate form data
+    const titleWordCount = formData.title.trim().split(/\s+/).length;
+    if (titleWordCount > 20) {
+      setAlertMessage('Project title cannot exceed 20 words.');
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    }
     if (!formData.title) {
       setAlertMessage('Project title is required.');
       setAlertType('error');
@@ -144,7 +162,7 @@ const EditProjectForm = ({ initialValues, id }) => {
     <div>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
-          <Label for="title">Project title</Label>
+          <Label for="title">Project title (20 words maximum)</Label>
           <Input
             type="text"
             name="title"
@@ -210,7 +228,7 @@ const EditProjectForm = ({ initialValues, id }) => {
             onChange={handleChange}
           />
         </FormGroup>
-        
+        {fileName && <p>Selected file: {fileName}</p>} {/* 显示选中的文件名 */}
         <Button type="submit" color="primary">Save</Button>
       </Form>
       <MessageAlert

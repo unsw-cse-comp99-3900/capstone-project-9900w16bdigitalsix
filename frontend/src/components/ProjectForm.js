@@ -28,7 +28,6 @@ const ProjectForm = () => {
   });
 
   const [role, setRole] = useState(null);
-
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('error');
   const [alertMessage, setAlertMessage] = useState('');
@@ -47,6 +46,17 @@ const ProjectForm = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
+    if (name === 'title') {
+      const wordCount = value.trim().split(/\s+/).length;
+      if (wordCount > 20) {
+        setAlertMessage('Project title cannot exceed 20 words.');
+        setAlertType('error');
+        setAlertOpen(true);
+        return;
+      }
+    }
+
     if (files) {
       setFormData({ ...formData, [name]: files[0] });
     } else {
@@ -58,6 +68,13 @@ const ProjectForm = () => {
     e.preventDefault();
 
     // Validate form data
+    const titleWordCount = formData.title.trim().split(/\s+/).length;
+    if (titleWordCount > 20) {
+      setAlertMessage('Project title cannot exceed 20 words.');
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    }
     if (!formData.title) {
       setAlertMessage('Project title is required.');
       setAlertType('error');
@@ -97,7 +114,6 @@ const ProjectForm = () => {
       } else if (key === 'email') {
         form.append('email', formData[key]);
       } else if (key === 'file') {
-        
         form.append('file', formData[key], formData[key].name);
       } else {
         form.append(key, formData[key]);
@@ -139,7 +155,7 @@ const ProjectForm = () => {
     <div>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
-          <Label for="title">Project title (15 words maximum)</Label>
+          <Label for="title">Project title (20 words maximum)</Label>
           <Input
             type="text"
             name="title"
