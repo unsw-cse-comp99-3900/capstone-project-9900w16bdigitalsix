@@ -25,33 +25,25 @@ export const apiCall = async (method, endpoint, data, isFormData = false) => {
   return { status: response.status, data: result };
 };
 
-const createFormData = () => {
-  const formDataa = new FormData();
-
-  formDataa.append('title', 'wqeq1');
-  formDataa.append('clientEmail', 'haowang32123@gmail.com');
-
-  // 添加技能数组
-  const skills = ['python', 'java'];
-  skills.forEach(skill => formDataa.append('requiredSkills[]', skill));
-
-  formDataa.append('field', 'field2');
-  formDataa.append('description', 'descripti3on');
-
-  // 创建一个虚拟文件
-  const blob = new Blob(['dummy content'], { type: 'application/pdf' });
-  formDataa.append('spec', blob, 'dummy.pdf');
-
-  return formDataa;
-};
-
 const EditProjectForm = ({ initialValues, id }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialValues);
+  const [fileName, setFileName] = useState('');
 
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('error');
   const [alertMessage, setAlertMessage] = useState('');
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem('role');
+    const storedEmail = localStorage.getItem('email');
+    setRole(parseInt(storedRole, 10));
+
+    if (storedRole === '3') {
+      setFormData((prevData) => ({ ...prevData, email: storedEmail }));
+    }
+  }, []);
 
   useEffect(() => {
     setFormData(initialValues);
@@ -61,6 +53,7 @@ const EditProjectForm = ({ initialValues, id }) => {
     const { name, value, files } = e.target;
     if (files) {
       setFormData({ ...formData, [name]: files[0] });
+      setFileName(files[0].name); // 保存原始文件名
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -108,8 +101,9 @@ const EditProjectForm = ({ initialValues, id }) => {
       } else if (key === 'email') {
         form.append('clientEmail', formData[key]);
       } else if (key === 'file') {
-        const blob = new Blob([formData[key]], { type: 'application/pdf' });
-        form.append('spec', blob, 'renewed.pdf');
+        const originalFileName = formData[key].name;
+        const newFileName = `${id}_${originalFileName}`;
+        form.append('spec', formData[key], newFileName);
       } else {
         form.append(key, formData[key]);
       }
@@ -182,17 +176,19 @@ const EditProjectForm = ({ initialValues, id }) => {
             onChange={handleChange}
           />
         </FormGroup>
-        <FormGroup>
-          <Label for="email">Email</Label>
-          <Input
-            type="email"
-            name="email"
-            id="email"
-            placeholder="Enter client email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </FormGroup>
+        {(role === 4 || role === 5) && (
+          <FormGroup>
+            <Label for="email">Email</Label>
+            <Input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Enter client email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </FormGroup>
+        )}
         <FormGroup>
           <Label for="requiredSkills">Required skills  (please use ", " to separate each item)</Label>
           <Input
@@ -214,6 +210,7 @@ const EditProjectForm = ({ initialValues, id }) => {
             onChange={handleChange}
           />
         </FormGroup>
+        
         <Button type="submit" color="primary">Save</Button>
       </Form>
       <MessageAlert

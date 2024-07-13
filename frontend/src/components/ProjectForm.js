@@ -97,8 +97,8 @@ const ProjectForm = () => {
       } else if (key === 'email') {
         form.append('email', formData[key]);
       } else if (key === 'file') {
-        const blob = new Blob([formData[key]], { type: 'application/pdf' });
-        form.append('spec', blob, 'project_spec.pdf');
+        
+        form.append('file', formData[key], formData[key].name);
       } else {
         form.append(key, formData[key]);
       }
