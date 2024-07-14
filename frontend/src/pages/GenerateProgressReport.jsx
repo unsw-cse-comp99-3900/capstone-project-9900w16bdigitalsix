@@ -31,6 +31,50 @@ const GenerateProgressReport = () => {
   const [description, setDiscription] = useState("");
   const [specLink, setSpecLink] = useState("");
   const [sprints, setSprints] = useState([]);
+  // data initialliate for sprint data(into two groups) to chart
+  const [sprintData, setSprintData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Completed User Stories',
+        data: [], 
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+      },
+      {
+        label: 'Incomplete User Stories',
+        data: [],
+        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+      },
+    ],
+  });
+  // initiate data for pie chart
+  const [pieData, setPieData] = useState({
+    labels: ['Completed User Stories', 'Remaining User Stories'],
+    datasets: [
+      {
+        data: [0, 0],
+        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+      },
+    ],
+  });
+  const [sprintDetailsData, setSprintDetailsData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Sprint Scores',
+        data: [],
+        borderColor: 'rgba(153, 102, 255, 0.6)',
+        fill: false,
+      },
+      {
+        label: 'Average Score',
+        data: [],
+        borderColor: 'rgba(255, 159, 64, 0.6)',
+        borderDash: [10, 5],
+        fill: false,
+      },
+    ],
+  });
 
   // this function is used to fetch a specific project detail
   const getProjectDetail = async () => {
@@ -64,6 +108,10 @@ const GenerateProgressReport = () => {
     try {
       const data = await apiCall('GET', `v1/progress/get/detail/${teamId}`);
       setSprints(data.sprints);
+      //console.log("sprint data:", data.sprints);
+      updateChartData(data.sprints);
+      updatePieChartData(data.sprints);
+      updateLineChartData(data.sprints);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     }
@@ -109,22 +157,77 @@ const GenerateProgressReport = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Sample datas
-  const sprintData = {
-    labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
-    datasets: [
-      {
-        label: 'Completed User Stories',
-        data: [8, 9, 9, 5],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-      },
-      {
-        label: 'Incomplete User Stories',
-        data: [2, 3, 1, 4],
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-      },
-    ],
+
+  // functions to load data to charts
+  const updateChartData = (sprints) => {
+    const labels = sprints.map(sprint => `Sprint ${sprint.sprintNum}`);
+    const completedData = sprints.map(sprint => sprint.userStoryList.filter(story => story.userStoryStatus === 3).length);
+    const incompleteData = sprints.map(sprint => sprint.userStoryList.filter(story => story.userStoryStatus !== 3).length);
+  
+    setSprintData({
+      labels,
+      datasets: [
+        {
+          label: 'Completed User Stories',
+          data: completedData,
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        },
+        {
+          label: 'Incomplete User Stories',
+          data: incompleteData,
+          backgroundColor: 'rgba(255, 99, 132, 0.6)',
+        },
+      ]
+    });
   };
+  const updatePieChartData = (sprints) => {
+    let completedCount = 0;
+    let remainingCount = 0;
+  
+    sprints.forEach(sprint => {
+      sprint.userStoryList.forEach(story => {
+        if (story.userStoryStatus === 3) {
+          completedCount += 1;
+        } else {
+          remainingCount += 1;
+        }
+      });
+    });
+    setPieData({
+      labels: ['Completed User Stories', 'Remaining User Stories'],
+      datasets: [
+        {
+          data: [completedCount, remainingCount],
+          backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+        },
+      ],
+    });
+  };
+  const updateLineChartData = (sprints) => {
+    const labels = sprints.map(sprint => `Sprint ${sprint.sprintNum}`);
+    const sprintScores = sprints.map(sprint => sprint.sprintGrade);
+    const averageScore = sprintScores.reduce((sum, current) => sum + current, 0) / sprints.length;
+  
+    setSprintDetailsData({
+      labels,
+      datasets: [
+        {
+          label: 'Sprint Scores',
+          data: sprintScores,
+          borderColor: 'rgba(153, 102, 255, 0.6)',
+          fill: false,
+        },
+        {
+          label: 'Average Score',
+          data: Array(sprints.length).fill(averageScore),
+          borderColor: 'rgba(255, 159, 64, 0.6)',
+          borderDash: [10, 5],
+          fill: false,
+        },
+      ],
+    });
+  };
+  
 
   // New options to display percentage inside bars
   const options = {
@@ -134,6 +237,7 @@ const GenerateProgressReport = () => {
         display: true,
         color: 'white',
         formatter: (value, context) => {
+          if (value === 0) return null;
           const total = context.chart.data.datasets
             .map(dataset => dataset.data[context.dataIndex])
             .reduce((a, b) => a + b, 0);
@@ -155,25 +259,7 @@ const GenerateProgressReport = () => {
       },
     },
   };
-  const sprintDetailsData = {
-    labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
-    datasets: [
-      {
-        label: 'Sprint Scores',
-        data: [20, 15, 25, 10],
-        borderColor: 'rgba(153, 102, 255, 0.6)',
-        fill: false,
-      },
-      {
-        label: 'Average Score',
-        data: [17.5, 17.5, 17.5, 17.5],
-        borderColor: 'rgba(255, 159, 64, 0.6)',
-        borderDash: [10, 5],
-        fill: false,
-      },
-    ],
-  };
-  
+
   // Updated options to include average line
   const sprintOptions = {
     maintainAspectRatio: false,
@@ -202,16 +288,6 @@ const GenerateProgressReport = () => {
     },
   };
 
-  // Sample data for pie chart
-const pieData = {
-  labels: ['Completed', 'Remaining'],
-  datasets: [
-    {
-      data: [70, 30],
-      backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-    },
-  ],
-};
 
 // Options to display percentage inside pie chart
 const pieOptions = {
