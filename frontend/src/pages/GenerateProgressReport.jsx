@@ -100,6 +100,7 @@ const GenerateProgressReport = () => {
       return total;
     }, 0);
   };
+  const totalProjectDays = calculateTotalProjectDays();
 
   useEffect(() => {
     getProjectDetail();
@@ -228,82 +229,66 @@ const pieOptions = {
   },
 };
 
-  // Sample data for time tracking
-  const timeTrackingData = {
-    labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
-    datasets: [
-      {
-        label: 'Planned Hours',
-        data: [100, 120, 110, 130],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        fill: false,
-      },
-      {
-        label: 'Actual Hours',
-        data: [90, 130, 115, 125],
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        fill: false,
-      },
-    ],
+  // Data for charts
+  const timepieData = {
+    labels: sprints.map(sprint => `Sprint ${sprint.sprintNum}`),
+    datasets: [{
+      label: 'Days per Sprint',
+      data: sprints.map(sprint => sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0),
+      backgroundColor: [
+        'rgba(75, 192, 192, 0.6)',
+        'rgba(255, 99, 132, 0.6)',
+        'rgba(52, 152, 219, 0.6)',
+        'rgba(26, 188, 156, 0.6)',
+        'rgba(231, 76, 60, 0.6)',
+        'rgba(243, 156, 18, 0.6)'
+      ],
+      }],
   };
 
-  // Options for the time tracking chart
-  const timeTrackingOptions = {
-    maintainAspectRatio: false,
+  const timebarData = {
+    labels: sprints.map(sprint => `Sprint ${sprint.sprintNum}`),
+    datasets: [{
+      label: 'Duration in Days',
+      data: sprints.map(sprint => sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0),
+      backgroundColor: 'rgba(54, 162, 235, 0.6)',
+      borderColor: 'rgba(54, 162, 235, 1)',
+      borderWidth: 1,
+    }],
+  };
+
+  const timeBarOptions = {
     scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Number of Days'
+        }
+      },
       x: {
         title: {
           display: true,
-          text: 'Sprints',
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: 'Hours',
-        },
-      },
+          text: 'Sprints'
+        }
+      }
     },
     plugins: {
-      datalabels: {
+      legend: {
         display: true,
-        color: 'black',
-        formatter: (value) => {
-          return value + 'h';
-        },
+        position: 'top'
       },
+      tooltip: {
+        callbacks: {
+          label: function(tooltipItem) {
+            return `Duration: ${tooltipItem.raw} days`;
+          }
+        }
+      }
     },
+    responsive: true,
+    maintainAspectRatio: false
   };
-
-  // Sample data for time tracking pie chart
-  const timePieData = {
-    labels: ['Completed on Time', 'Overtime'],
-    datasets: [
-      {
-        data: [75, 25], // example values
-        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-      },
-    ],
-  };
-
-  // Options to display percentage inside pie chart
-  const timePieOptions = {
-    maintainAspectRatio: false,
-    plugins: {
-      datalabels: {
-        display: true,
-        color: 'white',
-        formatter: (value, context) => {
-          const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-          const percentage = ((value / total) * 100).toFixed(2);
-          return percentage + '%';
-        },
-      },
-    },
-  };
-
 
   return (
     <main>
@@ -325,43 +310,44 @@ const pieOptions = {
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
             <Row>
-              <Col lg="6" className="mb-4">
+              <Col lg="12" className="mb-4">
                 <Card>
-                  <CardBody>
-                    <CardTitle tag="h5">Project Progress Chart</CardTitle>
-                    {showCharts && (
-                      <>
-                        <div className="chart-container mb-4">
-                          <Bar data={sprintData} options={options} plugins={[ChartDataLabels]} />
-                        </div>
-                        <div className="chart-container mb-4">
-                          <Pie data={pieData} options={pieOptions} plugins={[ChartDataLabels]} />
-                        </div>
+                <Row>
+                  <Col lg="6">
+                    <CardBody>
+                      <CardTitle tag="h5">Project Progress Chart</CardTitle>
+                      {showCharts && (
+                        <>
+                          <div className="chart-container mb-4">
+                            <Bar data={sprintData} options={options} plugins={[ChartDataLabels]} />
+                          </div>
+                          <div className="chart-container mb-4">
+                            <Pie data={pieData} options={pieOptions} plugins={[ChartDataLabels]} />
+                          </div>
 
-                        <div className="chart-container mb-4">
-                          <Line data={sprintDetailsData} options={sprintOptions} />
-                        </div>
-                        
-
-                      </>
-                    )}
-                  </CardBody>
+                          <div className="chart-container mb-4">
+                            <Line data={sprintDetailsData} options={sprintOptions} />
+                          </div>
+                        </>
+                      )}
+                    </CardBody>
+                  </Col>
+                  
+                  <Col lg="6">
+                    <CardBody>
+                    <CardTitle tag="h5">Time Tracking Chart</CardTitle>
+                    <div className="chart-container mb-4">
+                    <Bar data={timebarData} options={timeBarOptions} />
+                    </div>
+                    <div className="chart-container mb-4">
+                      <Pie data={timepieData} options={pieOptions} plugins={[ChartDataLabels]} />
+                    </div>
+                    </CardBody>
+                  </Col>
+                  </Row>
                 </Card>
               </Col>
 
-              <Col lg="6" className="mb-4">
-                <Card>
-                  <CardBody>
-                  <CardTitle tag="h5">Time Tracking Chart</CardTitle>
-                  <div className="chart-container mb-4">
-                    <Line data={timeTrackingData} options={timeTrackingOptions} plugins={[ChartDataLabels]} />
-                  </div>
-                  <div className="chart-container mb-4">
-                    <Pie data={timePieData} options={timePieOptions} plugins={[ChartDataLabels]} />
-                  </div>
-                  </CardBody>
-                </Card>
-              </Col>
             </Row>
             <Row>
               <Col lg="12" className="mb-4">
@@ -405,19 +391,18 @@ const pieOptions = {
                       <Row>
                         <Col md="6">
                         <CardTitle tag="h5">Time Tracking</CardTitle>
-                        <ul>
-                          {sprints.map((sprint, index) => (
-                            <li key={index}>
-                              Sprint {sprint.sprintNum}: {sprint.startDate && sprint.endDate ? `${sprint.startDate} - ${sprint.endDate}` : '(Date to be determined)'},
-                            </li>
-                          ))}
-                        </ul>
-                      <ul>
-                        <li>Sprint 1: Completion Time - xx%, Overtime - xx%</li>
-                        <li>Sprint 2: Completion Time - xx%, Overtime - xx%</li>
-                        <li>Sprint 3: Completion Time - xx%, Overtime - xx%</li>
-                        <li>Sprint 4: Completion Time - xx%, Overtime - xx%</li>
-                      </ul>
+                          <ul>
+                            {sprints.map((sprint, index) => {
+                              const days = sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0;
+                              const percentage = totalProjectDays ? ((days / totalProjectDays) * 100).toFixed(2) : 0;
+                              return (
+                                <li key={index}>
+                                  Sprint {sprint.sprintNum}: {days ? `${days} days` : '(Date to be determined)'},
+                                  Overtime - {percentage}%
+                                </li>
+                              );
+                            })}
+                          </ul>
                         </Col>
                         <Col md="6">
                           <CardTitle tag="h5">Performance Metrics</CardTitle>
