@@ -690,7 +690,7 @@ func RejectProjectAllocation(c *gin.Context) {
 // GetProjectsByRole godoc
 // @Summary get public project list by user role
 // @Description Get a list of the corresponding public projects based on the userID and role. If the user is a student (role == 1), the projects assigned by the team the user belongs to are returned; if the user is a client (role == 3) or a coordinator (role == 4), all the public projects for which they are each responsible are returned.
-// @Tags projects
+// @Tags Project
 // @Accept json
 // @Produce json
 // @Param userId path int true "用户ID"

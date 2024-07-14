@@ -1192,7 +1192,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "projects"
+                    "Project"
                 ],
                 "summary": "get public project list by user role",
                 "parameters": [

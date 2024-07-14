@@ -1559,7 +1559,7 @@ paths:
             type: object
       summary: get public project list by user role
       tags:
-      - projects
+      - Project
   /v1/project/get/public_project/list:
     get:
       description: is_public 字段 1表示 public， 2 表示未公开, 这里返回的公开的 project 信息
