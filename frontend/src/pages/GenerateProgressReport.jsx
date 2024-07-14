@@ -31,6 +31,50 @@ const GenerateProgressReport = () => {
   const [description, setDiscription] = useState("");
   const [specLink, setSpecLink] = useState("");
   const [sprints, setSprints] = useState([]);
+  // data initialliate for sprint data(into two groups) to chart
+  const [sprintData, setSprintData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Completed User Stories',
+        data: [], 
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+      },
+      {
+        label: 'Incomplete User Stories',
+        data: [],
+        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+      },
+    ],
+  });
+  // initiate data for pie chart
+  const [pieData, setPieData] = useState({
+    labels: ['Completed User Stories', 'Remaining User Stories'],
+    datasets: [
+      {
+        data: [0, 0],
+        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+      },
+    ],
+  });
+  const [sprintDetailsData, setSprintDetailsData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Sprint Scores',
+        data: [],
+        borderColor: 'rgba(153, 102, 255, 0.6)',
+        fill: false,
+      },
+      {
+        label: 'Average Score',
+        data: [],
+        borderColor: 'rgba(255, 159, 64, 0.6)',
+        borderDash: [10, 5],
+        fill: false,
+      },
+    ],
+  });
 
   // this function is used to fetch a specific project detail
   const getProjectDetail = async () => {
@@ -64,6 +108,10 @@ const GenerateProgressReport = () => {
     try {
       const data = await apiCall('GET', `v1/progress/get/detail/${teamId}`);
       setSprints(data.sprints);
+      //console.log("sprint data:", data.sprints);
+      updateChartData(data.sprints);
+      updatePieChartData(data.sprints);
+      updateLineChartData(data.sprints);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     }
@@ -100,6 +148,7 @@ const GenerateProgressReport = () => {
       return total;
     }, 0);
   };
+  const totalProjectDays = calculateTotalProjectDays();
 
   useEffect(() => {
     getProjectDetail();
@@ -108,22 +157,77 @@ const GenerateProgressReport = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Sample datas
-  const sprintData = {
-    labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
-    datasets: [
-      {
-        label: 'Completed User Stories',
-        data: [8, 9, 9, 5],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-      },
-      {
-        label: 'Incomplete User Stories',
-        data: [2, 3, 1, 4],
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-      },
-    ],
+
+  // functions to load data to charts
+  const updateChartData = (sprints) => {
+    const labels = sprints.map(sprint => `Sprint ${sprint.sprintNum}`);
+    const completedData = sprints.map(sprint => sprint.userStoryList.filter(story => story.userStoryStatus === 3).length);
+    const incompleteData = sprints.map(sprint => sprint.userStoryList.filter(story => story.userStoryStatus !== 3).length);
+  
+    setSprintData({
+      labels,
+      datasets: [
+        {
+          label: 'Completed User Stories',
+          data: completedData,
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        },
+        {
+          label: 'Incomplete User Stories',
+          data: incompleteData,
+          backgroundColor: 'rgba(255, 99, 132, 0.6)',
+        },
+      ]
+    });
   };
+  const updatePieChartData = (sprints) => {
+    let completedCount = 0;
+    let remainingCount = 0;
+  
+    sprints.forEach(sprint => {
+      sprint.userStoryList.forEach(story => {
+        if (story.userStoryStatus === 3) {
+          completedCount += 1;
+        } else {
+          remainingCount += 1;
+        }
+      });
+    });
+    setPieData({
+      labels: ['Completed User Stories', 'Remaining User Stories'],
+      datasets: [
+        {
+          data: [completedCount, remainingCount],
+          backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+        },
+      ],
+    });
+  };
+  const updateLineChartData = (sprints) => {
+    const labels = sprints.map(sprint => `Sprint ${sprint.sprintNum}`);
+    const sprintScores = sprints.map(sprint => sprint.sprintGrade);
+    const averageScore = sprintScores.reduce((sum, current) => sum + current, 0) / sprints.length;
+  
+    setSprintDetailsData({
+      labels,
+      datasets: [
+        {
+          label: 'Sprint Scores',
+          data: sprintScores,
+          borderColor: 'rgba(153, 102, 255, 0.6)',
+          fill: false,
+        },
+        {
+          label: 'Average Score',
+          data: Array(sprints.length).fill(averageScore),
+          borderColor: 'rgba(255, 159, 64, 0.6)',
+          borderDash: [10, 5],
+          fill: false,
+        },
+      ],
+    });
+  };
+  
 
   // New options to display percentage inside bars
   const options = {
@@ -133,6 +237,7 @@ const GenerateProgressReport = () => {
         display: true,
         color: 'white',
         formatter: (value, context) => {
+          if (value === 0) return null;
           const total = context.chart.data.datasets
             .map(dataset => dataset.data[context.dataIndex])
             .reduce((a, b) => a + b, 0);
@@ -154,25 +259,7 @@ const GenerateProgressReport = () => {
       },
     },
   };
-  const sprintDetailsData = {
-    labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
-    datasets: [
-      {
-        label: 'Sprint Scores',
-        data: [20, 15, 25, 10],
-        borderColor: 'rgba(153, 102, 255, 0.6)',
-        fill: false,
-      },
-      {
-        label: 'Average Score',
-        data: [17.5, 17.5, 17.5, 17.5],
-        borderColor: 'rgba(255, 159, 64, 0.6)',
-        borderDash: [10, 5],
-        fill: false,
-      },
-    ],
-  };
-  
+
   // Updated options to include average line
   const sprintOptions = {
     maintainAspectRatio: false,
@@ -201,16 +288,6 @@ const GenerateProgressReport = () => {
     },
   };
 
-  // Sample data for pie chart
-const pieData = {
-  labels: ['Completed', 'Remaining'],
-  datasets: [
-    {
-      data: [70, 30],
-      backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-    },
-  ],
-};
 
 // Options to display percentage inside pie chart
 const pieOptions = {
@@ -228,82 +305,66 @@ const pieOptions = {
   },
 };
 
-  // Sample data for time tracking
-  const timeTrackingData = {
-    labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4'],
-    datasets: [
-      {
-        label: 'Planned Hours',
-        data: [100, 120, 110, 130],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        fill: false,
-      },
-      {
-        label: 'Actual Hours',
-        data: [90, 130, 115, 125],
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        fill: false,
-      },
-    ],
+  // Data for charts
+  const timepieData = {
+    labels: sprints.map(sprint => `Sprint ${sprint.sprintNum}`),
+    datasets: [{
+      label: 'Days per Sprint',
+      data: sprints.map(sprint => sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0),
+      backgroundColor: [
+        'rgba(75, 192, 192, 0.6)',
+        'rgba(255, 99, 132, 0.6)',
+        'rgba(52, 152, 219, 0.6)',
+        'rgba(26, 188, 156, 0.6)',
+        'rgba(231, 76, 60, 0.6)',
+        'rgba(243, 156, 18, 0.6)'
+      ],
+      }],
   };
 
-  // Options for the time tracking chart
-  const timeTrackingOptions = {
-    maintainAspectRatio: false,
+  const timebarData = {
+    labels: sprints.map(sprint => `Sprint ${sprint.sprintNum}`),
+    datasets: [{
+      label: 'Duration in Days',
+      data: sprints.map(sprint => sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0),
+      backgroundColor: 'rgba(54, 162, 235, 0.6)',
+      borderColor: 'rgba(54, 162, 235, 1)',
+      borderWidth: 1,
+    }],
+  };
+
+  const timeBarOptions = {
     scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Number of Days'
+        }
+      },
       x: {
         title: {
           display: true,
-          text: 'Sprints',
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: 'Hours',
-        },
-      },
+          text: 'Sprints'
+        }
+      }
     },
     plugins: {
-      datalabels: {
+      legend: {
         display: true,
-        color: 'black',
-        formatter: (value) => {
-          return value + 'h';
-        },
+        position: 'top'
       },
+      tooltip: {
+        callbacks: {
+          label: function(tooltipItem) {
+            return `Duration: ${tooltipItem.raw} days`;
+          }
+        }
+      }
     },
+    responsive: true,
+    maintainAspectRatio: false
   };
-
-  // Sample data for time tracking pie chart
-  const timePieData = {
-    labels: ['Completed on Time', 'Overtime'],
-    datasets: [
-      {
-        data: [75, 25], // example values
-        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-      },
-    ],
-  };
-
-  // Options to display percentage inside pie chart
-  const timePieOptions = {
-    maintainAspectRatio: false,
-    plugins: {
-      datalabels: {
-        display: true,
-        color: 'white',
-        formatter: (value, context) => {
-          const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-          const percentage = ((value / total) * 100).toFixed(2);
-          return percentage + '%';
-        },
-      },
-    },
-  };
-
 
   return (
     <main>
@@ -325,43 +386,44 @@ const pieOptions = {
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
             <Row>
-              <Col lg="6" className="mb-4">
+              <Col lg="12" className="mb-4">
                 <Card>
-                  <CardBody>
-                    <CardTitle tag="h5">Project Progress Chart</CardTitle>
-                    {showCharts && (
-                      <>
-                        <div className="chart-container mb-4">
-                          <Bar data={sprintData} options={options} plugins={[ChartDataLabels]} />
-                        </div>
-                        <div className="chart-container mb-4">
-                          <Pie data={pieData} options={pieOptions} plugins={[ChartDataLabels]} />
-                        </div>
+                <Row>
+                  <Col lg="6">
+                    <CardBody>
+                      <CardTitle tag="h5">Project Progress Chart</CardTitle>
+                      {showCharts && (
+                        <>
+                          <div className="chart-container mb-4">
+                            <Bar data={sprintData} options={options} plugins={[ChartDataLabels]} />
+                          </div>
+                          <div className="chart-container mb-4">
+                            <Pie data={pieData} options={pieOptions} plugins={[ChartDataLabels]} />
+                          </div>
 
-                        <div className="chart-container mb-4">
-                          <Line data={sprintDetailsData} options={sprintOptions} />
-                        </div>
-                        
-
-                      </>
-                    )}
-                  </CardBody>
+                          <div className="chart-container mb-4">
+                            <Line data={sprintDetailsData} options={sprintOptions} />
+                          </div>
+                        </>
+                      )}
+                    </CardBody>
+                  </Col>
+                  
+                  <Col lg="6">
+                    <CardBody>
+                    <CardTitle tag="h5">Time Tracking Chart</CardTitle>
+                    <div className="chart-container mb-4">
+                    <Bar data={timebarData} options={timeBarOptions} />
+                    </div>
+                    <div className="chart-container mb-4">
+                      <Pie data={timepieData} options={pieOptions} plugins={[ChartDataLabels]} />
+                    </div>
+                    </CardBody>
+                  </Col>
+                  </Row>
                 </Card>
               </Col>
 
-              <Col lg="6" className="mb-4">
-                <Card>
-                  <CardBody>
-                  <CardTitle tag="h5">Time Tracking Chart</CardTitle>
-                  <div className="chart-container mb-4">
-                    <Line data={timeTrackingData} options={timeTrackingOptions} plugins={[ChartDataLabels]} />
-                  </div>
-                  <div className="chart-container mb-4">
-                    <Pie data={timePieData} options={timePieOptions} plugins={[ChartDataLabels]} />
-                  </div>
-                  </CardBody>
-                </Card>
-              </Col>
             </Row>
             <Row>
               <Col lg="12" className="mb-4">
@@ -405,19 +467,18 @@ const pieOptions = {
                       <Row>
                         <Col md="6">
                         <CardTitle tag="h5">Time Tracking</CardTitle>
-                        <ul>
-                          {sprints.map((sprint, index) => (
-                            <li key={index}>
-                              Sprint {sprint.sprintNum}: {sprint.startDate && sprint.endDate ? `${sprint.startDate} - ${sprint.endDate}` : '(Date to be determined)'},
-                            </li>
-                          ))}
-                        </ul>
-                      <ul>
-                        <li>Sprint 1: Completion Time - xx%, Overtime - xx%</li>
-                        <li>Sprint 2: Completion Time - xx%, Overtime - xx%</li>
-                        <li>Sprint 3: Completion Time - xx%, Overtime - xx%</li>
-                        <li>Sprint 4: Completion Time - xx%, Overtime - xx%</li>
-                      </ul>
+                          <ul>
+                            {sprints.map((sprint, index) => {
+                              const days = sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0;
+                              const percentage = totalProjectDays ? ((days / totalProjectDays) * 100).toFixed(2) : 0;
+                              return (
+                                <li key={index}>
+                                  Sprint {sprint.sprintNum}: {days ? `${days} days` : '(Date to be determined)'},
+                                  Overtime - {percentage}%
+                                </li>
+                              );
+                            })}
+                          </ul>
                         </Col>
                         <Col md="6">
                           <CardTitle tag="h5">Performance Metrics</CardTitle>
