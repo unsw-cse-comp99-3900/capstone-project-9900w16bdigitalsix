@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
@@ -50,6 +50,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const [teamMember, setTeamMember] = useState([]);
   const [preReason, setPreReason] = useState("");
   const [searchKey, setSearchKey] = useState("");
+  const searchInputRef = useRef(null);
   const userRole = parseInt(localStorage.getItem("role"));
 
   // this function used to get all teams that prefer a specific project
@@ -236,6 +237,12 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     }
   };
 
+  useEffect(() => {
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [searchKey]);
+
   // this function is used to clear the search input field and seach results
   const handleClearSearch = () => {
     setSearchKey("");
@@ -266,6 +273,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                 onClick={() => handleClick("Preference List")}
                 style={{
                   color: selected === "Preference List" ? "blue" : "inherit",
+                  marginRight: "5vw",
                 }}
               >
                 Preference List
@@ -290,6 +298,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                     placeholder="Search (separated by comma)"
                     prefix={<SearchOutlined />}
                     value={searchKey}
+                    ref={searchInputRef}
                     onChange={(e) => {
                       setSearchKey(e.target.value);
                     }}
