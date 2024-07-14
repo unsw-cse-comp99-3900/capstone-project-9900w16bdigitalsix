@@ -1171,6 +1171,77 @@
                 }
             }
         },
+        "/v1/project/get/list/byRole/{userId}": {
+            "get": {
+                "description": "Get a list of the corresponding public projects based on the userID and role. If the user is a student (role == 1), the projects assigned by the team the user belongs to are returned; if the user is a client (role == 3) or a coordinator (role == 4), all the public projects for which they are each responsible are returned.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "projects"
+                ],
+                "summary": "get public project list by user role",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.GetProjectListResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"Invalid userId\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "{\"error\": \"User does not have the required role\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"User not found\", \"error\": \"Team not found\", \"error\": \"Project not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Internal Server Error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/project/get/public_project/list": {
             "get": {
                 "description": "is_public 字段 1表示 public， 2 表示未公开, 这里返回的公开的 project 信息",

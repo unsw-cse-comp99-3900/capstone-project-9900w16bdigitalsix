@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -684,4 +685,105 @@ func RejectProjectAllocation(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Allocation canceled and notification sent successfully"})
+}
+
+// GetProjectsByRole godoc
+// @Summary get public project list by user role
+// @Description Get a list of the corresponding public projects based on the userID and role. If the user is a student (role == 1), the projects assigned by the team the user belongs to are returned; if the user is a client (role == 3) or a coordinator (role == 4), all the public projects for which they are each responsible are returned.
+// @Tags projects
+// @Accept json
+// @Produce json
+// @Param userId path int true "用户ID"
+// @Success 200 {array} response.GetProjectListResponse
+// @Failure 400 {object} map[string]string "{"error": "Invalid userId"}""
+// @Failure 404 {object} map[string]string "{"error": "User not found", "error": "Team not found", "error": "Project not found"}"
+// @Failure 403 {object} map[string]string "{"error": "User does not have the required role"}"
+// @Failure 500 {object} map[string]string "{"error": "Internal Server Error"}"
+// @Router /v1/project/get/list/byRole/{userId} [get]
+func GetProjectsByRole(c *gin.Context) {
+	userId, err := strconv.Atoi(c.Param("userId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid userId"})
+		return
+	}
+
+	var user models.User
+	if err := global.DB.First(&user, userId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	var projects []models.Project
+
+	switch user.Role {
+	case 1:
+		var team models.Team
+		if err := global.DB.First(&team, user.BelongsToGroup).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+			return
+		}
+		if team.AllocatedProject != nil {
+			var project models.Project
+			if err := global.DB.Preload("Skills").Preload("Teams").Where("id = ? AND is_public = ?", *team.AllocatedProject, 1).First(&project).Error; err != nil {
+				c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
+				return
+			}
+			projects = append(projects, project)
+		}
+	case 3:
+		if err := global.DB.Preload("Skills").Preload("Teams").Where("client_id = ? AND is_public = ?", userId, 1).Find(&projects).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	case 4:
+		if err := global.DB.Preload("Skills").Preload("Teams").Where("coordinator_id = ? AND is_public = ?", userId, 1).Find(&projects).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	default:
+		c.JSON(http.StatusForbidden, gin.H{"error": "User does not have the required role"})
+		return
+	}
+
+	var projectDetails []response.GetProjectListResponse
+	for _, project := range projects {
+		var client models.User
+		var tutor models.User
+		var coordinator models.User
+		global.DB.First(&client, project.ClientID)
+		global.DB.First(&tutor, project.TutorID)
+		global.DB.First(&coordinator, project.CoordinatorID)
+
+		var requiredSkills []string
+		for _, skill := range project.Skills {
+			requiredSkills = append(requiredSkills, skill.SkillName)
+		}
+
+		var allocatedTeams []response.AllocatedTeam
+		for _, team := range project.Teams {
+			allocatedTeams = append(allocatedTeams, response.AllocatedTeam{
+				TeamID:   team.ID,
+				TeamName: team.Name,
+			})
+		}
+
+		projectDetails = append(projectDetails, response.GetProjectListResponse{
+			ProjectID:        project.ID,
+			Title:            project.Name,
+			ClientID:         client.ID,
+			ClientName:       client.Username,
+			ClientEmail:      client.Email,
+			TutorID:          tutor.ID,
+			TutorName:        tutor.Username,
+			TutorEmail:       tutor.Email,
+			CoordinatorID:    coordinator.ID,
+			CoordinatorName:  coordinator.Username,
+			CoordinatorEmail: coordinator.Email,
+			RequiredSkills:   requiredSkills,
+			Field:            project.Field,
+			AllocatedTeam:    allocatedTeams,
+		})
+	}
+
+	c.JSON(http.StatusOK, projectDetails)
 }

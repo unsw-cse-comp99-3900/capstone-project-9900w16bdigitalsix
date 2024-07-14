@@ -1508,6 +1508,58 @@ paths:
       summary: Get project detail by projectID
       tags:
       - Project
+  /v1/project/get/list/byRole/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of the corresponding public projects based on the userID
+        and role. If the user is a student (role == 1), the projects assigned by the
+        team the user belongs to are returned; if the user is a client (role == 3)
+        or a coordinator (role == 4), all the public projects for which they are each
+        responsible are returned.
+      parameters:
+      - description: 用户ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.GetProjectListResponse'
+            type: array
+        "400":
+          description: '{"error": "Invalid userId"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: '{"error": "User does not have the required role"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "User not found", "error": "Team not found", "error":
+            "Project not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Internal Server Error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: get public project list by user role
+      tags:
+      - projects
   /v1/project/get/public_project/list:
     get:
       description: is_public 字段 1表示 public， 2 表示未公开, 这里返回的公开的 project 信息
