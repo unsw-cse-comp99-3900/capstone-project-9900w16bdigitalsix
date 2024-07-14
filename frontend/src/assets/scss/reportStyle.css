@@ -55,3 +55,7 @@
   border-bottom: 2px solid #ccc;
   padding-bottom: 5px;
 }
+
+.light-text {
+  font-weight: 300;
+}
