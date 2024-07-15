@@ -30,21 +30,8 @@ const ProjectList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkTeamAndFetchProjects = async () => {
+    const fetchProjects = async (userId) => {
       try {
-        const userId = localStorage.getItem('userId');
-        const role = parseInt(localStorage.getItem('role'), 10);
-        setRole(role);
-
-        const teamResponse = await apiCall('GET', `/v1/team/profile/${userId}`);
-        if (teamResponse.error) {
-          setAlertContent('You should gather your team first');
-          setOpenAlert(true);
-          return;
-        } else {
-          setHasTeam(true);
-        }
-
         const projectResponse = await apiCall('GET', `/v1/project/get/list/byRole/${userId}`);
         if (projectResponse.length === 0) {
           setHasProjects(false);
@@ -59,6 +46,31 @@ const ProjectList = () => {
           }));
           setProjects(mappedProjects);
           setHasProjects(true);
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    };
+
+    const checkTeamAndFetchProjects = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        const role = parseInt(localStorage.getItem('role'), 10);
+        setRole(role);
+
+        if (role !== 1) {
+          fetchProjects(userId);
+          return;
+        }
+
+        const teamResponse = await apiCall('GET', `/v1/team/profile/${userId}`);
+        if (teamResponse.error) {
+          setAlertContent('You should gather your team first');
+          setOpenAlert(true);
+          return;
+        } else {
+          setHasTeam(true);
+          fetchProjects(userId);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -106,7 +118,7 @@ const ProjectList = () => {
           </div>
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
-            {hasTeam && !hasProjects && (
+            {role === 1 && hasTeam && !hasProjects && (
               <div className="d-flex justify-content-center align-items-center mb-3" style={{ height: '200px' }}>
                 <Button
                   color="primary"
