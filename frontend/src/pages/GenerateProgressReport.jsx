@@ -13,6 +13,7 @@ import '../assets/scss/reportStyle.css';
 import { apiCall } from "../helper";
 
 const GenerateProgressReport = () => {
+  let globalUserStoryIndex = 1;
   const [showCharts, setShowCharts] = useState(false);
   // get localstorage
   const token = localStorage.getItem('token');
@@ -108,7 +109,7 @@ const GenerateProgressReport = () => {
     try {
       const data = await apiCall('GET', `v1/progress/get/detail/${teamId}`);
       setSprints(data.sprints);
-      //console.log("sprint data:", data.sprints);
+      console.log("sprint data:", data.sprints);
       updateChartData(data.sprints);
       updatePieChartData(data.sprints);
       updateLineChartData(data.sprints);
@@ -391,19 +392,21 @@ const pieOptions = {
                 <Row>
                   <Col lg="6">
                     <CardBody>
-                      <CardTitle tag="h5">Project Progress Chart</CardTitle>
+                      <CardTitle tag="h5"><strong>Project Progress Chart</strong></CardTitle>
                       {showCharts && (
                         <>
-                          <div className="chart-container mb-4">
-                            <Bar data={sprintData} options={options} plugins={[ChartDataLabels]} />
+                          <div className="chart-container mb-4"  style={{ padding: '30px 0 0 0' }}>
+                            <Bar data={sprintData} options={options} plugins={[ChartDataLabels]} />                  
                           </div>
-                          <div className="chart-container mb-4">
+                          <h6 style={{ textAlign: 'center', padding: '0 0 20px 0' }}>Fig 1. User Story Completion Tracking Chart</h6>
+                          <div className="chart-container mb-4"  style={{ padding: '10px 0 0 0' }}>
                             <Pie data={pieData} options={pieOptions} plugins={[ChartDataLabels]} />
                           </div>
-
-                          <div className="chart-container mb-4">
+                          <h6 style={{ textAlign: 'center', padding: '0 0 20px 0'}}>Fig 2. User Story Progress Overview</h6>   
+                          <div className="chart-container mb-4"  style={{ padding: '10px 0 0 0' }}>
                             <Line data={sprintDetailsData} options={sprintOptions} />
                           </div>
+                          <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Fig 3. Comparison of Sprint Scores to Average</h6>
                         </>
                       )}
                     </CardBody>
@@ -411,13 +414,15 @@ const pieOptions = {
                   
                   <Col lg="6">
                     <CardBody>
-                    <CardTitle tag="h5">Time Tracking Chart</CardTitle>
-                    <div className="chart-container mb-4">
+                    <CardTitle tag="h5"><strong>Time Tracking Chart</strong></CardTitle>
+                    <div className="chart-container mb-4" style={{ padding: '30px 0 0 0' }}>
                     <Bar data={timebarData} options={timeBarOptions} />
                     </div>
+                    <h6 style={{ textAlign: 'center', padding: '0 0 30px 0'}}>Fig 4. Duration of Sprints Over Time</h6>
                     <div className="chart-container mb-4">
                       <Pie data={timepieData} options={pieOptions} plugins={[ChartDataLabels]} />
                     </div>
+                    <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Fig 5. Sprint Time Contributions to Total Project Duration</h6>
                     </CardBody>
                   </Col>
                   </Row>
@@ -429,11 +434,10 @@ const pieOptions = {
               <Col lg="12" className="mb-4">
                 <Card>
                   <CardBody>
-                    <CardTitle tag="h5"><strong>Project Details</strong></CardTitle>
                     <CardText>
                       <Row>
                         <Col md="6">
-                        <CardTitle tag="h5">Project Overview</CardTitle>
+                        <CardTitle tag="h5"><strong>Project Overview</strong></CardTitle>
                         <CardText style = {{textAlign: 'justify'}}>
                           <strong>Project Name:</strong> {title}<br />
                           <strong>Field:</strong> {field}<br />
@@ -446,15 +450,15 @@ const pieOptions = {
                         </CardText>
                         </Col>
                         <Col md="6">
-                          <CardTitle tag="h5">Sprint Details and User Stories:</CardTitle>
+                          <CardTitle tag="h5"><strong>Sprint Details and User Stories:</strong></CardTitle>
                           <ul>
                             {sprints.map((sprint, index) => (
                               <li key={index} style = {{textAlign: 'justify'}}>
-                                Sprint {sprint.sprintNum}: {sprint.startDate && sprint.endDate ? `${sprint.startDate} - ${sprint.endDate}` : '(Date to be determined)'},
+                                Sprint {sprint.sprintNum}: {sprint.startDate && sprint.endDate ? `${sprint.startDate} / ${sprint.endDate}` : '(Date to be determined)'},
                                 <ul>
                                   {sprint.userStoryList.map((story) => (
-                                    <li key={story.userStoryId}>
-                                      User Story {story.userStoryId}: {story.userStoryDescription}<br />
+                                    <li key={story.userStoryId} style={{ marginBottom: '6px' }}>
+                                      User Story {globalUserStoryIndex++}: {story.userStoryDescription}<br />
                                       Status: {userstoryStatus(story.userStoryStatus)}
                                     </li>
                                   ))}
@@ -466,7 +470,7 @@ const pieOptions = {
                       </Row>
                       <Row>
                         <Col md="6">
-                        <CardTitle tag="h5">Time Tracking</CardTitle>
+                        <CardTitle tag="h5"><strong>Time Tracking</strong></CardTitle>
                           <ul>
                             {sprints.map((sprint, index) => {
                               const days = sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0;
@@ -481,7 +485,7 @@ const pieOptions = {
                           </ul>
                         </Col>
                         <Col md="6">
-                          <CardTitle tag="h5">Performance Metrics</CardTitle>
+                          <CardTitle tag="h5"><strong>Performance Metrics</strong></CardTitle>
                           <strong>Sprint Scores:</strong>
                           <ul>
                             {sprints.map((sprint, index) => (
