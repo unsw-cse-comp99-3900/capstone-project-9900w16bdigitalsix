@@ -42,18 +42,47 @@ const FullLayout = () => {
     }
   }, [mountedRef]);
 
-  const seachList = () => {
+  const seachList = async () => {
     const searchTerm = seachRef.current.input.value.toLowerCase();
     console.log(searchTerm);
     if (searchTerm) {
-      // const url = `v1/search/team/list/deatil/${searchTerm}`
-    const url = `v1/search/team/list/detail`
-      loadMoreData(url)
+      const url = 'v1/search/team/unallocated/list/detail'; 
+      const requestBody = {
+        searchList: searchTerm.split(' ')
+      };
+      if (loading) return;
+      setLoading(true);
+      const response = await apiCall('POST', url, requestBody);
+      console.log('....list....', response);
+      if (!response || response.error) {
+        setData([]);
+        setLoading(false);
+      } else {
+        const res = response;
+        console.log("res", res);
+        setData([...res]);
+        setLoading(false);
+      }
+      // fetch(url, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(requestBody),
+      // })
+      // .then(data => {
+      //   console.log(data);
+      // })
+      // .catch(error => {
+      //   console.error('Error:', error);
+      // });
     } else {
-      console.log(888)
+      console.log(888);
       loadMoreData();
     }
   };
+  
+  
 
   return (
     <main>
