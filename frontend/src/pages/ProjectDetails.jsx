@@ -19,8 +19,7 @@ import "../assets/scss/FullLayout.css"; //make sure import this
 import { apiCall } from "../helper";
 
 const ProjectDetails = () => {
-  // const ProjectDetails = ({projectId}) => {
-    let { projectId } = useParams();
+  let { projectId } = useParams();
 
   // some states
   const [title, setTitle] = useState("");
@@ -112,7 +111,7 @@ const ProjectDetails = () => {
       teamId: teamId,
       teamIdShow: teamIdShow,
       teamName: teamName,
-    }
+    };
     navigate(`/project/progress/${projectId}/${teamId}`, { state: { item } });
   };
 
@@ -241,15 +240,14 @@ const ProjectDetails = () => {
         </div>
       </div>
       <Dialog open={open} onClose={handleClose}>
-        <div style={{ display: "flex" }}>
-          <DialogTitle style={{ minWidth: "36vw", paddingBottom: 2 }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <DialogTitle style={{ paddingBottom: 2, marginRight: "8vw" }}>
             Allocated Teams:
           </DialogTitle>
           <IconButton
             aria-label="close"
             onClick={handleClose}
             sx={{
-              left: 4,
               right: 0,
               color: (theme) => theme.palette.grey[500],
             }}
@@ -267,7 +265,7 @@ const ProjectDetails = () => {
                     <div style={{ display: "flex", direction: "row" }}>
                       <ListItem
                         alignItems="flex-start"
-                        style={{ flex: 7 }}
+                        style={{ flex: 7, cursor: "pointer" }}
                         onClick={() => {
                           handleClickTeam(
                             team.teamId,
