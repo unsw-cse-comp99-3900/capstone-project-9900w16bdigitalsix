@@ -25,7 +25,9 @@ const ProjectList = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const data = await apiCall('GET', '/v1/project/get/public_project/list');
+        const userId = localStorage.getItem('userId');
+        console.log(userId)
+        const data = await apiCall('GET', `/v1/project/get/list/byRole/${userId}`);
         const mappedProjects = data.map(project => ({
           id: project.projectId,
           title: project.title,
