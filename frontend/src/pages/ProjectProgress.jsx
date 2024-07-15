@@ -303,7 +303,7 @@ const ProjectProgress = (props) => {
                   }
                   description={
                     <div className="list-item-meta-description">
-                      <div className="list-item-meta-id">
+                      <div className="list-item-meta-id" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {story.userStoryDescription}
                       </div>
                     </div>
