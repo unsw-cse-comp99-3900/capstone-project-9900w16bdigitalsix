@@ -5,9 +5,10 @@ import { Button, List, Input, Avatar } from 'antd';
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import { Container } from "reactstrap";
-import axios from 'axios';
 import '../assets/scss/FullLayout.css'; // Make sure to import this file
 import { width } from '@mui/system';
+import { apiCall } from '../helper'; // Make sure to import this file
+
 
 const FullLayout = () => {
   const navigate = useNavigate();
@@ -16,31 +17,21 @@ const FullLayout = () => {
   const seachRef = useRef();
   const mountedRef = useRef(false);
 
-  const loadMoreData = async () => {
+  const loadMoreData = async (url = 'v1/team/get/unallocated/list') => {
     if (loading) return;
     setLoading(true);
-    const url = 'v1/team/get/list';
-    const params = {
-      name: 1,
-    };
-    if (seachRef.current.input.value)
-      params.name = seachRef.current.input.value;
-
-    axios
-      .get('http://110.141.48.210:3000/mock/13/v1/team/profile/:userId', {
-        params,
-      })
-      .then((response) => {
-        const res = response.data;
-        console.log(res);
-        setData([...res]);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setData([]);
-        setLoading(false);
-        console.error('Error fetching data:', error);
-      });
+    // const url = 'v1/team/get/unallocated/list';
+    const response = await apiCall('GET', url, null, null, null);
+    console.log('....list....', response);
+    if (!response || response.error) {
+      setData([]);
+      setLoading(false);
+    } else {
+      const res = response;
+      console.log("res", res);
+      setData([...res]);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -52,7 +43,16 @@ const FullLayout = () => {
   }, [mountedRef]);
 
   const seachList = () => {
-    // The code for the search function can be put here
+    const searchTerm = seachRef.current.input.value.toLowerCase();
+    console.log(searchTerm);
+    if (searchTerm) {
+      // const url = `v1/search/team/list/deatil/${searchTerm}`
+    const url = `v1/search/team/list/detail`
+      loadMoreData(url)
+    } else {
+      console.log(888)
+      loadMoreData();
+    }
   };
 
   return (
@@ -109,13 +109,18 @@ const FullLayout = () => {
                 renderItem={(item) => (
                   <List.Item key={item.id}>
                     <List.Item.Meta
-                      avatar={
-                        <Avatar
-                          src={'https://randomuser.me/api/portraits/women/28.jpg'}
-                        />
+                      title={<a>{item.teamName}</a>}
+                      description={
+                        <>
+                          <div className="skills-container" style={{marginLeft: '0'}}>
+                            {Array.isArray(item.teamSkills) && item.teamSkills.map(skill => (
+                              <span key={skill} className="skill-badge">
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        </>
                       }
-                      title={<a>{item.userName}</a>}
-                      description={item.email}
                     />
                   </List.Item>
                 )}
