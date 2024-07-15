@@ -730,6 +730,11 @@ func GetProjectsByRole(c *gin.Context) {
 			}
 			projects = append(projects, project)
 		}
+	case 2:
+		if err := global.DB.Preload("Skills").Preload("Teams").Where("tutor_id = ? AND is_public = ?", userId, 1).Find(&projects).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 	case 3:
 		if err := global.DB.Preload("Skills").Preload("Teams").Where("client_id = ? AND is_public = ?", userId, 1).Find(&projects).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
