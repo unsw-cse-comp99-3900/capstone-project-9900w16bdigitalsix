@@ -429,7 +429,7 @@ func GetAllTeams(c *gin.Context) {
 // @Produce  json
 // @Success 200 {array} response.TeamListResponse
 // @Failure 500 {object} map[string]string "{"error": "Failed to fetch teams"}"
-// @Router /v1/team/get/unallocated-list [get]
+// @Router /v1/team/get/unallocated/list [get]
 func GetUnallocatedTeams(c *gin.Context) {
 	var teams []models.Team
 	// 只获取未分配项目的团队

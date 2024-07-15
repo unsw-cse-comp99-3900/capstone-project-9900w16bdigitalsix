@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/agnivade/levenshtein"
 	"github.com/gin-gonic/gin"
 
 	"web/forms"
@@ -13,8 +14,8 @@ import (
 	"web/models"
 )
 
-// @Summary Search preference project unallocated team list
-// @Description Search unallocated team list based on project preference
+// @Summary Search unallocated team list by team skills or teamIdShow
+// @Description Search unallocated team list based on team skills or teamIdShow
 // @Tags Search
 // @Accept  json
 // @Produce  json
@@ -113,4 +114,94 @@ func formatSearchTeamResponse(teams []models.Team) []response.SearchTeamResponse
 		})
 	}
 	return teamResponses
+}
+
+// SearchPublicProjects godoc
+// @Summary Search public projects by title or field
+// @Description Search for public projects by title or field, fuzzy matching, and support for similarity thresholds
+// @Tags Search
+// @Accept json
+// @Produce json
+// @Param filterString path string true "过滤字符串"
+// @Success 200 {array} response.GetProjectListResponse
+// @Failure 400 {object} map[string]string "{"error": "Invalid filter string"}"
+// @Failure 500 {object} map[string]string "{"error": "Internal Server Error"}"
+// @Router /v1/search/public/project/{filterString} [get]
+func SearchPublicProjects(c *gin.Context) {
+	filterString := c.Param("filterString")
+	if filterString == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid filter string"})
+		return
+	}
+
+	var projects []models.Project
+	if err := global.DB.Preload("Skills").Preload("Teams").Where("is_public = ?", 1).Find(&projects).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	var matchingProjects []models.Project
+	for _, project := range projects {
+		titleSimilarity := similarity(strings.ToLower(project.Name), strings.ToLower(filterString))
+		fieldSimilarity := similarity(strings.ToLower(project.Field), strings.ToLower(filterString))
+
+		if titleSimilarity >= 0.5 || fieldSimilarity >= 0.5 {
+			matchingProjects = append(matchingProjects, project)
+		}
+	}
+
+	var projectDetails []response.GetProjectListResponse
+	for _, project := range matchingProjects {
+		var client models.User
+		var tutor models.User
+		var coordinator models.User
+		global.DB.First(&client, project.ClientID)
+		global.DB.First(&tutor, project.TutorID)
+		global.DB.First(&coordinator, project.CoordinatorID)
+
+		var requiredSkills []string
+		for _, skill := range project.Skills {
+			requiredSkills = append(requiredSkills, skill.SkillName)
+		}
+
+		var allocatedTeams []response.AllocatedTeam
+		for _, team := range project.Teams {
+			allocatedTeams = append(allocatedTeams, response.AllocatedTeam{
+				TeamID:   team.ID,
+				TeamName: team.Name,
+			})
+		}
+
+		projectDetails = append(projectDetails, response.GetProjectListResponse{
+			ProjectID:        project.ID,
+			Title:            project.Name,
+			ClientID:         client.ID,
+			ClientName:       client.Username,
+			ClientEmail:      client.Email,
+			TutorID:          tutor.ID,
+			TutorName:        tutor.Username,
+			TutorEmail:       tutor.Email,
+			CoordinatorID:    coordinator.ID,
+			CoordinatorName:  coordinator.Username,
+			CoordinatorEmail: coordinator.Email,
+			RequiredSkills:   requiredSkills,
+			Field:            project.Field,
+			AllocatedTeam:    allocatedTeams,
+		})
+	}
+
+	c.JSON(http.StatusOK, projectDetails)
+}
+
+func similarity(a, b string) float64 {
+	distance := levenshtein.ComputeDistance(a, b)
+	length := max(len(a), len(b))
+	return 1 - float64(distance)/float64(length)
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }

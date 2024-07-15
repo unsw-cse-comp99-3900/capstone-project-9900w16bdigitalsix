@@ -118,6 +118,7 @@ func SearchRouter(Router *gin.RouterGroup) {
 	searchRouter := Router.Group("search")
     {
         searchRouter.POST("/team/list/detail", controllers.SearchUnallocatedTeams)
+		searchRouter.GET("/public/project/:filterString", controllers.SearchPublicProjects)
      
     }
 }

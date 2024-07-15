@@ -1520,9 +1520,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/search/team/list/detail": {
-            "post": {
-                "description": "Search unallocated team list based on project preference",
+        "/v1/search/public/project/{filterString}": {
+            "get": {
+                "description": "Search for public projects by title or field, fuzzy matching, and support for similarity thresholds",
                 "consumes": [
                     "application/json"
                 ],
@@ -1532,7 +1532,60 @@ const docTemplate = `{
                 "tags": [
                     "Search"
                 ],
-                "summary": "Search preference project unallocated team list",
+                "summary": "Search public projects by title or field",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "过滤字符串",
+                        "name": "filterString",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.GetProjectListResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"Invalid filter string\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Internal Server Error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/search/team/list/detail": {
+            "post": {
+                "description": "Search unallocated team list based on team skills or teamIdShow",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Search unallocated team list by team skills or teamIdShow",
                 "parameters": [
                     {
                         "description": "Request Body",
@@ -1782,7 +1835,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/team/get/unallocated-list": {
+        "/v1/team/get/unallocated/list": {
             "get": {
                 "description": "Get all unallocated teams",
                 "consumes": [

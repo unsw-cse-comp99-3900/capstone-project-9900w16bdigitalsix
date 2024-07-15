@@ -1711,11 +1711,47 @@ paths:
       summary: Get allocated team details
       tags:
       - Project Allocation
+  /v1/search/public/project/{filterString}:
+    get:
+      consumes:
+      - application/json
+      description: Search for public projects by title or field, fuzzy matching, and
+        support for similarity thresholds
+      parameters:
+      - description: 过滤字符串
+        in: path
+        name: filterString
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.GetProjectListResponse'
+            type: array
+        "400":
+          description: '{"error": "Invalid filter string"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Internal Server Error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search public projects by title or field
+      tags:
+      - Search
   /v1/search/team/list/detail:
     post:
       consumes:
       - application/json
-      description: Search unallocated team list based on project preference
+      description: Search unallocated team list based on team skills or teamIdShow
       parameters:
       - description: Request Body
         in: body
@@ -1738,7 +1774,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Search preference project unallocated team list
+      summary: Search unallocated team list by team skills or teamIdShow
       tags:
       - Search
   /v1/student/unassigned/list:
@@ -1885,7 +1921,7 @@ paths:
       summary: Get student list information by team name
       tags:
       - Team
-  /v1/team/get/unallocated-list:
+  /v1/team/get/unallocated/list:
     get:
       consumes:
       - application/json
