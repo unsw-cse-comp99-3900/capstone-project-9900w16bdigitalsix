@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import MessageAlert from '../components/MessageAlert';
@@ -27,14 +27,36 @@ const ProjectForm = () => {
     file: null,
   });
 
+  const [role, setRole] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('error');
   const [alertMessage, setAlertMessage] = useState('');
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const storedRole = localStorage.getItem('role');
+    const storedEmail = localStorage.getItem('email');
+    setRole(parseInt(storedRole, 10));
+
+    if (storedRole === '3') {
+      setFormData((prevData) => ({ ...prevData, email: storedEmail }));
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
+    if (name === 'title') {
+      const wordCount = value.trim().split(/\s+/).length;
+      if (wordCount > 20) {
+        setAlertMessage('Project title cannot exceed 20 words.');
+        setAlertType('error');
+        setAlertOpen(true);
+        return;
+      }
+    }
+
     if (files) {
       setFormData({ ...formData, [name]: files[0] });
     } else {
@@ -46,6 +68,13 @@ const ProjectForm = () => {
     e.preventDefault();
 
     // Validate form data
+    const titleWordCount = formData.title.trim().split(/\s+/).length;
+    if (titleWordCount > 20) {
+      setAlertMessage('Project title cannot exceed 20 words.');
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    }
     if (!formData.title) {
       setAlertMessage('Project title is required.');
       setAlertType('error');
@@ -85,8 +114,7 @@ const ProjectForm = () => {
       } else if (key === 'email') {
         form.append('email', formData[key]);
       } else if (key === 'file') {
-        const blob = new Blob([formData[key]], { type: 'application/pdf' });
-        form.append('spec', blob, 'project_spec.pdf');
+        form.append('file', formData[key], formData[key].name);
       } else {
         form.append(key, formData[key]);
       }
@@ -127,7 +155,7 @@ const ProjectForm = () => {
     <div>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
-          <Label for="title">Project title (15 words maximum)</Label>
+          <Label for="title">Project title (20 words maximum)</Label>
           <Input
             type="text"
             name="title"
@@ -140,13 +168,25 @@ const ProjectForm = () => {
         <FormGroup>
           <Label for="field">Field</Label>
           <Input
-            type="text"
+            type="select"
             name="field"
             id="field"
-            placeholder="Enter field"
             value={formData.field}
             onChange={handleChange}
-          />
+          >
+            <option value="">Select field</option>
+            <option value="Artificial Intelligence">Artificial Intelligence</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Cyber Security">Cyber Security</option>
+            <option value="Software Engineering">Software Engineering</option>
+            <option value="Network Engineering">Network Engineering</option>
+            <option value="Human-Computer Interaction">Human-Computer Interaction</option>
+            <option value="Cloud Computing">Cloud Computing</option>
+            <option value="Information Systems">Information Systems</option>
+            <option value="Machine Learning">Machine Learning</option>
+            <option value="Blockchain">Blockchain</option>
+            <option value="Other">Other</option>
+          </Input>
         </FormGroup>
         <FormGroup>
           <Label for="description">Description</Label>
@@ -159,17 +199,19 @@ const ProjectForm = () => {
             onChange={handleChange}
           />
         </FormGroup>
-        <FormGroup>
-          <Label for="email">Email</Label>
-          <Input
-            type="email"
-            name="email"
-            id="email"
-            placeholder="Enter client email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </FormGroup>
+        {(role === 4 || role === 5) && (
+          <FormGroup>
+            <Label for="email">Email</Label>
+            <Input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Enter client email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </FormGroup>
+        )}
         <FormGroup>
           <Label for="requiredSkills">Required skills (please use ", " to separate each item)</Label>
           <Input
