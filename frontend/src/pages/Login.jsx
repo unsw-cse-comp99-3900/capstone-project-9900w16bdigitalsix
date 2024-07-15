@@ -39,7 +39,7 @@ const Login = (props) => {
   // load dashboard
   React.useEffect(() => {
     if (props.token) {
-      navigate('/');
+      navigate('/project/allproject');
     }
   }, [props.token]);
 
@@ -84,7 +84,7 @@ const Login = (props) => {
         props.setToken(data.token);
         props.setRole(data.role);
         setEmail(email);
-        navigate('/');
+        navigate('/project/allproject');
       }
       console.log(data);
     } catch (error) {

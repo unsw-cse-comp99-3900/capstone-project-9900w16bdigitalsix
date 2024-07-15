@@ -8,9 +8,11 @@ import axios from 'axios';
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import '../assets/scss/FullLayout.css'; // Make sure to import this file
-import '../assets/scss/CustomCard.css'; // 引入CSS文件
+import '../assets/scss/CustomCard.css'; // import CSS file
 import '../styles/project.css';
 import { apiCall } from '../helper'; // Make sure to import this file
+import CustomCard from '../components/CustomCard';
+
 const { Meta } = Card;
 
 const FullLayout = () => {
@@ -20,17 +22,19 @@ const FullLayout = () => {
   let [data, setData] = useState([]);
   const seachRef = useRef();
   const mountedRef = useRef(false);
+  const role = localStorage.getItem('role');
 
   const loadMoreData = async (url = 'v1/project/get/public_project/list') => {
-    // const url = 'v1/project/get/public_project/list';
     const response = await apiCall('GET', url, null, null, null);
     console.log('....list....', response);
-    if (response.error) {
+    if (!response) {
+      setData([]);
+    } else if (response.error) {
       setData([]);
     } else {
       const res = response;
       console.log(res);
-      setData([...res]);
+      setData(res);
     }
   };
 
@@ -52,30 +56,6 @@ const FullLayout = () => {
       console.log(888)
       loadMoreData();
     }
-    // if (searchTerm) {
-    //   let filtered;
-    //   if (team) {
-    //     filtered = data.filter((item) =>
-    //       [item.userName, String(item.userId)].some((field) =>
-    //         field.toLowerCase().includes(searchTerm)
-    //       )
-    //     );
-    //   } else {
-    //     filtered = data.filter((item) =>
-    //       [
-    //         item.userName,
-    //         item.email,
-    //         String(item.userId),
-    //         item.userSkills,
-    //       ].some((field) => field && field.toLowerCase().includes(searchTerm))
-    //     );
-    //   }
-    //   console.log(filtered);
-    //   setData(filtered);
-    // } else {
-    //   console.log(data);
-    //   loadMoreData();
-    // }
   };
 
   return (
@@ -113,97 +93,17 @@ const FullLayout = () => {
               </div>
             </div>
             <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
-              {data.map((item, index) => (
+              {data.map((project, index) => (
                 <Col xs={24} sm={16} md={8} span={8} key={index}>
-                   <Card className="mb-4 custom-card">
-        <div className="custom-card-header">
-          <h5 className="custom-card-title">{item.title}</h5>
-        </div>
-        <CardBody className="d-flex flex-column custom-card-body">
-          <div className="d-flex align-items-center mb-3">
-            <div className="avatar">
-              <span>{ item.clientName[0] }</span>
-            </div>
-            <div className="client-info">
-              <CardTitle tag="h5" className="client-name">{ item.clientName }</CardTitle>
-              <CardText className="client-title">{item.clientEmail}</CardText>
-            </div>
-          </div>
-          <div className="skills-container">
-            {Array.isArray(item.requiredSkills) && item.requiredSkills.map(skill => (
-              <span key={skill} className="skill-badge">
-                {skill}
-              </span>
-            ))}
-          </div>
-          <div className="field-container">
-            <span className="field-badge">{ item.field }</span>
-          </div>
-          {/* <div className="mt-auto d-flex justify-content-between">
-            <i className="bi bi-file-earmark"></i>
-            <Link to={`/project/edit/${id}`}>
-              <i className="bi bi-pencil"></i>
-            </Link>
-            <i className="bi bi-person"></i>
-            <i className="bi bi-trash" onClick={toggle} style={{ color: 'red', cursor: 'pointer' }}></i>
-          </div> */}
-        </CardBody>
-      </Card>
-                  {/* <Card
-                    style={{ width: 300 }}
-                    cover={
-                      <div
-                        style={{
-                          background: '#D8BFD8',
-                          borderTopLeftRadius: '5px',
-                          borderTopRightRadius: '5px',
-                          height: '150px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontWeight: '550',
-                          fontSize: '20px',
-                        }}
-                      >
-                        {item.title}
-                      </div>
-                    }
-                  >
-                    <Meta
-                      avatar={
-                        <div
-                          style={{
-                            width: '40px',
-                            height: '40px',
-                            borderRadius: '50%',
-                            background: '#D8BFD8',
-                          }}
-                        ></div>
-                      }
-                      title={
-                        <>
-                          {item.clientName}
-                          <br />
-                          <div style={{ color: '#ababab', fontSize: '12px' }}>
-                            {item.clientEmail}
-                          </div>
-                        </>
-                      }
-                      description={
-                        <>
-                          <div style={{ marginBottom: '10px' }}>
-                            {Array.isArray(item.requiredSkills) &&
-                              item.requiredSkills.map((skill, skillIndex) => (
-                                <Tag color="default" key={skillIndex}>
-                                  {skill}
-                                </Tag>
-                              ))}
-                          </div>
-                          {item.field}
-                        </>
-                      }
+                    <CustomCard
+                      id={project.projectId}
+                      title={project.title}
+                      client={project.clientName}
+                      clientTitle={project.clientEmail}
+                      skills={project.requiredSkills}
+                      field={project.field}
+                      role={role}
                     />
-                  </Card> */}
                 </Col>
               ))}
             </Row>

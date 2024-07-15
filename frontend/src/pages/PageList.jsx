@@ -94,7 +94,7 @@ const PageList = () => {
           element={<TeamTutor token={token} setToken={setToken} />}
         />
         <Route
-          path="/team/preference"
+          path="/team/unallocated"
           element={<StudentTeamPreference token={token} setToken={setToken} />}
         />
 
@@ -128,6 +128,10 @@ const PageList = () => {
           element={<ProjectDetails token={token} setToken={setToken} />}
         />
         <Route path="/project/allproject" element={<AllProject token={token} setToken={setToken}/>}/>
+        <Route
+          path="/project/preference"
+          element={<StudentTeamPreference token={token} setToken={setToken} />}
+        />
 
         {/* admin */}
         <Route
