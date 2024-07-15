@@ -28,3 +28,7 @@ type SearchTeamRequest struct {
 	ProjectId  uint     `json:"projectId" binding:"required"`
 	SearchList []string `json:"searchList" binding:"required"`
 }
+
+type SearchUnallocatedTeamRequest struct {
+	SearchList []string `json:"searchList" binding:"required"`
+}

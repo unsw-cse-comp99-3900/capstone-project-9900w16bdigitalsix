@@ -14,16 +14,16 @@ import (
 	"web/models"
 )
 
-// @Summary Search unallocated team list by team skills or teamIdShow
-// @Description Search unallocated team list based on team skills or teamIdShow
+// @Summary Search unallocated teams that preference a paticular project by team skills or teamIdShow
+// @Description Search unallocated teams that preference a paticular project by team skills or teamIdShow
 // @Tags Search
 // @Accept  json
 // @Produce  json
 // @Param body body forms.SearchTeamRequest true "Request Body"
 // @Success 200 {array} response.SearchTeamResponse
 // @Failure 500 {object} map[string]string "{"error": "Failed to fetch teams"}"
-// @Router /v1/search/team/list/detail [post]
-func SearchUnallocatedTeams(c *gin.Context) {
+// @Router /v1/search/team/unallocated/preferenceProject/list/detail [post]
+func SearchUnallocatedTeamsProject(c *gin.Context) {
 	var req forms.SearchTeamRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
@@ -47,6 +47,106 @@ func SearchUnallocatedTeams(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, formatSearchTeamResponse(teams))
+}
+
+// SearchUnallocatedTeams godoc
+// @Summary Search unallocated teams by team name or team skills or teamIdShow
+// @Description Search unallocated team list based on team skills or teamIdShow
+// @Tags Search
+// @Accept  json
+// @Produce  json
+// @Param body body forms.SearchUnallocatedTeamRequest true "Request Body"
+// @Success 200 {array} response.SearchTeamResponse
+// @Failure 500 {object} map[string]string "{"error": "Failed to fetch teams"}"
+// @Router /v1/searach/team/unallocated/list/detail [post]
+func SearchUnallocatedTeams(c *gin.Context) {
+	var req forms.SearchUnallocatedTeamRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	var teams []models.Team
+
+	if len(req.SearchList) == 1 {
+		searchTerm := req.SearchList[0]
+		// Try to match teamIdShow first
+		if idShow, err := strconv.Atoi(searchTerm); err == nil {
+			if fetchTeamsByTeamIDShow(c, uint(idShow), &teams) {
+				return
+			}
+		}
+		// If teamIdShow doesn't match, try to match teamName
+		if fetchTeamsByName(c, searchTerm, &teams) {
+			return
+		}
+		// If neither matches, try to match teamSkills
+		if fetchTeamsByTeamSkills(c, req.SearchList, &teams) {
+			return
+		}
+	} else {
+		// For multiple search terms, use teamSkills matching
+		if fetchTeamsByTeamSkills(c, req.SearchList, &teams) {
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, formatSearchTeamResponse(teams))
+}
+
+func fetchTeamsByName(c *gin.Context, name string, teams *[]models.Team) bool {
+	searchTerm := "%" + strings.ToLower(name) + "%"
+	if err := global.DB.Preload("Skills").Preload("Members").
+		Where("teams.allocated_project IS NULL AND LOWER(teams.name) LIKE ?", searchTerm).
+		Find(teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
+		return true
+	}
+
+	if len(*teams) > 0 {
+		c.JSON(http.StatusOK, formatSearchTeamResponse(*teams))
+		return true
+	}
+
+	return false
+}
+
+func fetchTeamsByTeamIDShow(c *gin.Context, idShow uint, teams *[]models.Team) bool {
+	if err := global.DB.Preload("Skills").Preload("Members").
+		Where("teams.allocated_project IS NULL AND teams.team_id_show = ?", idShow).
+		Find(teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
+		return true
+	}
+
+	if len(*teams) > 0 {
+		c.JSON(http.StatusOK, formatSearchTeamResponse(*teams))
+		return true
+	}
+
+	return false
+}
+
+func fetchTeamsByTeamSkills(c *gin.Context, searchList []string, teams *[]models.Team) bool {
+	query := global.DB.Preload("Skills").Preload("Members").
+		Where("teams.allocated_project IS NULL")
+
+	for _, searchTerm := range searchList {
+		searchTerm = "%" + strings.ToLower(searchTerm) + "%"
+		query = query.Where("EXISTS (SELECT 1 FROM team_skills ts JOIN skills s ON ts.skill_id = s.id WHERE ts.team_id = teams.id AND LOWER(s.skill_name) LIKE ?)", searchTerm)
+	}
+
+	if err := query.Find(teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
+		return true
+	}
+
+	if len(*teams) > 0 {
+		c.JSON(http.StatusOK, formatSearchTeamResponse(*teams))
+		return true
+	}
+
+	return false
 }
 
 func fetchTeamsByIDShow(c *gin.Context, projectId uint, idShow uint, teams *[]models.Team) bool {

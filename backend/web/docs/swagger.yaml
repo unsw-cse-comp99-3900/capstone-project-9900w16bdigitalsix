@@ -229,6 +229,15 @@ definitions:
     - projectId
     - searchList
     type: object
+  forms.SearchUnallocatedTeamRequest:
+    properties:
+      searchList:
+        items:
+          type: string
+        type: array
+    required:
+    - searchList
+    type: object
   forms.SendEmailResetPwdForm:
     properties:
       email:
@@ -1711,6 +1720,36 @@ paths:
       summary: Get allocated team details
       tags:
       - Project Allocation
+  /v1/searach/team/unallocated/list/detail:
+    post:
+      consumes:
+      - application/json
+      description: Search unallocated team list based on team skills or teamIdShow
+      parameters:
+      - description: Request Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/forms.SearchUnallocatedTeamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.SearchTeamResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search unallocated teams by team name or team skills or teamIdShow
+      tags:
+      - Search
   /v1/search/public/project/{filterString}:
     get:
       consumes:
@@ -1747,11 +1786,12 @@ paths:
       summary: Search public projects by title or field
       tags:
       - Search
-  /v1/search/team/list/detail:
+  /v1/search/team/unallocated/preferenceProject/list/detail:
     post:
       consumes:
       - application/json
-      description: Search unallocated team list based on team skills or teamIdShow
+      description: Search unallocated teams that preference a paticular project by
+        team skills or teamIdShow
       parameters:
       - description: Request Body
         in: body
@@ -1774,7 +1814,8 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Search unallocated team list by team skills or teamIdShow
+      summary: Search unallocated teams that preference a paticular project by team
+        skills or teamIdShow
       tags:
       - Search
   /v1/student/unassigned/list:

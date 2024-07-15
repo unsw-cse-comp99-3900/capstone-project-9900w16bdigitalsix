@@ -117,7 +117,8 @@ func ProgressRouter(Router *gin.RouterGroup) {
 func SearchRouter(Router *gin.RouterGroup) {
 	searchRouter := Router.Group("search")
     {
-        searchRouter.POST("/team/list/detail", controllers.SearchUnallocatedTeams)
+        searchRouter.POST("/team/unallocated/preferenceProject/list/detail", controllers.SearchUnallocatedTeamsProject)
+		searchRouter.POST("/team/unallocated/list/detail", controllers.SearchUnallocatedTeams)
 		searchRouter.GET("/public/project/:filterString", controllers.SearchPublicProjects)
      
     }

@@ -1520,6 +1520,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/searach/team/unallocated/list/detail": {
+            "post": {
+                "description": "Search unallocated team list based on team skills or teamIdShow",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Search unallocated teams by team name or team skills or teamIdShow",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.SearchUnallocatedTeamRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.SearchTeamResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch teams\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/search/public/project/{filterString}": {
             "get": {
                 "description": "Search for public projects by title or field, fuzzy matching, and support for similarity thresholds",
@@ -1573,9 +1619,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/search/team/list/detail": {
+        "/v1/search/team/unallocated/preferenceProject/list/detail": {
             "post": {
-                "description": "Search unallocated team list based on team skills or teamIdShow",
+                "description": "Search unallocated teams that preference a paticular project by team skills or teamIdShow",
                 "consumes": [
                     "application/json"
                 ],
@@ -1585,7 +1631,7 @@ const docTemplate = `{
                 "tags": [
                     "Search"
                 ],
-                "summary": "Search unallocated team list by team skills or teamIdShow",
+                "summary": "Search unallocated teams that preference a paticular project by team skills or teamIdShow",
                 "parameters": [
                     {
                         "description": "Request Body",
@@ -3264,6 +3310,20 @@ const docTemplate = `{
                 "projectId": {
                     "type": "integer"
                 },
+                "searchList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "forms.SearchUnallocatedTeamRequest": {
+            "type": "object",
+            "required": [
+                "searchList"
+            ],
+            "properties": {
                 "searchList": {
                     "type": "array",
                     "items": {
