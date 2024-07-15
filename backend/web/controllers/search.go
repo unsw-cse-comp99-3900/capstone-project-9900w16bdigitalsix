@@ -134,6 +134,8 @@ func SearchPublicProjects(c *gin.Context) {
 		return
 	}
 
+	filterWords := strings.Fields(strings.ToLower(filterString))
+
 	var projects []models.Project
 	if err := global.DB.Preload("Skills").Preload("Teams").Where("is_public = ?", 1).Find(&projects).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
@@ -142,10 +144,8 @@ func SearchPublicProjects(c *gin.Context) {
 
 	var matchingProjects []models.Project
 	for _, project := range projects {
-		titleSimilarity := similarity(strings.ToLower(project.Name), strings.ToLower(filterString))
-		fieldSimilarity := similarity(strings.ToLower(project.Field), strings.ToLower(filterString))
-
-		if titleSimilarity >= 0.5 || fieldSimilarity >= 0.5 {
+		projectWords := append(strings.Fields(strings.ToLower(project.Name)), strings.Fields(strings.ToLower(project.Field))...)
+		if containsMatchingWord(projectWords, filterWords, 0.5) {
 			matchingProjects = append(matchingProjects, project)
 		}
 	}
@@ -191,6 +191,17 @@ func SearchPublicProjects(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, projectDetails)
+}
+
+func containsMatchingWord(projectWords, filterWords []string, threshold float64) bool {
+	for _, pWord := range projectWords {
+		for _, fWord := range filterWords {
+			if similarity(pWord, fWord) >= threshold {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func similarity(a, b string) float64 {
