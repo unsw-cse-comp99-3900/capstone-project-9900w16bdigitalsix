@@ -26,6 +26,8 @@ import '../assets/scss/FullLayout.css';//make sure import this
 import Calendar from "../components/Calendar";
 import MessageAlert from '../components/MessageAlert';
 
+// student, tutor and client can edit project progress
+// student can't edit grade
 
 const statusColorMap = {
   1: '#808080',   // grey
@@ -122,8 +124,8 @@ const ProjectProgress = (props) => {
       setAlertType('success');
       setAlertOpen(true);
     }
-    toggleCalendarModal();
     loadUserData();
+    toggleCalendarModal();
   };
 
   const loadUserData = async () => {
@@ -257,7 +259,7 @@ const ProjectProgress = (props) => {
                 {sprintGrade ? `(${sprintGrade} / 100)` : '(. / 100)'}
               </span>
               <Tooltip title='Select Sprint Duration' placement="right">
-                {parseInt(role, 10) === 1 && (
+                {(parseInt(role, 10) !== 3) && (
                   <Button
                     type="primary"
                     style={{ margin: '8px', width: "20px", background: 'transparent' }}
@@ -273,7 +275,7 @@ const ProjectProgress = (props) => {
             </div>
             {/* add user story */}
             <Tooltip title="Add User Story">
-            {parseInt(role, 10) === 1 && (
+            {parseInt(role, 10) !== 3 && (
               <Button
                 type="primary"
                 style={{ margin: '8px' }}
@@ -285,7 +287,7 @@ const ProjectProgress = (props) => {
           </Typography.Title>
           {/* list of user story */}
           <List
-            loading={loading}
+            // loading={loading}
             dataSource={storys.filter(story => story.sprintNum === sprint.sprintNumber)}
             renderItem={(story, index) => (
               <List.Item className="list-item" key={story.userStoryId}>
@@ -319,7 +321,7 @@ const ProjectProgress = (props) => {
                 </Tooltip>
                 {/* delete user story */}
                 <Tooltip title='Delete'>
-                {parseInt(role, 10) === 1 && (
+                {parseInt(role, 10) !== 3 && (
                   <Button
                     type="secondary"
                     className="list-item-button"

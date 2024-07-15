@@ -16,7 +16,11 @@ import { apiCall } from '../helper';
 import MessageAlert from './MessageAlert';
 
 
-const GradeModal = ({ title, sprintData, visible, onCancel, gradeComment, setGradeComment, teamId, loadUserData }) => {
+const GradeModal = ({ title, sprintData, visible, onOk, onCancel, gradeComment, setGradeComment, teamId, loadUserData }) => {
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertType, setAlertType] = useState('');
+  const [snackbarContent, setSnackbarContent] = useState('');
+
   const token = localStorage.getItem('token');
   const role = localStorage.getItem('role');
   // handle change for grade or comment
@@ -44,7 +48,7 @@ const GradeModal = ({ title, sprintData, visible, onCancel, gradeComment, setGra
   };
 
   // handle edit grade:
-  const onOk = async() => {
+  const handleSave = async() => {
     let sprints = [];
     // convert to standard format
     Object.keys(gradeComment.grades).map((key, index) => {
@@ -72,7 +76,20 @@ const GradeModal = ({ title, sprintData, visible, onCancel, gradeComment, setGra
     }
     console.log("requestBody", requestBody);
     const response = await apiCall('POST', `v1/progress/edit/grade`, requestBody, token, true);
-    loadUserData();
+    console.log("response111", response);
+    if (response.error){
+      setSnackbarContent("Student team has not start the graded sprint.");
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    } else {
+      setSnackbarContent("Update successfully.");
+      setAlertType('success');
+      setAlertOpen(true);
+      loadUserData();
+      onOk();
+    }
+    
   };
 
   // won't show edit button for students
@@ -80,7 +97,7 @@ const GradeModal = ({ title, sprintData, visible, onCancel, gradeComment, setGra
     if (parseInt(role) !== 1) {
       return [
         <Button key="cancel" onClick={onCancel}>Cancel</Button>,
-        <Button key="submit" type="primary" onClick={onOk}>Save</Button>
+        <Button key="submit" type="primary" onClick={handleSave}>Save</Button>
       ];
     }
     return null; 
@@ -127,7 +144,7 @@ const GradeModal = ({ title, sprintData, visible, onCancel, gradeComment, setGra
       <Modal
         title={title}
         open={visible}
-        onOk={onOk}
+        onOk={handleSave}
         onCancel={onCancel}
         footer={renderFooter}
         style={{ marginLeft: '8px', transform: 'none' }}
@@ -137,6 +154,12 @@ const GradeModal = ({ title, sprintData, visible, onCancel, gradeComment, setGra
           {renderSprints()}
         </div>
       </Modal>
+      <MessageAlert
+        open={alertOpen}
+        alertType={alertType}
+        handleClose={() => setAlertOpen(false)}
+        snackbarContent={snackbarContent}
+      />
     </>
   );
 };

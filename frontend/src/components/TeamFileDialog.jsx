@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import { Input, Avatar } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
@@ -35,6 +33,11 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     }
   `;
 
+  const NoScrollDialogContent = styled(DialogContent)({
+    overflowX: "hidden",
+    overflowY: "auto",
+  });
+
   const [selected, setSelected] = useState("Preference List");
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -47,11 +50,12 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const [teamMember, setTeamMember] = useState([]);
   const [preReason, setPreReason] = useState("");
   const [searchKey, setSearchKey] = useState("");
-  const [isFilter, setIsFilter] = useState(false);
+  const searchInputRef = useRef(null);
   const userRole = parseInt(localStorage.getItem("role"));
 
   // this function used to get all teams that prefer a specific project
   const getAllAppliedTeams = async () => {
+    setSearchKey("");
     try {
       const res = await apiCall(
         "GET",
@@ -96,6 +100,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     }
   };
 
+  // this function is used to handle when click "preference" and "allocated"
   const handleClick = (name) => {
     setSelected(name);
     if (name === "Preference List") {
@@ -107,7 +112,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
 
   useEffect(() => {
     setSelected("Preference List");
-    setIsFilter(false);
     setSearchKey("");
     getAllAppliedTeams();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -208,22 +212,41 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   // this function is used to search teams that satisfy the search requirements
   const handleSearchTeams = async () => {
     const trimmedSearchKey = searchKey.trim();
-    if (trimmedSearchKey === "") {
+    const searchList = trimmedSearchKey.split(/, */);
+    const trimmedSearcList = searchList
+      .map((word) => word.trim())
+      .filter((word) => word !== "");
+    const body = {
+      projectId: projectId,
+      searchList: trimmedSearcList,
+    };
+    try {
+      const res = await apiCall("POST", `v1/search/team/list/detail`, body);
+      if (res === null) {
+        setCurrentTeam([]);
+        return;
+      }
+      if (res.error) {
+        setCurrentTeam([]);
+        return;
+      } else {
+        setCurrentTeam(res);
+      }
+    } catch (error) {
       return;
     }
-    if (!isFilter) {
-      const searchList = trimmedSearchKey.split(/, */);
-      const trimmedSearcList = searchList
-        .map((word) => word.trim())
-        .filter((word) => word !== "");
-      console.log(trimmedSearcList);
-      setIsFilter(true);
-      // to do 返回搜索结果
-    } else {
-      setSearchKey("");
-      setIsFilter(false);
-      getAllAppliedTeams();
+  };
+
+  useEffect(() => {
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
     }
+  }, [searchKey]);
+
+  // this function is used to clear the search input field and seach results
+  const handleClearSearch = () => {
+    setSearchKey("");
+    getAllAppliedTeams();
   };
 
   return (
@@ -234,289 +257,279 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
           aria-labelledby="customized-dialog-title"
           open={open}
         >
-          <DialogTitle
-            sx={{
-              m: 0,
-              p: 2,
-              textDecoration: "underline",
-              minWidth: "48vw",
-              display: "flex",
-            }}
-            id="customized-dialog-title"
-          >
-            <div style={{ marginRight: "18vw" }}>
+          <NoScrollDialogContent>
+            <DialogTitle
+              sx={{
+                m: 0,
+                p: 2,
+                paddingTop: 0,
+                textDecoration: "underline",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+              id="customized-dialog-title"
+            >
               <HoverDiv
                 onClick={() => handleClick("Preference List")}
                 style={{
                   color: selected === "Preference List" ? "blue" : "inherit",
+                  marginRight: "5vw",
                 }}
               >
                 Preference List
               </HoverDiv>
-            </div>
-            <div
-              style={{
-                display: "flex",
-              }}
-            >
               <HoverDiv
                 onClick={() => handleClick("Allocated Team")}
                 style={{
                   color: selected === "Allocated Team" ? "blue" : "inherit",
+                  alignItems: "right",
                 }}
               >
                 Allocated Team
               </HoverDiv>
-              <IconButton
-                aria-label="close"
-                onClick={handleClose}
-                sx={{
-                  left: 8,
-                  right: 0,
-                  color: (theme) => theme.palette.grey[500],
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-            </div>
-          </DialogTitle>
+            </DialogTitle>
 
-          <DialogContent dividers>
-            {/* this is search component used to search teams that satisfy the requirements */}
-            {selected === "Preference List" ? (
-              <div className="search">
-                <Input
-                  size="large"
-                  placeholder="Search Team (separated by comma)"
-                  prefix={<SearchOutlined />}
-                  value={searchKey}
-                  onChange={(e) => {
-                    setSearchKey(e.target.value);
-                  }}
-                  suffix={
-                    <Button
-                      size="small"
-                      type="primary"
-                      onClick={() => {
-                        handleSearchTeams();
-                      }}
-                    >
-                      {isFilter ? "Clear" : "Filter"}
-                    </Button>
-                  }
-                />
-              </div>
-            ) : (
-              <></>
-            )}
-
-            {/* the list component is used to show all teams that prefer or have been allocated a specific project */}
-            <List sx={{ width: "100%" }}>
-              {currentTeam.length > 0 ? (
-                currentTeam.map((team) => {
-                  return (
-                    <React.Fragment key={team.teamId}>
-                      <div style={{ display: "flex", direction: "row" }}>
-                        <ListItem
-                          alignItems="flex-start"
-                          style={{
-                            flex: 7,
-                            cursor: "pointer",
-                          }}
+            <DialogContent dividers>
+              {/* this is search component used to search teams that satisfy the requirements */}
+              {selected === "Preference List" ? (
+                <div className="search">
+                  <Input
+                    size="large"
+                    placeholder="Search (separated by comma)"
+                    prefix={<SearchOutlined />}
+                    value={searchKey}
+                    ref={searchInputRef}
+                    onChange={(e) => {
+                      setSearchKey(e.target.value);
+                    }}
+                    suffix={
+                      <>
+                        <Button
+                          size="small"
+                          type="primary"
                           onClick={() => {
-                            handleClickFetchFile(team.teamId);
+                            handleSearchTeams();
                           }}
                         >
-                          <ListItemText
-                            primary={`TeamName: ${team.teamName} `}
-                            secondary={
-                              <React.Fragment>
-                                <Typography
-                                  sx={{ display: "inline" }}
-                                  component="span"
-                                  variant="body2"
-                                  color="text.primary"
-                                >
-                                  TeamId: {team.teamIdShow} <br />
-                                </Typography>
-                                <Typography
-                                  sx={{ display: "inline" }}
-                                  component="span"
-                                  variant="body2"
-                                  color="text.primary"
-                                >
-                                  No. of TeamMembers: {team.teamMember.length}
-                                </Typography>
-                                <br />
-                                <Typography
-                                  sx={{ display: "inline" }}
-                                  component="span"
-                                  variant="body2"
-                                  color="text.primary"
-                                >
-                                  TeamSkills:{" "}
-                                  {team.teamSkills
-                                    ? team.teamSkills.join(", ")
-                                    : " "}{" "}
-                                </Typography>
-                              </React.Fragment>
-                            }
-                          />
-                        </ListItem>
-                        <ListItem style={{ textAlign: "right", flex: 1 }}>
-                          {userRole === 4 && selected === "Preference List" ? (
-                            <Button
-                              size="small"
-                              variant="contained"
-                              onClick={() => {
-                                handleApproveTeam(team.teamId);
-                              }}
-                            >
-                              Approve
-                            </Button>
-                          ) : userRole === 3 &&
-                            selected === "Allocated Team" ? (
-                            <Button
-                              size="small"
-                              variant="contained"
-                              onClick={() => {
-                                handleRejectTeam(team.teamId);
-                              }}
-                            >
-                              Reject
-                            </Button>
-                          ) : (
-                            ""
-                          )}
-                        </ListItem>
-                      </div>
-                      <Divider component="li" />
-                    </React.Fragment>
-                  );
-                })
+                          Filter
+                        </Button>
+                        <Button
+                          size="small"
+                          type="primary"
+                          onClick={() => {
+                            handleClearSearch();
+                          }}
+                        >
+                          clear
+                        </Button>
+                      </>
+                    }
+                  />
+                </div>
               ) : (
-                <Typography variant="h6" gutterBottom textAlign="center">
-                  No Teams Found
-                </Typography>
+                <></>
               )}
-            </List>
-          </DialogContent>
+
+              {/* the list component is used to show all teams that prefer or have been allocated a specific project */}
+              <List sx={{ width: "100%" }}>
+                {currentTeam.length > 0 ? (
+                  currentTeam.map((team) => {
+                    return (
+                      <React.Fragment key={team.teamId}>
+                        <div style={{ display: "flex", direction: "row" }}>
+                          <ListItem
+                            alignItems="flex-start"
+                            style={{
+                              flex: 7,
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              handleClickFetchFile(team.teamId);
+                            }}
+                          >
+                            <ListItemText
+                              primary={`TeamName: ${team.teamName} `}
+                              secondary={
+                                <React.Fragment>
+                                  <Typography
+                                    sx={{ display: "inline" }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                  >
+                                    TeamId: {team.teamIdShow} <br />
+                                  </Typography>
+                                  <Typography
+                                    sx={{ display: "inline" }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                  >
+                                    No. of TeamMembers: {team.teamMember.length}
+                                  </Typography>
+                                  <br />
+                                  <Typography
+                                    sx={{ display: "inline" }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                  >
+                                    TeamSkills:{" "}
+                                    {team.teamSkills
+                                      ? team.teamSkills.join(", ")
+                                      : " "}{" "}
+                                  </Typography>
+                                </React.Fragment>
+                              }
+                            />
+                          </ListItem>
+                          <ListItem style={{ textAlign: "right", flex: 1 }}>
+                            {userRole === 4 &&
+                            selected === "Preference List" ? (
+                              <Button
+                                size="small"
+                                variant="contained"
+                                onClick={() => {
+                                  handleApproveTeam(team.teamId);
+                                }}
+                              >
+                                Approve
+                              </Button>
+                            ) : userRole === 3 &&
+                              selected === "Allocated Team" ? (
+                              <Button
+                                size="small"
+                                variant="contained"
+                                onClick={() => {
+                                  handleRejectTeam(team.teamId);
+                                }}
+                              >
+                                Reject
+                              </Button>
+                            ) : (
+                              ""
+                            )}
+                          </ListItem>
+                        </div>
+                        <Divider component="li" />
+                      </React.Fragment>
+                    );
+                  })
+                ) : (
+                  <Typography variant="h6" gutterBottom textAlign="center">
+                    No Teams Found
+                  </Typography>
+                )}
+              </List>
+            </DialogContent>
+          </NoScrollDialogContent>
         </BootstrapDialog>
       </React.Fragment>
 
       <div>
         {/* this dialog is used to show a specific team's details */}
         <Dialog open={open2} onClose={handleClose2}>
-          <div style={{ display: "flex" }}>
-            <DialogTitle style={{ minWidth: "36vw", paddingBottom: 2 }}>
-              TeamName: {teamName ? teamName : "N/A"}
-            </DialogTitle>
-            <IconButton
-              aria-label="close"
-              onClick={handleClose2}
-              sx={{
-                left: 4,
-                right: 0,
-                color: (theme) => theme.palette.grey[500],
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </div>
-          <DialogContent style={{ paddingTop: 0 }}>
-            <Typography
-              sx={{ display: "inline" }}
-              component="span"
-              color="text.primary"
-            >
-              TeamId: {teamIdShow}
-            </Typography>{" "}
-            <br />
-            <Typography
-              sx={{ display: "inline" }}
-              component="span"
-              color="text.primary"
-            >
-              TeamSkills: {teamSkills ? teamSkills.join(", ") : "N/A"}
-            </Typography>
-          </DialogContent>
-          <DialogContent dividers>
-            <Typography
-              sx={{ display: "inline" }}
-              component="span"
-              color="text.primary"
-            >
-              Team members:
-            </Typography>
-            <List sx={{ width: "100%" }}>
-              {teamMember.map((member, index) => {
-                return (
-                  <React.Fragment key={member.userId}>
-                    <ListItem alignItems="flex-start">
-                      <ListItemAvatar>
-                        <Avatar
-                          alt={member.userName.charAt(0)}
-                          src={
-                            member.avatarURL === ""
-                              ? (member.avatarURL = member.userName.charAt(0))
-                              : member.avatarURL
+          <NoScrollDialogContent>
+            <div style={{ display: "flex" }}>
+              <DialogTitle style={{ paddingTop: 0 }}>
+                TeamName: {teamName ? teamName : "N/A"}
+              </DialogTitle>
+            </div>
+            <DialogContent style={{ paddingTop: 0 }}>
+              <Typography
+                sx={{ display: "inline" }}
+                component="span"
+                color="text.primary"
+              >
+                TeamId: {teamIdShow}
+              </Typography>{" "}
+              <br />
+              <Typography
+                sx={{ display: "inline" }}
+                component="span"
+                color="text.primary"
+              >
+                TeamSkills: {teamSkills ? teamSkills.join(", ") : "N/A"}
+              </Typography>
+            </DialogContent>
+            <DialogContent dividers>
+              <Typography
+                sx={{ display: "inline" }}
+                component="span"
+                color="text.primary"
+              >
+                Team members:
+              </Typography>
+              <List sx={{ width: "100%" }}>
+                {teamMember.map((member, index) => {
+                  return (
+                    <React.Fragment key={member.userId}>
+                      <ListItem alignItems="flex-start">
+                        <ListItemAvatar>
+                          <Avatar
+                            alt={member.userName.charAt(0)}
+                            src={
+                              member.avatarURL === ""
+                                ? (member.avatarURL = member.userName.charAt(0))
+                                : member.avatarURL
+                            }
+                          >
+                            {member.userName.charAt(0)}
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={`${member.userName} (${member.userEmail})`}
+                          secondary={
+                            <React.Fragment>
+                              <Typography
+                                sx={{ display: "inline" }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                              >
+                                UserId: {member.userId}
+                              </Typography>{" "}
+                              <br />
+                              <Typography
+                                sx={{ display: "inline" }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                              >
+                                User Skills:
+                              </Typography>
+                              {` ${
+                                member.userSkills
+                                  ? member.userSkills.join(", ")
+                                  : "N/A"
+                              }`}
+                            </React.Fragment>
                           }
-                        >
-                          {member.userName.charAt(0)}
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={`${member.userName} (${member.userEmail})`}
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              UserId: {member.userId}
-                            </Typography>{" "}
-                            <br />
-                            <Typography
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              User Skills:
-                            </Typography>
-                            {` ${
-                              member.userSkills
-                                ? member.userSkills.join(", ")
-                                : "N/A"
-                            }`}
-                          </React.Fragment>
-                        }
-                      />
-                    </ListItem>
-                  </React.Fragment>
-                );
-              })}
-            </List>
-          </DialogContent>
-          <DialogContent dividers>
-            <Typography
-              sx={{ display: "inline" }}
-              component="span"
-              color="text.primary"
-            >
-              Preference Reason:
-            </Typography>{" "}
-            <br />
-            <Typography
-              sx={{ display: "inline" }}
-              component="span"
-              color="text.primary"
-            >
-              &nbsp;&nbsp;{preReason}
-            </Typography>
-          </DialogContent>
+                        />
+                      </ListItem>
+                    </React.Fragment>
+                  );
+                })}
+              </List>
+            </DialogContent>
+            <DialogContent dividers>
+              <Typography
+                sx={{ display: "inline" }}
+                component="span"
+                color="text.primary"
+              >
+                Preference Reason:
+              </Typography>{" "}
+              <br />
+              <Typography
+                sx={{ display: "inline" }}
+                component="span"
+                color="text.primary"
+              >
+                &nbsp;&nbsp;{preReason}
+              </Typography>
+            </DialogContent>
+          </NoScrollDialogContent>
         </Dialog>
       </div>
 

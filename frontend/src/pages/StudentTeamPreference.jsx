@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container } from "reactstrap";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -113,11 +114,12 @@ const StudentTeamPreference = () => {
 
   // =======================
   const [open, setOpen] = useState(false);
-  const projectId = 7;
+  const projectId = 2;
   // =======================
 
   const [rows, setRows] = useState([]);
   const [allProjects, setAllProjects] = useState([]);
+  const navigate = useNavigate();
 
   const userId = parseInt(localStorage.getItem("userId"));
 
@@ -287,6 +289,12 @@ const StudentTeamPreference = () => {
     }
   };
 
+  // this function is used to handle back button
+  const handleBack = () => {
+    // to do: update the route
+    navigate("/project/myproject");
+  };
+
   // ============================
   const handleClose = (event, reason) => {
     setOpen(false);
@@ -420,7 +428,9 @@ const StudentTeamPreference = () => {
                       spacing={2}
                       sx={{ justifyContent: "center" }}
                     >
-                      <Button variant="outlined">⬅️ Back</Button>
+                      <Button variant="outlined" onClick={handleBack}>
+                        ⬅️ Back
+                      </Button>
                       <Button variant="outlined" onClick={addOneMore}>
                         ✚ Add one
                       </Button>
