@@ -221,7 +221,11 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       searchList: trimmedSearcList,
     };
     try {
-      const res = await apiCall("POST", `v1/search/team/list/detail`, body);
+      const res = await apiCall(
+        "POST",
+        `v1/search/team/unallocated/preferenceProject/list/detail`,
+        body
+      );
       if (res === null) {
         setCurrentTeam([]);
         return;
