@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardBody, CardTitle, CardText, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import '../assets/scss/CustomCard.css'; // 引入CSS文件
 
-const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete }) => {
+const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete, role }) => {
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
 
@@ -49,12 +49,20 @@ const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete })
             <span className="field-badge">{field}</span>
           </div>
           <div className="mt-auto d-flex justify-content-between">
+          {(role === 3 || role === 4 || role === 5) && (
             <i className="bi bi-file-earmark"></i>
-            <Link to={`/project/edit/${id}`}>
-              <i className="bi bi-pencil"></i>
-            </Link>
-            <i className="bi bi-person"></i>
-            <i className="bi bi-trash" onClick={toggle} style={{ color: 'red', cursor: 'pointer' }}></i>
+          )}
+            {(role === 3 || role === 4 || role === 5) && (
+              <Link to={`/project/edit/${id}`}>
+                <i className="bi bi-pencil"></i>
+              </Link>
+            )}
+            {(role === 2 || role === 3 || role === 4 || role === 5)  && (
+              <i className="bi bi-person"></i>
+            )}
+            {(role === 3 || role === 4 || role === 5) && (
+              <i className="bi bi-trash" onClick={toggle} style={{ color: 'red', cursor: 'pointer' }}></i>
+            )}
           </div>
         </CardBody>
       </Card>
