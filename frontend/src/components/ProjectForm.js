@@ -168,13 +168,25 @@ const ProjectForm = () => {
         <FormGroup>
           <Label for="field">Field</Label>
           <Input
-            type="text"
+            type="select"
             name="field"
             id="field"
-            placeholder="Enter field"
             value={formData.field}
             onChange={handleChange}
-          />
+          >
+            <option value="">Select field</option>
+            <option value="Artificial Intelligence">Artificial Intelligence</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Cyber Security">Cyber Security</option>
+            <option value="Software Engineering">Software Engineering</option>
+            <option value="Network Engineering">Network Engineering</option>
+            <option value="Human-Computer Interaction">Human-Computer Interaction</option>
+            <option value="Cloud Computing">Cloud Computing</option>
+            <option value="Information Systems">Information Systems</option>
+            <option value="Machine Learning">Machine Learning</option>
+            <option value="Blockchain">Blockchain</option>
+            <option value="Other">Other</option>
+          </Input>
         </FormGroup>
         <FormGroup>
           <Label for="description">Description</Label>

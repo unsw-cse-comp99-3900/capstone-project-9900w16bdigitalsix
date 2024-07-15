@@ -119,9 +119,12 @@ const EditProjectForm = ({ initialValues, id }) => {
       } else if (key === 'email') {
         form.append('clientEmail', formData[key]);
       } else if (key === 'file') {
-        const originalFileName = formData[key].name;
-        const newFileName = `${id}_${originalFileName}`;
-        form.append('spec', formData[key], newFileName);
+        if (formData[key]) {
+          const originalFileName = formData[key].name;
+          const newFileName = `${id}_${originalFileName}`;
+          form.append('spec', formData[key], newFileName);
+        }
+
       } else {
         form.append(key, formData[key]);
       }
@@ -158,6 +161,20 @@ const EditProjectForm = ({ initialValues, id }) => {
     setAlertOpen(false);
   };
 
+  const fields = [
+    "Artificial Intelligence",
+    "Data Science",
+    "Cyber Security",
+    "Software Engineering",
+    "Network Engineering",
+    "Human-Computer Interaction",
+    "Cloud Computing",
+    "Information Systems",
+    "Machine Learning",
+    "Blockchain",
+    "Other"
+  ];
+
   return (
     <div>
       <Form onSubmit={handleSubmit}>
@@ -175,13 +192,17 @@ const EditProjectForm = ({ initialValues, id }) => {
         <FormGroup>
           <Label for="field">Field</Label>
           <Input
-            type="text"
+            type="select"
             name="field"
             id="field"
-            placeholder="Enter field"
             value={formData.field}
             onChange={handleChange}
-          />
+          >
+            <option value="">Select field</option>
+            {fields.map((field, index) => (
+              <option key={index} value={field}>{field}</option>
+            ))}
+          </Input>
         </FormGroup>
         <FormGroup>
           <Label for="description">Description</Label>
@@ -208,7 +229,7 @@ const EditProjectForm = ({ initialValues, id }) => {
           </FormGroup>
         )}
         <FormGroup>
-          <Label for="requiredSkills">Required skills  (please use ", " to separate each item)</Label>
+          <Label for="requiredSkills">Required skills (please use ", " to separate each item)</Label>
           <Input
             type="text"
             name="requiredSkills"
