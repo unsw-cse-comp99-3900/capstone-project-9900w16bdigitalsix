@@ -19,7 +19,6 @@ import "../assets/scss/FullLayout.css"; //make sure import this
 import { apiCall } from "../helper";
 
 const ProjectDetails = () => {
-  // const ProjectDetails = ({projectId}) => {
     let { projectId } = useParams();
 
   // some states
