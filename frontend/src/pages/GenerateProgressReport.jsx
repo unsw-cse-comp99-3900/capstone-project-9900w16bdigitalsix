@@ -398,15 +398,15 @@ const pieOptions = {
                           <div className="chart-container mb-4"  style={{ padding: '30px 0 0 0' }}>
                             <Bar data={sprintData} options={options} plugins={[ChartDataLabels]} />                  
                           </div>
-                          <h6 style={{ textAlign: 'center', padding: '0 0 20px 0' }}>User Story Completion Tracking Chart</h6>
+                          <h6 style={{ textAlign: 'center', padding: '0 0 20px 0' }}>Fig 1. User Story Completion Tracking Chart</h6>
                           <div className="chart-container mb-4"  style={{ padding: '10px 0 0 0' }}>
                             <Pie data={pieData} options={pieOptions} plugins={[ChartDataLabels]} />
                           </div>
-                          <h6 style={{ textAlign: 'center', padding: '0 0 20px 0'}}>User Story Progress Overview</h6>   
+                          <h6 style={{ textAlign: 'center', padding: '0 0 20px 0'}}>Fig 2. User Story Progress Overview</h6>   
                           <div className="chart-container mb-4"  style={{ padding: '10px 0 0 0' }}>
                             <Line data={sprintDetailsData} options={sprintOptions} />
                           </div>
-                          <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Comparison of Sprint Scores to Average</h6>
+                          <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Fig 3. Comparison of Sprint Scores to Average</h6>
                         </>
                       )}
                     </CardBody>
@@ -418,11 +418,11 @@ const pieOptions = {
                     <div className="chart-container mb-4" style={{ padding: '30px 0 0 0' }}>
                     <Bar data={timebarData} options={timeBarOptions} />
                     </div>
-                    <h6 style={{ textAlign: 'center', padding: '0 0 30px 0'}}>Duration of Sprints Over Time</h6>
+                    <h6 style={{ textAlign: 'center', padding: '0 0 30px 0'}}>Fig 4. Duration of Sprints Over Time</h6>
                     <div className="chart-container mb-4">
                       <Pie data={timepieData} options={pieOptions} plugins={[ChartDataLabels]} />
                     </div>
-                    <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Sprint Time Contributions to Total Project Duration</h6>
+                    <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Fig 5. Sprint Time Contributions to Total Project Duration</h6>
                     </CardBody>
                   </Col>
                   </Row>
