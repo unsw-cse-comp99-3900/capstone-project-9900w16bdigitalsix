@@ -114,7 +114,7 @@ const StudentTeamPreference = () => {
 
   // =======================
   const [open, setOpen] = useState(false);
-  const projectId = 7;
+  const projectId = 2;
   // =======================
 
   const [rows, setRows] = useState([]);

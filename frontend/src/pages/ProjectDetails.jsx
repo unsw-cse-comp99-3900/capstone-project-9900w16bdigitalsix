@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Container, Card, CardTitle, CardBody } from "reactstrap";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -20,7 +20,7 @@ import { apiCall } from "../helper";
 
 const ProjectDetails = () => {
   // const ProjectDetails = ({projectId}) => {
-  const projectId = 7;
+    let { projectId } = useParams();
 
   // some states
   const [title, setTitle] = useState("");
@@ -106,15 +106,14 @@ const ProjectDetails = () => {
   };
 
   const handleClickTeam = (teamId, teamIdShow, teamName) => {
-    navigate("/team/preference", {
-      state: {
-        projectId: projectId,
-        title: title,
-        teamId: teamId,
-        teamIdShow: teamIdShow,
-        teamName: teamName,
-      },
-    });
+    const item = {
+      projectId: projectId,
+      title: title,
+      teamId: teamId,
+      teamIdShow: teamIdShow,
+      teamName: teamName,
+    }
+    navigate(`/project/progress/${projectId}/${teamId}`, { state: { item } });
   };
 
   return (

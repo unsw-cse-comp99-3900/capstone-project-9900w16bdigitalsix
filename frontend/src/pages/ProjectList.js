@@ -5,7 +5,7 @@ import Header from '../layouts/Header';
 import { Container, Row, Col, Button } from 'reactstrap';
 import CustomCard from '../components/CustomCard';
 
-import '../assets/scss/FullLayout.css';//make sure import this
+import '../assets/scss/FullLayout.css'; //make sure import this
 
 const apiCall = async (method, endpoint) => {
   const response = await fetch(`http://127.0.0.1:8080${endpoint}`, {
@@ -18,14 +18,16 @@ const apiCall = async (method, endpoint) => {
   return data;
 };
 
-
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const data = await apiCall('GET', '/v1/project/get/public_project/list');
+        const userId = localStorage.getItem('userId');
+        console.log(userId)
+        const data = await apiCall('GET', `/v1/project/get/list/byRole/${userId}`);
         const mappedProjects = data.map(project => ({
           id: project.projectId,
           title: project.title,
@@ -43,10 +45,14 @@ const ProjectList = () => {
     fetchProjects();
   }, []);
 
+  useEffect(() => {
+    const storedRole = localStorage.getItem('role');
+    setRole(parseInt(storedRole, 10));
+  }, []);
+
   const handleDelete = (id) => {
     setProjects(projects.filter(project => project.id !== id));
   };
-
 
   const archivedProjects = [
     {
@@ -55,6 +61,7 @@ const ProjectList = () => {
       clientTitle: 'Client Title',
       skills: 'Required Skills',
       field: 'Field',
+      imgSrc: 'path_to_your_image_4.jpg',
     },
     {
       title: 'Project Title',
@@ -62,6 +69,7 @@ const ProjectList = () => {
       clientTitle: 'Client Title',
       skills: 'Required Skills',
       field: 'Field',
+      imgSrc: 'path_to_your_image_5.jpg',
     },
     {
       title: 'Project Title',
@@ -69,6 +77,7 @@ const ProjectList = () => {
       clientTitle: 'Client Title',
       skills: 'Required Skills',
       field: 'Field',
+      imgSrc: 'path_to_your_image_6.jpg',
     },
   ];
 
@@ -91,30 +100,37 @@ const ProjectList = () => {
           </div>
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <h3>Published Project</h3>
-              <Link to="/project/create">
-                <Button color="primary">+ Create</Button>
-              </Link>
-            </div>
-            
+            {role === 1 && (
+              <Button color="primary" className="mb-3">Manage your preference list</Button>
+            )}
+            {(role === 3 || role === 4 || role === 5) && (
+              <div className="d-flex justify-content-between align-items-center mb-4">
+                <h3>Published Project</h3>
+                <Link to="/project/create">
+                  <Button color="primary">+ Create Project</Button>
+                </Link>
+              </div>
+            )}
+            {role !== 1 && role !== 3 && role !== 4 && role !== 5 && (
+              <h3 className="mb-4">Published Project</h3>
+            )}
 
             <Row>
-        {projects.map(project => (
-          <Col key={project.id} md="4">
-            <CustomCard
-              id={project.id}
-              title={project.title}
-              client={project.client}
-              clientTitle={project.clientTitle}
-              skills={project.skills}
-              field={project.field}
-              onDelete={handleDelete}
-            />
-          </Col>
-        ))}
-      </Row>
-
+              {projects.map(project => (
+                <Col key={project.id} md="4">
+                  <CustomCard
+                    id={project.id}
+                    title={project.title}
+                    client={project.client}
+                    clientTitle={project.clientTitle}
+                    skills={project.skills}
+                    field={project.field}
+                    onDelete={handleDelete}
+                    role={role}
+                  />
+                </Col>
+              ))}
+            </Row>
 
             <h3>Archived Projects</h3>
             <Row>
@@ -126,6 +142,7 @@ const ProjectList = () => {
                     clientTitle={project.clientTitle}
                     skills={project.skills}
                     field={project.field}
+                    role={role}
                     // imgSrc={project.imgSrc}
                   />
                 </Col>

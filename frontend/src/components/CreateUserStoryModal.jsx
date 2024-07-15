@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Select, Avatar, Input, Button, message } from 'antd';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Modal, Select, Avatar, Input, Button, message, Typography } from 'antd';
 
 import '../assets/scss/AssignRoleModal.css';
 import { apiCall } from '../helper';
@@ -7,22 +8,42 @@ import MessageAlert from './MessageAlert';
 
 import TextField from '@mui/material/TextField';
 
+const { Option } = Select;
 
-const roleMap = {
-  1: 'Student',
-  2: 'Tutor',
-  3: 'Client',
-  4: 'Coordinator',
-  5: 'Administrator'
+const statusMap = {
+  1: 'TO DO',
+  2: 'IN PROGRESS',
+  3: 'DONE',
 };
 
-const CreateUserStoryModal = ({ title, visible, defaultDes, description, setDescription, onOk, onCancel, refreshData }) => {
-  const [selectedSprint, setSelectedSprint] = useState('');
+const statusColorMap = {
+  1: '#808080',   // grey
+  2: '#88D2FF',   // blue
+  3: '#52c41a'    // green
+};
+
+const CreateUserStoryModal = ({ title, visible,  description, setDescription, onOk, onCancel, refreshData, sprintNo, teamId, userStoryStatus, setUserStoryStatus }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setDescription('');
+  }, []);
+
+  // record status
+  const handleStatusChange = (value) => {
+    setUserStoryStatus(parseInt(value, 10));
+  };
+
+  // record description
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  }
 
   const handleSubmit = async () => {
+    // valid check
     if (!description) {
       setSnackbarContent('Please complete description.');
       setAlertType('error');
@@ -30,22 +51,30 @@ const CreateUserStoryModal = ({ title, visible, defaultDes, description, setDesc
       return;
     }
 
+    // token check
     const token = localStorage.getItem('token');
     if (!token) {
-      setSnackbarContent('Please login first');
-      setAlertType('error');
-      setAlertOpen(true);
+      navigate('/login')
       return;
     }
 
-    const response = await apiCall('GET', 'v1/project/get/public_project/list', {}, token, true);
+    // request
+    const requestBody = {
+      sprintNum: parseInt(sprintNo, 10),
+      teamId: parseInt(teamId, 10),
+      userStoryDescription: description,
+      userStoryStatus: userStoryStatus
+    };
+
+    console.log("requestBody", requestBody);
+    const response = await apiCall('POST', 'v1/progress/create/userstory', requestBody, token, true);
 
     if (response.error) {
       setSnackbarContent(response.error);
       setAlertType('error');
       setAlertOpen(true);
     } else {
-      setSnackbarContent('Submit successfully');
+      setSnackbarContent('Create successfully');
       setAlertType('success');
       setAlertOpen(true);
       onOk();
@@ -57,7 +86,7 @@ const CreateUserStoryModal = ({ title, visible, defaultDes, description, setDesc
     <>
       <Modal
         title={title}
-        visible={visible}
+        open={visible}
         onOk={handleSubmit}
         onCancel={onCancel}
         footer={[
@@ -65,8 +94,31 @@ const CreateUserStoryModal = ({ title, visible, defaultDes, description, setDesc
           <Button key="submit" type="primary" onClick={handleSubmit}>Save</Button>
         ]}
       >
+        <Typography.Text
+          style={{marginRight: '16px'}}
+        >
+          Select Status:
+        </Typography.Text>
+        <Select
+          className="status-select"
+          placeholder="Select status"
+          value={userStoryStatus !== null ? userStoryStatus.toString() : undefined}
+          onChange={handleStatusChange}
+          style={{width: '50%'}}
+        >
+          {Object.keys(statusMap).map((key) => (
+            <Option key={key} value={key} label={statusMap[key]}>
+              <span style={{ color: statusColorMap[key] }}>{statusMap[key]}</span>
+            </Option>
+          ))}
+        </Select>
         <div className="modal-body">
-          <Input.TextArea placeholder="Description" autoSize={{ minRows: 3, maxRows: 6 }} />
+          <Input.TextArea 
+            placeholder="Description"
+            autoSize={{ minRows: 3, maxRows: 6 }}
+            onChange={handleDescriptionChange}
+            value={description}
+          />
         </div>
       </Modal>
       <MessageAlert

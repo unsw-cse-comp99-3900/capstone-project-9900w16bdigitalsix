@@ -1,8 +1,9 @@
 import { Outlet } from "react-router-dom";
-import { Container } from "reactstrap";
+import { Container, Card } from "reactstrap";
 import React, { useEffect, useRef, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Flex, List, Input, Modal, Avatar } from 'antd';
+import { Button as MUIButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import Sidebar from "../layouts/Sidebar";
@@ -16,9 +17,12 @@ const ProjectAdmin = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const seachRef = useRef();
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  
 
-  const loadUserData = async () => {
+
+  const loadProjectData = async () => {
     if (loading) return;
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -46,31 +50,38 @@ const ProjectAdmin = () => {
       setLoading(false);
     }
   };
-  
 
+  const handleSearchProjects = async () => {
+    const searchTerm = seachRef.current.input.value.toLowerCase();
+    try {
+      const response = await apiCall("GET", `v1/search/public/project/${searchTerm}`);
+      if (! response) {
+        setFilteredData([]);
+        return;
+      }
+      if (response.error) {
+        setFilteredData([]);
+        return;
+      } else {
+        const res = Array.isArray(response) ? response : [];
+        setFilteredData(res);
+      }
+    } catch (error) {
+      return;
+    }
+  };
+
+  const handleClear = () => {
+    setSearchTerm('');
+    loadProjectData();
+  };
   useEffect(() => {
-    loadUserData();
+    loadProjectData();
   }, []);
 
   const solveClickAssign = (item) => {
     navigate(`/project/admin/${item.projectId}`, { state: { item } });
   };
-  
-
-  const searchList = () => {
-    const searchTerm = seachRef.current.input.value.toLowerCase();
-    if (searchTerm) {
-      const filtered = data.filter(item => 
-        (item.title && item.title.toString().includes(searchTerm)) ||
-        (item.clientName && item.clientName.toLowerCase().includes(searchTerm)) || 
-        (item.clientEmail && item.clientEmail.toLowerCase().includes(searchTerm)) ||
-        (item.field && item.field.toLowerCase().includes(searchTerm))
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(data);
-    }
-  };  
 
   return (
     <main>
@@ -90,22 +101,38 @@ const ProjectAdmin = () => {
             <Header />
           </div>
           <Container className="p-4 wrapper" fluid>
-            <div className="search">
+            <div className="search" style={{ display: 'flex', alignItems: 'center', border: 'none' }}>
               <Input
                 ref={seachRef}
                 size="large"
                 placeholder="Search Project"
                 prefix={<SearchOutlined />}
-                onChange={searchList}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ marginRight: '10px' }}
               />
+              <MUIButton
+                size="small"
+                type="primary"
+                onClick={handleSearchProjects}
+                style={{ marginRight: '10px' }}
+              >
+                Filter
+              </MUIButton>
+              <MUIButton
+                size="small"
+                type="primary"
+                onClick={handleClear}
+              >
+                Clear
+              </MUIButton>
             </div>
-            <div id="scrollableDiv">
+            <Card style={{padding: '20px', margin: '20px'}}>
               <List
                 loading={loading}
                 dataSource={filteredData}
                 renderItem={(item) => (
                   <List.Item className="list-item" key={item.userId}>
-                    {/* <Avatar src={item.avatar || ''} size={48} className="avatar" /> */}
                     <List.Item.Meta style={{paddingLeft: "8px"}}
 
                       title={
@@ -125,7 +152,7 @@ const ProjectAdmin = () => {
                   </List.Item>
                 )}
               />
-            </div>
+            </Card>
           </Container>
         </div>
       </div>
