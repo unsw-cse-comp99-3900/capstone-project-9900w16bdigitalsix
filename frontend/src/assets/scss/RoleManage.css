@@ -11,7 +11,7 @@
 #scrollableDiv {
   width: 100%;
   max-width: 600px;
-  margin: 0 auto;
+  /* margin: 0 auto; */
   margin-top: 16px;
   max-height: 550px;
   overflow-y: auto;
