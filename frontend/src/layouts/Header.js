@@ -31,6 +31,7 @@ const Header = () => {
   const [snackbarContent, setSnackbarContent] = useState('');
   const [notificationCount, setNotificationCount] = useState(0);
 
+  const role = localStorage.getItem('role');
   const handleAlertClose = () => {
     setAlertOpen(false);
   };
@@ -133,7 +134,10 @@ const Header = () => {
             </Link>
           </NavItem>
           <NavItem>
-            <Link to="/project/myproject" className="nav-link">
+            <Link
+              to={parseInt(role) === 5 ? "/project/admin" : "/project/myproject"}
+              className="nav-link"
+            >
               My Project
             </Link>
           </NavItem>

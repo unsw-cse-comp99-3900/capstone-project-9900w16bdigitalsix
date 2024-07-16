@@ -1,36 +1,32 @@
-import React, { useEffect, useRef, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import { Button, Flex, List, Input } from "antd";
-import "../styles/teamTutor.css";
-// import { useNavigate } from "react-router-dom";
-import InviteModel from "../components/InviteModel";
-import { apiCall } from "../helper";
-import '../assets/scss/FullLayout.css';//make sure import this
+import React, { useEffect, useRef, useState } from 'react';
+import { Outlet, useNavigate } from "react-router-dom";
+import { SearchOutlined } from '@ant-design/icons';
+import { Button, List, Input, Avatar } from 'antd';
+import Sidebar from "../layouts/Sidebar";
+import Header from "../layouts/Header";
+import { Container } from "reactstrap";
+import '../assets/scss/FullLayout.css'; // Make sure to import this file
+import { width } from '@mui/system';
+import { apiCall } from '../helper'; // Make sure to import this file
+import { Chip, Box } from '@mui/material';
 
-import Sidebar from '../layouts/Sidebar';
-import Header from '../layouts/Header';
-import { Container } from 'reactstrap';
-import { Avatar, Chip, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
-export default function TeamTutor() {
-  const navigate = useNavigate(); // Initialize useNavigate
-  const [team, setTeam] = useState(true);
+
+const FullLayout = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const mounting = useRef(true);
-  const [data, setData] = useState([]);
-  const [allData, setAllData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(''); // State to manage input value
-
+  let [data, setData] = useState([]);
   const seachRef = useRef();
   const mountedRef = useRef(false);
-  const loadMoreData = async () => {
+  const [team, setTeam] = useState(true);
+  const [searchTerm, setSearchTerm] = useState(''); // State to manage input value
+
+  const loadMoreData = async (url = 'v1/team/get/unallocated/list') => {
     if (loading) return;
     setLoading(true);
-    const url = "v1/team/get/list";
-    const studentUrl = "v1/student/unassigned/list";
-    const response = await apiCall("GET", team ? url : studentUrl);
-    console.log("....list....", response);
+    // const url = 'v1/team/get/unallocated/list';
+    const response = await apiCall('GET', url, null, null, null);
+    console.log('....list....', response);
     if (!response || response.error) {
       setData([]);
       setLoading(false);
@@ -39,84 +35,62 @@ export default function TeamTutor() {
       console.log("res", res);
       setData([...res]);
       setLoading(false);
-      setAllData([...res]);
     }
   };
-
-  useEffect(() => {
-    if (mounting.current) {
-      mounting.current = false;
-    } else {
-      loadMoreData();
-    }
-  }, [team]);
 
   useEffect(() => {
     if (!mountedRef.current) {
       mountedRef.current = true;
-      console.log("...token..");
+      console.log('...token..');
       loadMoreData();
     }
   }, [mountedRef]);
 
-  const changeList = () => {
-    setData([]);
-    setTeam(!team);
-  };
-
-  const seachList = () => {
+  const seachList = async () => {
     const searchTerm = seachRef.current.input.value.toLowerCase();
     console.log(searchTerm);
     if (searchTerm) {
-      let filtered;
-      if (team) {
-        filtered = allData.filter((item) =>
-          [item.teamName, item.teamSkills, String(item.teamId)].some((field) => {
-            console.log("field", field);
-            if (field) {
-              if (Array.isArray(field)) {
-                field = field.join(' ');
-              }
-              return field.toLowerCase().includes(searchTerm);
-            }
-          })
-        );
+      const url = 'v1/search/team/unallocated/list/detail'; 
+      const requestBody = {
+        searchList: searchTerm.split(' ')
+      };
+      if (loading) return;
+      setLoading(true);
+      const response = await apiCall('POST', url, requestBody);
+      console.log('....list....', response);
+      if (!response || response.error) {
+        setData([]);
+        setLoading(false);
       } else {
-        filtered = allData.filter((item) =>
-          [item.userName, item.email, String(item.userId)].some((field) => {
-            if (field) {
-              if (Array.isArray(field)) {
-                field = field.join(' ');
-              }
-              return field.toLowerCase().includes(searchTerm);
-            }
-          })
-        );
+        const res = response;
+        console.log("res", res);
+        setData([...res]);
+        setLoading(false);
       }
-      console.log(filtered);
-      setData(filtered);
+      // fetch(url, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(requestBody),
+      // })
+      // .then(data => {
+      //   console.log(data);
+      // })
+      // .catch(error => {
+      //   console.error('Error:', error);
+      // });
     } else {
-      console.log(data);
+      console.log(888);
       loadMoreData();
     }
-  };
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const navigateToUnallocatedTeams = () => {
-    navigate("/team/unallocated"); // Replace with the actual path
   };
   const handleClearSearch = () => {
     setSearchTerm('');
     loadMoreData();
   };
 
+  
 
   return (
     <main>
@@ -136,35 +110,16 @@ export default function TeamTutor() {
             <Header />
           </div>
           {/********Middle Content**********/}
-          <Container className="p-4 wrapper" fluid style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Container className="p-4 wrapper" fluid style={{display:'flex',justifyContent:'center'}}>
             <>
-              <div className="titleBtn">
-                <Flex gap="small" wrap>
-                  <Button
-                    style={{ backgroundColor: "#6451e9", borderColor: "#6451e9" }}
-                    type="primary"
-                    shape="round"
-                    onClick={changeList}
-                  >
-                    {team ? "STUDENT LIST" : "TEAM LIST"}
-                  </Button>
-                  <Button
-                    style={{ backgroundColor: "#6451e9", borderColor: "#6451e9" }}
-                    type="primary"
-                    shape="round"
-                    onClick={navigateToUnallocatedTeams}
-                  >
-                    UNALLOCATED TEAMS
-                  </Button>
-                </Flex>
-              </div>
-              <div className="seach" style={{width:'600px'}}>
-              <Input
+            <div>
+            <div className="seach" style={{width:'100%'}}>
+                <Input
                   value={searchTerm} // Bind input value to state
                   onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
-                  placeholder={team ? "Search Team" : "Search Student"}
+                  placeholder="Search Projects"
                   prefix={<SearchOutlined />}
-                  style={{  marginRight: '10px' }}
+                  style={{ width: '100%', marginRight: '10px' }}
                   ref={seachRef}
                   size="large"
                 />
@@ -190,7 +145,7 @@ export default function TeamTutor() {
                   maxHeight: 550,
                   // overflow: "auto",
                   padding: "0 16px",
-                  width:"100%",
+                  width:"600px",
                   border: "1px solid rgba(140, 140, 140, 0.35)",
                   background: "#fff",
                 }}
@@ -250,14 +205,17 @@ export default function TeamTutor() {
                   />
                 )}
               </div>
-              <InviteModel
-                isModalOpen={isModalOpen}
-                handleClose={handleClose}
-              ></InviteModel>
+         
+
+            </div>
+         
+             
             </>
           </Container>
         </div>
       </div>
     </main>
   );
-}
+};
+
+export default FullLayout;

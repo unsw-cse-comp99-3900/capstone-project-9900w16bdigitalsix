@@ -21,11 +21,9 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { Input } from "antd";
-
 import "../assets/scss/FullLayout.css"; //make sure import this
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
-import TeamFile from "../components/TeamFileDialog";
 import { apiCall } from "../helper";
 import MessageAlert from "../components/MessageAlert";
 
@@ -112,11 +110,6 @@ const StudentTeamPreference = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");
 
-  // =======================
-  const [open, setOpen] = useState(false);
-  const projectId = 2;
-  // =======================
-
   const [rows, setRows] = useState([]);
   const [allProjects, setAllProjects] = useState([]);
   const navigate = useNavigate();
@@ -200,12 +193,6 @@ const StudentTeamPreference = () => {
     newRows[index].reason = event.target.value;
     setRows(newRows);
   };
-
-  // =========================
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  // =========================
 
   const handleCloseAlert = (event, reason) => {
     if (reason === "clickaway") {
@@ -291,15 +278,8 @@ const StudentTeamPreference = () => {
 
   // this function is used to handle back button
   const handleBack = () => {
-    // to do: update the route
     navigate("/project/myproject");
   };
-
-  // ============================
-  const handleClose = (event, reason) => {
-    setOpen(false);
-  };
-  // ============================
 
   if (rows.length === 0) {
     setRows([{ preNum: 1, projectId: "", reason: "" }]);
@@ -337,9 +317,9 @@ const StudentTeamPreference = () => {
                     >
                       Preference List
                     </Typography>
-                    <Typography variant="h5" gutterBottom fontWeight={"bold"}>
+                    {/* <Typography variant="h5" gutterBottom fontWeight={"bold"}>
                       You must select at least 7 preferences
-                    </Typography>
+                    </Typography> */}
                   </Item>
                   <Item>
                     {/* the table below is used to record team's preference list */}
@@ -441,22 +421,6 @@ const StudentTeamPreference = () => {
                       >
                         save
                       </Button>
-
-                      {/* ======================= */}
-                      <Button
-                        variant="contained"
-                        endIcon={<SendIcon />}
-                        onClick={handleClickOpen}
-                      >
-                        teamProfile
-                      </Button>
-                      <TeamFile
-                        open={open}
-                        handleClose={handleClose}
-                        projectId={projectId}
-                        handleClickOpen={handleClickOpen}
-                      />
-                      {/* ======================== */}
                     </Stack>
                   </Item>
                 </Stack>

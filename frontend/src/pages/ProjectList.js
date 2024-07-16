@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
 import { Container, Row, Col, Button } from 'reactstrap';
@@ -21,6 +21,8 @@ const apiCall = async (method, endpoint) => {
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [role, setRole] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -53,6 +55,11 @@ const ProjectList = () => {
   const handleDelete = (id) => {
     setProjects(projects.filter(project => project.id !== id));
   };
+
+  // navigate to manage preference list for student team
+  const handlePreference = () => {
+    navigate(`/project/preference`);
+  }
 
   const archivedProjects = [
     {
@@ -101,7 +108,13 @@ const ProjectList = () => {
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
             {role === 1 && (
-              <Button color="primary" className="mb-3">Manage your preference list</Button>
+              <Button
+                color="primary"
+                className="mb-3"
+                onClick={handlePreference}
+              >
+                Manage your preference list
+              </Button>
             )}
             {(role === 3 || role === 4 || role === 5) && (
               <div className="d-flex justify-content-between align-items-center mb-4">

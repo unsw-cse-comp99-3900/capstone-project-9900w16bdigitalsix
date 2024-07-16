@@ -18,6 +18,7 @@ import TeamRouter from "./TeamRouter";
 import Team from "./Team";
 import TeamTutor from "./TeamTutor";
 import StudentTeamPreference from "./StudentTeamPreference";
+import UnallocatedTeam from "./UnallocatedTeam";
 
 // project
 import ProjectList from "./ProjectList";
@@ -94,8 +95,8 @@ const PageList = () => {
           element={<TeamTutor token={token} setToken={setToken} />}
         />
         <Route
-          path="/team/preference"
-          element={<StudentTeamPreference token={token} setToken={setToken} />}
+          path="/team/unallocated"
+          element={<UnallocatedTeam token={token} setToken={setToken} />}
         />
 
         {/* project */}
@@ -128,6 +129,10 @@ const PageList = () => {
           element={<ProjectDetails token={token} setToken={setToken} />}
         />
         <Route path="/project/allproject" element={<AllProject token={token} setToken={setToken}/>}/>
+        <Route
+          path="/project/preference"
+          element={<StudentTeamPreference token={token} setToken={setToken} />}
+        />
 
         {/* admin */}
         <Route
