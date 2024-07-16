@@ -3,8 +3,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Card, CardBody, CardTitle, CardText, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import '../assets/scss/CustomCard.css'; // import CSS file
 import TeamFile from "../components/TeamFileDialog";
+import { SpaceContext } from 'antd/es/space';
 
-const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete, role }) => {
+const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role }) => {
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
 
@@ -41,6 +42,15 @@ const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete, r
       console.error('An error occurred while deleting the project:', error);
     }
   };
+  const renderAvatar = () => {
+    console.log(clientAvatar)
+    if (clientAvatar) {
+      return <img src={clientAvatar} alt="Client Avatar" className="avatar" />;
+    } else {
+      return <div className="avatar"> <span> {client[0]}</span></div>;
+    }
+  };
+
 
   return (
     <>
@@ -58,9 +68,7 @@ const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete, r
         </div>
         <CardBody className="d-flex flex-column custom-card-body">
           <div className="d-flex align-items-center mb-3">
-            <div className="avatar">
-              <span>{client[0]}</span>
-            </div>
+          {renderAvatar()}
             <div className="client-info">
               <CardTitle tag="h5" className="client-name">{client}</CardTitle>
               <CardText className="client-title">{clientTitle}</CardText>

@@ -101,6 +101,7 @@ const FullLayout = () => {
                       client={project.clientName}
                       clientTitle={project.clientEmail}
                       skills={project.requiredSkills}
+                      clientAvatar={project.clientAvatarURL}
                       field={project.field}
                       role={role}
                     />
