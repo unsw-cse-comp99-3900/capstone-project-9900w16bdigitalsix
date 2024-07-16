@@ -8,6 +8,8 @@ import { Container } from "reactstrap";
 import '../assets/scss/FullLayout.css'; // Make sure to import this file
 import { width } from '@mui/system';
 import { apiCall } from '../helper'; // Make sure to import this file
+import { Chip, Box } from '@mui/material';
+
 
 
 const FullLayout = () => {
@@ -16,6 +18,8 @@ const FullLayout = () => {
   let [data, setData] = useState([]);
   const seachRef = useRef();
   const mountedRef = useRef(false);
+  const [team, setTeam] = useState(true);
+  const [searchTerm, setSearchTerm] = useState(''); // State to manage input value
 
   const loadMoreData = async (url = 'v1/team/get/unallocated/list') => {
     if (loading) return;
@@ -81,7 +85,11 @@ const FullLayout = () => {
       loadMoreData();
     }
   };
-  
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    loadMoreData();
+  };
+
   
 
   return (
@@ -102,61 +110,107 @@ const FullLayout = () => {
             <Header />
           </div>
           {/********Middle Content**********/}
-          <Container className="p-4 wrapper" fluid>
-            {/* Component content start */}
+          <Container className="p-4 wrapper" fluid style={{display:'flex',justifyContent:'center'}}>
             <>
-            <div className="seach" style={{width: '100%', display: 'flex', justifyContent: 'flex-start'}}>
-              <div style={{width: '88%'}}>
-              <Input
-                ref={seachRef}
+            <div>
+            <div className="seach" style={{width:'100%'}}>
+                <Input
+                  value={searchTerm} // Bind input value to state
+                  onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
+                  placeholder="Search Projects"
+                  prefix={<SearchOutlined />}
+                  style={{ width: '100%', marginRight: '10px' }}
+                  ref={seachRef}
+                  size="large"
+                />
+                <Button
                 size="large"
-                placeholder="Seach Team"
-                prefix={<SearchOutlined />}
-              />
-              </div>
-              <div
-                style={{ marginLeft: '15px', cursor: 'pointer' }}
+                type="primary"
                 onClick={seachList}
+                style={{ marginRight: '10px' }}
               >
                 Filter
+              </Button>
+              <Button
+                size="large"
+                type="primary"
+                onClick={handleClearSearch}
+              >
+                Clear
+              </Button>
               </div>
-            </div>
-            <div
-              id="scrollableDiv"
-              style={{
-                maxHeight: 550,
-                overflow: 'auto',
-                padding: '0 16px',
-                width: '88%',
-                border: '1px solid rgba(140, 140, 140, 0.35)',
-                background: '#fff',
-              }}
-            >
-              <List
-                loading={loading}
-                dataSource={data}
-                renderItem={(item) => (
-                  <List.Item key={item.id}>
-                    <List.Item.Meta
-                      title={<a>{item.teamName}</a>}
-                      description={
-                        <>
-                          <div className="skills-container" style={{marginLeft: '0'}}>
-                            {Array.isArray(item.teamSkills) && item.teamSkills.map(skill => (
-                              <span key={skill} className="skill-badge">
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </>
-                      }
-                    />
-                  </List.Item>
+              <div
+                id="scrollableDiv"
+                style={{
+                  maxHeight: 550,
+                  // overflow: "auto",
+                  padding: "0 16px",
+                  width:"600px",
+                  border: "1px solid rgba(140, 140, 140, 0.35)",
+                  background: "#fff",
+                }}
+              >
+                {team ? (
+                  <List
+                    loading={loading}
+                    dataSource={data}
+                    renderItem={(item) => (
+                      <List.Item key={item.teamId}>
+                        <List.Item.Meta title={<a>{item.teamName}</a>} description={
+                            <>
+                              Skills:
+                              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                                {item.teamSkills && item.teamSkills.map((skill, index) => (
+                                  <Chip key={index} label={skill} variant="outlined" />
+                                ))}
+                              </Box>
+                            </>
+                          }/>
+                      </List.Item>
+                    )}
+                  />
+                ) : (
+                  <List
+                    loading={loading}
+                    dataSource={data}
+                    grid={{
+                      gutter: 16,
+                      column: 2,
+                      xs: 1
+                    }}
+                    renderItem={(item) => (
+                      <List.Item key={item.userId} style={{ marginTop: '16px' }}>
+                        <List.Item.Meta
+                          avatar={
+                            <Avatar
+                              src={item.avatarURL}
+                              alt="avatar"
+                            />}
+                          title={<a>{item.userName}</a>}
+                          description={
+                            <>
+                              Email: {item.email}
+                              <br />
+                              Skills:
+                              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                                {item.userSkills && item.userSkills.map((skill, index) => (
+                                  <Chip key={index} label={skill} variant="outlined" />
+                                ))}
+                              </Box>
+                            </>
+                          }
+                        />
+                      </List.Item>
+                    )}
+                  />
                 )}
-              />
+              </div>
+         
+
             </div>
+         
+             
             </>
-            {/* End of component content */}
           </Container>
         </div>
       </div>
