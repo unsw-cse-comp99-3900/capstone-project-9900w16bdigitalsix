@@ -26,7 +26,7 @@ import CreateProject from "./CreateProject";
 import EditProject from "./EditProject";
 import ProjectProgress from "./ProjectProgress";
 import ProjectDetails from "./ProjectDetails";
-import AllProject from "./AllProject"
+import AllProject from "./AllProject"   
 
 //admin
 import RoleManage from "./RoleManage";
@@ -41,7 +41,7 @@ import TestProjectDetail from "./TestProjectDetail";
 
 // report
 import GenerateProgressReport from "./GenerateProgressReport";
-
+import GenerateVirtual from "./GenerateVirtual";
 const PageList = () => {
   const [token, setToken] = React.useState(null);
   const [role, setRole] = React.useState(null);
@@ -157,7 +157,14 @@ const PageList = () => {
           path="/project/report/:projectId/:teamId"
           element={<GenerateProgressReport token={token} setToken={setToken} />}
         />
+        {/* virtual data report */}
+        <Route
+          path="/project/virtual-data-report"
+          element={<GenerateVirtual token={token} setToken={setToken}/>}
+        />
       </Routes>
+      
+      
       <br />
     </>
   );

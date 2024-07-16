@@ -4,6 +4,7 @@ import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
 import { Container, Row, Col, Button } from 'reactstrap';
 import CustomCard from '../components/CustomCard';
+import MessageAlert from '../components/MessageAlert';
 
 import '../assets/scss/FullLayout.css'; //make sure import this
 
@@ -21,75 +22,85 @@ const apiCall = async (method, endpoint) => {
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [role, setRole] = useState(null);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertContent, setAlertContent] = useState('');
+  const [hasProjects, setHasProjects] = useState(false);
+  const [hasTeam, setHasTeam] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProjects = async (userId) => {
       try {
-        const userId = localStorage.getItem('userId');
-        console.log(userId)
-        const data = await apiCall('GET', `/v1/project/get/list/byRole/${userId}`);
-        const mappedProjects = data.map(project => ({
-          id: project.projectId,
-          title: project.title,
-          client: project.clientName,
-          clientTitle: project.clientEmail,
-          skills: project.requiredSkills || 'N/A',
-          field: project.field,
-        }));
-        setProjects(mappedProjects);
+        const projectResponse = await apiCall('GET', `/v1/project/get/list/byRole/${userId}`);
+        if (projectResponse.length === 0) {
+          setHasProjects(false);
+        } else {
+          const mappedProjects = projectResponse.map(project => ({
+            id: project.projectId,
+            title: project.title,
+            client: project.clientName,
+            clientTitle: project.clientEmail,
+            skills: project.requiredSkills || 'N/A',
+            field: project.field,
+          }));
+          setProjects(mappedProjects);
+          setHasProjects(true);
+        }
       } catch (error) {
         console.error('Error fetching projects:', error);
       }
     };
 
-    fetchProjects();
-  }, []);
+    const checkTeamAndFetchProjects = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        const role = parseInt(localStorage.getItem('role'), 10);
+        setRole(role);
 
-  useEffect(() => {
-    const storedRole = localStorage.getItem('role');
-    setRole(parseInt(storedRole, 10));
+        if (role !== 1) {
+          fetchProjects(userId);
+          return;
+        }
+
+        const teamResponse = await apiCall('GET', `/v1/team/profile/${userId}`);
+        if (teamResponse.error) {
+          setAlertContent('You should gather your team first');
+          setOpenAlert(true);
+          return;
+        } else {
+          setHasTeam(true);
+          fetchProjects(userId);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    checkTeamAndFetchProjects();
   }, []);
 
   const handleDelete = (id) => {
     setProjects(projects.filter(project => project.id !== id));
   };
 
-  // navigate to manage preference list for student team
   const handlePreference = () => {
     navigate(`/project/preference`);
-  }
+  };
 
-  const archivedProjects = [
-    {
-      title: 'Project Title',
-      client: 'Client',
-      clientTitle: 'Client Title',
-      skills: 'Required Skills',
-      field: 'Field',
-      imgSrc: 'path_to_your_image_4.jpg',
-    },
-    {
-      title: 'Project Title',
-      client: 'Client',
-      clientTitle: 'Client Title',
-      skills: 'Required Skills',
-      field: 'Field',
-      imgSrc: 'path_to_your_image_5.jpg',
-    },
-    {
-      title: 'Project Title',
-      client: 'Client',
-      clientTitle: 'Client Title',
-      skills: 'Required Skills',
-      field: 'Field',
-      imgSrc: 'path_to_your_image_6.jpg',
-    },
-  ];
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
+    navigate('/team/student');
+  };
 
   return (
     <main>
+      <MessageAlert
+        open={openAlert}
+        alertType="error"
+        handleClose={handleCloseAlert}
+        snackbarContent={alertContent}
+      />
       <div className="pageWrapper d-lg-flex">
         {/********Sidebar**********/}
         <aside className="sidebarArea shadow" id="sidebarArea">
@@ -107,14 +118,17 @@ const ProjectList = () => {
           </div>
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
-            {role === 1 && (
-              <Button
-                color="primary"
-                className="mb-3"
-                onClick={handlePreference}
-              >
-                Manage your preference list
-              </Button>
+            {role === 1 && hasTeam && !hasProjects && (
+              <div className="d-flex justify-content-center align-items-center mb-3" style={{ height: '200px' }}>
+                <Button
+                  color="primary"
+                  size="lg"
+                  style={{ fontSize: '24px', padding: '20px 40px' }}
+                  onClick={handlePreference}
+                >
+                  Manage your preference list
+                </Button>
+              </div>
             )}
             {(role === 3 || role === 4 || role === 5) && (
               <div className="d-flex justify-content-between align-items-center mb-4">
@@ -140,23 +154,6 @@ const ProjectList = () => {
                     field={project.field}
                     onDelete={handleDelete}
                     role={role}
-                  />
-                </Col>
-              ))}
-            </Row>
-
-            <h3>Archived Projects</h3>
-            <Row>
-              {archivedProjects.map((project, index) => (
-                <Col md="4" key={index}>
-                  <CustomCard
-                    title={project.title}
-                    client={project.client}
-                    clientTitle={project.clientTitle}
-                    skills={project.skills}
-                    field={project.field}
-                    role={role}
-                    // imgSrc={project.imgSrc}
                   />
                 </Col>
               ))}
