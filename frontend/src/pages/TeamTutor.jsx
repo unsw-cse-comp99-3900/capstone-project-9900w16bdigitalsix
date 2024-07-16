@@ -11,14 +11,16 @@ import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
 import { Container } from 'reactstrap';
 import { Avatar, Chip, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 export default function TeamTutor() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate(); // Initialize useNavigate
   const [team, setTeam] = useState(true);
   const [loading, setLoading] = useState(false);
   const mounting = useRef(true);
   const [data, setData] = useState([]);
   const [allData, setAllData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(''); // State to manage input value
 
   const seachRef = useRef();
   const mountedRef = useRef(false);
@@ -39,20 +41,8 @@ export default function TeamTutor() {
       setLoading(false);
       setAllData([...res]);
     }
-    // axios
-    //   .get(team ? url : studentUrl, { params, headers })
-    //   .then((response) => {
-    //     const res = response.data;
-    //     console.log(res);
-    //     setData([...res]);
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     setData([]);
-    //     setLoading(false);
-    //     console.error('Error fetching data:', error);
-    //   });
   };
+
   useEffect(() => {
     if (mounting.current) {
       mounting.current = false;
@@ -60,60 +50,57 @@ export default function TeamTutor() {
       loadMoreData();
     }
   }, [team]);
+
   useEffect(() => {
     if (!mountedRef.current) {
       mountedRef.current = true;
       console.log("...token..");
-      // if (!localStorage.getItem('token')) {
-      //   navigate('/login');
-      //   return;
-      // }
       loadMoreData();
     }
   }, [mountedRef]);
+
   const changeList = () => {
     setData([]);
     setTeam(!team);
   };
+
   const seachList = () => {
-     const searchTerm = seachRef.current.input.value.toLowerCase();
-     console.log(searchTerm);
-     if (searchTerm) {
-     let filtered;
-     if (team) {
-     filtered = allData.filter((item) =>
-     [item.teamName, item.teamSkills, String(item.teamId)].some((field) =>{
-        console.log("field", field);
-        if (field) {
-          if (Array.isArray(field)) {
-            field = field.join(' ');
-          }
-          return field.toLowerCase().includes(searchTerm)
-        }
+    const searchTerm = seachRef.current.input.value.toLowerCase();
+    console.log(searchTerm);
+    if (searchTerm) {
+      let filtered;
+      if (team) {
+        filtered = allData.filter((item) =>
+          [item.teamName, item.teamSkills, String(item.teamId)].some((field) => {
+            console.log("field", field);
+            if (field) {
+              if (Array.isArray(field)) {
+                field = field.join(' ');
+              }
+              return field.toLowerCase().includes(searchTerm);
+            }
+          })
+        );
+      } else {
+        filtered = allData.filter((item) =>
+          [item.userName, item.email, String(item.userId)].some((field) => {
+            if (field) {
+              if (Array.isArray(field)) {
+                field = field.join(' ');
+              }
+              return field.toLowerCase().includes(searchTerm);
+            }
+          })
+        );
       }
-     )
-     )
-     } else {
-     filtered = allData.filter((item) =>
-     [item.userName, item.email, String(item.userId)].some((field) => {
-      if (field) {
-        if (Array.isArray(field)) {
-          field = field.join(' ');
-        }
-        return field.toLowerCase().includes(searchTerm)
-      }
-     }
-     )
-     )
-     }
-     console.log(filtered);
-     setData(filtered);
-     } else {
-     console.log(data);
-     //   setData(data);
-     loadMoreData();
-     }
-     };
+      console.log(filtered);
+      setData(filtered);
+    } else {
+      console.log(data);
+      loadMoreData();
+    }
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
@@ -121,6 +108,15 @@ export default function TeamTutor() {
   const handleClose = () => {
     setIsModalOpen(false);
   };
+
+  const navigateToUnallocatedTeams = () => {
+    navigate("/team/unallocated"); // Replace with the actual path
+  };
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    loadMoreData();
+  };
+
 
   return (
     <main>
@@ -140,8 +136,7 @@ export default function TeamTutor() {
             <Header />
           </div>
           {/********Middle Content**********/}
-          <Container className="p-4 wrapper" fluid>
-            {/* add code here */}
+          <Container className="p-4 wrapper" fluid style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <>
               <div className="titleBtn">
                 <Flex gap="small" wrap>
@@ -153,28 +148,49 @@ export default function TeamTutor() {
                   >
                     {team ? "STUDENT LIST" : "TEAM LIST"}
                   </Button>
+                  <Button
+                    style={{ backgroundColor: "#6451e9", borderColor: "#6451e9" }}
+                    type="primary"
+                    shape="round"
+                    onClick={navigateToUnallocatedTeams}
+                  >
+                    UNALLOCATED TEAMS
+                  </Button>
                 </Flex>
               </div>
-              <div className="seach">
-                <Input
+              <div className="seach" style={{width:'600px'}}>
+              <Input
+                  value={searchTerm} // Bind input value to state
+                  onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
+                  placeholder="Search Projects"
+                  prefix={<SearchOutlined />}
+                  style={{  marginRight: '10px' }}
                   ref={seachRef}
                   size="large"
-                  placeholder={team ? "Search Team" : "Search Student"}
-                  prefix={<SearchOutlined />}
                 />
-                <div
-                  style={{ marginLeft: "15px", cursor: "pointer" }}
-                  onClick={seachList}
-                >
-                  Filter
-                </div>
+                <Button
+                size="large"
+                type="primary"
+                onClick={seachList}
+                style={{ marginRight: '10px' }}
+              >
+                Filter
+              </Button>
+              <Button
+                size="large"
+                type="primary"
+                onClick={handleClearSearch}
+              >
+                Clear
+              </Button>
               </div>
               <div
                 id="scrollableDiv"
                 style={{
                   maxHeight: 550,
-                  overflow: "auto",
+                  // overflow: "auto",
                   padding: "0 16px",
+                  width:"100%",
                   border: "1px solid rgba(140, 140, 140, 0.35)",
                   background: "#fff",
                 }}
@@ -234,68 +250,12 @@ export default function TeamTutor() {
                   />
                 )}
               </div>
-              {/* <Button type="primary" onClick={showModal}>
-                Invite
-              </Button> */}
               <InviteModel
                 isModalOpen={isModalOpen}
                 handleClose={handleClose}
               ></InviteModel>
-              {/* <Modal
-                title=""
-                open={isModalOpen}
-                onOk={handleOk}
-                onCancel={handleCancel}
-              >
-                <div className="seach">
-                  <Input
-                    ref={seachRef}
-                    size="large"
-                    placeholder="Seach"
-                    prefix={<SearchOutlined />}
-                  />
-                  <div
-                    style={{ marginLeft: '15px', cursor: 'pointer' }}
-                    onClick={seachList}
-                  >
-                    Filter
-                  </div>
-                </div>
-                <div
-                  id="scrollableDiv"
-                  style={{
-                    maxHeight: 550,
-                    overflow: 'auto',
-                    padding: '0 16px',
-                    border: '1px solid rgba(140, 140, 140, 0.35)',
-                    background: '#fff',
-                  }}
-                >
-                  <List
-                    loading={loading}
-                    dataSource={data}
-                    renderItem={(item, index) => (
-                      <List.Item
-                        key={item.id}
-                        actions={[
-                          <Checkbox
-                            checked={checkedList.includes(item.id)}
-                            key={index}
-                            onChange={(e) => handleCheckboxChange(item.id, e)}
-                          />,
-                        ]}
-                      >
-                        <List.Item.Meta
-                          title={<a>{item.name}</a>}
-                          description={item.email}
-                        />
-                      </List.Item>
-                    )}
-                  />
-                </div>
-              </Modal> */}
             </>
-    </Container>
+          </Container>
         </div>
       </div>
     </main>

@@ -1,26 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Outlet, useNavigate } from "react-router-dom";
 import { SearchOutlined } from '@ant-design/icons';
-import { Input, Col, Row } from 'antd';
-import { Card, CardBody, CardTitle, CardText, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Input, Button, Row, Col } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import { Container } from "reactstrap";
-import axios from 'axios';
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
-import '../assets/scss/FullLayout.css'; // Make sure to import this file
-import '../assets/scss/CustomCard.css'; // import CSS file
+import '../assets/scss/FullLayout.css';
+import '../assets/scss/CustomCard.css';
 import '../styles/project.css';
-import { apiCall } from '../helper'; // Make sure to import this file
+import { apiCall } from '../helper';
 import CustomCard from '../components/CustomCard';
-
-const { Meta } = Card;
 
 const FullLayout = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [team, setTeam] = useState(true);
   let [data, setData] = useState([]);
-  const seachRef = useRef();
+  const [searchTerm, setSearchTerm] = useState(''); // State to manage input value
   const mountedRef = useRef(false);
   const role = localStorage.getItem('role');
 
@@ -47,67 +43,74 @@ const FullLayout = () => {
   }, [mountedRef]);
 
   const seachList = () => {
-    const searchTerm = seachRef.current.input.value.toLowerCase();
-    console.log(searchTerm);
     if (searchTerm) {
-      const url = `v1/search/public/project/${searchTerm}`
-      loadMoreData(url)
+      const url = `v1/search/public/project/${searchTerm.toLowerCase()}`;
+      loadMoreData(url);
     } else {
-      console.log(888)
+      console.log(888);
       loadMoreData();
     }
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    loadMoreData();
   };
 
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
-        {/********Sidebar**********/}
         <aside className="sidebarArea shadow" id="sidebarArea">
           <Sidebar />
         </aside>
-        {/********Content Area**********/}
         <div className="contentArea">
           <div className="d-lg-none headerMd">
-            {/********Header**********/}
             <Header />
           </div>
           <div className="d-none d-lg-block headerLg">
-            {/********Header**********/}
             <Header />
           </div>
-          {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
-            {/* Project Component content start */}
             <div className="seach">
               <Input
-                ref={seachRef}
+                value={searchTerm} // Bind input value to state
+                onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
                 size="large"
-                placeholder="Seach Projects"
+                placeholder="Search Projects"
                 prefix={<SearchOutlined />}
+                style={{ width: '70%', marginRight: '10px' }}
               />
-              <div
-                style={{ marginLeft: '15px', cursor: 'pointer' }}
+              <Button
+                size="large"
+                type="primary"
                 onClick={seachList}
+                style={{ marginRight: '10px' }}
               >
                 Filter
-              </div>
+              </Button>
+              <Button
+                size="large"
+                type="primary"
+                onClick={handleClearSearch}
+              >
+                Clear
+              </Button>
             </div>
             <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
               {data.map((project, index) => (
                 <Col xs={24} sm={16} md={8} span={8} key={index}>
-                    <CustomCard
-                      id={project.projectId}
-                      title={project.title}
-                      client={project.clientName}
-                      clientTitle={project.clientEmail}
-                      skills={project.requiredSkills}
-                      field={project.field}
-                      role={role}
-                    />
+                  <CustomCard
+                    id={project.projectId}
+                    title={project.title}
+                    client={project.clientName}
+                    clientTitle={project.clientEmail}
+                    skills={project.requiredSkills}
+                    field={project.field}
+                    role={role}
+                  />
                 </Col>
               ))}
             </Row>
-            {/* Project Component content end */}
           </Container>
         </div>
       </div>
