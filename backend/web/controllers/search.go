@@ -278,6 +278,7 @@ func SearchPublicProjects(c *gin.Context) {
 			ClientID:         client.ID,
 			ClientName:       client.Username,
 			ClientEmail:      client.Email,
+			ClientAvatarURL:  client.AvatarURL,
 			TutorID:          tutor.ID,
 			TutorName:        tutor.Username,
 			TutorEmail:       tutor.Email,

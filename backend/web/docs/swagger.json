@@ -3449,6 +3449,9 @@
                         "$ref": "#/definitions/response.AllocatedTeam"
                     }
                 },
+                "clientAvatar": {
+                    "type": "string"
+                },
                 "clientEmail": {
                     "type": "string"
                 },
@@ -3694,6 +3697,9 @@
                     "items": {
                         "$ref": "#/definitions/response.AllocatedTeam"
                     }
+                },
+                "clientAvatarURL": {
+                    "type": "string"
                 },
                 "clientEmail": {
                     "type": "string"

@@ -323,6 +323,8 @@ definitions:
         items:
           $ref: '#/definitions/response.AllocatedTeam'
         type: array
+      clientAvatar:
+        type: string
       clientEmail:
         type: string
       clientId:
@@ -484,6 +486,8 @@ definitions:
         items:
           $ref: '#/definitions/response.AllocatedTeam'
         type: array
+      clientAvatarURL:
+        type: string
       clientEmail:
         type: string
       clientId:

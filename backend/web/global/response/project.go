@@ -11,6 +11,7 @@ type GetProjectListResponse struct {
 	ClientID         uint            `json:"clientId"`
 	ClientName       string          `json:"clientName"`
 	ClientEmail      string          `json:"clientEmail"`
+	ClientAvatarURL  string          `json:"clientAvatar"`
 	TutorID          uint            `json:"tutorId"`
 	TutorName        string          `json:"tutorName"`
 	TutorEmail       string          `json:"tutorEmail"`
@@ -28,6 +29,7 @@ type ProjectDetailResponse struct {
 	ClientName       string          `json:"clientName"`
 	ClientEmail      string          `json:"clientEmail"`
 	ClientID         uint            `json:"clientId"`
+	ClientAvatarURL  string          `json:"clientAvatarURL"`
 	TutorID          uint            `json:"tutorId"`
 	TutorName        string          `json:"tutorName"`
 	TutorEmail       string          `json:"tutorEmail"`

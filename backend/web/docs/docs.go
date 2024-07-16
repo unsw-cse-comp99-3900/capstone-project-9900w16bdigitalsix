@@ -3460,6 +3460,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/response.AllocatedTeam"
                     }
                 },
+                "clientAvatar": {
+                    "type": "string"
+                },
                 "clientEmail": {
                     "type": "string"
                 },
@@ -3705,6 +3708,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/response.AllocatedTeam"
                     }
+                },
+                "clientAvatarURL": {
+                    "type": "string"
                 },
                 "clientEmail": {
                     "type": "string"
