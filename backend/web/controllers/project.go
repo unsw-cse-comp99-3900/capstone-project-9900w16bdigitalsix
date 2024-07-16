@@ -264,7 +264,7 @@ func DeleteProject(c *gin.Context) {
 	projectId := c.Param("projectId")
 	var project models.Project
 
-	// 检查项目是否存在
+	// check if project exists
 	if err := global.DB.First(&project, projectId).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
@@ -274,10 +274,26 @@ func DeleteProject(c *gin.Context) {
 		return
 	}
 
-	// 删除项目
+	// delete the project
 	if err := global.DB.Delete(&project).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	// check if some teams already allocated the project
+	var teams []models.Team
+	if err := global.DB.Where("allocated_project = ?", project.ID).Find(&teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// set allocated_project field to nil
+	for _, team := range teams {
+		team.AllocatedProject = nil
+		if err := global.DB.Save(&team).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": true})
