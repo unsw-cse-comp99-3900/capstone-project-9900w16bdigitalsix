@@ -399,7 +399,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                               >
                                 Approve
                               </Button>
-                            ) : userRole === 3 &&
+                            ) : (userRole === 3 || userRole === 4) &&
                               selected === "Allocated Team" ? (
                               <Button
                                 size="small"
