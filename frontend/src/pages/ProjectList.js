@@ -6,7 +6,7 @@ import { Container, Row, Col, Button } from 'reactstrap';
 import CustomCard from '../components/CustomCard';
 import MessageAlert from '../components/MessageAlert';
 
-import '../assets/scss/FullLayout.css'; //make sure import this
+import '../assets/scss/FullLayout.css'; // make sure to import this
 
 const apiCall = async (method, endpoint) => {
   const response = await fetch(`http://127.0.0.1:8080${endpoint}`, {
@@ -33,6 +33,8 @@ const ProjectList = () => {
     const fetchProjects = async (userId) => {
       try {
         const projectResponse = await apiCall('GET', `/v1/project/get/list/byRole/${userId}`);
+        console.log('Project Response:', projectResponse);
+
         if (projectResponse.length === 0) {
           setHasProjects(false);
         } else {
@@ -42,8 +44,10 @@ const ProjectList = () => {
             client: project.clientName,
             clientTitle: project.clientEmail,
             skills: project.requiredSkills || 'N/A',
+            clientAvatar: project.clientAvatar,
             field: project.field,
           }));
+          console.log('Mapped Projects:', mappedProjects);
           setProjects(mappedProjects);
           setHasProjects(true);
         }
@@ -58,20 +62,17 @@ const ProjectList = () => {
         const role = parseInt(localStorage.getItem('role'), 10);
         setRole(role);
 
-        if (role !== 1) {
-          fetchProjects(userId);
-          return;
+        if (role === 1) {
+          const teamResponse = await apiCall('GET', `/v1/team/profile/${userId}`);
+          if (teamResponse.error) {
+            setAlertContent('You should gather your team first');
+            setOpenAlert(true);
+            return;
+          } else {
+            setHasTeam(true);
+          }
         }
-
-        const teamResponse = await apiCall('GET', `/v1/team/profile/${userId}`);
-        if (teamResponse.error) {
-          setAlertContent('You should gather your team first');
-          setOpenAlert(true);
-          return;
-        } else {
-          setHasTeam(true);
-          fetchProjects(userId);
-        }
+        fetchProjects(userId);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -92,7 +93,7 @@ const ProjectList = () => {
     setOpenAlert(false);
     navigate('/team/student');
   };
-
+  
   return (
     <main>
       <MessageAlert
@@ -138,7 +139,7 @@ const ProjectList = () => {
                 </Link>
               </div>
             )}
-            {role !== 1 && role !== 3 && role !== 4 && role !== 5 && (
+            {role === 2 && (
               <h3 className="mb-4">Published Project</h3>
             )}
 
@@ -150,6 +151,7 @@ const ProjectList = () => {
                     title={project.title}
                     client={project.client}
                     clientTitle={project.clientTitle}
+                    clientAvatar={project.clientAvatar} // Pass the clientAvatarURL
                     skills={project.skills}
                     field={project.field}
                     onDelete={handleDelete}
