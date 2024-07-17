@@ -4,6 +4,7 @@ import { Card, CardBody, CardTitle, CardText, Button, Modal, ModalHeader, ModalB
 import '../assets/scss/CustomCard.css'; // import CSS file
 import TeamFile from "../components/TeamFileDialog";
 import { SpaceContext } from 'antd/es/space';
+import { Avatar } from 'antd';
 
 const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role }) => {
   const [modal, setModal] = useState(false);
@@ -68,7 +69,8 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
         </div>
         <CardBody className="d-flex flex-column custom-card-body">
           <div className="d-flex align-items-center mb-3">
-          {renderAvatar()}
+            <Avatar src={clientAvatar || ''} size={40} className="avatar" />
+          {/* {renderAvatar()} */}
             <div className="client-info">
               <CardTitle tag="h5" className="client-name">{client}</CardTitle>
               <CardText className="client-title">{clientTitle}</CardText>
