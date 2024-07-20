@@ -8,15 +8,15 @@ import (
 
 type User struct {
 	gorm.Model
-	Email              string `gorm:"index:idx_email;unique;type:varchar(255);not null"`
-	Password           string `gorm:"type:varchar(255);not null"`
-	Username           string `gorm:"type:varchar(16);not null"`
-	AvatarURL          string `gorm:"type:varchar(255)"`
-	Bio                string `json:"bio"`
-	Organization       string `json:"organization"`
-	Position           string `json:"position"`
-	Field              string `json:"field"`
-	Phone              string
+	Email              string         `gorm:"index:idx_email;unique;type:varchar(255);not null"`
+	Password           string         `gorm:"type:varchar(255);not null"`
+	Username           string         `gorm:"type:varchar(16);not null"`
+	AvatarURL          string         `gorm:"type:varchar(255)"`
+	Bio                string         `json:"bio"`
+	Organization       string         `json:"organization"`
+	Position           string         `json:"position"`
+	Field              string         `json:"field"`
+	Course             string         `json:"course"`
 	Role               int            `gorm:"default:1;type:int comment '1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin'"`
 	BelongsToGroup     *uint          `gorm:"default:null"`
 	ClientProjects     []Project      `gorm:"foreignkey:ClientID"`      // a client/coordinator can create/responsible for many projects
@@ -30,12 +30,13 @@ type Team struct {
 	gorm.Model
 	TeamIdShow       uint
 	Name             string
+	Course           string                  `json:"course"`
 	TutorID          *uint                   `gorm:"default:null"`
 	AllocatedProject *uint                   `gorm:"default:null"`
 	Members          []User                  `gorm:"foreignkey:BelongsToGroup"` // a group has many students
-	PreferencedProj  []TeamPreferenceProject `gorm:"foreignkey:TeamID"`         // 使用Preference模型
+	PreferencedProj  []TeamPreferenceProject `gorm:"foreignkey:TeamID"`         // use Preference model
 	Skills           []Skill                 `gorm:"many2many:team_skills;"`
-	Sprints          []Sprint                `gorm:"foreignkey:TeamID"` // 一个团队有多个Sprint
+	Sprints          []Sprint                `gorm:"foreignkey:TeamID"` // one team has many Sprints
 }
 
 type Project struct {
@@ -44,8 +45,7 @@ type Project struct {
 	Field         string
 	IsPublic      uint                    `gorm:"default:1;type:int comment '1表示public 2 表示没有public'"`
 	Description   string                  `gorm:"type:text"`
-	Filename      string                  `gorm:"type:text;"`
-	FileURL       string                  `gorm:"type:varchar(255)"` // 存储文件路径
+	FileURL       string                  `gorm:"type:varchar(255)"` 
 	ClientID      *uint                   `gorm:"default:null"`      // 一个项目被谁负责的
 	TutorID       *uint                   `gorm:"default:null"`
 	CoordinatorID *uint                   `gorm:"default:null"`

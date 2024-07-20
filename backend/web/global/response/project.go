@@ -62,6 +62,7 @@ type TeamDetailResponse struct {
 	TeamID           uint                `json:"teamId"`
 	TeamIdShow       uint                `json:"teamIdShow"`
 	TeamName         string              `json:"teamName"`
+	Course           string              `json:"course"`
 	TeamMember       []ProjectTeamMember `json:"teamMember"`
 	TeamSkills       []string            `json:"teamSkills"`
 	PreferenceReason string              `json:"preferenceReason"`

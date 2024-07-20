@@ -188,6 +188,8 @@ definitions:
     type: object
   forms.RegisterForm:
     properties:
+      course:
+        type: string
       email:
         type: string
       password:
@@ -199,6 +201,7 @@ definitions:
       username:
         type: string
     required:
+    - course
     - email
     - password
     - password_confirm
@@ -306,6 +309,8 @@ definitions:
     type: object
   response.CreateTeamResponse:
     properties:
+      course:
+        type: string
       teamId:
         type: integer
       teamIdShow:
@@ -356,6 +361,8 @@ definitions:
     type: object
   response.GetTeamProfileResponse:
     properties:
+      course:
+        type: string
       teamId:
         type: integer
       teamIdShow:
@@ -538,6 +545,8 @@ definitions:
     type: object
   response.SearchTeamResponse:
     properties:
+      course:
+        type: string
       teamId:
         type: integer
       teamIdShow:
@@ -583,6 +592,8 @@ definitions:
     properties:
       avatarURL:
         type: string
+      course:
+        type: string
       email:
         type: string
       id:
@@ -593,6 +604,8 @@ definitions:
   response.StudentListResponse:
     properties:
       avatarURL:
+        type: string
+      course:
         type: string
       email:
         type: string
@@ -609,6 +622,8 @@ definitions:
     type: object
   response.TeamDetailResponse:
     properties:
+      course:
+        type: string
       preferenceReason:
         type: string
       teamId:
@@ -642,6 +657,8 @@ definitions:
   response.TeamMember:
     properties:
       avatarURL:
+        type: string
+      course:
         type: string
       email:
         type: string
@@ -1432,9 +1449,8 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"msg": "Project created successfully", "projectId": 1, "fileName":
-            "filename.pdf", "filePath": "backend/files/filename.pdf", "createdBy":
-            1}'
+          description: '{"msg": "Project created successfully", "projectId": 1, "filePath":
+            "backend/files/filename.pdf", "createdBy": 1}'
           schema:
             additionalProperties: true
             type: object
@@ -2026,6 +2042,12 @@ paths:
             additionalProperties:
               type: string
             type: object
+        "409":
+          description: '{"error": "Course mismatch"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
         "500":
           description: '{"error": "Failed to invite user to team"}'
           schema:
@@ -2039,7 +2061,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: 用户加入团队
+      description: User join a team
       parameters:
       - description: Join Team form
         in: body
@@ -2067,7 +2089,7 @@ paths:
               type: string
             type: object
         "409":
-          description: '{"error": "User already belongs to a team"}'
+          description: '{"error": "Course mismatch"}'
           schema:
             additionalProperties:
               type: string

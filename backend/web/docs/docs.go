@@ -1057,7 +1057,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"msg\": \"Project created successfully\", \"projectId\": 1, \"fileName\": \"filename.pdf\", \"filePath\": \"backend/files/filename.pdf\", \"createdBy\": 1}",
+                        "description": "{\"msg\": \"Project created successfully\", \"projectId\": 1, \"filePath\": \"backend/files/filename.pdf\", \"createdBy\": 1}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -1973,6 +1973,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "409": {
+                        "description": "{\"error\": \"Course mismatch\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "{\"error\": \"Failed to invite user to team\"}",
                         "schema": {
@@ -1987,7 +1996,7 @@ const docTemplate = `{
         },
         "/v1/team/join": {
             "put": {
-                "description": "用户加入团队",
+                "description": "User join a team",
                 "consumes": [
                     "application/json"
                 ],
@@ -2035,7 +2044,7 @@ const docTemplate = `{
                         }
                     },
                     "409": {
-                        "description": "{\"error\": \"User already belongs to a team\"}",
+                        "description": "{\"error\": \"Course mismatch\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -3259,12 +3268,16 @@ const docTemplate = `{
         "forms.RegisterForm": {
             "type": "object",
             "required": [
+                "course",
                 "email",
                 "password",
                 "password_confirm",
                 "username"
             ],
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -3434,6 +3447,9 @@ const docTemplate = `{
         "response.CreateTeamResponse": {
             "type": "object",
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "teamId": {
                     "type": "integer"
                 },
@@ -3510,6 +3526,9 @@ const docTemplate = `{
         "response.GetTeamProfileResponse": {
             "type": "object",
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "teamId": {
                     "type": "integer"
                 },
@@ -3788,6 +3807,9 @@ const docTemplate = `{
         "response.SearchTeamResponse": {
             "type": "object",
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "teamId": {
                     "type": "integer"
                 },
@@ -3857,6 +3879,9 @@ const docTemplate = `{
                 "avatarURL": {
                     "type": "string"
                 },
+                "course": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -3872,6 +3897,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "avatarURL": {
+                    "type": "string"
+                },
+                "course": {
                     "type": "string"
                 },
                 "email": {
@@ -3897,6 +3925,9 @@ const docTemplate = `{
         "response.TeamDetailResponse": {
             "type": "object",
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "preferenceReason": {
                     "type": "string"
                 },
@@ -3947,6 +3978,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "avatarURL": {
+                    "type": "string"
+                },
+                "course": {
                     "type": "string"
                 },
                 "email": {

@@ -209,6 +209,7 @@ func formatSearchTeamResponse(teams []models.Team) []response.SearchTeamResponse
 			TeamId:     team.ID,
 			TeamIdShow: team.TeamIdShow,
 			TeamName:   team.Name,
+			Course:     team.Course,
 			TeamMember: teamMembers,
 			TeamSkills: teamSkills,
 		})

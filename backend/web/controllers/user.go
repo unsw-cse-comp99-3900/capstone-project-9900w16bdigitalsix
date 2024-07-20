@@ -32,7 +32,7 @@ import (
 // PasswordLogin handles user login using email and password
 // @Summary User Login
 // @Description Authenticate user with email and password, Role 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
-// @Tags Personal Management 
+// @Tags Personal Management
 // @Accept json
 // @Produce json
 // @Param body body forms.PasswordLoginForm true "Login Form"
@@ -148,7 +148,7 @@ func PasswordLogin(ctx *gin.Context) {
 // VerifyEmail godoc
 // @Summary User register (verify email)
 // @Description 验证邮箱，并完成用户注册
-// @Tags Personal Management 
+// @Tags Personal Management
 // @Accept json
 // @Produce json
 // @Param token query string true "Verification Token"
@@ -205,6 +205,7 @@ func VerifyEmail(ctx *gin.Context) {
 	_, err = userSrvClient.CreateUser(ctx, &proto.CreateUserInfo{
 		Username: registerForm.Username,
 		Email:    registerForm.Email,
+		Course:   registerForm.Course,
 		Password: registerForm.Password,
 	})
 
@@ -223,7 +224,7 @@ func VerifyEmail(ctx *gin.Context) {
 // Register godoc
 // @Summary User register（send email）
 // @Description 用户注册，发送验证邮件
-// @Tags Personal Management 
+// @Tags Personal Management
 // @Accept json
 // @Produce json
 // @Param registerForm body forms.RegisterForm true "Register form"
@@ -279,7 +280,7 @@ func Register(ctx *gin.Context) {
 // SendEmailResetPassword godoc
 // @Summary Reset password (send email)
 // @Description 发送重置密码邮件
-// @Tags Personal Management 
+// @Tags Personal Management
 // @Accept json
 // @Produce json
 // @Param sendEmailResetPwdForm body forms.SendEmailResetPwdForm true "Reset Password form"
@@ -333,7 +334,7 @@ func SendEmailResetPassword(c *gin.Context) {
 // ResetPassword godoc
 // @Summary Reset Password
 // @Description 重置用户密码
-// @Tags Personal Management 
+// @Tags Personal Management
 // @Accept json
 // @Produce json
 // @Param resetPasswordForm body forms.ResetPasswordForm true "Reset Password form"
@@ -387,7 +388,7 @@ func ResetPassword(ctx *gin.Context) {
 // ChangePassword godoc
 // @Summary Change Password
 // @Description 修改用户密码
-// @Tags Personal Management 
+// @Tags Personal Management
 // @Accept json
 // @Produce json
 // @Param changePasswordForm body forms.ChangePasswordForm true "Change Password form"
@@ -473,7 +474,7 @@ func ChangePassword(c *gin.Context) {
 // UpdateUserInfo godoc
 // @Summary Update User Profile
 // @Description 更新用户个人信息和技能
-// @Tags Personal Management 
+// @Tags Personal Management
 // @Accept json
 // @Produce json
 // @Param profileReq body forms.ProfileRequest true "Profile Request"
@@ -517,7 +518,7 @@ func UpdateUserInfo(c *gin.Context) {
 	}
 
 	url := ""
-	if (profileReq.Profile.Avatarbase64 != "") {
+	if profileReq.Profile.Avatarbase64 != "" {
 		// 解析 base64 图片， 并保存
 		outputDir := global.ServerConfig.PicturePath
 		var err error
@@ -622,7 +623,7 @@ func GetPersonProfile(c *gin.Context) {
 
 // @Summary Get all students List
 // @Description 返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
-// @Tags Personal Management 
+// @Tags Personal Management
 // @Accept  json
 // @Produce  json
 // @Success 200 {array} response.StudentListResponse
@@ -665,28 +666,29 @@ func GetAllStudents(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error": "Failed to fetch users"}"
 // @Router /v1/student/unassigned/list [get]
 func GetAllUnassignedStudents(c *gin.Context) {
-    var users []models.User
-    if err := global.DB.Where("role = ? AND belongs_to_group IS NULL", 1).Preload("Skills").Find(&users).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
-        return
-    }
+	var users []models.User
+	if err := global.DB.Where("role = ? AND belongs_to_group IS NULL", 1).Preload("Skills").Find(&users).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
+		return
+	}
 
-    var userResponses []response.StudentListResponse
-    for _, user := range users {
-        var skills []string
-        for _, skill := range user.Skills {
-            skills = append(skills, skill.SkillName)
-        }
+	var userResponses []response.StudentListResponse
+	for _, user := range users {
+		var skills []string
+		for _, skill := range user.Skills {
+			skills = append(skills, skill.SkillName)
+		}
 
-        userResponses = append(userResponses, response.StudentListResponse{
-            UserID:     user.ID,
-            UserName:   user.Username,
-            Role:       user.Role,
-            Email:      user.Email,
-            AvatarURL:  user.AvatarURL,
-            UserSkills: skills,
-        })
-    }
+		userResponses = append(userResponses, response.StudentListResponse{
+			UserID:     user.ID,
+			UserName:   user.Username,
+			Role:       user.Role,
+			Email:      user.Email,
+			AvatarURL:  user.AvatarURL,
+			Course:     user.Course,
+			UserSkills: skills,
+		})
+	}
 
-    c.JSON(http.StatusOK, userResponses)
+	c.JSON(http.StatusOK, userResponses)
 }

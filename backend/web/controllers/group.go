@@ -62,6 +62,7 @@ func CreateTeam(c *gin.Context) {
 	team := models.Team{
 		Name:       teamName,
 		TeamIdShow: teamIdShow,
+		Course:     user.Course,
 		Members:    []models.User{user}, // 将创建者加入团队
 	}
 
@@ -81,12 +82,14 @@ func CreateTeam(c *gin.Context) {
 		TeamID:     team.ID,
 		TeamName:   team.Name,
 		TeamIdShow: teamIdShow,
+		Course:     user.Course,
 		TeamMember: []response.TeamMember{
 			{
 				UserID:     user.ID,
 				UserName:   user.Username,
 				Email:      user.Email,
 				AvatarURL:  user.AvatarURL,
+				Course:     user.Course,
 				UserSkills: userSkills,
 			},
 		},
@@ -160,7 +163,7 @@ func UpdateTeamProfile(c *gin.Context) {
 
 // JoinTeam godoc
 // @Summary Join a team
-// @Description 用户加入团队
+// @Description User join a team
 // @Tags Team
 // @Accept json
 // @Produce json
@@ -170,6 +173,7 @@ func UpdateTeamProfile(c *gin.Context) {
 // @Failure 409 {object} map[string]string "{"error": "User already belongs to a team"}"
 // @Failure 404 {object} map[string]string "{"error":"User not found"}"
 // @Failure 404 {object} map[string]string "{"error":"Team not found"}"
+// @Failure 409 {object} map[string]string "{"error": "Course mismatch"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to update user"}"
 // @Failure 500 {object} map[string]string "{"error":"Failed to update team"}"
 // @Router /v1/team/join [put]
@@ -186,7 +190,7 @@ func JoinTeam(c *gin.Context) {
 		return
 	}
 
-	// 检查用户是否已经属于一个团队
+	// check if the user is already belong to a team
 	if user.BelongsToGroup != nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "User already belongs to a team"})
 		return
@@ -195,6 +199,12 @@ func JoinTeam(c *gin.Context) {
 	var team models.Team
 	if err := global.DB.Preload("Members.Skills").Preload("Skills").Where("team_id_show = ?", req.TeamIdShow).First(&team).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+		return
+	}
+
+	// check if the user has the match course of the team
+	if user.Course != team.Course {
+		c.JSON(http.StatusConflict, gin.H{"error": "Course mismatch"})
 		return
 	}
 
@@ -299,6 +309,7 @@ func GetTeamProfile(c *gin.Context) {
 		TeamId:     team.ID,
 		TeamIdShow: team.TeamIdShow,
 		TeamName:   team.Name,
+		Course:     team.Course,
 		TeamMember: teamMembers,
 		TeamSkills: teamSkills,
 	}
@@ -382,6 +393,7 @@ func GetStudentInfo(ctx *gin.Context) {
 			Name:      member.Username,
 			Email:     member.Email,
 			AvatarURL: member.AvatarURL,
+			Course:    member.Course,
 		})
 	}
 
@@ -466,6 +478,7 @@ func GetUnallocatedTeams(c *gin.Context) {
 // @Success 200 {object} map[string]string "{"message": "User invited to team successfully"}"
 // @Failure 400 {object} map[string]string "{"error": "User already belongs to a team"}"
 // @Failure 404 {object} map[string]string "{"error": "User not found"} or gin.H{"error": "Team not found"}"
+// @Failure 409 {object} map[string]string "{"error": "Course mismatch"}"
 // @Failure 500 {object} map[string]string "{"error": "Failed to invite user to team"}"
 // @Router /v1/team/invite/{userId}/{teamId} [get]
 func InviteUserToTeam(c *gin.Context) {
@@ -484,13 +497,19 @@ func InviteUserToTeam(c *gin.Context) {
 		return
 	}
 
-	// 检查用户是否已经属于一个团队
+	// check if the user is already belongs to a team
 	if user.BelongsToGroup != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User already belongs to a team"})
 		return
 	}
 
-	// 更新用户的 BelongsToGroup 字段
+	// check if the user's course math the team course
+	if user.Course != team.Course {
+		c.JSON(http.StatusConflict, gin.H{"error": "Course mismatch"})
+		return
+	}
+
+	// update the belongs_to_group field
 	user.BelongsToGroup = &team.ID
 	if err := global.DB.Model(&user).Updates(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to invite user to team"})
@@ -528,15 +547,15 @@ func UpdateTeamPreferences(c *gin.Context) {
 	teamID := *user.BelongsToGroup
 
 	var team models.Team
-    if err := global.DB.First(&team, teamID).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve team"})
-        return
-    }
+	if err := global.DB.First(&team, teamID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve team"})
+		return
+	}
 
-    if team.AllocatedProject != nil {
-        c.JSON(http.StatusConflict, gin.H{"error": "Team already allocated a project, cannot update preferences"})
-        return
-    }
+	if team.AllocatedProject != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "Team already allocated a project, cannot update preferences"})
+		return
+	}
 
 	// 删除 team_preference_projects 表中关于这个团队的所有记录
 	if err := global.DB.Where("team_id = ?", teamID).Delete(&models.TeamPreferenceProject{}).Error; err != nil {
@@ -569,7 +588,6 @@ func UpdateTeamPreferences(c *gin.Context) {
 
 	c.JSON(http.StatusOK, "Successfully updated team preferences")
 }
-
 
 // @Summary Get team preferences
 // @Description Get the team preferences for a given user
@@ -614,4 +632,3 @@ func GetTeamPreferences(c *gin.Context) {
 
 	c.JSON(http.StatusOK, responses)
 }
-

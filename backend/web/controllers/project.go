@@ -28,7 +28,7 @@ import (
 // @Param email formData string true "Clinet Email"
 // @Param requiredSkills[] formData array false "Required Skills" items(type=string)
 // @Param file formData file false "upload file"
-// @Success 200 {object} map[string]interface{} "{"msg": "Project created successfully", "projectId": 1, "fileName": "filename.pdf", "filePath": "backend/files/filename.pdf", "createdBy": 1}"
+// @Success 200 {object} map[string]interface{} "{"msg": "Project created successfully", "projectId": 1, "filePath": "backend/files/filename.pdf", "createdBy": 1}"
 // @Failure 400 {object} map[string]interface{} "{"error": "Invalid email"}"
 // @Failure 404 {object} map[string]interface{} "{"error": "Client not found"}"
 // @Failure 500 {object} map[string]interface{} "{"error": "Failed to save file"} or {"error": "Failed to create project"} or {"error": "Failed to find or create skill"} or {"error": "Failed to associate skills"}"
@@ -95,7 +95,6 @@ func CreateProject(c *gin.Context) {
 
 	// 如果有上传文件，则保存文件名和文件路径
 	if fileURL != "" {
-		project.Filename = fileName
 		project.FileURL = fileURL
 	}
 
@@ -129,7 +128,6 @@ func CreateProject(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"msg":       "Project created successfully",
 		"projectId": project.ID,
-		"fileName":  project.Filename,
 		"fileURL":   project.FileURL,
 		"createdBy": client.ID,
 	})
@@ -466,6 +464,7 @@ func GetAllocatedTeamDetail(c *gin.Context) {
 			TeamID:           team.ID,
 			TeamIdShow:       team.TeamIdShow,
 			TeamName:         team.Name,
+			Course:           team.Course,
 			TeamMember:       members,
 			TeamSkills:       skills,
 			PreferenceReason: preference.Reason,
@@ -525,6 +524,7 @@ func GetPreferencedByTeamsDetail(c *gin.Context) {
 				TeamID:           team.ID,
 				TeamIdShow:       team.TeamIdShow,
 				TeamName:         team.Name,
+				Course:           team.Course,
 				TeamMember:       members,
 				TeamSkills:       skills,
 				PreferenceReason: pref.Reason,
@@ -596,6 +596,7 @@ func GetProjectPreferencedByTeamDetail(c *gin.Context) {
 		TeamID:           team.ID,
 		TeamIdShow:       team.TeamIdShow,
 		TeamName:         team.Name,
+		Course:           team.Course,
 		TeamMember:       members,
 		TeamSkills:       skills,
 		PreferenceReason: preference.Reason,

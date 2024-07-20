@@ -116,6 +116,7 @@ func (s *UserServer) CreateUser(ctx context.Context, req *proto.CreateUserInfo) 
 	// 用户不存在可以进行创建
 	user.Email = req.Email
 	user.Username = req.Username
+	user.Course = req.Course
 
 	// 加密
 	options := &password.Options{SaltLen: 10, Iterations: 100, KeyLen: 32, HashFunction: sha512.New}

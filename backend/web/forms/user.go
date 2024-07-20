@@ -9,6 +9,7 @@ type PasswordLoginForm struct {
 
 type RegisterForm struct {
 	Username        string `json:"username" binding:"required"`
+	Course          string `json:"course" binding:"required"`
 	Email           string `json:"email" binding:"required,email"`
 	Password        string `json:"password" binding:"required,min=3,max=20"`
 	ConfirmPassword string `json:"password_confirm" binding:"required,eqfield=Password"`

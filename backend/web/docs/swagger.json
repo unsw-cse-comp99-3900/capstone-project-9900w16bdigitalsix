@@ -1046,7 +1046,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"msg\": \"Project created successfully\", \"projectId\": 1, \"fileName\": \"filename.pdf\", \"filePath\": \"backend/files/filename.pdf\", \"createdBy\": 1}",
+                        "description": "{\"msg\": \"Project created successfully\", \"projectId\": 1, \"filePath\": \"backend/files/filename.pdf\", \"createdBy\": 1}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -1962,6 +1962,15 @@
                             }
                         }
                     },
+                    "409": {
+                        "description": "{\"error\": \"Course mismatch\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "{\"error\": \"Failed to invite user to team\"}",
                         "schema": {
@@ -1976,7 +1985,7 @@
         },
         "/v1/team/join": {
             "put": {
-                "description": "用户加入团队",
+                "description": "User join a team",
                 "consumes": [
                     "application/json"
                 ],
@@ -2024,7 +2033,7 @@
                         }
                     },
                     "409": {
-                        "description": "{\"error\": \"User already belongs to a team\"}",
+                        "description": "{\"error\": \"Course mismatch\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -3248,12 +3257,16 @@
         "forms.RegisterForm": {
             "type": "object",
             "required": [
+                "course",
                 "email",
                 "password",
                 "password_confirm",
                 "username"
             ],
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -3423,6 +3436,9 @@
         "response.CreateTeamResponse": {
             "type": "object",
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "teamId": {
                     "type": "integer"
                 },
@@ -3499,6 +3515,9 @@
         "response.GetTeamProfileResponse": {
             "type": "object",
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "teamId": {
                     "type": "integer"
                 },
@@ -3777,6 +3796,9 @@
         "response.SearchTeamResponse": {
             "type": "object",
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "teamId": {
                     "type": "integer"
                 },
@@ -3846,6 +3868,9 @@
                 "avatarURL": {
                     "type": "string"
                 },
+                "course": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -3861,6 +3886,9 @@
             "type": "object",
             "properties": {
                 "avatarURL": {
+                    "type": "string"
+                },
+                "course": {
                     "type": "string"
                 },
                 "email": {
@@ -3886,6 +3914,9 @@
         "response.TeamDetailResponse": {
             "type": "object",
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "preferenceReason": {
                     "type": "string"
                 },
@@ -3936,6 +3967,9 @@
             "type": "object",
             "properties": {
                 "avatarURL": {
+                    "type": "string"
+                },
+                "course": {
                     "type": "string"
                 },
                 "email": {
