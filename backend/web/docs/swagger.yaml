@@ -1410,6 +1410,47 @@ paths:
       summary: Get project preferred by team detail
       tags:
       - Project Preference
+  /v1/project/archive/{projectId}:
+    get:
+      consumes:
+      - application/json
+      description: Set the IsPublic field of the project to 2
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Project archived"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "Invalid project ID"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Project not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Unable to update project"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Archive the specified project
+      tags:
+      - Project
   /v1/project/create:
     post:
       consumes:
@@ -1535,6 +1576,29 @@ paths:
               type: string
             type: object
       summary: Get project detail by projectID
+      tags:
+      - Project
+  /v1/project/get/archived/list:
+    get:
+      consumes:
+      - application/json
+      description: Get the details of all projects with IsPublic field set to 2
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.ProjectDetailResponse'
+            type: array
+        "500":
+          description: '{"error": "Unable to retrieve archived projects"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all archived projects
       tags:
       - Project
   /v1/project/get/list/byRole/{userId}:
@@ -2714,5 +2778,5 @@ paths:
             type: object
       summary: Get all students List
       tags:
-      - Personal Management
+      - Student
 swagger: "2.0"

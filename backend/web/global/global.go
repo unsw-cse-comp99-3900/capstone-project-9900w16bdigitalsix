@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// 一些全局变量
+// global variables
 var (
 	DB           *gorm.DB
 	ServerConfig *config.ServerConfig = &config.ServerConfig{}

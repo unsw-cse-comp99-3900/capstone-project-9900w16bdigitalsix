@@ -1000,6 +1000,68 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/project/archive/{projectId}": {
+            "get": {
+                "description": "Set the IsPublic field of the project to 2",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Archive the specified project",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\": \"Project archived\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"Invalid project ID\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"Project not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Unable to update project\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/project/create": {
             "post": {
                 "description": "client 创建一个新的项目并上传文件, this api makes sure only client can create the project",
@@ -1172,6 +1234,41 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "{\"error\": \"Internal Server Error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/project/get/archived/list": {
+            "get": {
+                "description": "Get the details of all projects with IsPublic field set to 2",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Get all archived projects",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.ProjectDetailResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Unable to retrieve archived projects\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -2959,7 +3056,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Personal Management"
+                    "Student"
                 ],
                 "summary": "Get all students List",
                 "responses": {

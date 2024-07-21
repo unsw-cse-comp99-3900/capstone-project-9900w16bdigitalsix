@@ -90,6 +90,8 @@ func ProjectRouter(Router *gin.RouterGroup) {
 		projectRouter.GET("/preferencedBy/team/:projectId", controllers.GetPreferencedByTeamsDetail)
 		projectRouter.GET("/:projectId/preferencedBy/:teamId/detail", controllers.GetProjectPreferencedByTeamDetail)
 		projectRouter.GET("/get/list/byRole/:userId", controllers.GetProjectsByRole)
+		projectRouter.GET("/get/archived/list", controllers.GetArchivedProjects)
+		projectRouter.GET("/archive/:projectId", controllers.ArchiveProject)
 	}
 }
 

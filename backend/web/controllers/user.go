@@ -623,7 +623,7 @@ func GetPersonProfile(c *gin.Context) {
 
 // @Summary Get all students List
 // @Description 返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
-// @Tags Personal Management
+// @Tags Student
 // @Accept  json
 // @Produce  json
 // @Success 200 {array} response.StudentListResponse
