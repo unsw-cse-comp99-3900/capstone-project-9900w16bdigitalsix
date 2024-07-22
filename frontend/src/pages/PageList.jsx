@@ -133,6 +133,10 @@ const PageList = () => {
           path="/project/preference"
           element={<StudentTeamPreference token={token} setToken={setToken} />}
         />
+        <Route
+          path="/project/report"
+          element={<RoleManage token={token} setToken={setToken} />}
+        />
 
         {/* admin */}
         <Route
