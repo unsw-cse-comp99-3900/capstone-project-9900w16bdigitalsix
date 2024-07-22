@@ -42,6 +42,9 @@ import TestProjectDetail from "./TestProjectDetail";
 // report
 import GenerateProgressReport from "./GenerateProgressReport";
 import GenerateVirtual from "./GenerateVirtual";
+
+// message
+import Message from "./Message";
 const PageList = () => {
   const [token, setToken] = React.useState(null);
   const [role, setRole] = React.useState(null);
@@ -134,7 +137,7 @@ const PageList = () => {
           element={<StudentTeamPreference token={token} setToken={setToken} />}
         />
         <Route
-          path="/project/report"
+          path="/project/role-manage"
           element={<RoleManage token={token} setToken={setToken} />}
         />
 
@@ -165,6 +168,12 @@ const PageList = () => {
         <Route
           path="/project/virtual-data-report"
           element={<GenerateVirtual token={token} setToken={setToken}/>}
+        />
+
+        {/* Message */}
+        <Route
+          path="/message"
+          element={<Message token={token} setToken={setToken}/>}
         />
       </Routes>
       
