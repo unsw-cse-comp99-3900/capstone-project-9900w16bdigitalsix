@@ -1531,6 +1531,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/project/statistics": {
+            "get": {
+                "description": "Get total number of students, clients, tutors, coordinators, and top 5 popular project and top 5 popular project field",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Get statistics of projects and teams",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.StatisticsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/project/team/allocated/{projectId}": {
             "get": {
                 "description": "查看一个 project 被 allocated 的所有 team 的信息",
@@ -3564,6 +3587,20 @@ const docTemplate = `{
                 }
             }
         },
+        "response.FieldStatistic": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "type": "string"
+                },
+                "projects": {
+                    "type": "integer"
+                },
+                "teams": {
+                    "type": "integer"
+                }
+            }
+        },
         "response.GetProjectListResponse": {
             "type": "object",
             "properties": {
@@ -3878,6 +3915,23 @@ const docTemplate = `{
                 }
             }
         },
+        "response.ProjectStatistic": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "type": "string"
+                },
+                "projectId": {
+                    "type": "integer"
+                },
+                "teams": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "response.ProjectTeamMember": {
             "type": "object",
             "properties": {
@@ -3966,6 +4020,35 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sprintNum": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.StatisticsResponse": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.FieldStatistic"
+                    }
+                },
+                "projects": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ProjectStatistic"
+                    }
+                },
+                "totalClients": {
+                    "type": "integer"
+                },
+                "totalCoordinators": {
+                    "type": "integer"
+                },
+                "totalStudents": {
+                    "type": "integer"
+                },
+                "totalTutors": {
                     "type": "integer"
                 }
             }

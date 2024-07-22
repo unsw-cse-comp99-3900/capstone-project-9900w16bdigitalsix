@@ -322,6 +322,15 @@ definitions:
       teamName:
         type: string
     type: object
+  response.FieldStatistic:
+    properties:
+      field:
+        type: string
+      projects:
+        type: integer
+      teams:
+        type: integer
+    type: object
   response.GetProjectListResponse:
     properties:
       allocatedTeam:
@@ -528,6 +537,17 @@ definitions:
       tutorName:
         type: string
     type: object
+  response.ProjectStatistic:
+    properties:
+      field:
+        type: string
+      projectId:
+        type: integer
+      teams:
+        type: integer
+      title:
+        type: string
+    type: object
   response.ProjectTeamMember:
     properties:
       avatarURL:
@@ -586,6 +606,25 @@ definitions:
       grade:
         type: integer
       sprintNum:
+        type: integer
+    type: object
+  response.StatisticsResponse:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/response.FieldStatistic'
+        type: array
+      projects:
+        items:
+          $ref: '#/definitions/response.ProjectStatistic'
+        type: array
+      totalClients:
+        type: integer
+      totalCoordinators:
+        type: integer
+      totalStudents:
+        type: integer
+      totalTutors:
         type: integer
     type: object
   response.StudentInfoResponse:
@@ -1777,6 +1816,22 @@ paths:
       summary: Get  unallocated teams that prefer a project
       tags:
       - Project Preference
+  /v1/project/statistics:
+    get:
+      consumes:
+      - application/json
+      description: Get total number of students, clients, tutors, coordinators, and
+        top 5 popular project and top 5 popular project field
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.StatisticsResponse'
+      summary: Get statistics of projects and teams
+      tags:
+      - Statistics
   /v1/project/team/allocated/{projectId}:
     get:
       description: 查看一个 project 被 allocated 的所有 team 的信息

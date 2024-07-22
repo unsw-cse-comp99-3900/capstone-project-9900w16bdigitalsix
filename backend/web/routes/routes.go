@@ -92,6 +92,7 @@ func ProjectRouter(Router *gin.RouterGroup) {
 		projectRouter.GET("/get/list/byRole/:userId", controllers.GetProjectsByRole)
 		projectRouter.GET("/get/archived/list", controllers.GetArchivedProjects)
 		projectRouter.GET("/archive/:projectId", controllers.ArchiveProject)
+		projectRouter.GET("statistics/", controllers.GetStatistics)
 	}
 }
 
