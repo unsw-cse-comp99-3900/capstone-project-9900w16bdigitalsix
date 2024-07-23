@@ -1,86 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Container, Row, Col, Card, CardBody, CardTitle, FormGroup, Label, Input } from 'reactstrap';
 
+const fetchApiData = async () => {
+  try {
+    const response = await fetch('http://127.0.0.1:8080/v1/project/statistics/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    return null;
+  }
+};
+
 const VirtualDataReport = () => {
-  const data = {
-    totalStudents: 150,
-    totalClients: 30,
-    totalTutors: 20,
-    totalCoordinators: 10,
-    fields: [
-      { name: "Artificial Intelligence", projects: 8, teams: 20 },
-      { name: "Data Science", projects: 6, teams: 15 },
-      { name: "Cyber Security", projects: 4, teams: 10 },
-      { name: "Software Engineering", projects: 5, teams: 12 },
-      { name: "Network Engineering", projects: 3, teams: 8 },
-      { name: "Human-Computer Interaction", projects: 7, teams: 18 },
-      { name: "Cloud Computing", projects: 4, teams: 11 },
-      { name: "Information Systems", projects: 6, teams: 14 },
-      { name: "Machine Learning", projects: 5, teams: 13 },
-      { name: "Blockchain", projects: 2, teams: 6 },
-      { name: "Other", projects: 1, teams: 4 },
-    ],
-    projects: [
-      { name: "Project A", field: "Artificial Intelligence", teams: 5 },
-      { name: "Project B", field: "Artificial Intelligence", teams: 3 },
-      { name: "Project C", field: "Artificial Intelligence", teams: 2 },
-      { name: "Project D", field: "Artificial Intelligence", teams: 4 },
-      { name: "Project E", field: "Artificial Intelligence", teams: 6 },
-      { name: "Project F", field: "Data Science", teams: 7 },
-      { name: "Project G", field: "Data Science", teams: 5 },
-      { name: "Project H", field: "Data Science", teams: 4 },
-      { name: "Project I", field: "Data Science", teams: 3 },
-      { name: "Project J", field: "Cyber Security", teams: 3 },
-      { name: "Project K", field: "Cyber Security", teams: 4 },
-      { name: "Project L", field: "Cyber Security", teams: 3 },
-      { name: "Project M", field: "Software Engineering", teams: 4 },
-      { name: "Project N", field: "Software Engineering", teams: 5 },
-      { name: "Project O", field: "Software Engineering", teams: 3 },
-      { name: "Project P", field: "Network Engineering", teams: 3 },
-      { name: "Project Q", field: "Network Engineering", teams: 2 },
-      { name: "Project R", field: "Network Engineering", teams: 3 },
-      { name: "Project S", field: "Human-Computer Interaction", teams: 6 },
-      { name: "Project T", field: "Human-Computer Interaction", teams: 4 },
-      { name: "Project U", field: "Human-Computer Interaction", teams: 5 },
-      { name: "Project V", field: "Cloud Computing", teams: 4 },
-      { name: "Project W", field: "Cloud Computing", teams: 3 },
-      { name: "Project X", field: "Cloud Computing", teams: 4 },
-      { name: "Project Y", field: "Information Systems", teams: 5 },
-      { name: "Project Z", field: "Information Systems", teams: 4 },
-      { name: "Project AA", field: "Information Systems", teams: 5 },
-      { name: "Project BB", field: "Machine Learning", teams: 3 },
-      { name: "Project CC", field: "Machine Learning", teams: 4 },
-      { name: "Project DD", field: "Machine Learning", teams: 3 },
-      { name: "Project EE", field: "Blockchain", teams: 2 },
-      { name: "Project FF", field: "Blockchain", teams: 4 },
-      { name: "Project GG", field: "Other", teams: 1 },
-      { name: "Project HH", field: "Other", teams: 3 },
-      // 其他项目的数据
-    ],
-  };
+  const [data, setData] = useState(null);
+  const [selectedField, setSelectedField] = useState("");
 
-  const fieldColors = {
-    "Artificial Intelligence": "rgba(75, 192, 192, 0.6)",
-    "Data Science": "rgba(255, 99, 132, 0.6)",
-    "Cyber Security": "rgba(153, 102, 255, 0.6)",
-    "Software Engineering": "rgba(255, 159, 64, 0.6)",
-    "Network Engineering": "rgba(54, 162, 235, 0.6)",
-    "Human-Computer Interaction": "rgba(255, 206, 86, 0.6)",
-    "Cloud Computing": "rgba(75, 192, 192, 0.6)",
-    "Information Systems": "rgba(255, 99, 132, 0.6)",
-    "Machine Learning": "rgba(153, 102, 255, 0.6)",
-    "Blockchain": "rgba(255, 159, 64, 0.6)",
-    "Other": "rgba(54, 162, 235, 0.6)",
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      const apiData = await fetchApiData();
+      if (apiData) {
+        setData(apiData);
+        if (apiData.fields.length > 0) {
+          setSelectedField(apiData.fields[0].field);
+        }
+      }
+    };
 
-  const [selectedField, setSelectedField] = useState("Artificial Intelligence");
+    fetchData();
+  }, []);
 
   const handleFieldChange = (event) => {
     setSelectedField(event.target.value);
   };
+
+  if (!data) {
+    return <div>Loading...</div>;
+  }
 
   const totalUsersData = {
     labels: ['Students', 'Clients', 'Tutors', 'Coordinators'],
@@ -93,7 +62,7 @@ const VirtualDataReport = () => {
   };
 
   const fieldTeamsData = {
-    labels: data.fields.map(field => field.name),
+    labels: data.fields.map(field => field.field),
     datasets: [
       {
         data: data.fields.map(field => field.teams),
@@ -104,7 +73,7 @@ const VirtualDataReport = () => {
 
   const selectedFieldProjects = data.projects.filter(project => project.field === selectedField);
   const fieldProjectsData = {
-    labels: selectedFieldProjects.map(project => project.name),
+    labels: selectedFieldProjects.map(project => project.title),
     datasets: [
       {
         label: 'Teams',
@@ -116,21 +85,15 @@ const VirtualDataReport = () => {
 
   const topKProjects = data.projects.sort((a, b) => b.teams - a.teams).slice(0, 5);
   const topKProjectsData = {
-    labels: topKProjects.map(project => project.name),
+    labels: topKProjects.map(project => project.title),
     datasets: [
       {
         label: 'Projects',
         data: topKProjects.map(project => project.teams),
-        backgroundColor: topKProjects.map(project => fieldColors[project.field] || 'rgba(75, 192, 192, 0.6)'),
+        backgroundColor: topKProjects.map(project => 'rgba(75, 192, 192, 0.6)'), // You can customize colors based on project fields
       },
     ],
   };
-
-  const uniqueFields = [...new Set(topKProjects.map(project => project.field))];
-  const legendLabels = uniqueFields.map(field => ({
-    text: field,
-    fillStyle: fieldColors[field],
-  }));
 
   const pieOptions = {
     responsive: true,
@@ -154,18 +117,12 @@ const VirtualDataReport = () => {
     scales: {
       y: {
         beginAtZero: true,
-        max: 10, // 固定纵坐标最大值为10
       },
     },
     plugins: {
       legend: {
         display: true,
         position: 'top',
-        labels: {
-          generateLabels: (chart) => {
-            return legendLabels;
-          },
-        },
       },
     },
   };
@@ -217,7 +174,7 @@ const VirtualDataReport = () => {
                 <Label for="fieldSelect">Select Field</Label>
                 <Input type="select" id="fieldSelect" value={selectedField} onChange={handleFieldChange}>
                   {data.fields.map(field => (
-                    <option key={field.name} value={field.name}>{field.name}</option>
+                    <option key={field.field} value={field.field}>{field.field}</option>
                   ))}
                 </Input>
               </FormGroup>
