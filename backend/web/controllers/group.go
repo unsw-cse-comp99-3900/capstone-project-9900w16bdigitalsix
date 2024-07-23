@@ -557,7 +557,7 @@ func UpdateTeamPreferences(c *gin.Context) {
 		return
 	}
 
-	// 删除 team_preference_projects 表中关于这个团队的所有记录
+	// delete records of team_preference_projects table for the team
 	if err := global.DB.Where("team_id = ?", teamID).Delete(&models.TeamPreferenceProject{}).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete existing preferences"})
 		return
@@ -569,16 +569,19 @@ func UpdateTeamPreferences(c *gin.Context) {
 		return
 	}
 
+	num := 1
 	for _, pref := range preferences {
 		var existingPref response.TeamPreferenceProject
 		if err := global.DB.Where("team_id = ? AND project_id = ?", teamID, pref.ProjectID).First(&existingPref).Error; err != nil {
 			// Create new preference
-			newPref := response.TeamPreferenceProject{
+			newPref := models.TeamPreferenceProject{
 				TeamID:    teamID,
 				ProjectID: pref.ProjectID,
 				Reason:    pref.Reason,
+				PreferenceNum: num,
 			}
 			global.DB.Create(&newPref)
+			num += 1
 		} else {
 			// Update existing preference
 			existingPref.Reason = pref.Reason

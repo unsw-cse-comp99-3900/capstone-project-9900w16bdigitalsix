@@ -284,7 +284,7 @@ func GetGrades(c *gin.Context) {
 }
 
 // @Summary Get project progress detail
-// @Description 获取指定团队的项目进度详细信息
+// @Description Get project progress detail for specific team
 // @Tags Project Progress
 // @Accept json
 // @Produce json

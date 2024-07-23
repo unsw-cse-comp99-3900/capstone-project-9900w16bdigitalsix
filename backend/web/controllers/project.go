@@ -528,6 +528,7 @@ func GetPreferencedByTeamsDetail(c *gin.Context) {
 				TeamMember:       members,
 				TeamSkills:       skills,
 				PreferenceReason: pref.Reason,
+				PreferenceNum:    pref.PreferenceNum,
 			})
 		}
 	}
@@ -826,26 +827,26 @@ func GetProjectsByRole(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error": "Unable to update project"}"
 // @Router /v1/project/archive/{projectId} [get]
 func ArchiveProject(c *gin.Context) {
-    projectId := c.Param("projectId")
-    id, err := strconv.Atoi(projectId)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project ID"})
-        return
-    }
+	projectId := c.Param("projectId")
+	id, err := strconv.Atoi(projectId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project ID"})
+		return
+	}
 
-    var project models.Project
-    if err := global.DB.First(&project, id).Error; err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
-        return
-    }
+	var project models.Project
+	if err := global.DB.First(&project, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
+		return
+	}
 
-    project.IsPublic = 2
-    if err := global.DB.Save(&project).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to update project"})
-        return
-    }
+	project.IsPublic = 2
+	if err := global.DB.Save(&project).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to update project"})
+		return
+	}
 
-    c.JSON(http.StatusOK, gin.H{"message": "Project archived"})
+	c.JSON(http.StatusOK, gin.H{"message": "Project archived"})
 }
 
 // GetArchivedProjects godoc
@@ -858,54 +859,54 @@ func ArchiveProject(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error": "Unable to retrieve archived projects"}"
 // @Router /v1/project/get/archived/list [get]
 func GetArchivedProjects(c *gin.Context) {
-    var projects []models.Project
-    if err := global.DB.Where("is_public = ?", 2).Find(&projects).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrieve archived projects"})
-        return
-    }
+	var projects []models.Project
+	if err := global.DB.Where("is_public = ?", 2).Find(&projects).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrieve archived projects"})
+		return
+	}
 
-    var projectDetails []response.ProjectDetailResponse
-    for _, project := range projects {
-        var client, tutor, coordinator models.User
-        global.DB.First(&client, project.ClientID)
-        global.DB.First(&tutor, project.TutorID)
-        global.DB.First(&coordinator, project.CoordinatorID)
+	var projectDetails []response.ProjectDetailResponse
+	for _, project := range projects {
+		var client, tutor, coordinator models.User
+		global.DB.First(&client, project.ClientID)
+		global.DB.First(&tutor, project.TutorID)
+		global.DB.First(&coordinator, project.CoordinatorID)
 
-        var skills []models.Skill
-        global.DB.Model(&project).Association("Skills").Find(&skills)
-        var skillNames []string
-        for _, skill := range skills {
-            skillNames = append(skillNames, skill.SkillName)
-        }
+		var skills []models.Skill
+		global.DB.Model(&project).Association("Skills").Find(&skills)
+		var skillNames []string
+		for _, skill := range skills {
+			skillNames = append(skillNames, skill.SkillName)
+		}
 
-        var allocatedTeams []response.AllocatedTeam
-        for _, team := range project.Teams {
-            allocatedTeams = append(allocatedTeams, response.AllocatedTeam{
-                TeamID:   team.ID,
-                TeamName: team.Name,
-            })
-        }
+		var allocatedTeams []response.AllocatedTeam
+		for _, team := range project.Teams {
+			allocatedTeams = append(allocatedTeams, response.AllocatedTeam{
+				TeamID:   team.ID,
+				TeamName: team.Name,
+			})
+		}
 
-        projectDetails = append(projectDetails, response.ProjectDetailResponse{
-            ProjectID:        project.ID,
-            Title:            project.Name,
-            ClientName:       client.Username,
-            ClientEmail:      client.Email,
-            ClientID:         client.ID,
-            ClientAvatarURL:  client.AvatarURL,
-            TutorID:          tutor.ID,
-            TutorName:        tutor.Username,
-            TutorEmail:       tutor.Email,
-            CoordinatorID:    coordinator.ID,
-            CoordinatorName:  coordinator.Username,
-            CoordinatorEmail: coordinator.Email,
-            RequiredSkills:   skillNames,
-            Field:            project.Field,
-            Description:      project.Description,
-            SpecLink:         project.FileURL,
-            AllocatedTeam:    allocatedTeams,
-        })
-    }
+		projectDetails = append(projectDetails, response.ProjectDetailResponse{
+			ProjectID:        project.ID,
+			Title:            project.Name,
+			ClientName:       client.Username,
+			ClientEmail:      client.Email,
+			ClientID:         client.ID,
+			ClientAvatarURL:  client.AvatarURL,
+			TutorID:          tutor.ID,
+			TutorName:        tutor.Username,
+			TutorEmail:       tutor.Email,
+			CoordinatorID:    coordinator.ID,
+			CoordinatorName:  coordinator.Username,
+			CoordinatorEmail: coordinator.Email,
+			RequiredSkills:   skillNames,
+			Field:            project.Field,
+			Description:      project.Description,
+			SpecLink:         project.FileURL,
+			AllocatedTeam:    allocatedTeams,
+		})
+	}
 
-    c.JSON(http.StatusOK, projectDetails)
+	c.JSON(http.StatusOK, projectDetails)
 }

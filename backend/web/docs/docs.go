@@ -902,7 +902,7 @@ const docTemplate = `{
         },
         "/v1/progress/get/detail/{teamId}": {
             "get": {
-                "description": "获取指定团队的项目进度详细信息",
+                "description": "Get project progress detail for specific team",
                 "consumes": [
                     "application/json"
                 ],
@@ -4107,6 +4107,9 @@ const docTemplate = `{
             "properties": {
                 "course": {
                     "type": "string"
+                },
+                "preferenceNum": {
+                    "type": "integer"
                 },
                 "preferenceReason": {
                     "type": "string"

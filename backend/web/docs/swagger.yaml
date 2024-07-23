@@ -663,6 +663,8 @@ definitions:
     properties:
       course:
         type: string
+      preferenceNum:
+        type: integer
       preferenceReason:
         type: string
       teamId:
@@ -1357,7 +1359,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 获取指定团队的项目进度详细信息
+      description: Get project progress detail for specific team
       parameters:
       - description: Team ID
         in: path

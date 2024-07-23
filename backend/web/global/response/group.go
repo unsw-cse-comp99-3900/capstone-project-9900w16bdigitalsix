@@ -50,9 +50,10 @@ type StudentInfoResponse struct {
 }
 
 type TeamPreferenceProject struct {
-	TeamID    uint   `gorm:"primaryKey"`
-	ProjectID uint   `gorm:"primaryKey"`
-	Reason    string `gorm:"type:text"`
+	TeamID        uint   `json:"teamId"`
+	ProjectID     uint   `json:"projectId"`
+	Reason        string `json:"reason"`
+	PreferenceNum int    `json:"preferenceNum"`
 }
 
 type PreferenceResponse struct {

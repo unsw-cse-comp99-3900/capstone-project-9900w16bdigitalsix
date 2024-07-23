@@ -52,7 +52,7 @@ func GetUserNotifications(c *gin.Context) {
 func ClearUserNotifications(c *gin.Context) {
 	userId := c.Param("userId")
 
-	// 删除用户的所有通知
+	// delete all notifications
 	if err := global.DB.Where("user_id = ?", userId).Delete(&models.UserNotifications{}).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -43,23 +43,25 @@ type Project struct {
 	gorm.Model
 	Name          string
 	Field         string
+	MaxTeams      int
 	IsPublic      uint                    `gorm:"default:1;type:int comment '1表示public 2 表示没有public'"`
 	Description   string                  `gorm:"type:text"`
-	FileURL       string                  `gorm:"type:varchar(255)"` 
-	ClientID      *uint                   `gorm:"default:null"`      // 一个项目被谁负责的
+	FileURL       string                  `gorm:"type:varchar(255)"`
+	ClientID      *uint                   `gorm:"default:null"` 
 	TutorID       *uint                   `gorm:"default:null"`
 	CoordinatorID *uint                   `gorm:"default:null"`
 	Teams         []Team                  `gorm:"foreignkey:AllocatedProject"` // a project can be done by many groups
-	PreferencedBy []TeamPreferenceProject `gorm:"foreignkey:ProjectID"`        // 使用Preference模型
+	PreferencedBy []TeamPreferenceProject `gorm:"foreignkey:ProjectID"`        // use Preferenc model
 	Skills        []Skill                 `gorm:"many2many:project_skills;"`
 }
 
 // Preference model
 type TeamPreferenceProject struct {
-	ID        uint   `gorm:"primaryKey"`
-	TeamID    uint   `gorm:"primaryKey"`
-	ProjectID uint   `gorm:"primaryKey"`
-	Reason    string `gorm:"type:text"`
+	ID            uint `gorm:"primaryKey"`
+	TeamID        uint `gorm:"primaryKey"`
+	ProjectID     uint `gorm:"primaryKey"`
+	PreferenceNum int
+	Reason        string `gorm:"type:text"`
 }
 
 type Skill struct {
@@ -83,19 +85,19 @@ type UserNotifications struct {
 }
 
 type Sprint struct {
-	TeamID      uint       `gorm:"primaryKey;not null"`                                     // 外键，关联到团队
-	SprintNum   int        `gorm:"primaryKey;not null comment '1 表示未开始， 2 表示进行中， 3 表示已完成'"` // Sprint编号，从1到3
+	TeamID      uint       `gorm:"primaryKey;not null"`                                     
+	SprintNum   int        `gorm:"primaryKey;not null"` // Sprint number
 	StartDate   *time.Time `gorm:"type:datetime"`
 	EndDate     *time.Time `gorm:"type:datetime"`
 	Grade       *int
-	Comment     *string     `gorm:"type:text"`                                               // 评语
-	UserStories []UserStory `gorm:"foreignKey:TeamID,SprintNum;references:TeamID,SprintNum"` // 一个Sprint有多个UserStory
+	Comment     *string     `gorm:"type:text"`                                              
+	UserStories []UserStory `gorm:"foreignKey:TeamID,SprintNum;references:TeamID,SprintNum"` // one Sprint has many UserStory
 }
 
 type UserStory struct {
 	gorm.Model
-	TeamID      uint   `gorm:"not null"` // 外键，关联到Sprint的TeamID
-	SprintNum   int    `gorm:"not null"` // 外键，关联到Sprint的SprintNum
+	TeamID      uint   `gorm:"not null"` // foreigh key
+	SprintNum   int    `gorm:"not null"` // foreign key
 	Description string `gorm:"type:text"`
-	Status      int    `gorm:"not null"` // 1表示未完成，2表示进行中，3表示已完成
+	Status      int    `gorm:"not null comment '1 todo, 2 ongoing, 3 done'"`
 }
