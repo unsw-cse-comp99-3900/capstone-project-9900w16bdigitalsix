@@ -90,7 +90,7 @@ const VirtualDataReport = () => {
       {
         label: 'Projects',
         data: topKProjects.map(project => project.teams),
-        backgroundColor: topKProjects.map(project => 'rgba(75, 192, 192, 0.6)'), // You can customize colors based on project fields
+        backgroundColor: topKProjects.map(project => 'rgba(75, 192, 192, 0.6)'),
       },
     ],
   };
