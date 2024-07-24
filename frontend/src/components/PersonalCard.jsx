@@ -132,7 +132,7 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
   return (
     <>
       <Modal
-        title="Share student card"
+        title="Share Student Card"
         visible={visible}
         onOk={handleSubmit}
         onCancel={handleCancel}
