@@ -26,7 +26,7 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
   }, []);
   // update selected student 
   const handleSelect = (e) => {
-    setSelectedId(e.target.value);
+    setSelectedId(e);
   };
 
   const loadStudentData = async() => {
@@ -86,9 +86,9 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
     // }
   };
 
-  const handleCancle = () => {
-    onCancel();
+  const handleCancel = () => {
     setSelectedId(null);
+    onCancel();
   }
 
   return (
@@ -97,9 +97,9 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
         title="Share student card"
         visible={visible}
         onOk={handleSubmit}
-        onCancel={handleCancle}
+        onCancel={handleCancel}
         footer={[
-          <Button key="cancel" onClick={onCancel}>Cancel</Button>,
+          <Button key="cancel" onClick={handleCancel}>Cancel</Button>,
           <Button key="submit" type="primary" onClick={handleSubmit}>Save</Button>
         ]}
       >
@@ -107,12 +107,12 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
           dataSource={data}
           style={{ maxHeight: '400px', overflowY: 'auto' }}
           renderItem={item => (
-            <List.Item>
+            <List.Item onClick={() => handleSelect(item.userId)} style={{ cursor: 'pointer' }}>
               <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                 <Radio
                   value={item.userId}
                   checked={selectedId === item.userId}
-                  onChange={handleSelect}
+                  onChange={() => handleSelect(item.userId)}
                   style={{ marginRight: 16 }}
                 />
                 <Avatar src={item.avatarUrl} style={{ marginRight: 16 }} />
