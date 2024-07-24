@@ -14,7 +14,7 @@ import {
 } from "mdb-react-ui-kit";
 import { Button as MUIButton } from '@mui/material';
 import { Button, Flex, List, Input, Modal, Avatar } from 'antd';
-import { Outlet } from "react-router-dom";
+import { Outlet, useActionData } from "react-router-dom";
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import { Container, Card } from "reactstrap";
@@ -22,11 +22,24 @@ import IconButton from '@mui/material/IconButton';
 import ShareIcon from '@mui/icons-material/Share';
 import '../assets/scss/FullLayout.css';//make sure import this
 import '../assets/scss/Message.css'
+import PersonalCard from '../components/PersonalCard';
 
 const Message = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  
+  // personal card modal
+  const [isPersonalCardVisible, setIsPersonalCardVisible] = useState(false);
+
+  const handlePersonalCardOk = () => {
+    setIsPersonalCardVisible(false);
+  }
+
+  const handlePersonalCardCancel = () => {
+    setIsPersonalCardVisible(false);
+  }
+
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
@@ -132,7 +145,10 @@ const Message = () => {
                 <a className="ms-3" href="#!">
                   <MDBIcon fas icon="paper-plane" />
                 </a>
-                <IconButton className="circle-buttonshare">
+                <IconButton
+                  className="circle-buttonshare"
+                  onClick={() => setIsPersonalCardVisible(true)}
+                >
                   <ShareIcon />
                 </IconButton>
               </div>
@@ -140,6 +156,16 @@ const Message = () => {
           </Container>
         </div>
       </div>
+
+      {/* share personal card */}
+      <PersonalCard
+        visible={isPersonalCardVisible}
+        onOk={handlePersonalCardOk}
+        onCancel={handlePersonalCardCancel}
+        // refreshData={loadMessageData} // update function
+      >
+
+      </PersonalCard>
     </main>
   );
 };
