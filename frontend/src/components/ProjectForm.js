@@ -113,7 +113,7 @@ const ProjectForm = () => {
         skills.forEach(skill => form.append('requiredSkills[]', skill));
       } else if (key === 'email') {
         form.append('email', formData[key]);
-      } else if (key === 'file') {
+      } else if (key === 'file' && formData[key]) {
         form.append('file', formData[key], formData[key].name);
       } else {
         form.append(key, formData[key]);

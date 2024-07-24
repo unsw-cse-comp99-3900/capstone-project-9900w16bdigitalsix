@@ -137,7 +137,7 @@ const ProjectProgress = (props) => {
       return;
     }
   
-    const response = await apiCall('GET', `v1/progress/get/detail/${item.teamId}`, null, token, true);
+    const response = await apiCall('GET', `v1/progress/get/detail/${item?.teamId}`, null, token, true);
     console.log("response", response);
     if (!response) {
       setData(null);
@@ -246,7 +246,7 @@ const ProjectProgress = (props) => {
       if (startDate) datesRender.push(startDate);
       if (endDate) datesRender.push(endDate);
 
-      return (
+      return ( item ? 
         <CardBody className="">
           <Typography.Title
             level={5}
@@ -335,7 +335,7 @@ const ProjectProgress = (props) => {
               </List.Item>
             )}
           />
-        </CardBody>
+        </CardBody> : <></>
     )});
   };
 
@@ -365,9 +365,9 @@ const ProjectProgress = (props) => {
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'bold' }}
               >
                 <div>
-                  {item.title} - {item.teamName}
+                  {item?.title} - {item?.teamName}
                   <div style={{ fontSize: '12px', fontWeight: 'normal', marginTop: '4px' }}>
-                    Project Id: {projectId} - Team Id: {item.teamIdShow}
+                    Project Id: {projectId} - Team Id: {item?.teamIdShow}
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -385,6 +385,7 @@ const ProjectProgress = (props) => {
                       type="primary"
                       style={{ margin: '8px', width: "20px" }}
                       onClick={clickReport}
+                      disabled={!item}
                     >
                       <FileTextOutlined style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }} />
                     </Button>
@@ -404,7 +405,7 @@ const ProjectProgress = (props) => {
             onCancel={handleGradeCancel}
             gradeComment={gradeComment}
             setGradeComment={setGradeComment}
-            teamId={item.teamId}
+            teamId={item?.teamId}
             loadUserData={loadUserData}
           />
           {/* edit user story */}
@@ -417,7 +418,7 @@ const ProjectProgress = (props) => {
             onCancel={handleEditCancel}
             refreshData={loadUserData} // update function
             sprintNo={`${sprintNo}`}
-            teamId={item.teamId}
+            teamId={item?.teamId}
             userStoryId={userStoryId}
             userStoryStatus={userStoryStatus}
             setUserStoryStatus={setUserStoryStatus}
@@ -432,7 +433,7 @@ const ProjectProgress = (props) => {
             onCancel={handleCreateCancel}
             refreshData={loadUserData} // update function
             sprintNo={`${sprintNo}`}
-            teamId={item.teamId}
+            teamId={item?.teamId}
             userStoryStatus={userStoryStatus}
             setUserStoryStatus={setUserStoryStatus}
           />
