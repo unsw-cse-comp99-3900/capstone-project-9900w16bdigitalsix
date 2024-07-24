@@ -18,6 +18,8 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import { Container, Card } from "reactstrap";
+import IconButton from '@mui/material/IconButton';
+import ShareIcon from '@mui/icons-material/Share';
 import '../assets/scss/FullLayout.css';//make sure import this
 import '../assets/scss/Message.css'
 
@@ -45,17 +47,25 @@ const Message = () => {
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
             {/* add code here */}
-            <div className="search" style={{ display: 'flex', alignItems: 'center', border: 'none' }}>
+            
+            <Card id="scrollableDiv2">
+            <div className="topContainer">
               <Button
                 type="primary" 
                 className="list-item-button"
                 style={{marginLeft: '18px'}}
               >
-                REPORT
+                All Channel
+              </Button>
+              <Button
+                type="primary" 
+                className="list-item-button"
+                style={{marginLeft: '18px'}}
+              >
+                +  New Channel
               </Button>
             </div>
-            <Card id="scrollableDiv">
-              <Card id="scrollableDiv">
+              <Card id="scrollableDiv2">
                 <li className="d-flex align-items-center mb-4">
                   <Avatar src={''} size={48} className="avatar" />
                   <MDBCard style={{ flexGrow: 1 }}>
@@ -122,6 +132,9 @@ const Message = () => {
                 <a className="ms-3" href="#!">
                   <MDBIcon fas icon="paper-plane" />
                 </a>
+                <IconButton className="circle-buttonshare">
+                  <ShareIcon />
+                </IconButton>
               </div>
             </Card>
           </Container>
