@@ -15,11 +15,14 @@ export default function InviteModel({
   const [allData, setAllData] = useState([]);
   const seachRef = useRef();
   const mountedRef = useRef(false);
+
+  const token = localStorage.getItem('token');
+
   const loadMoreData = async () => {
     if (loading) return;
     setLoading(true);
     const url = "v1/user/student/list";
-    const response = await apiCall("GET", url);
+    const response = await apiCall("GET", url, null, token, null);
     console.log("....list....", response);
     if (!response || response.error) {
       setData([]);
