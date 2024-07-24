@@ -420,7 +420,7 @@ const pieOptions = {
                     </div>
                     <h6 style={{ textAlign: 'center', padding: '0 0 30px 0'}}>Fig 4. Duration of Sprints Over Time</h6>
                     <div className="chart-container mb-4">
-                      <Pie data={timepieData} options={pieOptions} plugins={[ChartDataLabels]} />
+                      <Pie data={timepieData} options={pieOptions} plugins={[ChartDataLabels]}/>
                     </div>
                     <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Fig 5. Sprint Time Contributions to Total Project Duration</h6>
                     </CardBody>
