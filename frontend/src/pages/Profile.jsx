@@ -319,6 +319,18 @@ const handleFileChange = async (event) => {
                             )}
                         </Grid>
                         <Grid item xs={6}>
+                            <Typography variant="body1">Course:</Typography>
+                            {editable ? (
+                                <Typography variant="body2" sx={{ mt: 1, bgcolor: 'grey.200', p: 2, borderRadius: 1 }}>
+                                    {role}
+                                </Typography>
+                            ) : (
+                                <Typography variant="body2" sx={{ mt: 1, bgcolor: 'grey.200', p: 2, borderRadius: 1 }}>
+                                    {role}
+                                </Typography>
+                            )}
+                        </Grid>
+                        <Grid item xs={6}>
                             <Typography variant="body1">Skills:</Typography>
                             {editable ? (
                                 <>
