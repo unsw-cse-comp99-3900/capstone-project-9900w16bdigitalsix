@@ -462,6 +462,7 @@ func GetUnallocatedTeams(c *gin.Context) {
 			TeamIdShow: team.TeamIdShow,
 			TeamName:   team.Name,
 			TeamSkills: teamSkills,
+			Course:     team.Course,
 		})
 	}
 
@@ -575,9 +576,9 @@ func UpdateTeamPreferences(c *gin.Context) {
 		if err := global.DB.Where("team_id = ? AND project_id = ?", teamID, pref.ProjectID).First(&existingPref).Error; err != nil {
 			// Create new preference
 			newPref := models.TeamPreferenceProject{
-				TeamID:    teamID,
-				ProjectID: pref.ProjectID,
-				Reason:    pref.Reason,
+				TeamID:        teamID,
+				ProjectID:     pref.ProjectID,
+				Reason:        pref.Reason,
 				PreferenceNum: num,
 			}
 			global.DB.Create(&newPref)

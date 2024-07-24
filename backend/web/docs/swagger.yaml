@@ -164,6 +164,8 @@ definitions:
         type: string
       bio:
         type: string
+      course:
+        type: string
       field:
         type: string
       name:
@@ -444,6 +446,8 @@ definitions:
         type: string
       bio:
         type: string
+      course:
+        type: string
       email:
         type: string
       field:
@@ -684,6 +688,8 @@ definitions:
     type: object
   response.TeamListResponse:
     properties:
+      course:
+        type: string
       teamId:
         type: integer
       teamIdShow:

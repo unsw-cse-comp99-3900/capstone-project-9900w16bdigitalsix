@@ -3340,6 +3340,9 @@
                 "bio": {
                     "type": "string"
                 },
+                "course": {
+                    "type": "string"
+                },
                 "field": {
                     "type": "string"
                 },
@@ -3763,6 +3766,9 @@
                 "bio": {
                     "type": "string"
                 },
+                "course": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -4129,6 +4135,9 @@
         "response.TeamListResponse": {
             "type": "object",
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "teamId": {
                     "type": "integer"
                 },

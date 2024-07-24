@@ -3351,6 +3351,9 @@ const docTemplate = `{
                 "bio": {
                     "type": "string"
                 },
+                "course": {
+                    "type": "string"
+                },
                 "field": {
                     "type": "string"
                 },
@@ -3774,6 +3777,9 @@ const docTemplate = `{
                 "bio": {
                     "type": "string"
                 },
+                "course": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -4140,6 +4146,9 @@ const docTemplate = `{
         "response.TeamListResponse": {
             "type": "object",
             "properties": {
+                "course": {
+                    "type": "string"
+                },
                 "teamId": {
                     "type": "integer"
                 },

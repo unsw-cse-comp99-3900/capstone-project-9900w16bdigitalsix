@@ -31,6 +31,7 @@ type Profile struct {
 	UserID       uint     `json:"userId"`
 	Name         string   `json:"name"`
 	Role         int      `json:"role"`
+	Course       string   `json:"course"`
 	Avatarbase64 string   `json:"avatarBase64"`
 	Bio          string   `json:"bio"`
 	Organization string   `json:"organization"`

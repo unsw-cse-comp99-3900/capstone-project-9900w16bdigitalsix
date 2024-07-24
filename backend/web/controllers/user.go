@@ -535,6 +535,7 @@ func UpdateUserInfo(c *gin.Context) {
 	user.Role = profileReq.Profile.Role
 	user.AvatarURL = url
 	user.Field = profileReq.Profile.Field
+	user.Course = profileReq.Profile.Course
 
 	// 更新用户技能
 	var skills []models.Skill
@@ -610,6 +611,7 @@ func GetPersonProfile(c *gin.Context) {
 		UserID:       user.ID,
 		Name:         user.Username,
 		Email:        user.Email,
+		Course:       user.Course,
 		Role:         user.Role,
 		Bio:          user.Bio,
 		Organization: user.Organization,
