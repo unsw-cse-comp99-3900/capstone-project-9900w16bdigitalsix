@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import {
   MDBContainer,
   MDBRow,
@@ -8,15 +8,23 @@ import {
   MDBIcon,
   MDBTypography,
   MDBInputGroup,
+  MDBCardHeader,
+  MDBCardFooter,
+  MDBBtn,
 } from "mdb-react-ui-kit";
-
+import { Button as MUIButton } from '@mui/material';
+import { Button, Flex, List, Input, Modal, Avatar } from 'antd';
 import { Outlet } from "react-router-dom";
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
-import { Container } from "reactstrap";
+import { Container, Card } from "reactstrap";
 import '../assets/scss/FullLayout.css';//make sure import this
+import '../assets/scss/Message.css'
 
 const Message = () => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
@@ -37,123 +45,85 @@ const Message = () => {
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
             {/* add code here */}
-            <MDBContainer fluid className="py-5" style={{ backgroundColor: "#CDC4F9" }}>
-                <MDBRow>
-                    <MDBCol md="12">
-                    <MDBCard id="chat3" style={{ borderRadius: "15px" }}>
-                        <MDBCardBody>
-                        <MDBRow>
-                            <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
-                            <div className="p-3">
-                                <MDBInputGroup className="rounded mb-3">
-                                <input
-                                    className="form-control rounded"
-                                    placeholder="Search"
-                                    type="search"
-                                />
-                                <span
-                                    className="input-group-text border-0"
-                                    id="search-addon"
-                                >
-                                    <MDBIcon fas icon="search" />
-                                </span>
-                                </MDBInputGroup>
+            <div className="search" style={{ display: 'flex', alignItems: 'center', border: 'none' }}>
+              <Button
+                type="primary" 
+                className="list-item-button"
+                style={{marginLeft: '18px'}}
+              >
+                REPORT
+              </Button>
+            </div>
+            <Card id="scrollableDiv">
+              <Card id="scrollableDiv">
+                <li className="d-flex align-items-center mb-4">
+                  <Avatar src={''} size={48} className="avatar" />
+                  <MDBCard style={{ flexGrow: 1 }}>
+                    <MDBCardHeader className="d-flex justify-content-between p-3">
+                      <p className="fw-bold mb-0">Brad Pitt</p>
+                      <p className="text-muted small mb-0">
+                        <MDBIcon far icon="clock" /> 12 mins ago
+                      </p>
+                    </MDBCardHeader>
+                    <MDBCardBody>
+                      <p className="mb-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                        do eiusmod tempor incididunt ut labore et dolore magna
+                        aliqua.
+                      </p>
+                    </MDBCardBody>
+                  </MDBCard>
+                </li>
+                <List
+                  loading={loading}
+                  dataSource={filteredData}
+                  renderItem={(item) => (
+                    <List.Item className="list-item" key={item.userId}>
+                      <List.Item.Meta style={{paddingLeft: "8px"}}
 
-                                <div
-                                style={{ position: "relative", height: "400px", overflowY: "auto" }}
-                                >
-                                <MDBTypography listUnStyled className="mb-0">
-                                    <li className="p-2 border-bottom">
-                                    <a
-                                        href="#!"
-                                        className="d-flex justify-content-between"
-                                    >
-                                        <div className="d-flex flex-row">
-                                        <div>
-                                            <img
-                                            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                            alt="avatar"
-                                            className="d-flex align-self-center me-3"
-                                            width="60"
-                                            />
-                                            <span className="badge bg-success badge-dot"></span>
-                                        </div>
-                                        <div className="pt-1">
-                                            <p className="fw-bold mb-0">Marie Horwitz</p>
-                                            <p className="small text-muted">
-                                            Hello, Are you there?
-                                            </p>
-                                        </div>
-                                        </div>
-                                        <div className="pt-1">
-                                        <p className="small text-muted mb-1">Just now</p>
-                                        <span className="badge bg-danger rounded-pill float-end">
-                                            3
-                                        </span>
-                                        </div>
-                                    </a>
-                                    </li>
-                                    {/* Repeat similar structure for other list items */}
-                                </MDBTypography>
-                                </div>
-                            </div>
-                            </MDBCol>
-                            <MDBCol md="6" lg="7" xl="8">
-                            <div
-                                style={{ position: "relative", height: "400px", overflowY: "auto" }}
-                                className="pt-3 pe-3"
-                            >
-                                <div className="d-flex flex-row justify-content-start">
-                                <img
-                                    src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                                    alt="avatar 1"
-                                    style={{ width: "45px", height: "100%" }}
-                                />
-                                <div>
-                                    <p
-                                    className="small p-2 ms-3 mb-1 rounded-3"
-                                    style={{ backgroundColor: "#f5f6f7" }}
-                                    >
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing
-                                    elit, sed do eiusmod tempor incididunt ut labore et
-                                    dolore magna aliqua.
-                                    </p>
-                                    <p className="small ms-3 mb-3 rounded-3 text-muted float-end">
-                                    12:00 PM | Aug 13
-                                    </p>
-                                </div>
-                                </div>
-                                {/* Repeat similar structure for other messages */}
-                            </div>
-                            <div className="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
-                                <img
-                                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                                alt="avatar 3"
-                                style={{ width: "40px", height: "100%" }}
-                                />
-                                <input
-                                type="text"
-                                className="form-control form-control-lg"
-                                id="exampleFormControlInput2"
-                                placeholder="Type message"
-                                />
-                                <a className="ms-1 text-muted" href="#!">
-                                <MDBIcon fas icon="paperclip" />
-                                </a>
-                                <a className="ms-3 text-muted" href="#!">
-                                <MDBIcon fas icon="smile" />
-                                </a>
-                                <a className="ms-3" href="#!">
-                                <MDBIcon fas icon="paper-plane" />
-                                </a>
-                            </div>
-                            </MDBCol>
-                        </MDBRow>
-                        </MDBCardBody>
-                    </MDBCard>
-                    </MDBCol>
-                </MDBRow>
-            </MDBContainer>
+                        title={
+                          <div className="list-item-meta-title">
+                            <span className="list-item-meta-name" style={{ fontSize: '16px', fontWeight: 'bold' }}>{item.title}</span>
+                          </div>
+                        }
+                        description={
+                          <div className="list-item-meta-description">
+                            <div className="list-item-meta-id">Client: {item.clientName}</div>
+                            <div className="list-item-meta-email">Client Email: {item.clientEmail}</div>
+                            <div className="list-item-meta-field">Field: {item.field}</div>
+                          </div>
+                        }
+                      />
+                      <Button type="primary" className="list-item-button">Assign</Button>
+                    </List.Item>
+                  )}
+                />
+              </Card>
+
+
+              <div className="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
+                <img
+                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                  alt="avatar 3"
+                  style={{ width: "40px", height: "100%" }}
+                />
+                <input
+                  type="text"
+                  className="form-control form-control-lg"
+                  id="exampleFormControlInput2"
+                  placeholder="Type message"
+                />
+                <a className="ms-1 text-muted" href="#!">
+                  <MDBIcon fas icon="paperclip" />
+                </a>
+                <a className="ms-3 text-muted" href="#!">
+                  <MDBIcon fas icon="smile" />
+                </a>
+                <a className="ms-3" href="#!">
+                  <MDBIcon fas icon="paper-plane" />
+                </a>
+              </div>
+            </Card>
           </Container>
         </div>
       </div>
