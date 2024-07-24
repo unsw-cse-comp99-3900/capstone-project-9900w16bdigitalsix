@@ -21,6 +21,22 @@ import MessageAlert from '../components/MessageAlert';
 import { Avatar } from '@mui/material';
 import '../assets/scss/bell.css';
 
+const roleMap = {
+  1: 'Student',
+  2: 'Tutor',
+  3: 'Client',
+  4: 'Coordinator',
+  5: 'Administrator'
+};
+
+const roleColorMap = {
+  1: { background: '#e0f7fa', color: '#006064' }, // blue Student
+  2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
+  3: { background: '#fff9c4', color: '#f57f17' }, // yellow Client
+  4: { background: '#ffe0b2', color: '#e65100' }, // orange Coordinator
+  5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
+};
+
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -159,15 +175,11 @@ const Header = () => {
             </div>
           </Link>
         </Nav>
+        <span className="list-item-meta-role" style={{ backgroundColor: roleColorMap[role].background, color: roleColorMap[role].color }}>
+          {roleMap[role]}
+        </span>
         <Dropdown isOpen={dropdownOpen} toggle={toggle}>
           <DropdownToggle color="transparent">
-            {/* avatar */}
-            {/* <img
-              src={user1}
-              alt="profile"
-              className="rounded-circle"
-              width="30"
-            ></img> */}
             <Avatar
                 src={avatar}
                 alt="Profile"
