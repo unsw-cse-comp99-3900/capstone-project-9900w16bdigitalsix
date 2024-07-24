@@ -23,6 +23,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import '../assets/scss/FullLayout.css';//make sure import this
 import '../assets/scss/Message.css'
 import PersonalCard from '../components/PersonalCard';
+import ChatPersonalCard from '../components/ChatPersonalCard';
 
 const Message = () => {
   const [loading, setLoading] = useState(false);
@@ -31,6 +32,8 @@ const Message = () => {
   
   // personal card modal
   const [isPersonalCardVisible, setIsPersonalCardVisible] = useState(false);
+  // new chat select person card modal
+  const [isChatPersonalCardVisible, setIsChatPersonalCardVisible] = useState(false);
 
   const handlePersonalCardOk = () => {
     setIsPersonalCardVisible(false);
@@ -38,6 +41,14 @@ const Message = () => {
 
   const handlePersonalCardCancel = () => {
     setIsPersonalCardVisible(false);
+  }
+
+  // for chat select modal
+  const handleChatPersonalCardOk = () => {
+    setIsChatPersonalCardVisible(false);
+  }
+  const handleChatPersonalCardCancel = () => {
+    setIsChatPersonalCardVisible(false);
   }
 
   return (
@@ -74,6 +85,7 @@ const Message = () => {
                 type="primary" 
                 className="list-item-button"
                 style={{marginLeft: '18px'}}
+                onClick={() => setIsChatPersonalCardVisible(true)}
               >
                 +  New Channel
               </Button>
@@ -166,6 +178,16 @@ const Message = () => {
       >
 
       </PersonalCard>
+
+      {/* chat selection personal card */}
+      <ChatPersonalCard
+        visible={isChatPersonalCardVisible}
+        onOk={handleChatPersonalCardOk}
+        onCancel={handleChatPersonalCardCancel}
+        // refreshData={loadMessageData} // update function
+      >
+
+      </ChatPersonalCard>
     </main>
   );
 };
