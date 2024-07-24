@@ -99,15 +99,16 @@ const FullLayout = () => {
             <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
               {data.map((project, index) => (
                 <Col xs={24} sm={16} md={8} span={8} key={index}>
-                  <CustomCard
-                    id={project.projectId}
-                    title={project.title}
-                    client={project.clientName}
-                    clientTitle={project.clientEmail}
-                    skills={project.requiredSkills}
-                    field={project.field}
-                    role={role}
-                  />
+                    <CustomCard
+                      id={project.projectId}
+                      title={project.title}
+                      client={project.clientName}
+                      clientTitle={project.clientEmail}
+                      skills={project.requiredSkills}
+                      clientAvatar={project.clientAvatarURL}
+                      field={project.field}
+                      role={role}
+                    />
                 </Col>
               ))}
             </Row>

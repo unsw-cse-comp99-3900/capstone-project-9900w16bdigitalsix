@@ -75,6 +75,11 @@ const ProjectAdmin = () => {
     setSearchTerm('');
     loadProjectData();
   };
+
+  const handleReport = () => {
+    navigate('/project/report');
+  }
+
   useEffect(() => {
     loadProjectData();
   }, []);
@@ -126,6 +131,14 @@ const ProjectAdmin = () => {
               >
                 Clear
               </MUIButton>
+              <Button
+                type="primary" 
+                className="list-item-button"
+                style={{marginLeft: '18px'}}
+                onClick={handleReport}
+              >
+                REPORT
+              </Button>
             </div>
             <Card style={{padding: '20px', margin: '20px'}}>
               <List
