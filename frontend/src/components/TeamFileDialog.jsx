@@ -12,9 +12,8 @@ import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import NativeSelect from "@mui/material/NativeSelect";
 
 import { apiCall } from "../helper";
 import MessageAlert from "../components/MessageAlert";
@@ -55,6 +54,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const [teamMember, setTeamMember] = useState([]);
   const [preReason, setPreReason] = useState("");
   const [searchKey, setSearchKey] = useState("");
+  const [sortValue, setSortValue] = useState(0);
+  const [originalTeams, setOriginalTeams] = useState([]);
   const searchInputRef = useRef(null);
   const userRole = parseInt(localStorage.getItem("role"));
 
@@ -69,12 +70,15 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       // console.log(res);
       if (res === null) {
         setCurrentTeam([]);
+        setOriginalTeams([]);
         return;
       }
       if (res.error) {
         setCurrentTeam([]);
+        setOriginalTeams([]);
       } else {
         setCurrentTeam(res);
+        setOriginalTeams(res);
       }
     } catch (error) {
       setErrorMessage(error.message || error.toString());
@@ -93,12 +97,15 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       // console.log(res);
       if (res === null) {
         setCurrentTeam([]);
+        setOriginalTeams([]);
         return;
       }
       if (res.error) {
         setCurrentTeam([]);
+        setOriginalTeams([]);
       } else {
         setCurrentTeam(res);
+        setOriginalTeams(res);
       }
     } catch (error) {
       setErrorMessage(error.message || error.toString());
@@ -111,6 +118,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const handleClick = (name) => {
     setSelected(name);
     if (name === "Preference List") {
+      setSortValue(0);
       getAllAppliedTeams();
     } else if (name === "Allocated Team") {
       getAllAllocatedTeams();
@@ -119,6 +127,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
 
   useEffect(() => {
     setSelected("Preference List");
+    setSortValue(0);
     setSearchKey("");
     getAllAppliedTeams();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -226,6 +235,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     const trimmedSearcList = searchList
       .map((word) => word.trim())
       .filter((word) => word !== "");
+    setSortValue(0);
     const body = {
       projectId: projectId,
       searchList: trimmedSearcList,
@@ -238,13 +248,16 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       );
       if (res === null) {
         setCurrentTeam([]);
+        setOriginalTeams([]);
         return;
       }
       if (res.error) {
         setCurrentTeam([]);
+        setOriginalTeams([]);
         return;
       } else {
         setCurrentTeam(res);
+        setOriginalTeams(res);
       }
     } catch (error) {
       return;
@@ -260,10 +273,43 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   // this function is used to clear the search input field and seach results
   const handleClearSearch = () => {
     setSearchKey("");
+    setSortValue(0);
     getAllAppliedTeams();
   };
 
-  const handleSort = (event) => {};
+  const handleSortClick = (num) => {
+    const teams = [...currentTeam];
+    if (num === "0") {
+      // sort by none
+      setCurrentTeam([...originalTeams]);
+    } else if (num === "1") {
+      //sort by pre num
+      const newTeams = teams.sort((a, b) => {
+        return a.preferenceNum - b.preferenceNum;
+      });
+      setCurrentTeam(newTeams);
+    } else if (num === "2") {
+      // sort by course
+      const newTeams = teams.sort((a, b) => {
+        const courseA = a.course;
+        const courseB = b.course;
+        const courseNumA = parseInt(courseA.match(/\d+/));
+        const courseNumB = parseInt(courseB.match(/\d+/));
+        if (courseA < courseB) return -1;
+        if (courseA > courseB) return 1;
+        if (courseNumA < courseNumB) return -1;
+        if (courseNumA > courseNumB) return 1;
+        return 0;
+      });
+      setCurrentTeam(newTeams);
+    }
+  };
+
+  const handleSortChange = (event) => {
+    const selectedValue = event.target.value;
+    setSortValue(selectedValue);
+    handleSortClick(selectedValue);
+  };
 
   return (
     <>
@@ -308,61 +354,76 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
             <DialogContent dividers>
               {/* this is search component used to search teams that satisfy the requirements */}
               {selected === "Preference List" ? (
-                <div className="search">
-                  <Input
-                    size="large"
-                    placeholder="Search (separated by comma)"
-                    prefix={<SearchOutlined />}
-                    value={searchKey}
-                    ref={searchInputRef}
-                    onChange={(e) => {
-                      setSearchKey(e.target.value);
+                <>
+                  <div className="search">
+                    <Input
+                      size="large"
+                      placeholder="Search (separated by comma)"
+                      prefix={<SearchOutlined />}
+                      value={searchKey}
+                      ref={searchInputRef}
+                      onChange={(e) => {
+                        setSearchKey(e.target.value);
+                      }}
+                      suffix={
+                        <>
+                          <ButtonGroup
+                            variant="text"
+                            aria-label="Basic button group"
+                            size="small"
+                          >
+                            <Button
+                              size="small"
+                              type="primary"
+                              onClick={() => {
+                                handleSearchTeams();
+                              }}
+                            >
+                              Filter
+                            </Button>
+                            <Button
+                              size="small"
+                              type="primary"
+                              onClick={() => {
+                                handleClearSearch();
+                              }}
+                            >
+                              clear
+                            </Button>
+                          </ButtonGroup>
+                        </>
+                      }
+                    />
+                  </div>
+                  <div
+                    style={{
+                      margin: 10,
+                      // display: "flex",
+                      // justifyContent: "right",
+                      // width: "100%",
                     }}
-                    suffix={
-                      <>
-                        <ButtonGroup
-                          variant="text"
-                          aria-label="Basic button group"
-                          size="small"
-                        >
-                          <Button
-                            size="small"
-                            type="primary"
-                            onClick={() => {
-                              handleSearchTeams();
-                            }}
-                          >
-                            Filter
-                          </Button>
-                          <Button
-                            size="small"
-                            type="primary"
-                            onClick={() => {
-                              handleSort();
-                            }}
-                          >
-                            Sort
-                          </Button>
-                          <Button
-                            size="small"
-                            type="primary"
-                            onClick={() => {
-                              handleClearSearch();
-                            }}
-                          >
-                            clear
-                          </Button>
-                        </ButtonGroup>
-                      </>
-                    }
-                  />
-                </div>
+                  >
+                    <NativeSelect
+                      defaultValue={sortValue}
+                      onChange={handleSortChange}
+                      inputProps={{
+                        name: "age",
+                        id: "uncontrolled-native",
+                      }}
+                      sx={{ width: "100%", marginLeft: 1, marginRight: 1 }}
+                    >
+                      <option value={0}>Sort By None</option>
+                      <option value={1}>Sort By Preference Number</option>
+                      <option value={2}>Sort By Course</option>
+                    </NativeSelect>
+                  </div>
+                </>
               ) : (
                 <></>
               )}
 
               {/* the list component is used to show all teams that prefer or have been allocated a specific project */}
-              <List sx={{ width: "100%" }}>
+              <List sx={{ width: "100%", padding: 0 }}>
                 {currentTeam.length > 0 ? (
                   currentTeam.map((team) => {
                     return (
