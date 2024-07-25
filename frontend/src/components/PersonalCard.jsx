@@ -184,6 +184,7 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
                   <div><strong>Name:</strong> {item.userName}</div>
                   <div><strong>Email:</strong> {item.email}</div>
                   <div><strong>Course:</strong> {item.course}</div>
+                  <div><strong>Skills:</strong> {item.userSkills}</div>
                 </div>
               </div>
             </List.Item>
