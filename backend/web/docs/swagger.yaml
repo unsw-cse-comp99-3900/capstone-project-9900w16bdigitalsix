@@ -38,6 +38,18 @@ definitions:
     - projectId
     - tutorId
     type: object
+  forms.CreateChannelForm:
+    properties:
+      channelType:
+        type: integer
+      userId:
+        items:
+          type: integer
+        type: array
+    required:
+    - channelType
+    - userId
+    type: object
   forms.CreateTeamForm:
     properties:
       user_id:
@@ -259,6 +271,16 @@ definitions:
     required:
     - content
     - to
+    type: object
+  forms.UpdateChannelNameForm:
+    properties:
+      ChannelName:
+        type: string
+      channelId:
+        type: integer
+    required:
+    - ChannelName
+    - channelId
     type: object
   forms.UpdateTeamProfileForm:
     properties:
@@ -1132,6 +1154,90 @@ paths:
       summary: Modify user role
       tags:
       - Admin
+  /v1/message/create/channel:
+    post:
+      consumes:
+      - application/json
+      description: private channle or group channel
+      parameters:
+      - description: create channel form
+        in: body
+        name: CreateChannelForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.CreateChannelForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"create channel successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: '{"error": "private chat channel already exists"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: create channel
+      tags:
+      - Message
+  /v1/message/update/channelName:
+    post:
+      consumes:
+      - application/json
+      description: update the name of a specified channel
+      parameters:
+      - description: update channel name form
+        in: body
+        name: UpdateChannelNameForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.UpdateChannelNameForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg": "update channel name successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: update channel name
+      tags:
+      - Message
   /v1/notification/clear/all/{userId}:
     delete:
       consumes:

@@ -547,6 +547,134 @@
                 }
             }
         },
+        "/v1/message/create/channel": {
+            "post": {
+                "description": "private channle or group channel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Message"
+                ],
+                "summary": "create channel",
+                "parameters": [
+                    {
+                        "description": "create channel form",
+                        "name": "CreateChannelForm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.CreateChannelForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"msg\":\"create channel successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"bad request\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "{\"error\": \"private chat channel already exists\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Internal server error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/message/update/channelName": {
+            "post": {
+                "description": "update the name of a specified channel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Message"
+                ],
+                "summary": "update channel name",
+                "parameters": [
+                    {
+                        "description": "update channel name form",
+                        "name": "UpdateChannelNameForm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.UpdateChannelNameForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"msg\": \"update channel name successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"bad request\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"channel not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/notification/clear/all/{userId}": {
             "delete": {
                 "description": "Clears all notifications for a user by user ID",
@@ -3152,6 +3280,24 @@
                 }
             }
         },
+        "forms.CreateChannelForm": {
+            "type": "object",
+            "required": [
+                "channelType",
+                "userId"
+            ],
+            "properties": {
+                "channelType": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "forms.CreateTeamForm": {
             "type": "object",
             "required": [
@@ -3480,6 +3626,21 @@
                 },
                 "to": {
                     "$ref": "#/definitions/forms.NotificationToTeam"
+                }
+            }
+        },
+        "forms.UpdateChannelNameForm": {
+            "type": "object",
+            "required": [
+                "ChannelName",
+                "channelId"
+            ],
+            "properties": {
+                "ChannelName": {
+                    "type": "string"
+                },
+                "channelId": {
+                    "type": "integer"
                 }
             }
         },

@@ -126,3 +126,14 @@ func SearchRouter(Router *gin.RouterGroup) {
      
     }
 }
+
+
+func MessageRouter(Router *gin.RouterGroup) {
+	messageRouter := Router.Group("message")
+    {
+        messageRouter.POST("create/channel", controllers.CreateChannel)
+		messageRouter.POST("update/channelName", controllers.UpdateChannelName)
+		messageRouter.POST("invite/to/channel", controllers.InviteToChannel)
+     
+    }
+}

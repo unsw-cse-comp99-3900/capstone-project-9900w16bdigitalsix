@@ -16,7 +16,7 @@ func InitRouters() *gin.Engine {
 	Router := gin.Default()
 	// 配置跨域
 	Router.Use(middlewares.CORS())
-	//swagger 文档
+	//swagger document
 	Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// static files
 	imagesPath := global.ServerConfig.PicturePath
@@ -34,5 +34,6 @@ func InitRouters() *gin.Engine {
 	routes.NotificationRouter(ApiGroup)
 	routes.ProgressRouter(ApiGroup)
 	routes.SearchRouter(ApiGroup)
+	routes.MessageRouter(ApiGroup)
 	return Router
 }

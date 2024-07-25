@@ -46,7 +46,7 @@ type Project struct {
 	Name          string
 	Field         string
 	MaxTeams      int
-	IsPublic      uint                    `gorm:"default:1;type:int comment '1表示public 2 表示没有public'"`
+	IsPublic      uint                    `gorm:"default:1;type:int comment '1 represents public, 2 represents archive'"`
 	Description   string                  `gorm:"type:text"`
 	FileURL       string                  `gorm:"type:varchar(255)"`
 	ClientID      *uint                   `gorm:"default:null"`
@@ -107,14 +107,14 @@ type UserStory struct {
 type Channel struct {
 	gorm.Model
 	Name     string    `gorm:"type:varchar(255);not null"`
-	IsGroup  bool      `gorm:"not null;default:false"`
+	Type     int       `gorm:"not null;default:1;type:int comment '1 represents private chat, 2 represents group chat'"`
 	Users    []User    `gorm:"many2many:channel_users"`
 	Messages []Message `gorm:"foreignKey:ChannelID"`
 }
 
 type Message struct {
 	gorm.Model
-	Type      int       `gorm:"not null"`
+	Type      int       `gorm:"not null;type:int comment '1 represents test message, 2 represents card'"`
 	Content   string    `gorm:"type:text"`
 	Username  string    `gorm:"type:varchar(16)"`
 	Email     string    `gorm:"type:varchar(255)"`
