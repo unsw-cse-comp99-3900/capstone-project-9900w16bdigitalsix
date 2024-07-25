@@ -242,7 +242,7 @@ const ProjectDetails = () => {
       </div>
       <Dialog open={open} onClose={handleClose}>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <DialogTitle style={{ paddingBottom: 2, marginRight: "8vw" }}>
+          <DialogTitle style={{ paddingBottom: 2, marginRight: "15vw" }}>
             Allocated Teams:
           </DialogTitle>
           <IconButton

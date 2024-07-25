@@ -12,6 +12,9 @@ import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import ButtonGroup from "@mui/material/ButtonGroup";
 
 import { apiCall } from "../helper";
 import MessageAlert from "../components/MessageAlert";
@@ -260,6 +263,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     getAllAppliedTeams();
   };
 
+  const handleSort = (event) => {};
+
   return (
     <>
       <React.Fragment>
@@ -284,7 +289,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                 onClick={() => handleClick("Preference List")}
                 style={{
                   color: selected === "Preference List" ? "blue" : "inherit",
-                  marginRight: "5vw",
+                  marginRight: "15vw",
                 }}
               >
                 Preference List
@@ -315,24 +320,39 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                     }}
                     suffix={
                       <>
-                        <Button
+                        <ButtonGroup
+                          variant="text"
+                          aria-label="Basic button group"
                           size="small"
-                          type="primary"
-                          onClick={() => {
-                            handleSearchTeams();
-                          }}
                         >
-                          Filter
-                        </Button>
-                        <Button
-                          size="small"
-                          type="primary"
-                          onClick={() => {
-                            handleClearSearch();
-                          }}
-                        >
-                          clear
-                        </Button>
+                          <Button
+                            size="small"
+                            type="primary"
+                            onClick={() => {
+                              handleSearchTeams();
+                            }}
+                          >
+                            Filter
+                          </Button>
+                          <Button
+                            size="small"
+                            type="primary"
+                            onClick={() => {
+                              handleSort();
+                            }}
+                          >
+                            Sort
+                          </Button>
+                          <Button
+                            size="small"
+                            type="primary"
+                            onClick={() => {
+                              handleClearSearch();
+                            }}
+                          >
+                            clear
+                          </Button>
+                        </ButtonGroup>
                       </>
                     }
                   />
