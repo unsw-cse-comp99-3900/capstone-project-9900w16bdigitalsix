@@ -24,6 +24,8 @@ import '../assets/scss/FullLayout.css';//make sure import this
 import '../assets/scss/Message.css'
 import PersonalCard from '../components/PersonalCard';
 import ChatPersonalCard from '../components/ChatPersonalCard';
+import MessageText from '../components/MessageText';
+import MessageCard from '../components/MessageCard';
 
 const Message = () => {
   const [loading, setLoading] = useState(false);
@@ -92,55 +94,9 @@ const Message = () => {
             </div>
               <Card id="scrollableDiv2">
                 {/* message template */}
-                <li className="d-flex align-items-center mb-4">
-                  <Avatar src={''} size={48} className="avatar" />
-                  <MDBCard style={{ flexGrow: 1 }}>
-                    <MDBCardHeader className="d-flex justify-content-between p-3">
-                      <p className="fw-bold mb-0">Brad Pitt</p>
-                      <p className="text-muted small mb-0">
-                        <MDBIcon far icon="clock" /> 12 mins ago
-                      </p>
-                    </MDBCardHeader>
-                    <MDBCardBody>
-                      <p className="mb-0">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                        do eiusmod tempor incididunt ut labore et dolore magna
-                        aliqua.
-                      </p>
-                    </MDBCardBody>
-                  </MDBCard>
-                </li>
+                <MessageText></MessageText>
                 {/* personal card template */}
-                <li className="d-flex align-items-center mb-4">
-                  <Avatar src={''} size={48} className="avatar" />
-                  <MDBCard style={{ flexGrow: 1 }}>
-                    <MDBCardHeader className="d-flex justify-content-between p-3">
-                      <p className="fw-bold mb-0">Brad Pitt</p>
-                      <p className="text-muted small mb-0">
-                        <MDBIcon far icon="clock" /> 12 mins ago
-                      </p>
-                    </MDBCardHeader>
-                    <MDBCardBody style={{ padding: '16px', width: '40%' }}>
-                      <div style={{
-                        borderRadius: '10px',
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                        padding: '16px',
-                        backgroundColor: '#e0f7fa',
-                      }}>
-                        <p className="mb-2" style={{ fontStyle: 'italic', color: '#555' }}>
-                          We recommend you connect with this user:
-                        </p>
-                        <hr style={{ borderColor: '#e0e0e0', margin: '8px 0' }} />
-                        <p className="mb-1" style={{ fontWeight: 'bold' }}>
-                          <strong>Name:</strong> <span style={{ fontWeight: 'normal' }}>xxx</span>
-                        </p>
-                        <p className="mb-0" style={{ fontWeight: 'bold' }}>
-                          <strong>Email:</strong> <span style={{ fontWeight: 'normal' }}>xxx@example.com</span>
-                        </p>
-                      </div>
-                    </MDBCardBody>
-                  </MDBCard>
-                </li>
+                <MessageCard></MessageCard>
                 <List
                   loading={loading}
                   dataSource={filteredData}
