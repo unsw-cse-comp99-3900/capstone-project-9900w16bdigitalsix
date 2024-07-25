@@ -24,6 +24,8 @@ type User struct {
 	CoordinatorProject []Project      `gorm:"foreignkey:CoordinatorID"` // a coordinator responsible for many projects
 	Skills             []Skill        `gorm:"many2many:student_skills"` // a student has many skills, a skill can have many students
 	Notifications      []Notification `gorm:"many2many:user_notifications"`
+	Channels           []Channel      `gorm:"many2many:channel_users"`
+	SentMessages       []Message      `gorm:"foreignKey:SenderID"`
 }
 
 type Team struct {
@@ -47,7 +49,7 @@ type Project struct {
 	IsPublic      uint                    `gorm:"default:1;type:int comment '1表示public 2 表示没有public'"`
 	Description   string                  `gorm:"type:text"`
 	FileURL       string                  `gorm:"type:varchar(255)"`
-	ClientID      *uint                   `gorm:"default:null"` 
+	ClientID      *uint                   `gorm:"default:null"`
 	TutorID       *uint                   `gorm:"default:null"`
 	CoordinatorID *uint                   `gorm:"default:null"`
 	Teams         []Team                  `gorm:"foreignkey:AllocatedProject"` // a project can be done by many groups
@@ -85,12 +87,12 @@ type UserNotifications struct {
 }
 
 type Sprint struct {
-	TeamID      uint       `gorm:"primaryKey;not null"`                                     
+	TeamID      uint       `gorm:"primaryKey;not null"`
 	SprintNum   int        `gorm:"primaryKey;not null"` // Sprint number
 	StartDate   *time.Time `gorm:"type:datetime"`
 	EndDate     *time.Time `gorm:"type:datetime"`
 	Grade       *int
-	Comment     *string     `gorm:"type:text"`                                              
+	Comment     *string     `gorm:"type:text"`
 	UserStories []UserStory `gorm:"foreignKey:TeamID,SprintNum;references:TeamID,SprintNum"` // one Sprint has many UserStory
 }
 
@@ -100,4 +102,28 @@ type UserStory struct {
 	SprintNum   int    `gorm:"not null"` // foreign key
 	Description string `gorm:"type:text"`
 	Status      int    `gorm:"not null comment '1 todo, 2 ongoing, 3 done'"`
+}
+
+type Channel struct {
+	gorm.Model
+	Name     string    `gorm:"type:varchar(255);not null"`
+	IsGroup  bool      `gorm:"not null;default:false"`
+	Users    []User    `gorm:"many2many:channel_users"`
+	Messages []Message `gorm:"foreignKey:ChannelID"`
+}
+
+type Message struct {
+	gorm.Model
+	Type      int       `gorm:"not null"`
+	Content   string    `gorm:"type:text"`
+	Username  string    `gorm:"type:varchar(16)"`
+	Email     string    `gorm:"type:varchar(255)"`
+	CreatedAt time.Time `gorm:"autoCreateTime"`
+	SenderID  uint      `gorm:"foreignKey:SenderID"`
+	ChannelID uint      `gorm:"foreignKey:ChannelID"`
+}
+
+type ChannelUser struct {
+	UserID    uint `gorm:"primaryKey"`
+	ChannelID uint `gorm:"primaryKey"`
 }

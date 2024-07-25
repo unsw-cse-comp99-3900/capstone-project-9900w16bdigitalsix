@@ -17,7 +17,7 @@ func main() {
 
 	global.DB.AutoMigrate(&models.User{}, &models.Team{}, &models.Project{},
 		&models.Skill{}, &models.Sprint{}, &models.UserStory{}, &models.TeamPreferenceProject{}, 
-		&models.Notification{}, &models.UserNotifications{})
+		&models.Notification{}, &models.UserNotifications{}, &models.Channel{}, &models.Message{}, &models.ChannelUser{})
 	// 修改现有表的字段排序规则
 	global.DB.Exec("ALTER TABLE skills MODIFY skill_name VARCHAR(255) COLLATE utf8mb4_bin")
 
