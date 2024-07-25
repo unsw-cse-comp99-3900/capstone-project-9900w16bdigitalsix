@@ -26,6 +26,7 @@ const Team = (props) => {
   const [currentMember, setCurrentMember] = useState([]);
   const [curTeamSkills, setCurTeamSkills] = useState([]);
   const [isInvite, setIsInvite] = useState(false);
+  const [course, setCourse] = useState("");
 
   const userId = parseInt(localStorage.getItem("userId"));
 
@@ -46,7 +47,7 @@ const Team = (props) => {
         console.log(res);
         setTeamId(res.teamId);
         setTeamIdShow(res.teamIdShow);
-        setTeamName(res.teamName);
+        setCourse(res.course);
         setCurrentMember(res.teamMember);
         setCurTeamSkills(res.teamSkills);
         setHasTeam(true);
@@ -75,6 +76,7 @@ const Team = (props) => {
         setTeamId(res.teamId);
         setTeamIdShow(res.teamIdShow);
         setTeamName(res.teamName);
+        setCourse(res.course);
         setCurrentMember(res.teamMember);
         setCurTeamSkills(res.teamSkills);
         setHasTeam(true);
@@ -106,6 +108,7 @@ const Team = (props) => {
         setTeamId(res.teamId);
         setTeamIdShow(res.teamIdShow);
         setTeamName(res.teamName);
+        setCourse(res.course);
         setCurrentMember(res.teamMember);
         setCurTeamSkills(res.teamSkills);
         setHasTeam(true);
@@ -177,6 +180,7 @@ const Team = (props) => {
                         teamId={teamId}
                         teamIdShow={teamIdShow}
                         teamName={teamName}
+                        course={course}
                         setTeamName={setTeamName}
                         leaveTeam={leaveTeam}
                         currentMember={currentMember}
