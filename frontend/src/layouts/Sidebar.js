@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 const navigation = [
   {
     title: "Project",
-    href: "/project",//need to be implented
+    href: "/project/allproject",//need to be implented
     icon: "bi bi-clipboard2-data",
   },
   {

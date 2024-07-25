@@ -22,11 +22,15 @@ const statusColorMap = {
   3: '#52c41a'    // green
 };
 
-const CreateUserStoryModal = ({ title, visible, description, setDescription, onOk, onCancel, refreshData, sprintNo, teamId, userStoryId, userStoryStatus, setUserStoryStatus }) => {
+const CreateUserStoryModal = ({ title, visible,  description, setDescription, onOk, onCancel, refreshData, sprintNo, teamId, userStoryStatus, setUserStoryStatus }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setDescription('');
+  }, []);
 
   // record status
   const handleStatusChange = (value) => {
@@ -63,7 +67,7 @@ const CreateUserStoryModal = ({ title, visible, description, setDescription, onO
     };
 
     console.log("requestBody", requestBody);
-    const response = await apiCall('POST', `v1/progress/edit/${userStoryId}`, requestBody, token, true);
+    const response = await apiCall('POST', 'v1/progress/create/userstory', requestBody, token, true);
 
     if (response.error) {
       setSnackbarContent(response.error);
@@ -111,7 +115,7 @@ const CreateUserStoryModal = ({ title, visible, description, setDescription, onO
         <div className="modal-body">
           <Input.TextArea 
             placeholder="Description"
-            autoSize={{ minRows: 3, maxRows: 6 }} 
+            autoSize={{ minRows: 3, maxRows: 6 }}
             onChange={handleDescriptionChange}
             value={description}
           />

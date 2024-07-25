@@ -19,6 +19,23 @@ import cap from "../assets/images/logos/cap_white.png";
 import { apiCall, fileToDataUrl } from '../helper';
 import MessageAlert from '../components/MessageAlert';
 import { Avatar } from '@mui/material';
+import '../assets/scss/bell.css';
+
+const roleMap = {
+  1: 'Student',
+  2: 'Tutor',
+  3: 'Client',
+  4: 'Coordinator',
+  5: 'Administrator'
+};
+
+const roleColorMap = {
+  1: { background: '#e0f7fa', color: '#006064' }, // blue Student
+  2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
+  3: { background: '#fff9c4', color: '#f57f17' }, // yellow Client
+  4: { background: '#ffe0b2', color: '#e65100' }, // orange Coordinator
+  5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
+};
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,7 +45,9 @@ const Header = () => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
+  const [notificationCount, setNotificationCount] = useState(0);
 
+  const role = localStorage.getItem('role');
   const handleAlertClose = () => {
     setAlertOpen(false);
   };
@@ -61,6 +80,14 @@ const Header = () => {
         setAlertType('error');
         setAlertOpen(true);
       }
+
+      const notifications = await apiCall('GET', `v1/notification/get/all/${userId}`);
+      if(notifications){
+        setNotificationCount(notifications.length);
+      }
+      else{
+        setNotificationCount(0);
+      }
     } catch (error) {
       console.error('Failed to fetch user data:', error);
       setSnackbarContent('Failed to fetch user data 1111');
@@ -68,6 +95,7 @@ const Header = () => {
       setAlertOpen(true);
     }
   };
+  
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -122,7 +150,10 @@ const Header = () => {
             </Link>
           </NavItem>
           <NavItem>
-            <Link to="/project/myproject" className="nav-link">
+            <Link
+              to={parseInt(role) === 5 ? "/project/admin" : "/project/myproject"}
+              className="nav-link"
+            >
               My Project
             </Link>
           </NavItem>
@@ -134,20 +165,21 @@ const Header = () => {
         </Nav>
         <Nav className="ml-auto d-flex align-items-center">
           <Link to="/notification" className="nav-link">
-            <div className="notification-icon">
-              <i className="bi bi-bell-fill"></i>
+            <div className="notification">
+              {notificationCount > 0 && (
+                <div className="notification-count">{notificationCount}</div>
+              )}
+              <div className="bell-container">
+                <div className="bell"></div>
+              </div>
             </div>
           </Link>
         </Nav>
+        <span className="list-item-meta-role" style={{ backgroundColor: roleColorMap[role].background, color: roleColorMap[role].color }}>
+          {roleMap[role]}
+        </span>
         <Dropdown isOpen={dropdownOpen} toggle={toggle}>
           <DropdownToggle color="transparent">
-            {/* avatar */}
-            {/* <img
-              src={user1}
-              alt="profile"
-              className="rounded-circle"
-              width="30"
-            ></img> */}
             <Avatar
                 src={avatar}
                 alt="Profile"

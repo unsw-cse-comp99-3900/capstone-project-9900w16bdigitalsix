@@ -162,7 +162,11 @@ export default function TeamTutor() {
               <Input
                   value={searchTerm} // Bind input value to state
                   onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
+<<<<<<< HEAD
                   placeholder="Search Projects"
+=======
+                  placeholder={team ? "Search Team" : "Search Student"}
+>>>>>>> origin/project_typ
                   prefix={<SearchOutlined />}
                   style={{  marginRight: '10px' }}
                   ref={seachRef}

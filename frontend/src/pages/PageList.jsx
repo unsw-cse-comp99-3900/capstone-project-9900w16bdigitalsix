@@ -18,7 +18,11 @@ import TeamRouter from "./TeamRouter";
 import Team from "./Team";
 import TeamTutor from "./TeamTutor";
 import StudentTeamPreference from "./StudentTeamPreference";
+<<<<<<< HEAD
 import UnallocatedTeam from  "./UnallocatedTeam";
+=======
+import UnallocatedTeam from "./UnallocatedTeam";
+>>>>>>> origin/project_typ
 
 // project
 import ProjectList from "./ProjectList";
@@ -26,12 +30,17 @@ import CreateProject from "./CreateProject";
 import EditProject from "./EditProject";
 import ProjectProgress from "./ProjectProgress";
 import ProjectDetails from "./ProjectDetails";
+<<<<<<< HEAD
 import AllProject from "./AllProject"
+=======
+import AllProject from "./AllProject"   
+>>>>>>> origin/project_typ
 
 //admin
 import RoleManage from "./RoleManage";
 import ProjectAdmin from "./ProjectAdmin";
 import ProjectAdminAssign from "./ProjectAdminAssign";
+<<<<<<< HEAD
 
 // notification
 import Notification from "./Notification";
@@ -41,7 +50,21 @@ import TestProjectDetail from "./TestProjectDetail";
 
 // report
 import GenerateProgressReport from "./GenerateProgressReport";
+=======
+>>>>>>> origin/project_typ
 
+// notification
+import Notification from "./Notification";
+
+// test
+import TestProjectDetail from "./TestProjectDetail";
+
+// report
+import GenerateProgressReport from "./GenerateProgressReport";
+import GenerateVirtual from "./GenerateVirtual";
+
+// message
+import Message from "./Message";
 const PageList = () => {
   const [token, setToken] = React.useState(null);
   const [role, setRole] = React.useState(null);
@@ -133,6 +156,13 @@ const PageList = () => {
           path="/project/preference"
           element={<StudentTeamPreference token={token} setToken={setToken} />}
         />
+<<<<<<< HEAD
+=======
+        <Route
+          path="/project/role-manage"
+          element={<RoleManage token={token} setToken={setToken} />}
+        />
+>>>>>>> origin/project_typ
 
         {/* admin */}
         <Route
@@ -157,7 +187,23 @@ const PageList = () => {
           path="/project/report/:projectId/:teamId"
           element={<GenerateProgressReport token={token} setToken={setToken} />}
         />
+<<<<<<< HEAD
+=======
+        {/* virtual data report */}
+        <Route
+          path="/project/virtual-data-report"
+          element={<GenerateVirtual token={token} setToken={setToken}/>}
+        />
+
+        {/* Message */}
+        <Route
+          path="/message"
+          element={<Message token={token} setToken={setToken}/>}
+        />
+>>>>>>> origin/project_typ
       </Routes>
+      
+      
       <br />
     </>
   );

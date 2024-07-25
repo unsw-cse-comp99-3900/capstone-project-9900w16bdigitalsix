@@ -25,33 +25,25 @@ export const apiCall = async (method, endpoint, data, isFormData = false) => {
   return { status: response.status, data: result };
 };
 
-const createFormData = () => {
-  const formDataa = new FormData();
-
-  formDataa.append('title', 'wqeq1');
-  formDataa.append('clientEmail', 'haowang32123@gmail.com');
-
-  // 添加技能数组
-  const skills = ['python', 'java'];
-  skills.forEach(skill => formDataa.append('requiredSkills[]', skill));
-
-  formDataa.append('field', 'field2');
-  formDataa.append('description', 'descripti3on');
-
-  // 创建一个虚拟文件
-  const blob = new Blob(['dummy content'], { type: 'application/pdf' });
-  formDataa.append('spec', blob, 'dummy.pdf');
-
-  return formDataa;
-};
-
 const EditProjectForm = ({ initialValues, id }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialValues);
+  const [fileName, setFileName] = useState('');
 
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('error');
   const [alertMessage, setAlertMessage] = useState('');
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem('role');
+    const storedEmail = localStorage.getItem('email');
+    setRole(parseInt(storedRole, 10));
+
+    if (storedRole === '3') {
+      setFormData((prevData) => ({ ...prevData, email: storedEmail }));
+    }
+  }, []);
 
   useEffect(() => {
     setFormData(initialValues);
@@ -59,8 +51,19 @@ const EditProjectForm = ({ initialValues, id }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+    if (name === 'title') {
+      const wordCount = value.trim().split(/\s+/).length;
+      if (wordCount > 20) {
+        setAlertMessage('Project title cannot exceed 20 words.');
+        setAlertType('error');
+        setAlertOpen(true);
+        return;
+      }
+    }
+
     if (files) {
       setFormData({ ...formData, [name]: files[0] });
+      setFileName(files[0].name); // 保存原始文件名
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -69,6 +72,14 @@ const EditProjectForm = ({ initialValues, id }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate form data
+    const titleWordCount = formData.title.trim().split(/\s+/).length;
+    if (titleWordCount > 20) {
+      setAlertMessage('Project title cannot exceed 20 words.');
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    }
     if (!formData.title) {
       setAlertMessage('Project title is required.');
       setAlertType('error');
@@ -108,8 +119,12 @@ const EditProjectForm = ({ initialValues, id }) => {
       } else if (key === 'email') {
         form.append('clientEmail', formData[key]);
       } else if (key === 'file') {
-        const blob = new Blob([formData[key]], { type: 'application/pdf' });
-        form.append('spec', blob, 'renewed.pdf');
+        if (formData[key]) {
+          const originalFileName = formData[key].name;
+          const newFileName = `${id}_${originalFileName}`;
+          form.append('spec', formData[key], newFileName);
+        }
+
       } else {
         form.append(key, formData[key]);
       }
@@ -146,11 +161,25 @@ const EditProjectForm = ({ initialValues, id }) => {
     setAlertOpen(false);
   };
 
+  const fields = [
+    "Artificial Intelligence",
+    "Data Science",
+    "Cyber Security",
+    "Software Engineering",
+    "Network Engineering",
+    "Human-Computer Interaction",
+    "Cloud Computing",
+    "Information Systems",
+    "Machine Learning",
+    "Blockchain",
+    "Other"
+  ];
+
   return (
     <div>
       <Form onSubmit={handleSubmit}>
         <FormGroup>
-          <Label for="title">Project title</Label>
+          <Label for="title">Project title (20 words maximum)</Label>
           <Input
             type="text"
             name="title"
@@ -163,13 +192,17 @@ const EditProjectForm = ({ initialValues, id }) => {
         <FormGroup>
           <Label for="field">Field</Label>
           <Input
-            type="text"
+            type="select"
             name="field"
             id="field"
-            placeholder="Enter field"
             value={formData.field}
             onChange={handleChange}
-          />
+          >
+            <option value="">Select field</option>
+            {fields.map((field, index) => (
+              <option key={index} value={field}>{field}</option>
+            ))}
+          </Input>
         </FormGroup>
         <FormGroup>
           <Label for="description">Description</Label>
@@ -182,19 +215,21 @@ const EditProjectForm = ({ initialValues, id }) => {
             onChange={handleChange}
           />
         </FormGroup>
+        {(role === 4 || role === 5) && (
+          <FormGroup>
+            <Label for="email">Email</Label>
+            <Input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Enter client email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </FormGroup>
+        )}
         <FormGroup>
-          <Label for="email">Email</Label>
-          <Input
-            type="email"
-            name="email"
-            id="email"
-            placeholder="Enter client email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for="requiredSkills">Required skills  (please use ", " to separate each item)</Label>
+          <Label for="requiredSkills">Required skills (please use ", " to separate each item)</Label>
           <Input
             type="text"
             name="requiredSkills"
@@ -214,6 +249,7 @@ const EditProjectForm = ({ initialValues, id }) => {
             onChange={handleChange}
           />
         </FormGroup>
+        {fileName && <p>Selected file: {fileName}</p>} {/* 显示选中的文件名 */}
         <Button type="submit" color="primary">Save</Button>
       </Form>
       <MessageAlert

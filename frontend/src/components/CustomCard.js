@@ -1,57 +1,124 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Card, CardBody, CardTitle, CardText, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import '../assets/scss/CustomCard.css'; // import CSS file
+import TeamFile from "../components/TeamFileDialog";
+import { SpaceContext } from 'antd/es/space';
+import { Avatar } from 'antd';
 
-const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete }) => {
+const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role }) => {
   const [modal, setModal] = useState(false);
-
   const toggle = () => setModal(!modal);
 
+  const navigate = useNavigate();
+
+  const handleCardNavi = () => {
+    navigate(`/project/details/${id}`);
+  };
+  // student preference list modal openW
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    setOpen(false);
+  };
+
+
+
+  // delete project
   const handleDelete = async () => {
     try {
       const response = await fetch(`http://127.0.0.1:8080/v1/project/delete/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
-        onDelete(id); // 调用父组件传递的删除回调函数
-        toggle(); // 关闭模态框
+        onDelete(id);
       } else {
-        console.error('Failed to delete project');
+        console.error('Failed to delete the project.');
       }
     } catch (error) {
-      console.error('Error deleting project:', error);
+      console.error('An error occurred while deleting the project:', error);
+    }
+  };
+  const renderAvatar = () => {
+    console.log(clientAvatar)
+    if (clientAvatar) {
+      return <img src={clientAvatar} alt="Client Avatar" className="avatar" />;
+    } else {
+      return <div className="avatar"> <span> {client[0]}</span></div>;
     }
   };
 
+
   return (
     <>
-      <Card className="mb-4">
-        <div style={{ height: '150px', backgroundColor: '#D8BFD8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <h5>{title}</h5>
+      <Card 
+        className="mb-4 custom-card"
+      >
+        <div 
+          className="custom-card-header"
+          onClick={handleCardNavi}
+          style={{ cursor: "pointer" }}
+        >
+          <h5 className="custom-card-title">
+            {title}
+          </h5>
         </div>
-        <CardBody>
+        <CardBody className="d-flex flex-column custom-card-body">
           <div className="d-flex align-items-center mb-3">
-            <div style={{ width: '40px', height: '40px', backgroundColor: '#D8BFD8', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '10px' }}>
-              <span style={{ color: 'white', fontSize: '20px' }}>{client[0]}</span>
-            </div>
-            <div>
-              <CardTitle tag="h5">{client}</CardTitle>
-              <CardText>{clientTitle}</CardText>
+            <Avatar src={clientAvatar || ''} size={40} className="avatar" />
+          {/* {renderAvatar()} */}
+            <div className="client-info">
+              <CardTitle tag="h5" className="client-name">{client}</CardTitle>
+              <CardText className="client-title">{clientTitle}</CardText>
             </div>
           </div>
-          <CardText>{skills}</CardText>
-          <CardText>{field}</CardText>
-          <div className="d-flex justify-content-between">
+          <div className="skills-container">
+            {Array.isArray(skills) && skills.map(skill => (
+              <span key={skill} className="skill-badge">
+                {skill}
+              </span>
+            ))}
+          </div>
+          <div className="field-container">
+            <span className="field-badge">{field}</span>
+          </div>
+          <div className="mt-auto d-flex justify-content-between">
+          {(role === 3 || role === 4 || role === 5) && (
+            // archive
             <i className="bi bi-file-earmark"></i>
-            <Link to={`/project/edit/${id}`}>
-              <i className="bi bi-pencil"></i>
-            </Link>
-            <i className="bi bi-person"></i>
-            <i className="bi bi-trash" onClick={toggle} style={{ color: 'red', cursor: 'pointer' }}></i>
+          )}
+            {(role === 3 || role === 4 || role === 5) && (
+              <Link to={`/project/edit/${id}`}>
+                {/* edit */}
+                <i className="bi bi-pencil"></i>
+              </Link>
+            )}
+            {(role === 2 || role === 3 || role === 4 || role === 5)  && (
+              // preference list
+              <i 
+                className="bi bi-person"
+                onClick={handleClickOpen}
+                style={{ color: 'blue', cursor: 'pointer' }}
+              ></i>
+
+            )}
+            {(role === 3 || role === 4 || role === 5) && (
+              // delete
+              <i className="bi bi-trash" onClick={toggle} style={{ color: 'red', cursor: 'pointer' }}></i>
+            )}
           </div>
         </CardBody>
+        <TeamFile
+          open={open}
+          handleClose={handleClose}
+          projectId={id}
+          handleClickOpen={handleClickOpen}
+        />
       </Card>
-
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>Confirm Delete</ModalHeader>
         <ModalBody>
