@@ -125,7 +125,11 @@ const Message = () => {
                       </p>
                     )}
                     <div className="buttons">
-                      <Button className="invite-button">+ Invite</Button>
+                      <Button 
+                        className="invite-button"
+                        onClick={() => setIsChatPersonalCardVisible(true)}
+                        >
+                          + Invite</Button>
                       <Button className="leave-button">Leave</Button>
                     </div>
                   </div>

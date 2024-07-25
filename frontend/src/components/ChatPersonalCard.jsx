@@ -95,7 +95,7 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
         onCancel={handleCancel}
         footer={[
           <Button key="cancel" onClick={onCancel}>Cancel</Button>,
-          <Button key="submit" type="primary" onClick={handleSubmit}>Save</Button>
+          <Button key="submit" type="primary" onClick={handleSubmit}>Invite</Button>
         ]}
       >
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
