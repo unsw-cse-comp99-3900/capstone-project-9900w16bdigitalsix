@@ -63,6 +63,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
         "GET",
         `v1/project/preferencedBy/team/${projectId}`
       );
+      // console.log(res);
       if (res === null) {
         setCurrentTeam([]);
         return;
@@ -86,6 +87,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
         "GET",
         `v1/project/team/allocated/${projectId}`
       );
+      // console.log(res);
       if (res === null) {
         setCurrentTeam([]);
         return;
@@ -137,6 +139,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
         "GET",
         `v1/project/${projectId}/preferencedBy/${teamId}/detail`
       );
+      // console.log(res);
       if (res === null) {
         return;
       }

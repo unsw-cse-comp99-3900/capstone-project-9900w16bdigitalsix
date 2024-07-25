@@ -70,6 +70,7 @@ const ProjectDetails = () => {
         "GET",
         `v1/project/team/allocated/${projectId}`
       );
+      // console.log(res);
       if (res === null) {
         setCurrentTeam([]);
         return;
