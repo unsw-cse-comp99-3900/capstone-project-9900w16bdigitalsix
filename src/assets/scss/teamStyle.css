@@ -1,0 +1,76 @@
+/* newStyles.css */
+
+/* General styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f0f4f8;
+}
+
+/* Loading container styles */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* No team container styles */
+.noTeamContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 56px); /* Adjust this value if header height is different */
+  text-align: center;
+}
+
+.noTeamBox {
+  background-color: #ffffff;
+  padding: 40px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: center;
+  margin: auto; /* Center the box horizontally */
+}
+
+.noTeamMessage {
+  font-size: 1.5rem;
+  padding: 20px 50px 50px 50px;
+  color: #333;
+  font-weight: normal;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.teamButton {
+  background-color: #007bff;
+  color: #fff;
+  padding: 15px 0;
+  font-size: 1.25rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.teamButton:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* Additional styles for typography */
+h3, .noTeamMessage {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  font-weight: normal; /* Adjust font weight to normal for lighter text */
+}
