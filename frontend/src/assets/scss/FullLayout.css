@@ -1,0 +1,31 @@
+
+.pageWrapper {
+  display: flex;
+}
+
+.sidebarArea {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  min-height: 100vh;
+}
+
+.contentArea {
+  margin-top: 56px; /* Adjust this value to match the Header height */
+}
+
+.headerLg {
+  position: fixed;
+  top: 0;
+  width: calc(100% - 260px);
+  z-index: 1000;
+}
+
+.headerMd {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.wrapper {
+  padding: 16px;
+}

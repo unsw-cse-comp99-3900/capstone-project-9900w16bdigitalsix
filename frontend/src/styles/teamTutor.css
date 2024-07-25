@@ -1,0 +1,21 @@
+.my-button.ant-btn {
+  background-color: #1890ff; /* 自定义背景颜色 */
+  border-color: #1890ff; /* 自定义边框颜色 */
+}
+.titleBtn {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+}
+
+.seach {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  width: 100%;
+  margin: 20px 0;
+}
+::v-deep .ant-list-item,
+.ant-list-item-meta {
+  padding: 0 20px !important;
+}
