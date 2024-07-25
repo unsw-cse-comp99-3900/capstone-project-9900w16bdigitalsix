@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Select, Avatar, Button, message, List, Checkbox, Input } from 'antd';
+import { Modal, Avatar, Button, List, Checkbox, Input } from 'antd';
 
 import '../assets/scss/AssignRoleModal.css';
 import { apiCall } from '../helper';
 import MessageAlert from './MessageAlert';
 
-const { Option } = Select;
 const { Search } = Input;
 
 const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
@@ -37,17 +36,17 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
     setFilteredData(filtered);
   }, [searchTerm, data]);
 
-  const handleSelect = (userId, avatarURL) => {
+  const handleSelect = (userId, avatarUrl) => {
     if (selectedIds.includes(userId)) {
       setSelectedIds(prevSelectedIds => prevSelectedIds.filter(id => id !== userId));
-      setSelectedAvatars(prevSelectedAvatars => prevSelectedAvatars.filter(url => url !== avatarURL));
+      setSelectedAvatars(prevSelectedAvatars => prevSelectedAvatars.filter(user => user.userId !== userId));
     } else {
       setSelectedIds(prevSelectedIds => [...prevSelectedIds, userId]);
-      setSelectedAvatars(prevSelectedAvatars => [...prevSelectedAvatars, avatarURL]);
+      setSelectedAvatars(prevSelectedAvatars => [...prevSelectedAvatars, { userId, avatarUrl }]);
     }
   };
 
-  const loadStudentData = async() => {
+  const loadStudentData = async () => {
     const response = await apiCall('GET', 'v1/user/student/list', null, token, true);
     
     if (!response) {
@@ -100,10 +99,11 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
         ]}
       >
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
-          {selectedAvatars.map((avatarURL, index) => (
+          {selectedAvatars.map((user, index) => (
             <Avatar
-              key={avatarURL}
-              src={avatarURL ? avatarURL : ''}
+              key={user.userId}
+              id={user.userId}
+              src={user.avatarUrl ? user.avatarUrl : ''}
               size={64}
               style={{
                 marginLeft: index === 0 ? 0 : -16,
@@ -126,10 +126,10 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
                 <Checkbox
                   value={item.userId}
                   checked={selectedIds.includes(item.userId)}
-                  onChange={() => handleSelect(item.userId, item.avatarURL)}
+                  onChange={() => handleSelect(item.userId, item.avatarUrl)}
                   style={{ marginRight: 16 }}
                 />
-                <Avatar src={item.avatarURL ? item.avatarURL : ''} style={{ marginRight: 16 }} />
+                <Avatar src={item.avatarUrl ? item.avatarUrl : ''} style={{ marginRight: 16 }} />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <div><strong>Name:</strong> {item.userName}</div>
                   <div><strong>Email:</strong> {item.email}</div>

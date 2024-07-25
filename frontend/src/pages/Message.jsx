@@ -14,10 +14,11 @@ import {
 } from "mdb-react-ui-kit";
 import { Button as MUIButton } from '@mui/material';
 import { Button, Flex, List, Input, Modal, Avatar } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import { Outlet, useActionData } from "react-router-dom";
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
-import { Container, Card } from "reactstrap";
+import { Container, Card, CardText, CardTitle } from "reactstrap";
 import IconButton from '@mui/material/IconButton';
 import ShareIcon from '@mui/icons-material/Share';
 import '../assets/scss/FullLayout.css';//make sure import this
@@ -34,6 +35,9 @@ const Message = () => {
   const [isPersonalCardVisible, setIsPersonalCardVisible] = useState(false);
   // new chat select person card modal
   const [isChatPersonalCardVisible, setIsChatPersonalCardVisible] = useState(false);
+  // edit channel name
+  const [isEditing, setIsEditing] = useState(false);
+  const [channelName, setChannelName] = useState('Channel Name');
 
   const handlePersonalCardOk = () => {
     setIsPersonalCardVisible(false);
@@ -50,6 +54,19 @@ const Message = () => {
   const handleChatPersonalCardCancel = () => {
     setIsChatPersonalCardVisible(false);
   }
+
+  // for channel name edit
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleInputChange = (e) => {
+    setChannelName(e.target.value);
+  };
+
+  const handleInputBlur = () => {
+    setIsEditing(false);
+  };
 
   return (
     <main>
@@ -91,6 +108,28 @@ const Message = () => {
               </Button>
             </div>
               <Card id="scrollableDiv2">
+                {/* Channel name. When it's group chat, show invite & leave button*/}
+                <CardTitle>
+                  <div className="channel-title">
+                    {isEditing ? (
+                      <Input
+                        value={channelName}
+                        onChange={handleInputChange}
+                        onBlur={handleInputBlur}
+                        autoFocus
+                      />
+                    ) : (
+                      <p>
+                        <strong>{channelName}</strong>
+                        <EditOutlined className="edit-icon" onClick={handleEditClick} />
+                      </p>
+                    )}
+                    <div className="buttons">
+                      <Button className="invite-button">+ Invite</Button>
+                      <Button className="leave-button">Leave</Button>
+                    </div>
+                  </div>
+                </CardTitle>
                 {/* message template */}
                 <li className="d-flex align-items-center mb-4">
                   <Avatar src={''} size={48} className="avatar" />
