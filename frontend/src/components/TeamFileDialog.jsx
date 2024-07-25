@@ -45,6 +45,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
   const [currentTeam, setCurrentTeam] = useState([]);
   const [open2, setOpen2] = useState(false);
   const [teamName, setTeamName] = useState("");
+  const [course, setCourse] = useState("");
+  const [pnum, setPnum] = useState(null);
   const [teamIdShow, setTeamIdShow] = useState("");
   const [teamSkills, setTeamSkills] = useState("");
   const [teamMember, setTeamMember] = useState([]);
@@ -143,6 +145,8 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
       } else {
         setTeamName(res.teamName);
         setTeamIdShow(res.teamIdShow);
+        setCourse(res.course);
+        setPnum(res.preferenceNum);
         setTeamSkills(res.teamSkills);
         setTeamMember(res.teamMember);
         setPreReason(res.preferenceReason);
@@ -369,6 +373,22 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                                     variant="body2"
                                     color="text.primary"
                                   >
+                                    Course: {team.course} <br />
+                                  </Typography>
+                                  <Typography
+                                    sx={{ display: "inline" }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                  >
+                                    Preference No.: {team.preferenceNum} <br />
+                                  </Typography>
+                                  <Typography
+                                    sx={{ display: "inline" }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                  >
                                     No. of TeamMembers: {team.teamMember.length}
                                   </Typography>
                                   <br />
@@ -446,7 +466,23 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                 color="text.primary"
               >
                 TeamId: {teamIdShow}
-              </Typography>{" "}
+              </Typography>
+              <br />
+              <Typography
+                sx={{ display: "inline" }}
+                component="span"
+                color="text.primary"
+              >
+                Course:{course}
+              </Typography>
+              <br />
+              <Typography
+                sx={{ display: "inline" }}
+                component="span"
+                color="text.primary"
+              >
+                Preference No.:{pnum}
+              </Typography>
               <br />
               <Typography
                 sx={{ display: "inline" }}

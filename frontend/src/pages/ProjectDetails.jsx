@@ -19,7 +19,7 @@ import "../assets/scss/FullLayout.css"; //make sure import this
 import { apiCall } from "../helper";
 
 const ProjectDetails = () => {
-    let { projectId } = useParams();
+  let { projectId } = useParams();
 
   // some states
   const [title, setTitle] = useState("");
@@ -285,6 +285,22 @@ const ProjectDetails = () => {
                                 color="text.primary"
                               >
                                 TeamId: {team.teamIdShow} <br />
+                              </Typography>
+                              <Typography
+                                sx={{ display: "inline" }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                              >
+                                Course: {team.course} <br />
+                              </Typography>
+                              <Typography
+                                sx={{ display: "inline" }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                              >
+                                Preference No.: {team.preferenceNum} <br />
                               </Typography>
                               <Typography
                                 sx={{ display: "inline" }}
