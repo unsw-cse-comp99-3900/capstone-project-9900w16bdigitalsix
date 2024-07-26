@@ -60,7 +60,8 @@ const Message = () => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
-
+  // send message
+  const [sendMessage, setSendMessage] = useState(null);
   // for sharing personal card modal
   const handlePersonalCardOk = () => {
     setIsPersonalCardVisible(false);
@@ -194,6 +195,46 @@ const Message = () => {
     setAlertOpen(false);
   };
 
+  // handle sending message
+  const handleSendMessageChange = (event) => {
+    setSendMessage(event.target.value);
+  }
+
+  const handleKeyPress = async(event) => {
+    if (event.key === 'Enter' && sendMessage.trim()) {
+      const requestBody = {
+        SenderId: parseInt(userId),
+        channelId: parseInt(channelId),
+        messageContent: sendMessage,
+        messageType: 1,
+      };
+  
+      console.log("requestBody", requestBody);
+      const response = await apiCall('POST', 'v1/message/send', requestBody, token, true);
+      if (!response){
+        return
+      } else if (response.error){
+        setSnackbarContent(response.error);
+        setAlertType('error');
+        setAlertOpen(true);
+      } else {
+        fetchMessages();
+      }
+      setSendMessage(''); // Clear the input field after sending the message
+    }
+  };
+
+  // scroll to bottom
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
@@ -270,17 +311,17 @@ const Message = () => {
                   </div>
                 </CardTitle>
                 {/* message text or card*/}
-                <List
-                  dataSource={messages}
-                  style={{ maxHeight: '400px', overflowY: 'auto' }}
-                  renderItem={item => (
-                    <List.Item>
-                      {item.messageType === 1 ? <MessageText message={item}></MessageText>
-                      : <MessageCard message={item}></MessageCard>
-                      }  
-                    </List.Item>
-                  )}
-                />
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  <List
+                    dataSource={messages}
+                    renderItem={item => (
+                      <List.Item>
+                        {item.messageType === 1 ? <MessageText message={item} /> : <MessageCard message={item} />}
+                      </List.Item>
+                    )}
+                  />
+                  <div ref={messagesEndRef} />
+                </div>
               </Card>
               <div className="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
                 <img
@@ -293,6 +334,9 @@ const Message = () => {
                   className="form-control form-control-lg"
                   id="exampleFormControlInput2"
                   placeholder="Type message"
+                  value={sendMessage}
+                  onChange={handleSendMessageChange}
+                  onKeyPress={handleKeyPress}
                 />
                 <a className="ms-1 text-muted" href="#!">
                   <MDBIcon fas icon="paperclip" />

@@ -24,23 +24,29 @@ import MessageAlert from './MessageAlert';
 const { Option } = Select;
 
 const MessageText = ({ message }) => {
+  const messageTime = new Date(message.messageTime).toLocaleString('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    hour12: true,
+  });
+
   return (
     <>
       {/* message template */}
-      <li className="d-flex align-items-center mb-4">
+      <li className="d-flex align-items-center">
         {/*  */}
         <Avatar src={''} size={48} className="avatar" />
         {/*  */}
         <MDBCard style={{ flexGrow: 1 }}>
-          <MDBCardHeader className="d-flex justify-content-between p-3">
-            <p className="fw-bold mb-0">message.senderName</p>
+          <MDBCardHeader className="d-flex justify-content-between">
+            <p className="fw-bold mb-0">{message.senderName}</p>
             <p className="text-muted small mb-0">
-              <MDBIcon far icon="clock" /> message.messageTime
+              <MDBIcon far icon="clock" /> {messageTime}
             </p>
           </MDBCardHeader>
-          <MDBCardBody>
+          <MDBCardBody style={{ minWidth: '350px' }}>
             <p className="mb-0">
-              message.messageContent.content
+              {message.messageContent.content}
             </p>
           </MDBCardBody>
         </MDBCard>
