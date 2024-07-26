@@ -43,6 +43,8 @@ const Message = () => {
   // edit channel name
   const [isEditing, setIsEditing] = useState(false);
   const [channelName, setChannelName] = useState('Channel Name');
+  // decide which function we use when we open the select person card
+  const [cardType, setCardType] = useState(null);
 
   const handlePersonalCardOk = () => {
     setIsPersonalCardVisible(false);
@@ -63,6 +65,17 @@ const Message = () => {
   // for channel name edit
   const handleEditClick = () => {
     setIsEditing(true);
+  };
+
+  // for create new channel
+  const handleNewChannelClick = () => {
+    setCardType('newChannel');
+    setIsChatPersonalCardVisible(true);
+  };
+  // for invite new member to channel
+  const handleInviteClick = () => {
+    setCardType('invite');
+    setIsChatPersonalCardVisible(true);
   };
 
   const handleInputChange = (e) => {
@@ -107,7 +120,7 @@ const Message = () => {
                 type="primary" 
                 className="list-item-button"
                 style={{marginLeft: '18px'}}
-                onClick={() => setIsChatPersonalCardVisible(true)}
+                onClick={handleNewChannelClick}
               >
                 +  New Channel
               </Button>
@@ -134,7 +147,7 @@ const Message = () => {
                     <div className="buttons">
                       <Button 
                         className="invite-button"
-                        onClick={() => setIsChatPersonalCardVisible(true)}
+                        onClick={handleInviteClick}
                         >
                           + Invite</Button>
                       <Button className="leave-button">Leave</Button>
@@ -228,6 +241,7 @@ const Message = () => {
         onCancel={handleChatPersonalCardCancel}
         // refreshData={loadMessageData} // update function
         channelId={channelId}
+        cardType={cardType}
       >
 
       </ChatPersonalCard>

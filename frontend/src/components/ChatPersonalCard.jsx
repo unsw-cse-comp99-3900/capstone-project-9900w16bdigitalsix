@@ -7,7 +7,7 @@ import MessageAlert from './MessageAlert';
 
 const { Search } = Input;
 
-const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
+const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, cardType }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
@@ -70,12 +70,41 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
       return;
     }
 
-    if (!token) {
-      setSnackbarContent('Please login first');
-      setAlertType('error');
-      setAlertOpen(true);
-      return;
+    // 把自己的 userId 加入 selectedIds
+    const allUserIds = [parseInt(userId, 10), ...selectedIds.map(id => parseInt(id, 10))];
+
+    let requestBody;
+    if (selectedIds.length === 1) {
+      requestBody = {
+        channelType: 1, // 私人 channel
+        userId: allUserIds,
+      };
+    } else {
+      requestBody = {
+        channelType: 2, // 群聊 channel
+        userId: allUserIds,
+      };
     }
+    console.log("requestBody:",requestBody);
+    if (cardType === 'newChannel') {
+      const response = await apiCall('POST', 'v1/message/create/channel', requestBody, token, true);
+      console.log(response);
+
+        // 根据需要处理响应，例如调用 onOk 或其他操作
+      if (response && !response.error) {
+        setSnackbarContent('Operation successful');
+        setAlertType('success');
+        setAlertOpen(true);
+        onOk();
+      } else {
+        setSnackbarContent('Operation failed');
+        setAlertType('error');
+        setAlertOpen(true);
+      }
+    }
+
+
+ 
     setSelectedIds([]);
     setSelectedAvatars([]);
   };
