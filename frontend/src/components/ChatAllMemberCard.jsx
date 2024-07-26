@@ -22,9 +22,11 @@ const ChatAllMemberCard = ({ visible, onOk, onCancel, refreshData, channelId, ca
   const [selectedAvatars, setSelectedAvatars] = useState([]);
 
   useEffect(() => {
-    loadStudentData();
-    setSelectedAvatars([]);
-  }, []);
+    if (visible) {
+      loadStudentData();
+      setSelectedAvatars([]);
+    }
+  }, [visible]);
 
   useEffect(() => {
     const filtered = data.filter(item =>
