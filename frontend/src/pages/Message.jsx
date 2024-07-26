@@ -29,8 +29,11 @@ import MessageText from '../components/MessageText';
 import MessageCard from '../components/MessageCard';
 import apiCall from '../helper';
 import AllChannelsModal from '../components/AllChannelModal';
+import MessageAlert from '../components/MessageAlert';
 
 const Message = () => {
+  const userId = localStorage.getItem('userId');
+  const token = localStorage.getItem('token');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -46,9 +49,13 @@ const Message = () => {
   const [isChatPersonalCardVisible, setIsChatPersonalCardVisible] = useState(false);
   // edit channel name
   const [isEditing, setIsEditing] = useState(false);
-  const [channelName, setChannelName] = useState('Channel Name');
+  const [channelName, setChannelName] = useState('');
   // decide which function we use when we open the select person card
   const [cardType, setCardType] = useState(null);
+  // alert message
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertType, setAlertType] = useState('');
+  const [snackbarContent, setSnackbarContent] = useState('');
 
   // for sharing personal card modal
   const handlePersonalCardOk = () => {
@@ -71,24 +78,48 @@ const Message = () => {
   const handleEditClick = () => {
     setIsEditing(true);
   };
+  const handleInputChange = (e) => {
+    setChannelName(e.target.value);
+  };
+  const handleInputBlur = async () => {
+    setIsEditing(false);
+    const requestBody = {
+      ChannelName: channelName,
+      channelId: parseInt(channelId, 10),
+    };
+
+    try {
+      const response = await apiCall('POST', 'v1/message/update/channelName', requestBody, token, true);
+      console.log(response);
+
+      if (response && !response.error) {
+        setSnackbarContent('Channel name updated successfully');
+        setAlertType('success');
+        setAlertOpen(true);
+      } else {
+        const errorMsg = response.error || 'Failed to update channel name';
+        console.error(errorMsg);
+        setAlertType('error');
+        setAlertOpen(true);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setSnackbarContent('An unexpected error occurred');
+      setAlertType('error');
+      setAlertOpen(true);
+    }
+  };
 
   // for create new channel
   const handleNewChannelClick = () => {
     setCardType('newChannel');
     setIsChatPersonalCardVisible(true);
   };
+  
   // for invite new member to channel
   const handleInviteClick = () => {
     setCardType('invite');
     setIsChatPersonalCardVisible(true);
-  };
-
-  const handleInputChange = (e) => {
-    setChannelName(e.target.value);
-  };
-
-  const handleInputBlur = () => {
-    setIsEditing(false);
   };
 
   // Handle all channel button click
@@ -101,6 +132,33 @@ const Message = () => {
   const handleAllChannelCancel = () => {
     setAllChannelVisible(false);
   }
+
+  // Handle leave channel
+  const handleLeaveChannel = async () => {
+    const requestBody = {
+      channelId: parseInt(channelId),
+      userId: parseInt(userId),
+    };
+    console.log("requestBody:",requestBody);
+    const response = await apiCall('DELETE', 'v1/message/leave/channel', requestBody, token, true);
+    console.log("response:",response);
+
+    if (response && !response.error) {
+      setSnackbarContent('Left channel successfully');
+      setAlertType('success');
+      setAlertOpen(true);
+    } else {
+      setSnackbarContent('Failed to leave channel');
+      setAlertType('error');
+      setAlertOpen(true);
+      console.log("response.error:",response.error);
+    }
+  };
+
+  // Message alert
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
 
   return (
     <main>
@@ -151,7 +209,7 @@ const Message = () => {
                 {/* Channel name. When it's group chat, show invite & leave button*/}
                 <CardTitle>
                   <div className="channel-title">
-                    {isEditing ? (
+                  {isEditing ? (
                       <Input
                         value={channelName}
                         onChange={handleInputChange}
@@ -170,7 +228,10 @@ const Message = () => {
                         onClick={handleInviteClick}
                         >
                           + Invite</Button>
-                      <Button className="leave-button">Leave</Button>
+                      <Button 
+                        className="leave-button"
+                        onClick={handleLeaveChannel}>
+                          Leave</Button>
                     </div>
                   </div>
                 </CardTitle>
@@ -275,8 +336,14 @@ const Message = () => {
         channelId={channelId}
         setChannelId={setChannelId}
       >
-
       </AllChannelsModal>
+
+      <MessageAlert
+                open={alertOpen}
+                alertType={alertType}
+                handleClose={handleAlertClose}
+                snackbarContent={snackbarContent}
+            />
     </main>
   );
 };
