@@ -71,10 +71,9 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData, channelId }) => {
       return;
     }
   
-    // /////////////////////////
     const requestBody = {
       SenderId: userId,
-      channelId: 1,
+      channelId: channelId,
       messageContent: {
         name: selectedName,
         email: selectedEmail,
