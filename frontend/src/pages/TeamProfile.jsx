@@ -64,6 +64,7 @@ const TeamProfile = ({
   teamId,
   teamIdShow,
   teamName,
+  course,
   setTeamName,
   leaveTeam,
   currentMember,
@@ -197,7 +198,10 @@ const TeamProfile = ({
                   <Item style={{ textAlign: "left" }}>
                     <Typography variant="h6" gutterBottom color="grey">
                       Team Id: {teamIdShow}
-                    </Typography>
+                    </Typography>{" "}
+                    <Typography variant="h6" gutterBottom color="grey">
+                      Course: {course}
+                    </Typography>{" "}
                   </Item>
                 </Grid>
                 <Grid item xs={4}>

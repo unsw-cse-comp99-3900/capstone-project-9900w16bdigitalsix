@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Outlet, useNavigate } from "react-router-dom";
 import { SearchOutlined } from '@ant-design/icons';
-import { Button, List, Input, Avatar } from 'antd';
+import { Button, List, Input, Avatar, Flex } from 'antd';
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import { Container } from "reactstrap";
@@ -9,6 +9,8 @@ import '../assets/scss/FullLayout.css'; // Make sure to import this file
 import { width } from '@mui/system';
 import { apiCall } from '../helper'; // Make sure to import this file
 import { Chip, Box } from '@mui/material';
+import Typography from "@mui/material/Typography";
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 
 
@@ -20,6 +22,7 @@ const FullLayout = () => {
   const mountedRef = useRef(false);
   const [team, setTeam] = useState(true);
   const [searchTerm, setSearchTerm] = useState(''); // State to manage input value
+  const [course, setCourse] = useState("");
 
   const loadMoreData = async (url = 'v1/team/get/unallocated/list') => {
     if (loading) return;
@@ -89,6 +92,10 @@ const FullLayout = () => {
     setSearchTerm('');
     loadMoreData();
   };
+  
+  const goback = () => {
+    navigate(-1);
+  };
 
   
 
@@ -113,11 +120,53 @@ const FullLayout = () => {
           <Container className="p-4 wrapper" fluid style={{display:'flex',justifyContent:'center'}}>
             <>
             <div>
-            <div className="seach" style={{width:'100%'}}>
-                <Input
+            <div className="seach" style={{width:'600px',flexDirection: 'column'}}>
+            <div style={{width:'100%',marginBottom:'10px',color:"rgba(0,0,0,0.6)"}}> 
+            <Typography
+                      variant="h4"
+                      gutterBottom
+                      fontWeight={"bold"}
+                      textAlign="left"
+                    >
+                      Unallocated Team List
+                      {/* {team ? "TEAM LIST" : "STUDENT LIST"} */}
+                    </Typography>
+              </div>
+            <div style={{width:'100%',marginBottom:'10px', display: 'flex',alignItems:"center"}}> 
+                <FormControl fullWidth style={{ flexDirection: 'column', alignItems: 'top',width:'1675px'}}>
+                  <InputLabel id="course-label">Course</InputLabel>
+                  <Select
+                    labelId="course-label"
+                    id="course"
+                    value={course}
+                    label="Course"
+                    onChange={e => setCourse(e.target.value)}
+                  >
+                    <MenuItem value="">Back</MenuItem>
+                    <MenuItem value="COMP9900">COMP9900</MenuItem>
+                    <MenuItem value="COMP3900">COMP3900</MenuItem>
+                  </Select>
+                </FormControl>
+                <div className="titleBtn">
+                <Flex gap="small" wrap>
+                 
+                  <Button
+                    style={{ backgroundColor: "#6451e9", borderColor: "#6451e9" }}
+                    type="primary"
+                    shape="round"
+                    onClick={goback}
+                  >
+                   BACK
+                  </Button>
+                </Flex>
+              </div>
+            </div>
+            <div style={{display:'flex',alignItems: 'center',width:'600px'}}>
+
+            <Input
                   value={searchTerm} // Bind input value to state
                   onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
-                  placeholder="Search Projects"
+                  placeholder="Search Unallocated Team"
                   prefix={<SearchOutlined />}
                   style={{ width: '100%', marginRight: '10px' }}
                   ref={seachRef}
@@ -138,6 +187,9 @@ const FullLayout = () => {
               >
                 Clear
               </Button>
+            </div>
+               
+             
               </div>
               <div
                 id="scrollableDiv"
