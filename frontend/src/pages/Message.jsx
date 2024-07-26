@@ -164,7 +164,7 @@ const Message = () => {
       } else if (response.error) {
         setMessages([]);
       } else {
-        setMessages(response.messages);
+        setMessages(response.messages ? response.messages : []);
       }
   }
 
