@@ -558,6 +558,65 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/message/channel/{channelId}/messages": {
+            "get": {
+                "description": "get details of all messages in a specified channel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Message"
+                ],
+                "summary": "get messages of a specific channel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Channel ID",
+                        "name": "channelId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ChannelMessagesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"bad request\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"channel not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/message/create/channel": {
             "post": {
                 "description": "private channle or group channel",
@@ -622,6 +681,230 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/message/get/all/channels": {
+            "get": {
+                "description": "get details of all channels",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Message"
+                ],
+                "summary": "get all channels",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.AllChannelsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/message/invite/to/channel": {
+            "post": {
+                "description": "invite users to an existing channel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Message"
+                ],
+                "summary": "invite people to channel",
+                "parameters": [
+                    {
+                        "description": "invite to channel form",
+                        "name": "InviteToChannelForm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.InviteToChannelForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"msg\":\"invited to channel successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"bad request\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"channel not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/message/leave/channel": {
+            "delete": {
+                "description": "remove user from a channel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Message"
+                ],
+                "summary": "leave channel",
+                "parameters": [
+                    {
+                        "description": "leave channel form",
+                        "name": "LeaveChannelForm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.LeaveChannelForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"msg\":\"left channel successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"bad request\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"channel or user not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/message/send": {
+            "post": {
+                "description": "send a message in a specified channel if messageType == 2,  messageContent is the format of {\"name\": \"string\", \"email\": \"string\"}",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Message"
+                ],
+                "summary": "send message in channel",
+                "parameters": [
+                    {
+                        "description": "send message form",
+                        "name": "SendMessageForm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forms.SendMessageForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"msg\":\"message sent successfully\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"bad request\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"channel not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/message/update/channelName": {
             "post": {
                 "description": "update the name of a specified channel",
@@ -654,6 +937,65 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "string"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"error\": \"bad request\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"error\": \"channel not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"internal server error\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/message/{channelId}/users/detail": {
+            "get": {
+                "description": "get details of all users in a specified channel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Message"
+                ],
+                "summary": "get specific channel users detail",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Channel ID",
+                        "name": "channelId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ChannelUsersResponse"
                         }
                     },
                     "400": {
@@ -3383,6 +3725,24 @@ const docTemplate = `{
                 }
             }
         },
+        "forms.InviteToChannelForm": {
+            "type": "object",
+            "required": [
+                "channelId",
+                "userId"
+            ],
+            "properties": {
+                "channelId": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "forms.JoinTeamForm": {
             "type": "object",
             "required": [
@@ -3391,6 +3751,21 @@ const docTemplate = `{
             ],
             "properties": {
                 "teamIdShow": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "forms.LeaveChannelForm": {
+            "type": "object",
+            "required": [
+                "channelId",
+                "userId"
+            ],
+            "properties": {
+                "channelId": {
                     "type": "integer"
                 },
                 "userId": {
@@ -3625,6 +4000,27 @@ const docTemplate = `{
                 }
             }
         },
+        "forms.SendMessageForm": {
+            "type": "object",
+            "required": [
+                "SenderId",
+                "channelId",
+                "messageContent",
+                "messageType"
+            ],
+            "properties": {
+                "SenderId": {
+                    "type": "integer"
+                },
+                "channelId": {
+                    "type": "integer"
+                },
+                "messageContent": {},
+                "messageType": {
+                    "type": "integer"
+                }
+            }
+        },
         "forms.TeamNotification": {
             "type": "object",
             "required": [
@@ -3697,6 +4093,17 @@ const docTemplate = `{
                 }
             }
         },
+        "response.AllChannelsResponse": {
+            "type": "object",
+            "properties": {
+                "channels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ChannelDetail"
+                    }
+                }
+            }
+        },
         "response.AllocatedTeam": {
             "type": "object",
             "properties": {
@@ -3705,6 +4112,42 @@ const docTemplate = `{
                 },
                 "teamName": {
                     "type": "string"
+                }
+            }
+        },
+        "response.ChannelDetail": {
+            "type": "object",
+            "properties": {
+                "channelId": {
+                    "type": "integer"
+                },
+                "channelName": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.ChannelMessagesResponse": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.MessageDetail"
+                    }
+                }
+            }
+        },
+        "response.ChannelUsersResponse": {
+            "type": "object",
+            "properties": {
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.UserDetail"
+                    }
                 }
             }
         },
@@ -3884,6 +4327,37 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "response.MessageContent": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.MessageDetail": {
+            "type": "object",
+            "properties": {
+                "messageContent": {
+                    "$ref": "#/definitions/response.MessageContent"
+                },
+                "messageTime": {
+                    "type": "string"
+                },
+                "messageType": {
+                    "type": "integer"
+                },
+                "senderName": {
+                    "type": "string"
                 }
             }
         },
@@ -4387,6 +4861,38 @@ const docTemplate = `{
                 },
                 "tutorId": {
                     "type": "integer"
+                }
+            }
+        },
+        "response.UserDetail": {
+            "type": "object",
+            "properties": {
+                "avatarURL": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "integer"
+                },
+                "userCourse": {
+                    "type": "string"
+                },
+                "userEmail": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "userName": {
+                    "type": "string"
+                },
+                "userSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

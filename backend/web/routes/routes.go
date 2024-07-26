@@ -106,34 +106,38 @@ func NotificationRouter(Router *gin.RouterGroup) {
 
 func ProgressRouter(Router *gin.RouterGroup) {
 	progressRouter := Router.Group("progress")
-    {
-        progressRouter.POST("/create/userstory", controllers.CreateUserStory)
+	{
+		progressRouter.POST("/create/userstory", controllers.CreateUserStory)
 		progressRouter.POST("/edit/:userStoryId", controllers.EditUserStory)
 		progressRouter.DELETE("/delete/:userStoryId", controllers.DeleteUserStory)
 		progressRouter.POST("/edit/sprint/date", controllers.EditSprintDate)
 		progressRouter.POST("/edit/grade", controllers.EditGrade)
 		progressRouter.GET("/get/grade/:teamId", controllers.GetGrades)
 		progressRouter.GET("/get/detail/:teamId", controllers.GetProgressDetail)
-    }
+	}
 }
 
 func SearchRouter(Router *gin.RouterGroup) {
 	searchRouter := Router.Group("search")
-    {
-        searchRouter.POST("/team/unallocated/preferenceProject/list/detail", controllers.SearchUnallocatedTeamsProject)
+	{
+		searchRouter.POST("/team/unallocated/preferenceProject/list/detail", controllers.SearchUnallocatedTeamsProject)
 		searchRouter.POST("/team/unallocated/list/detail", controllers.SearchUnallocatedTeams)
 		searchRouter.GET("/public/project/:filterString", controllers.SearchPublicProjects)
-     
-    }
-}
 
+	}
+}
 
 func MessageRouter(Router *gin.RouterGroup) {
 	messageRouter := Router.Group("message")
-    {
-        messageRouter.POST("create/channel", controllers.CreateChannel)
+	{
+		messageRouter.POST("create/channel", controllers.CreateChannel)
 		messageRouter.POST("update/channelName", controllers.UpdateChannelName)
 		messageRouter.POST("invite/to/channel", controllers.InviteToChannel)
-     
-    }
+		messageRouter.DELETE("leave/channel", controllers.LeaveChannel)
+		messageRouter.GET(":channelId/users/detail", controllers.GetChannelUsersDetail)
+		messageRouter.POST("send", controllers.SendMessage)
+		messageRouter.GET("receive/:channelId", controllers.GetChannelMessages)
+		messageRouter.GET("/get/all/channels", controllers.GetAllChannels)
+
+	}
 }

@@ -116,14 +116,13 @@ type Message struct {
 	gorm.Model
 	Type      int       `gorm:"not null;type:int comment '1 represents test message, 2 represents card'"`
 	Content   string    `gorm:"type:text"`
-	Username  string    `gorm:"type:varchar(16)"`
-	Email     string    `gorm:"type:varchar(255)"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
-	SenderID  uint      `gorm:"foreignKey:SenderID"`
-	ChannelID uint      `gorm:"foreignKey:ChannelID"`
+	SenderID  uint      `gorm:"default:null"`
+	ChannelID uint      `gorm:"default:null;constraint:OnDelete:CASCADE;"` // for cascade delete
+	Sender    User      `gorm:"foreignKey:SenderID"`                       // Add this line for correct association
 }
 
 type ChannelUser struct {
-	UserID    uint `gorm:"primaryKey"`
 	ChannelID uint `gorm:"primaryKey"`
+	UserID    uint `gorm:"primaryKey"`
 }

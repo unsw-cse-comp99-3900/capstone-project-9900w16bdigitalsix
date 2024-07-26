@@ -100,6 +100,18 @@ definitions:
     - grade
     - sprintNum
     type: object
+  forms.InviteToChannelForm:
+    properties:
+      channelId:
+        type: integer
+      userId:
+        items:
+          type: integer
+        type: array
+    required:
+    - channelId
+    - userId
+    type: object
   forms.JoinTeamForm:
     properties:
       teamIdShow:
@@ -108,6 +120,16 @@ definitions:
         type: integer
     required:
     - teamIdShow
+    - userId
+    type: object
+  forms.LeaveChannelForm:
+    properties:
+      channelId:
+        type: integer
+      userId:
+        type: integer
+    required:
+    - channelId
     - userId
     type: object
   forms.ModifyUserRoleRequest:
@@ -262,6 +284,21 @@ definitions:
     required:
     - email
     type: object
+  forms.SendMessageForm:
+    properties:
+      SenderId:
+        type: integer
+      channelId:
+        type: integer
+      messageContent: {}
+      messageType:
+        type: integer
+    required:
+    - SenderId
+    - channelId
+    - messageContent
+    - messageType
+    type: object
   forms.TeamNotification:
     properties:
       content:
@@ -311,12 +348,42 @@ definitions:
     - userStoryDescription
     - userStoryStatus
     type: object
+  response.AllChannelsResponse:
+    properties:
+      channels:
+        items:
+          $ref: '#/definitions/response.ChannelDetail'
+        type: array
+    type: object
   response.AllocatedTeam:
     properties:
       teamId:
         type: integer
       teamName:
         type: string
+    type: object
+  response.ChannelDetail:
+    properties:
+      channelId:
+        type: integer
+      channelName:
+        type: string
+      type:
+        type: integer
+    type: object
+  response.ChannelMessagesResponse:
+    properties:
+      messages:
+        items:
+          $ref: '#/definitions/response.MessageDetail'
+        type: array
+    type: object
+  response.ChannelUsersResponse:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/response.UserDetail'
+        type: array
     type: object
   response.CoorInfoResponse:
     properties:
@@ -434,6 +501,26 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  response.MessageContent:
+    properties:
+      content:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+    type: object
+  response.MessageDetail:
+    properties:
+      messageContent:
+        $ref: '#/definitions/response.MessageContent'
+      messageTime:
+        type: string
+      messageType:
+        type: integer
+      senderName:
+        type: string
     type: object
   response.ModifyProjectDetailResponse:
     properties:
@@ -763,6 +850,27 @@ definitions:
         type: integer
       tutorId:
         type: integer
+    type: object
+  response.UserDetail:
+    properties:
+      avatarURL:
+        type: string
+      email:
+        type: string
+      role:
+        type: integer
+      userCourse:
+        type: string
+      userEmail:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+      userSkills:
+        items:
+          type: string
+        type: array
     type: object
   response.UserListResponse:
     properties:
@@ -1154,6 +1262,84 @@ paths:
       summary: Modify user role
       tags:
       - Admin
+  /v1/message/{channelId}/users/detail:
+    get:
+      consumes:
+      - application/json
+      description: get details of all users in a specified channel
+      parameters:
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ChannelUsersResponse'
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: get specific channel users detail
+      tags:
+      - Message
+  /v1/message/channel/{channelId}/messages:
+    get:
+      consumes:
+      - application/json
+      description: get details of all messages in a specified channel
+      parameters:
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ChannelMessagesResponse'
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: get messages of a specific channel
+      tags:
+      - Message
   /v1/message/create/channel:
     post:
       consumes:
@@ -1194,6 +1380,154 @@ paths:
               type: string
             type: object
       summary: create channel
+      tags:
+      - Message
+  /v1/message/get/all/channels:
+    get:
+      consumes:
+      - application/json
+      description: get details of all channels
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.AllChannelsResponse'
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: get all channels
+      tags:
+      - Message
+  /v1/message/invite/to/channel:
+    post:
+      consumes:
+      - application/json
+      description: invite users to an existing channel
+      parameters:
+      - description: invite to channel form
+        in: body
+        name: InviteToChannelForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.InviteToChannelForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"invited to channel successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: invite people to channel
+      tags:
+      - Message
+  /v1/message/leave/channel:
+    delete:
+      consumes:
+      - application/json
+      description: remove user from a channel
+      parameters:
+      - description: leave channel form
+        in: body
+        name: LeaveChannelForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.LeaveChannelForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"left channel successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel or user not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: leave channel
+      tags:
+      - Message
+  /v1/message/send:
+    post:
+      consumes:
+      - application/json
+      description: 'send a message in a specified channel if messageType == 2,  messageContent
+        is the format of {"name": "string", "email": "string"}'
+      parameters:
+      - description: send message form
+        in: body
+        name: SendMessageForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.SendMessageForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"message sent successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: send message in channel
       tags:
       - Message
   /v1/message/update/channelName:
