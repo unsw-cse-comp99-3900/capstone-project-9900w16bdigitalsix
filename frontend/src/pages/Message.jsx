@@ -27,6 +27,8 @@ import PersonalCard from '../components/PersonalCard';
 import ChatPersonalCard from '../components/ChatPersonalCard';
 import MessageText from '../components/MessageText';
 import MessageCard from '../components/MessageCard';
+import apiCall from '../helper';
+import AllChannelsModal from '../components/AllChannelModal';
 
 const Message = () => {
   const [loading, setLoading] = useState(false);
@@ -35,6 +37,8 @@ const Message = () => {
   
   // record channelId
   const [channelId, setChannelId] = useState(null);
+  // all channel dropdown
+  const [isAllChannelVisible, setAllChannelVisible] = useState(false);
 
   // personal card modal
   const [isPersonalCardVisible, setIsPersonalCardVisible] = useState(false);
@@ -46,6 +50,7 @@ const Message = () => {
   // decide which function we use when we open the select person card
   const [cardType, setCardType] = useState(null);
 
+  // for sharing personal card modal
   const handlePersonalCardOk = () => {
     setIsPersonalCardVisible(false);
   }
@@ -86,6 +91,17 @@ const Message = () => {
     setIsEditing(false);
   };
 
+  // Handle all channel button click
+  const handleAllChannelButtonClick = () => {
+    setAllChannelVisible(true);
+  };
+  const handleAllChannelOk = () => {
+    setAllChannelVisible(false);
+  }
+  const handleAllChannelCancel = () => {
+    setAllChannelVisible(false);
+  }
+
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
@@ -109,13 +125,17 @@ const Message = () => {
             
             <Card id="scrollableDiv2">
             <div className="topContainer">
-              <Button
-                type="primary" 
-                className="list-item-button"
-                style={{marginLeft: '18px'}}
-              >
-                All Channel
-              </Button>
+              <div>
+                <Button
+                  type="primary" 
+                  className="list-item-button"
+                  style={{marginLeft: '18px'}}
+                  onClick={handleAllChannelButtonClick}
+                >
+                  All Channel
+                </Button>
+              </div>
+
               <Button
                 type="primary" 
                 className="list-item-button"
@@ -245,6 +265,18 @@ const Message = () => {
       >
 
       </ChatPersonalCard>
+
+      {/* show all channels */}
+      <AllChannelsModal
+        visible={isAllChannelVisible}
+        onOk={handleAllChannelOk}
+        onCancel={handleAllChannelCancel}
+        // refreshData={loadMessageData} // update function
+        channelId={channelId}
+        setChannelId={setChannelId}
+      >
+
+      </AllChannelsModal>
     </main>
   );
 };
