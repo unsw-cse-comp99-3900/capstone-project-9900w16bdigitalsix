@@ -37,8 +37,10 @@ const Message = () => {
   
   // record channelId
   const [channelId, setChannelId] = useState(null);
-  // all channel dropdown
+  // all channel modal
   const [isAllChannelVisible, setAllChannelVisible] = useState(false);
+  const [allChannelData, setAllChannelData] = useState([]);
+  const token = localStorage.getItem('token');
 
   // personal card modal
   const [isPersonalCardVisible, setIsPersonalCardVisible] = useState(false);
@@ -91,8 +93,22 @@ const Message = () => {
     setIsEditing(false);
   };
 
+  
+  // fetch channel list
+  const loadChannelData = async() => {
+    const response = await apiCall('GET', 'v1/message/get/all/channels', null, token, true);
+      if (!response) {
+        setAllChannelData([]);
+      } else if (response.error) {
+        setAllChannelData([]);
+      } else {
+        setAllChannelData(response.channels);
+      }
+  }
+
   // Handle all channel button click
   const handleAllChannelButtonClick = () => {
+    loadChannelData();
     setAllChannelVisible(true);
   };
   const handleAllChannelOk = () => {
@@ -274,6 +290,7 @@ const Message = () => {
         // refreshData={loadMessageData} // update function
         channelId={channelId}
         setChannelId={setChannelId}
+        data={allChannelData}
       >
 
       </AllChannelsModal>

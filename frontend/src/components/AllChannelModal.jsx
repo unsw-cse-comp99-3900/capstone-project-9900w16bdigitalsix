@@ -9,33 +9,13 @@ import MessageAlert from './MessageAlert';
 
 const { Option } = Select;
 
-const AllChannelModal = ({ visible, onOk, onCancel, refreshData, channelId, setChannelId }) => {
+const AllChannelModal = ({ visible, onOk, onCancel, refreshData, channelId, setChannelId, data }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
 
   const userId = parseInt(localStorage.getItem('userId'));
   const token = localStorage.getItem('token');
-
-  // channel list
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    loadChannelData();
-  }, []);
-
-
-  // fetch channel list
-  const loadChannelData = async() => {
-    const response = await apiCall('GET', 'v1/message/get/all/channels', null, token, true);
-      if (!response) {
-        setData([]);
-      } else if (response.error) {
-        setData([]);
-      } else {
-        setData(response.channels);
-      }
-  }
 
   // share a personal card
   const handleClick = (id) => {
