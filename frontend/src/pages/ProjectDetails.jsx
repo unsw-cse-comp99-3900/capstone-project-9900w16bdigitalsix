@@ -19,7 +19,7 @@ import "../assets/scss/FullLayout.css"; //make sure import this
 import { apiCall } from "../helper";
 
 const ProjectDetails = () => {
-    let { projectId } = useParams();
+  let { projectId } = useParams();
 
   // some states
   const [title, setTitle] = useState("");
@@ -70,6 +70,7 @@ const ProjectDetails = () => {
         "GET",
         `v1/project/team/allocated/${projectId}`
       );
+      // console.log(res);
       if (res === null) {
         setCurrentTeam([]);
         return;
@@ -241,7 +242,7 @@ const ProjectDetails = () => {
       </div>
       <Dialog open={open} onClose={handleClose}>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <DialogTitle style={{ paddingBottom: 2, marginRight: "8vw" }}>
+          <DialogTitle style={{ paddingBottom: 2, marginRight: "15vw" }}>
             Allocated Teams:
           </DialogTitle>
           <IconButton
@@ -285,6 +286,22 @@ const ProjectDetails = () => {
                                 color="text.primary"
                               >
                                 TeamId: {team.teamIdShow} <br />
+                              </Typography>
+                              <Typography
+                                sx={{ display: "inline" }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                              >
+                                Course: {team.course} <br />
+                              </Typography>
+                              <Typography
+                                sx={{ display: "inline" }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                              >
+                                Preference No.: {team.preferenceNum} <br />
                               </Typography>
                               <Typography
                                 sx={{ display: "inline" }}
