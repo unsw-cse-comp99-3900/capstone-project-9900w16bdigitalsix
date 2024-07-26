@@ -33,6 +33,9 @@ const Message = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   
+  // record channelId
+  const [channelId, setChannelId] = useState(null);
+
   // personal card modal
   const [isPersonalCardVisible, setIsPersonalCardVisible] = useState(false);
   // new chat select person card modal
@@ -109,6 +112,8 @@ const Message = () => {
                 +  New Channel
               </Button>
             </div>
+            {channelId ? (
+              <>
               <Card id="scrollableDiv2">
                 {/* Channel name. When it's group chat, show invite & leave button*/}
                 <CardTitle>
@@ -195,6 +200,12 @@ const Message = () => {
                   <ShareIcon />
                 </IconButton>
               </div>
+            </>
+            ) : (
+              <h1 style={{display: 'flex', justifyContent: 'center', alignItems: 'center', margin:'100px'}}>
+                Please select a channel
+              </h1>
+            )}
             </Card>
           </Container>
         </div>
@@ -216,6 +227,7 @@ const Message = () => {
         onOk={handleChatPersonalCardOk}
         onCancel={handleChatPersonalCardCancel}
         // refreshData={loadMessageData} // update function
+        channelId={channelId}
       >
 
       </ChatPersonalCard>
