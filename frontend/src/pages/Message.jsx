@@ -21,9 +21,12 @@ import Header from "../layouts/Header";
 import { Container, Card, CardText, CardTitle } from "reactstrap";
 import IconButton from '@mui/material/IconButton';
 import ShareIcon from '@mui/icons-material/Share';
+import GroupIcon from '@mui/icons-material/Group';
+
 import '../assets/scss/FullLayout.css';//make sure import this
 import '../assets/scss/Message.css'
 import PersonalCard from '../components/PersonalCard';
+import ChatAllMemberCard from '../components/ChatAllMemberCard';
 import ChatPersonalCard from '../components/ChatPersonalCard';
 import MessageText from '../components/MessageText';
 import MessageCard from '../components/MessageCard';
@@ -51,6 +54,8 @@ const Message = () => {
   const [isPersonalCardVisible, setIsPersonalCardVisible] = useState(false);
   // new chat select person card modal
   const [isChatPersonalCardVisible, setIsChatPersonalCardVisible] = useState(false);
+  // show all members in channel ChatAllMemberCard
+  const [isChatAllMemberCardVisible, setIsChatAllMemberCardVisible] = useState(false);
   // edit channel name
   const [isEditing, setIsEditing] = useState(false);
   const [channelName, setChannelName] = useState('');
@@ -76,6 +81,14 @@ const Message = () => {
   }
   const handleChatPersonalCardCancel = () => {
     setIsChatPersonalCardVisible(false);
+  }
+
+  // for show all members ChatAllMemberCard 
+  const handleChatAllMemberCardOk = () => {
+    setIsChatAllMemberCardVisible(false);
+  }
+  const handleChatAllMemberCardCancel = () => {
+    setIsChatAllMemberCardVisible(false);
   }
 
   // for channel name edit
@@ -126,6 +139,10 @@ const Message = () => {
     setIsChatPersonalCardVisible(true);
   };
 
+  // for view all member ChatAllMemberCard
+  const handleMemberClick = () => {
+    setIsChatAllMemberCardVisible(true);
+  };
 
   // fetch channel list
   const loadChannelData = async() => {
@@ -257,15 +274,29 @@ const Message = () => {
                       </p>
                     )}
                     <div className="buttons">
-                      <Button 
-                        className="invite-button"
-                        onClick={handleInviteClick}
+                      <IconButton 
+                        className="group-icon-button"
+                        onClick={handleMemberClick}
+                      >
+                        <GroupIcon />
+                      </IconButton>
+                    {channelType !== 1 && (
+                      <div className="buttons">
+                        
+                        <Button 
+                          className="invite-button"
+                          onClick={handleInviteClick}
                         >
-                          + Invite</Button>
-                      <Button 
-                        className="leave-button"
-                        onClick={handleLeaveChannel}>
-                          Leave</Button>
+                          + Invite
+                        </Button>
+                        <Button 
+                          className="leave-button"
+                          onClick={handleLeaveChannel}
+                        >
+                          Leave
+                        </Button>
+                      </div>
+                    )}
                     </div>
                   </div>
                 </CardTitle>
@@ -340,8 +371,18 @@ const Message = () => {
         channelId={channelId}
         cardType={cardType}
       >
-
       </ChatPersonalCard>
+
+      {/* show all member in channel card */}
+      <ChatAllMemberCard
+        visible={isChatAllMemberCardVisible}
+        onOk={handleChatAllMemberCardOk}
+        onCancel={handleChatAllMemberCardCancel}
+        // refreshData={loadMessageData} // update function
+        channelId={channelId}
+        cardType={cardType}
+        >
+      </ChatAllMemberCard>
 
       {/* show all channels */}
       <AllChannelsModal
