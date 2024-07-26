@@ -365,7 +365,8 @@ const Message = () => {
         visible={isPersonalCardVisible}
         onOk={handlePersonalCardOk}
         onCancel={handlePersonalCardCancel}
-        // refreshData={loadMessageData} // update function
+        refreshData={fetchMessages} // update function
+        channelId={channelId}
       >
 
       </PersonalCard>
