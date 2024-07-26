@@ -23,17 +23,19 @@ import MessageAlert from './MessageAlert';
 
 const { Option } = Select;
 
-const MessageCard = ({ content }) => {
+const MessageCard = ({ message }) => {
   return (
     <>
       {/* personal card template */}
       <li className="d-flex align-items-center mb-4">
+        {/*  */}
         <Avatar src={''} size={48} className="avatar" />
+        {/*  */}
         <MDBCard style={{ flexGrow: 1 }}>
           <MDBCardHeader className="d-flex justify-content-between p-3">
-            <p className="fw-bold mb-0">Brad Pitt</p>
+            <p className="fw-bold mb-0">message.senderName</p>
             <p className="text-muted small mb-0">
-              <MDBIcon far icon="clock" /> 12 mins ago
+              <MDBIcon far icon="clock" /> message.messageTime
             </p>
           </MDBCardHeader>
           <MDBCardBody style={{ padding: '16px', width: '350px' }}>
@@ -48,10 +50,10 @@ const MessageCard = ({ content }) => {
               </p>
               <hr style={{ borderColor: '#e0e0e0', margin: '8px 0' }} />
               <p className="mb-1" style={{ fontWeight: 'bold' }}>
-                <strong>Name:</strong> <span style={{ fontWeight: 'normal' }}>xxx</span>
+                <strong>Name:</strong> <span style={{ fontWeight: 'normal' }}>message.messageContent.name</span>
               </p>
               <p className="mb-0" style={{ fontWeight: 'bold' }}>
-                <strong>Email:</strong> <span style={{ fontWeight: 'normal' }}>xxx@example.com</span>
+                <strong>Email:</strong> <span style={{ fontWeight: 'normal' }}>message.messageContent.email</span>
               </p>
             </div>
           </MDBCardBody>

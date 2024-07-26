@@ -36,12 +36,16 @@ const Message = () => {
   const token = localStorage.getItem('token');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
   
   // record channelId
   const [channelId, setChannelId] = useState(null);
-  // all channel dropdown
+  const [channelType, setChannelType] = useState(null);
+  // all channel modal
   const [isAllChannelVisible, setAllChannelVisible] = useState(false);
+  const [allChannelData, setAllChannelData] = useState([]);
+
+  // channel Message
+  const [messages, setMessages] = useState([]);
 
   // personal card modal
   const [isPersonalCardVisible, setIsPersonalCardVisible] = useState(false);
@@ -122,8 +126,22 @@ const Message = () => {
     setIsChatPersonalCardVisible(true);
   };
 
+
+  // fetch channel list
+  const loadChannelData = async() => {
+    const response = await apiCall('GET', 'v1/message/get/all/channels', null, token, true);
+      if (!response) {
+        setAllChannelData([]);
+      } else if (response.error) {
+        setAllChannelData([]);
+      } else {
+        setAllChannelData(response.channels);
+      }
+  }
+
   // Handle all channel button click
   const handleAllChannelButtonClick = () => {
+    loadChannelData();
     setAllChannelVisible(true);
   };
   const handleAllChannelOk = () => {
@@ -131,6 +149,22 @@ const Message = () => {
   }
   const handleAllChannelCancel = () => {
     setAllChannelVisible(false);
+  }
+
+  // fetch all messages in the selected channel
+  useEffect(() => {
+    fetchMessages();
+  }, [channelId]);
+
+  const fetchMessages = async() => {
+    const response = await apiCall('GET', `v1/message/channel/${channelId}/messages`, null, token, true);
+      if (!response) {
+        setMessages([]);
+      } else if (response.error) {
+        setMessages([]);
+      } else {
+        setMessages(response.messages);
+      }
   }
 
   // Handle leave channel
@@ -235,37 +269,19 @@ const Message = () => {
                     </div>
                   </div>
                 </CardTitle>
-                {/* message template */}
-                <MessageText></MessageText>
-                {/* personal card template */}
-                <MessageCard></MessageCard>
+                {/* message text or card*/}
                 <List
-                  loading={loading}
-                  dataSource={filteredData}
-                  renderItem={(item) => (
-                    <List.Item className="list-item" key={item.userId}>
-                      <List.Item.Meta style={{paddingLeft: "8px"}}
-
-                        title={
-                          <div className="list-item-meta-title">
-                            <span className="list-item-meta-name" style={{ fontSize: '16px', fontWeight: 'bold' }}>{item.title}</span>
-                          </div>
-                        }
-                        description={
-                          <div className="list-item-meta-description">
-                            <div className="list-item-meta-id">Client: {item.clientName}</div>
-                            <div className="list-item-meta-email">Client Email: {item.clientEmail}</div>
-                            <div className="list-item-meta-field">Field: {item.field}</div>
-                          </div>
-                        }
-                      />
-                      <Button type="primary" className="list-item-button">Assign</Button>
+                  dataSource={messages}
+                  style={{ maxHeight: '400px', overflowY: 'auto' }}
+                  renderItem={item => (
+                    <List.Item>
+                      {item.messageType === 1 ? <MessageText message={item}></MessageText>
+                      : <MessageCard message={item}></MessageCard>
+                      }  
                     </List.Item>
                   )}
                 />
               </Card>
-
-
               <div className="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
                 <img
                   src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
@@ -335,6 +351,11 @@ const Message = () => {
         // refreshData={loadMessageData} // update function
         channelId={channelId}
         setChannelId={setChannelId}
+        channelType={channelType}
+        setChannelType={setChannelType}
+        channelName={channelName}
+        setChannelName={setChannelName}
+        data={allChannelData}
       >
       </AllChannelsModal>
 

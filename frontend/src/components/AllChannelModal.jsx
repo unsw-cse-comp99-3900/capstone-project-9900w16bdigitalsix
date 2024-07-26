@@ -9,7 +9,7 @@ import MessageAlert from './MessageAlert';
 
 const { Option } = Select;
 
-const AllChannelModal = ({ visible, onOk, onCancel, refreshData, channelId, setChannelId }) => {
+const AllChannelModal = ({ visible, onOk, onCancel, refreshData, channelId, setChannelId, data, channelType, setChannelType, channelName, setChannelName }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
@@ -17,29 +17,11 @@ const AllChannelModal = ({ visible, onOk, onCancel, refreshData, channelId, setC
   const userId = parseInt(localStorage.getItem('userId'));
   const token = localStorage.getItem('token');
 
-  // channel list
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    loadChannelData();
-  }, []);
-
-
-  // fetch channel list
-  const loadChannelData = async() => {
-    const response = await apiCall('GET', 'v1/message/get/all/channels', null, token, true);
-      if (!response) {
-        setData([]);
-      } else if (response.error) {
-        setData([]);
-      } else {
-        setData(response.channels);
-      }
-  }
-
   // share a personal card
-  const handleClick = (id) => {
+  const handleClick = (id, type, name) => {
     setChannelId(id);
+    setChannelType(type);
+    setChannelName(name);
     onOk();
   };
 
@@ -61,7 +43,7 @@ const AllChannelModal = ({ visible, onOk, onCancel, refreshData, channelId, setC
               dataSource={data.length > 0 ? data.filter(item => parseInt(item.type) === 1): []}
               style={{ maxHeight: '400px', overflowY: 'auto' }}
               renderItem={item => (
-                <List.Item onClick={() => handleClick(item.channelId)} style={{ cursor: 'pointer' }}>
+                <List.Item onClick={() => handleClick(item.channelId, item.type, item.channelName)} style={{ cursor: 'pointer' }}>
                   <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                     <div
                       style={{ 
@@ -88,7 +70,7 @@ const AllChannelModal = ({ visible, onOk, onCancel, refreshData, channelId, setC
               dataSource={data.length > 0 ? data.filter(item => parseInt(item.type) === 2) : []}
               style={{ maxHeight: '400px', overflowY: 'auto' }}
               renderItem={item => (
-                <List.Item onClick={() => handleClick(item.channelId)} style={{ cursor: 'pointer' }}>
+                <List.Item onClick={() => handleClick(item.channelId, item.type, item.channelName)} style={{ cursor: 'pointer' }}>
                   <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                     <div
                       style={{ 
