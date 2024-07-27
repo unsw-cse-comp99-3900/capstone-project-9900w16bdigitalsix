@@ -49,6 +49,8 @@ const Message = () => {
 
   // channel Message
   const [messages, setMessages] = useState([]);
+  const prevMsgLengthRef = useRef(0);
+  const prevChannelIdRef = useState(null);
 
   // personal card modal
   const [isPersonalCardVisible, setIsPersonalCardVisible] = useState(false);
@@ -183,7 +185,18 @@ const Message = () => {
       } else if (response.error) {
         setMessages([]);
       } else {
-        setMessages(response.messages ? response.messages : []);
+        if (prevChannelIdRef.current !== channelId) {
+          setMessages(response.messages ? response.messages : []);
+          prevMsgLengthRef.current = 0;
+          prevChannelIdRef.current = channelId;
+        }
+
+        if (response.messages && response.messages.length > prevMsgLengthRef.current) {
+          console.log("response.messages.length", response.messages.length);
+          console.log("prevMsgLength", prevMsgLengthRef.current);
+          prevMsgLengthRef.current = response.messages.length;
+          setMessages(response.messages ? response.messages : []);
+        }
       }
   }
 
