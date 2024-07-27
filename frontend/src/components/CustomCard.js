@@ -76,9 +76,11 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
   return (
     <>
       <Card className="mb-4 custom-card">
-        <div className="allocated-teams-count">
-          {allocatedTeamsCount}
-        </div>
+        {role !== 1 && (
+          <div className="allocated-teams-count">
+            {allocatedTeamsCount}
+          </div>
+        )}
         <div 
           className="custom-card-header"
           onClick={handleCardNavi}
