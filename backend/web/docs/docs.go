@@ -724,7 +724,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/message/leave/channel": {
+        "/v1/message/leave/channel/{channelId}/{userId}": {
             "delete": {
                 "description": "remove user from a channel",
                 "consumes": [
@@ -739,13 +739,18 @@ const docTemplate = `{
                 "summary": "leave channel",
                 "parameters": [
                     {
-                        "description": "leave channel form",
-                        "name": "LeaveChannelForm",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/forms.LeaveChannelForm"
-                        }
+                        "type": "integer",
+                        "description": "Channel ID",
+                        "name": "channelId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -3774,21 +3779,6 @@ const docTemplate = `{
             ],
             "properties": {
                 "teamIdShow": {
-                    "type": "integer"
-                },
-                "userId": {
-                    "type": "integer"
-                }
-            }
-        },
-        "forms.LeaveChannelForm": {
-            "type": "object",
-            "required": [
-                "channelId",
-                "userId"
-            ],
-            "properties": {
-                "channelId": {
                     "type": "integer"
                 },
                 "userId": {

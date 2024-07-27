@@ -179,22 +179,31 @@ func InviteToChannel(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"msg": "invited to channel successfully"})
 }
 
-// LeaveChannel Leave channel
 // @Summary leave channel
 // @Description remove user from a channel
 // @Tags Message
 // @Accept json
 // @Produce json
-// @Param LeaveChannelForm body forms.LeaveChannelForm true "leave channel form"
+// @Param channelId path int true "Channel ID"
+// @Param userId path int true "User ID"
 // @Success 200 {object} map[string]string "{"msg":"left channel successfully"}"
 // @Failure 400 {object} map[string]string "{"error": "bad request"}"
 // @Failure 404 {object} map[string]string "{"error": "channel or user not found"}"
 // @Failure 500 {object} map[string]string "{"error": "internal server error"}"
-// @Router /v1/message/leave/channel [delete]
+// @Router /v1/message/leave/channel/{channelId}/{userId} [delete]
 func LeaveChannel(c *gin.Context) {
-	var form forms.LeaveChannelForm
-	if err := c.ShouldBindJSON(&form); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	channelIDStr := c.Param("channelId")
+	userIDStr := c.Param("userId")
+
+	channelID, err := strconv.Atoi(channelIDStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid channel ID"})
+		return
+	}
+
+	userID, err := strconv.Atoi(userIDStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
 
@@ -202,7 +211,7 @@ func LeaveChannel(c *gin.Context) {
 	var channel models.Channel
 	var user models.User
 
-	if err := db.First(&channel, form.ChannelID).Error; err != nil {
+	if err := db.First(&channel, channelID).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "channel not found"})
 		} else {
@@ -211,7 +220,8 @@ func LeaveChannel(c *gin.Context) {
 		return
 	}
 
-	if err := db.First(&user, form.UserID).Error; err != nil {
+	// find user
+	if err := db.First(&user, userID).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		} else {
@@ -220,13 +230,16 @@ func LeaveChannel(c *gin.Context) {
 		return
 	}
 
+	// delete user from channel
 	if err := db.Model(&channel).Association("Users").Delete(&user); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// check if channel has users
 	userCount := db.Model(&channel).Association("Users").Count()
 	if userCount == 0 {
+		// delete channle and related message
 		if err := db.Transaction(func(tx *gorm.DB) error {
 			if err := tx.Where("channel_id = ?", channel.ID).Delete(&models.Message{}).Error; err != nil {
 				return err

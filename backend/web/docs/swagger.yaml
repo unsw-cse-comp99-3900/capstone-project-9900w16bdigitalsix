@@ -122,16 +122,6 @@ definitions:
     - teamIdShow
     - userId
     type: object
-  forms.LeaveChannelForm:
-    properties:
-      channelId:
-        type: integer
-      userId:
-        type: integer
-    required:
-    - channelId
-    - userId
-    type: object
   forms.ModifyUserRoleRequest:
     properties:
       notification:
@@ -1433,18 +1423,22 @@ paths:
       summary: invite people to channel
       tags:
       - Message
-  /v1/message/leave/channel:
+  /v1/message/leave/channel/{channelId}/{userId}:
     delete:
       consumes:
       - application/json
       description: remove user from a channel
       parameters:
-      - description: leave channel form
-        in: body
-        name: LeaveChannelForm
+      - description: Channel ID
+        in: path
+        name: channelId
         required: true
-        schema:
-          $ref: '#/definitions/forms.LeaveChannelForm'
+        type: integer
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
