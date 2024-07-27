@@ -147,7 +147,7 @@ const Message = () => {
 
   // fetch channel list
   const loadChannelData = async() => {
-    const response = await apiCall('GET', 'v1/message/get/all/channels', null, token, true);
+    const response = await apiCall('GET', `v1/message/get/all/channels/${userId}`, null, token, true);
       if (!response) {
         setAllChannelData([]);
       } else if (response.error) {
@@ -172,6 +172,8 @@ const Message = () => {
   // fetch all messages in the selected channel
   useEffect(() => {
     fetchMessages();
+    const intervalId = setInterval(fetchMessages, 5000); // Poll every 5 seconds
+    return () => clearInterval(intervalId); // Clear the interval on component unmount
   }, [channelId]);
 
   const fetchMessages = async() => {

@@ -34,7 +34,7 @@ const MessageCard = ({ message }) => {
       {/* personal card template */}
       <li className="d-flex align-items-center mb-4">
         {/*  */}
-        <Avatar src={''} size={48} className="avatar" />
+        <Avatar src={message.avatarUrl ?  message.avatarUrl : message.senderName[0]} size={48} className="avatar" />
         {/*  */}
         <MDBCard style={{ flexGrow: 1 }}>
           <MDBCardHeader className="d-flex justify-content-between p-3">
