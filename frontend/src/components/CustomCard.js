@@ -1,34 +1,37 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Card, CardBody, CardTitle, CardText, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Card, CardBody, CardTitle, CardText, Button as StrapButton } from 'reactstrap';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Button from "@mui/material/Button";
+import Tooltip from '@mui/material/Tooltip';
+import { message } from 'antd';
 import '../assets/scss/CustomCard.css'; // import CSS file
 import TeamFile from "../components/TeamFileDialog";
-import { SpaceContext } from 'antd/es/space';
 import { Avatar } from 'antd';
 
 const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role }) => {
-  const [modal, setModal] = useState(false);
-  const toggle = () => setModal(!modal);
-
+  const [modalOpen, setModalOpen] = useState(false);
+  const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleCardNavi = () => {
     navigate(`/project/details/${id}`);
   };
-  // student preference list modal openW
+
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = (event, reason) => {
+  const handleClose = () => {
     setOpen(false);
   };
 
-
-
-  // delete project
   const handleDelete = async () => {
     try {
       const response = await fetch(`http://127.0.0.1:8080/v1/project/delete/${id}`, {
@@ -36,6 +39,7 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
       });
       if (response.ok) {
         onDelete(id);
+        setModalOpen(false);
       } else {
         console.error('Failed to delete the project.');
       }
@@ -43,6 +47,23 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
       console.error('An error occurred while deleting the project:', error);
     }
   };
+
+  const handleArchive = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8080/v1/project/archive/${id}`, {
+        method: 'POST',
+      });
+      if (response.ok) {
+        message.success('Project archived successfully');
+        setArchiveDialogOpen(false);
+      } else {
+        message.error('Failed to archive the project');
+      }
+    } catch (error) {
+      message.error('An error occurred while archiving the project');
+    }
+  };
+
   const renderAvatar = () => {
     console.log(clientAvatar)
     if (clientAvatar) {
@@ -52,12 +73,9 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
     }
   };
 
-
   return (
     <>
-      <Card 
-        className="mb-4 custom-card"
-      >
+      <Card className="mb-4 custom-card">
         <div 
           className="custom-card-header"
           onClick={handleCardNavi}
@@ -70,7 +88,6 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
         <CardBody className="d-flex flex-column custom-card-body">
           <div className="d-flex align-items-center mb-3">
             <Avatar src={clientAvatar || ''} size={40} className="avatar" />
-          {/* {renderAvatar()} */}
             <div className="client-info">
               <CardTitle tag="h5" className="client-name">{client}</CardTitle>
               <CardText className="client-title">{clientTitle}</CardText>
@@ -87,28 +104,46 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
             <span className="field-badge">{field}</span>
           </div>
           <div className="mt-auto d-flex justify-content-between">
-          {(role === 3 || role === 4 || role === 5) && (
-            // archive
-            <i className="bi bi-file-earmark"></i>
-          )}
             {(role === 3 || role === 4 || role === 5) && (
-              <Link to={`/project/edit/${id}`}>
-                {/* edit */}
-                <i className="bi bi-pencil"></i>
-              </Link>
+              <Tooltip title="Archive">
+                <Button 
+                  onClick={() => setArchiveDialogOpen(true)} 
+                  style={{ color: 'green', cursor: 'pointer', minWidth: '40px' }}
+                >
+                  <i className="bi bi-file-earmark"></i>
+                </Button>
+              </Tooltip>
+            )}
+            {(role === 3 || role === 4 || role === 5) && (
+              <Tooltip title="Edit">
+                <Link to={`/project/edit/${id}`}>
+                  <Button 
+                    style={{ color: 'black', cursor: 'pointer', minWidth: '40px' }}
+                  >
+                    <i className="bi bi-pencil"></i>
+                  </Button>
+                </Link>
+              </Tooltip>
             )}
             {(role === 2 || role === 3 || role === 4 || role === 5)  && (
-              // preference list
-              <i 
-                className="bi bi-person"
-                onClick={handleClickOpen}
-                style={{ color: 'blue', cursor: 'pointer' }}
-              ></i>
-
+              <Tooltip title="Teams">
+                <Button 
+                  onClick={handleClickOpen}
+                  style={{ color: 'blue', cursor: 'pointer', minWidth: '40px' }}
+                >
+                  <i className="bi bi-person"></i>
+                </Button>
+              </Tooltip>
             )}
             {(role === 3 || role === 4 || role === 5) && (
-              // delete
-              <i className="bi bi-trash" onClick={toggle} style={{ color: 'red', cursor: 'pointer' }}></i>
+              <Tooltip title="Delete">
+                <Button 
+                  onClick={() => setModalOpen(true)} 
+                  style={{ color: 'red', cursor: 'pointer', minWidth: '40px' }}
+                >
+                  <i className="bi bi-trash"></i>
+                </Button>
+              </Tooltip>
             )}
           </div>
         </CardBody>
@@ -119,16 +154,52 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
           handleClickOpen={handleClickOpen}
         />
       </Card>
-      <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>Confirm Delete</ModalHeader>
-        <ModalBody>
-          Are you sure you want to delete this project?
-        </ModalBody>
-        <ModalFooter>
-          <Button color="danger" onClick={handleDelete}>Delete</Button>
-          <Button color="secondary" onClick={toggle}>Cancel</Button>
-        </ModalFooter>
-      </Modal>
+      <Dialog
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Confirm Delete"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this project?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDelete} color="error">
+            Delete
+          </Button>
+          <Button onClick={() => setModalOpen(false)} color="primary" autoFocus>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={archiveDialogOpen}
+        onClose={() => setArchiveDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Confirm Archive"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to archive this project?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleArchive} color="primary">
+            Archive
+          </Button>
+          <Button onClick={() => setArchiveDialogOpen(false)} color="secondary" autoFocus>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
