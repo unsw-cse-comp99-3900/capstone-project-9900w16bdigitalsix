@@ -1,5 +1,5 @@
 id,created_at,updated_at,deleted_at,email,password,username,course,role,avatar_url,bio,organization,position,field,belongs_to_group
-1,26/7/2024 02:46:52.693,26/7/2024 02:46:52.693,,tangyiping12138@163.com,pbkdf2-sha512$Em8v8GhgSR$2d27303981ff529b6d8e43c4bae9a6837019a9cf2417325f8f7c3253c41e4796,YIPING TANG,COMP9900,1,,,,,,1
+1,26/7/2024 02:46:52.693,26/7/2024 02:46:52.693,,tangyiping12138@163.com,pbkdf2-sha512$Em8v8GhgSR$2d27303981ff529b6d8e43c4bae9a6837019a9cf2417325f8f7c3253c41e4796,YIPING TANG,COMP9900,1,,,,,,
 2,26/7/2024 02:55:21.719,26/7/2024 02:55:21.719,,admin@docker.yapi,pbkdf2-sha512$dEZPfmkeKv$83c1b53a8d858f398b7e33071fc8fa086148cb7128e43266cd7e094a2d7599b2,admin,,5,,,,,,
 3,26/7/2024 02:55:21.725,26/7/2024 02:55:21.725,,client_1@ad.au,pbkdf2-sha512$jlmpLPKQYD$2e5fd868fcae516cb4858befad9918e81958392dbf0e66059bebd8b09de7e5d9,client_1,,3,,,,,,
 4,26/7/2024 02:55:21.73,26/7/2024 02:55:21.73,,client_2@ad.au,pbkdf2-sha512$8naCbIFBBP$2735cd5728f9c84cd37f7c4693b2ffcf393f048a1ddfd655b364f735c0c3cdcb,client_2,,3,,,,,,

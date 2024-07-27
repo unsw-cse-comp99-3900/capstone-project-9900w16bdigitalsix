@@ -65,7 +65,8 @@ const Message = () => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
-
+  // send message
+  const [sendMessage, setSendMessage] = useState(null);
   // for sharing personal card modal
   const handlePersonalCardOk = () => {
     setIsPersonalCardVisible(false);
@@ -146,7 +147,7 @@ const Message = () => {
 
   // fetch channel list
   const loadChannelData = async() => {
-    const response = await apiCall('GET', 'v1/message/get/all/channels', null, token, true);
+    const response = await apiCall('GET', `v1/message/get/all/channels/${userId}`, null, token, true);
       if (!response) {
         setAllChannelData([]);
       } else if (response.error) {
@@ -171,6 +172,8 @@ const Message = () => {
   // fetch all messages in the selected channel
   useEffect(() => {
     fetchMessages();
+    const intervalId = setInterval(fetchMessages, 5000); // Poll every 5 seconds
+    return () => clearInterval(intervalId); // Clear the interval on component unmount
   }, [channelId]);
 
   const fetchMessages = async() => {
@@ -180,7 +183,7 @@ const Message = () => {
       } else if (response.error) {
         setMessages([]);
       } else {
-        setMessages(response.messages);
+        setMessages(response.messages ? response.messages : []);
       }
   }
 
@@ -210,6 +213,46 @@ const Message = () => {
   const handleAlertClose = () => {
     setAlertOpen(false);
   };
+
+  // handle sending message
+  const handleSendMessageChange = (event) => {
+    setSendMessage(event.target.value);
+  }
+
+  const handleKeyPress = async(event) => {
+    if (event.key === 'Enter' && sendMessage.trim()) {
+      const requestBody = {
+        SenderId: parseInt(userId),
+        channelId: parseInt(channelId),
+        messageContent: sendMessage,
+        messageType: 1,
+      };
+  
+      console.log("requestBody", requestBody);
+      const response = await apiCall('POST', 'v1/message/send', requestBody, token, true);
+      if (!response){
+        return
+      } else if (response.error){
+        setSnackbarContent(response.error);
+        setAlertType('error');
+        setAlertOpen(true);
+      } else {
+        fetchMessages();
+      }
+      setSendMessage(''); // Clear the input field after sending the message
+    }
+  };
+
+  // scroll to bottom
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <main>
@@ -301,29 +344,27 @@ const Message = () => {
                   </div>
                 </CardTitle>
                 {/* message text or card*/}
-                <List
-                  dataSource={messages}
-                  style={{ maxHeight: '400px', overflowY: 'auto' }}
-                  renderItem={item => (
-                    <List.Item>
-                      {item.messageType === 1 ? <MessageText message={item}></MessageText>
-                      : <MessageCard message={item}></MessageCard>
-                      }  
-                    </List.Item>
-                  )}
-                />
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  <List
+                    dataSource={messages}
+                    renderItem={item => (
+                      <List.Item>
+                        {item.messageType === 1 ? <MessageText message={item} /> : <MessageCard message={item} />}
+                      </List.Item>
+                    )}
+                  />
+                  <div ref={messagesEndRef} />
+                </div>
               </Card>
               <div className="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
-                <img
-                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                  alt="avatar 3"
-                  style={{ width: "40px", height: "100%" }}
-                />
                 <input
                   type="text"
                   className="form-control form-control-lg"
                   id="exampleFormControlInput2"
                   placeholder="Type message"
+                  value={sendMessage}
+                  onChange={handleSendMessageChange}
+                  onKeyPress={handleKeyPress}
                 />
                 <a className="ms-1 text-muted" href="#!">
                   <MDBIcon fas icon="paperclip" />
@@ -357,7 +398,8 @@ const Message = () => {
         visible={isPersonalCardVisible}
         onOk={handlePersonalCardOk}
         onCancel={handlePersonalCardCancel}
-        // refreshData={loadMessageData} // update function
+        refreshData={fetchMessages} // update function
+        channelId={channelId}
       >
 
       </PersonalCard>
