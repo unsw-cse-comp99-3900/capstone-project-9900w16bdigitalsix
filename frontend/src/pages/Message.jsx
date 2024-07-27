@@ -179,6 +179,10 @@ const Message = () => {
   }, [channelId]);
 
   const fetchMessages = async() => {
+    if (! channelId) {
+      return
+    };
+  
     const response = await apiCall('GET', `v1/message/channel/${channelId}/messages`, null, token, true);
       if (!response) {
         setMessages([]);
