@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,14 +17,14 @@ import (
 )
 
 // @Summary create channel
-// @Description private channle or group channel
+// @Description private channel or group channel
 // @Tags Message
 // @Accept json
 // @Produce json
 // @Param CreateChannelForm body forms.CreateChannelForm true "create channel form"
 // @Success 200 {object} map[string]string "{"channelID": "string", "msg":"create channel successfully"}" or "{"channelID": "string", "msg": "private chat channel already exists"}"
 // @Failure 400 {object} map[string]string "{"error": "bad request"}"
-// @Failure 409 {object} map[string]string "{"error": "private chat channel already exists"}""
+// @Failure 409 {object} map[string]string "{"error": "private chat channel already exists"}"
 // @Failure 500 {object} map[string]string "{"error": "Internal server error"}"
 // @Router /v1/message/create/channel [post]
 func CreateChannel(c *gin.Context) {
@@ -51,13 +52,25 @@ func CreateChannel(c *gin.Context) {
 			return
 		}
 	}
+
 	// Create new channel
 	var users []models.User
+	var userNames []string
 	for _, userID := range form.UserIds {
-		users = append(users, models.User{Model: gorm.Model{ID: uint(userID)}})
+		var user models.User
+		if err := db.First(&user, userID).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
+			return
+		}
+		users = append(users, user)
+		userNames = append(userNames, user.Username)
 	}
 
+	// Generate channel name
+	channelName := generateChannelName(form.ChannelType, userNames)
+
 	channel := &models.Channel{
+		Name:  channelName,
 		Type:  form.ChannelType,
 		Users: users,
 	}
@@ -71,6 +84,14 @@ func CreateChannel(c *gin.Context) {
 		"channelID": channel.ID,
 		"msg":       "Create channel successfully",
 	})
+}
+
+// generateChannelName generates a default channel name based on the channel type and user names
+func generateChannelName(channelType int, userNames []string) string {
+	if channelType == 1 {
+		return "Private Chat: " + userNames[0] + " and " + userNames[1]
+	}
+	return "Group Chat: " + strings.Join(userNames, ", ")
 }
 
 // UpdateChannelName Update channel name

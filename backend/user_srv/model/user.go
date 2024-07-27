@@ -18,6 +18,6 @@ type User struct {
 	Email    string `gorm:"index:idx_email;unique;type:varchar(255);not null"`
 	Password string `gorm:"type:varchar(255);not null"`
 	Username string `gorm:"type:varchar(16);not null"`
-	Course   string `gorm:"type:varchar(16)"`
+	Course   string `gorm:"type:varchar(16);default:'COMP9900'"`
 	Role     int    `gorm:"default:1;type:int comment '1表示student, 2表示tutor, 3表示convenor, 4表示client, 5表示admin'"`
 }

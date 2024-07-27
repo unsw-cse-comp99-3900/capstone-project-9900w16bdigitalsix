@@ -1325,7 +1325,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: private channle or group channel
+      description: private channel or group channel
       parameters:
       - description: create channel form
         in: body

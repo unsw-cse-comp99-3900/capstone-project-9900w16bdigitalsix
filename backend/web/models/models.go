@@ -16,7 +16,7 @@ type User struct {
 	Organization       string         `json:"organization"`
 	Position           string         `json:"position"`
 	Field              string         `json:"field"`
-	Course             string         `json:"course"`
+	Course             string         `gorm:"type:varchar(16);default:'COMP9900'"`
 	Role               int            `gorm:"default:1;type:int comment '1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin'"`
 	BelongsToGroup     *uint          `gorm:"default:null"`
 	ClientProjects     []Project      `gorm:"foreignkey:ClientID"`      // a client/coordinator can create/responsible for many projects

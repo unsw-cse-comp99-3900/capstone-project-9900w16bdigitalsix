@@ -557,7 +557,7 @@ const docTemplate = `{
         },
         "/v1/message/create/channel": {
             "post": {
-                "description": "private channle or group channel",
+                "description": "private channel or group channel",
                 "consumes": [
                     "application/json"
                 ],
