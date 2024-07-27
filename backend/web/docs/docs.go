@@ -1522,6 +1522,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "Max Team Numbers",
+                        "name": "maxTeams",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
                         "type": "array",
                         "description": "Required Skills",
                         "name": "requiredSkills[]",
@@ -1851,6 +1858,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Project Description",
                         "name": "description",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Max Team Number",
+                        "name": "maxTeams",
                         "in": "formData",
                         "required": true
                     },

@@ -26,6 +26,7 @@ import (
 // @Param field formData string true "Project Field"
 // @Param description formData string true "Project Description"
 // @Param email formData string true "Clinet Email"
+// @Param maxTeams formData string true "Max Team Numbers"
 // @Param requiredSkills[] formData array false "Required Skills" items(type=string)
 // @Param file formData file false "upload file"
 // @Success 200 {object} map[string]interface{} "{"msg": "Project created successfully", "projectId": 1, "filePath": "backend/files/filename.pdf", "createdBy": 1}"
@@ -43,6 +44,13 @@ func CreateProject(c *gin.Context) {
 	description := c.PostForm("description")
 	email := c.PostForm("email")
 	requiredSkills := c.PostFormArray("requiredSkills[]")
+	maxTeamsStr := c.PostForm("maxTeams")
+
+	maxTeams, err := strconv.Atoi(maxTeamsStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid maxTeams value"})
+		return
+	}
 
 	// 检查客户是否存在
 	var client models.User
@@ -91,6 +99,7 @@ func CreateProject(c *gin.Context) {
 		Field:       field,
 		Description: description,
 		ClientID:    &clientID, // 存储创建者ID
+		MaxTeams:    maxTeams,
 	}
 
 	// 如果有上传文件，则保存文件名和文件路径
@@ -309,6 +318,7 @@ func DeleteProject(c *gin.Context) {
 // @Param requiredSkills formData array false "Required Skills" items(type=string)
 // @Param field formData string true "Project Field"
 // @Param description formData string true "Project Description"
+// @Param maxTeams formData string true "Max Team Number"
 // @Param spec formData file false "Specification File"
 // @Success 200 {object} response.ModifyProjectDetailResponse
 // @Failure 400 {object} map[string]string "{"error": "File not provided"}"
@@ -337,6 +347,13 @@ func ModifyProjectDetail(c *gin.Context) {
 	requiredSkills := c.PostFormArray("requiredSkills[]")
 	field := c.PostForm("field")
 	description := c.PostForm("description")
+	maxTeamsStr := c.PostForm("maxTeams")
+
+	maxTeams, err := strconv.Atoi(maxTeamsStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid maxTeams value"})
+		return
+	}
 
 	// 查找用户
 	var user models.User
@@ -378,6 +395,7 @@ func ModifyProjectDetail(c *gin.Context) {
 	project.Description = description
 	project.FileURL = fileURL
 	project.ClientID = &user.ID
+	project.MaxTeams = maxTeams
 
 	// 更新技能 关联表(project_skills）
 	var skills []models.Skill

@@ -1953,6 +1953,11 @@ paths:
         name: email
         required: true
         type: string
+      - description: Max Team Numbers
+        in: formData
+        name: maxTeams
+        required: true
+        type: string
       - description: Required Skills
         in: formData
         name: requiredSkills[]
@@ -2183,6 +2188,11 @@ paths:
       - description: Project Description
         in: formData
         name: description
+        required: true
+        type: string
+      - description: Max Team Number
+        in: formData
+        name: maxTeams
         required: true
         type: string
       - description: Specification File
