@@ -46,6 +46,7 @@ const ProjectList = () => {
             skills: project.requiredSkills || 'N/A',
             clientAvatar: project.clientAvatar,
             field: project.field,
+            allocatedTeamsCount: project.allocatedTeam ? project.allocatedTeam.length : 0,
           }));
           console.log('Mapped Projects:', mappedProjects);
           setProjects(mappedProjects);
@@ -93,7 +94,7 @@ const ProjectList = () => {
     setOpenAlert(false);
     navigate('/team/student');
   };
-  
+
   return (
     <main>
       <MessageAlert
@@ -151,11 +152,12 @@ const ProjectList = () => {
                     title={project.title}
                     client={project.client}
                     clientTitle={project.clientTitle}
-                    clientAvatar={project.clientAvatar} // Pass the clientAvatarURL
+                    clientAvatar={project.clientAvatar}
                     skills={project.skills}
                     field={project.field}
                     onDelete={handleDelete}
                     role={role}
+                    allocatedTeamsCount={project.allocatedTeamsCount} 
                   />
                 </Col>
               ))}

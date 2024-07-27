@@ -13,7 +13,7 @@ import '../assets/scss/CustomCard.css'; // import CSS file
 import TeamFile from "../components/TeamFileDialog";
 import { Avatar } from 'antd';
 
-const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role }) => {
+const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role, allocatedTeamsCount }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
   const navigate = useNavigate();
@@ -76,6 +76,9 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
   return (
     <>
       <Card className="mb-4 custom-card">
+        <div className="allocated-teams-count">
+          {allocatedTeamsCount}
+        </div>
         <div 
           className="custom-card-header"
           onClick={handleCardNavi}
