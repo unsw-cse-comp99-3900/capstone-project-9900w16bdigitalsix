@@ -31,6 +31,7 @@ func UserRouter(Router *gin.RouterGroup) {
 		UserRouter.POST("/modify/profile", controllers.UpdateUserInfo)
 		UserRouter.GET("/profile/:user_id", controllers.GetPersonProfile)
 		UserRouter.GET("/student/list", controllers.GetAllStudents)
+		UserRouter.GET("/get/user/list", controllers.GetAllUsersInfo)
 	}
 }
 
@@ -38,7 +39,6 @@ func AdminRouter(Router *gin.RouterGroup) {
 	AdminRouter := Router.Group("admin")
 	AdminRouter.Use(middlewares.JWTAuth(), middlewares.IsAdmin())
 	{
-		AdminRouter.GET("/get/user/list", controllers.GetAllUsersInfo)
 		AdminRouter.GET("/get/tutor/list", controllers.GetAllTutorInfo)
 		AdminRouter.GET("/get/coordinator/list", controllers.GetAllCoordinatorInfo)
 		AdminRouter.POST("/modify/user/role", controllers.ModifyUserRole)

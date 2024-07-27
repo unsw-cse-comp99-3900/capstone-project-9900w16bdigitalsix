@@ -396,68 +396,6 @@
                 }
             }
         },
-        "/v1/admin/get/user/list": {
-            "get": {
-                "description": "注意 header  Authorization: Bearer \u003ctoken\u003e, 返回所有用户列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Get all users List",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer \u003ctoken\u003e",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/response.UserListResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "{\"error\": \"Please login\"}",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "{\"error\": \"only admin have permission\"}",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "{\"error\": \"Failed to fetch users\"}",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/v1/admin/modify/user/role": {
             "post": {
                 "description": "修改用户的角色信息, 注意header  Authorization: Bearer \u003ctoken\u003e，如果用户离开队伍且队伍没有其他成员，解散队伍并删除",
@@ -3188,6 +3126,68 @@
                     },
                     "500": {
                         "description": "{\"error\":\"Failed to send reset password email\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/get/user/list": {
+            "get": {
+                "description": "Role field（int）， 1 represent student, 2 represent tutor, 3 represent client, 4 represent convenor, 5 represent admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get all users List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003ctoken\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.UserListResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "{\"error\": \"Please login\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "{\"error\": \"only admin have permission\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch users\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {

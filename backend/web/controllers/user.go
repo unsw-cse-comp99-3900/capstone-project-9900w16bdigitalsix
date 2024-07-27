@@ -694,3 +694,35 @@ func GetAllUnassignedStudents(c *gin.Context) {
 
 	c.JSON(http.StatusOK, userResponses)
 }
+
+// @Summary Get all users List
+// @Description   Role field（int）， 1 represent student, 2 represent tutor, 3 represent client, 4 represent convenor, 5 represent admin
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Param Authorization header string true "Bearer <token>"
+// @Success 200 {array} response.UserListResponse
+// @Failure 500 {object} map[string]string "{"error": "Failed to fetch users"}"
+// @Failure 403 {object} map[string]string "{"error": "only admin have permission"}"
+// @Failure 401 {object} map[string]string "{"error": "Please login"}"
+// @Router /v1/user/get/user/list [get]
+func GetAllUsersInfo(c *gin.Context) {
+	var users []models.User
+	if err := global.DB.Find(&users).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+		return
+	}
+
+	var userResponses []response.UserListResponse
+	for _, user := range users {
+		userResponses = append(userResponses, response.UserListResponse{
+			UserID:    user.ID,
+			UserName:  user.Username,
+			Email:     user.Email,
+			Role:      user.Role,
+			AvatarURL: user.AvatarURL,
+		})
+	}
+
+	c.JSON(http.StatusOK, userResponses)
+}

@@ -12,38 +12,6 @@ import (
 	"web/models"
 )
 
-// @Summary Get all users List
-// @Description 注意 header  Authorization: Bearer <token>, 返回所有用户列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
-// @Tags Admin
-// @Accept  json
-// @Produce  json
-// @Param Authorization header string true "Bearer <token>"
-// @Success 200 {array} response.UserListResponse
-// @Failure 500 {object} map[string]string "{"error": "Failed to fetch users"}"
-// @Failure 403 {object} map[string]string "{"error": "only admin have permission"}"
-// @Failure 401 {object} map[string]string "{"error": "Please login"}"
-// @Router /v1/admin/get/user/list [get]
-func GetAllUsersInfo(c *gin.Context) {
-	var users []models.User
-	if err := global.DB.Find(&users).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
-		return
-	}
-	// 映射到返回的结构体
-	var userResponses []response.UserListResponse
-	for _, user := range users {
-		userResponses = append(userResponses, response.UserListResponse{
-			UserID:    user.ID,
-			UserName:  user.Username,
-			Email:     user.Email,
-			Role:      user.Role,
-			AvatarURL: user.AvatarURL,
-		})
-	}
-
-	c.JSON(http.StatusOK, userResponses)
-}
-
 // @Summary Get all tutor List
 // @Description 注意 header  Authorization: Bearer <token>, 返回所有 Tutor 列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
 // @Tags Admin
