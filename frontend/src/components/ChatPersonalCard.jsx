@@ -7,6 +7,22 @@ import MessageAlert from './MessageAlert';
 
 const { Search } = Input;
 
+const roleMap = {
+  1: 'Student',
+  2: 'Tutor',
+  3: 'Client',
+  4: 'Coordinator',
+  5: 'Administrator'
+};
+
+const roleColorMap = {
+  1: { background: '#e0f7fa', color: '#006064' }, // blue Student
+  2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
+  3: { background: '#fff9c4', color: '#f57f17' }, // yellow Client
+  4: { background: '#ffe0b2', color: '#e65100' }, // orange Coordinator
+  5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
+};
+
 const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, cardType, channelId }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
@@ -23,7 +39,7 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, cardType, chan
   const [selectedAvatars, setSelectedAvatars] = useState([]);
 
   useEffect(() => {
-    loadStudentData();
+    loadUserData();
     setSelectedIds([]);
     setSelectedAvatars([]);
   }, []);
@@ -46,8 +62,8 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, cardType, chan
     }
   };
 
-  const loadStudentData = async () => {
-    const response = await apiCall('GET', 'v1/user/student/list', null, token, true);
+  const loadUserData = async () => {
+    const response = await apiCall('GET', 'v1/user/get/user/list', null, token, true);
     
     if (!response) {
       setData([]);
@@ -59,6 +75,7 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, cardType, chan
       const res = Array.isArray(response) ? response : [];
       setData(res);
       setFilteredData(res);
+      console.log("response:",response);
     }
   }
 
@@ -106,7 +123,6 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, cardType, chan
         userId: selectedIds.map(id => parseInt(id, 10)),
       };
       const response = await apiCall('POST', 'v1/message/invite/to/channel', requestBody, token, true);
-      console.log(response);
       if (response && !response.error) {
         setSnackbarContent('Operation successful');
         setAlertType('success');
@@ -175,7 +191,21 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, cardType, chan
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <div><strong>Name:</strong> {item.userName}</div>
                   <div><strong>Email:</strong> {item.email}</div>
-                  <div><strong>Course:</strong> {item.course}</div>
+                  <div>
+                    <span
+                      className="list-item-meta-role"
+                      style={{
+                        backgroundColor: roleColorMap[item.role].background,
+                        color: roleColorMap[item.role].color,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: 'inline-block',
+                      }}
+                    >
+                      {roleMap[item.role]}
+                    </span>
+                  </div>
                 </div>
               </div>
             </List.Item>

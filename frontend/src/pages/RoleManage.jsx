@@ -46,7 +46,7 @@ const RoleManage = () => {
       return;
     }
   
-    const response = await apiCall('GET', 'v1/admin/get/user/list', null, token, true);
+    const response = await apiCall('GET', 'v1/user/get/user/list', null, token, true);
   
     //console.log("response:", response)
   
