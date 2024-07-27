@@ -155,7 +155,13 @@ export default function InviteModel({
               >
                 <List.Item.Meta
                   title={<a>{item.userName}</a>}
-                  description={item.email}
+                  description={
+                    <>
+                    <div><strong>Email:</strong> {item.email}</div>
+                    <div><strong>Course:</strong> {item.course}</div>
+                    <div><strong>Skills:</strong> {item.userSkills}</div>
+                    </>
+                  }
                 />
               </List.Item>
             )}
