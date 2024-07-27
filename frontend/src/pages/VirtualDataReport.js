@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { Container, Row, Col, Card, CardBody, CardTitle, FormGroup, Label, Input, Button } from 'reactstrap';
+import { Container, Row, Col, Card, CardBody, CardTitle, FormGroup, Label, Input, Button, Table } from 'reactstrap';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -23,6 +23,27 @@ const fieldColors = {
   "wedqasda": 'rgba(192, 75, 192, 0.6)',
   "AIII": 'rgba(75, 192, 75, 0.6)',
   "MLAI": 'rgba(192, 192, 75, 0.6)'
+};
+
+const fetchProjectList = async () => {
+  try {
+    const response = await fetch('http://127.0.0.1:8080/v1/project/get/list/byRole/5', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    return [];
+  }
 };
 
 const fetchApiData = async () => {
@@ -48,6 +69,7 @@ const fetchApiData = async () => {
 
 const VirtualDataReport = () => {
   const [data, setData] = useState(null);
+  const [projectList, setProjectList] = useState([]);
   const [selectedField, setSelectedField] = useState("");
   const reportRef = useRef(null);
 
@@ -60,6 +82,9 @@ const VirtualDataReport = () => {
           setSelectedField(apiData.fields[0].field);
         }
       }
+
+      const projectListData = await fetchProjectList();
+      setProjectList(projectListData);
     };
 
     fetchData();
@@ -72,7 +97,7 @@ const VirtualDataReport = () => {
   const handlePrintPdf = async () => {
     const input = reportRef.current;
     const pdf = new jsPDF('p', 'pt', 'a4');
-    
+
     // get time
     const currentDate = new Date();
     const dateString = currentDate.toLocaleString();
@@ -83,7 +108,9 @@ const VirtualDataReport = () => {
     pdf.text(`Generated on: ${dateString}`, 20, 50);
 
     let offset = 70; // offset
-    
+    const margin = 20;
+    const imgWidth = 595.28; // A4 width in points
+
     // get all chart elements
     const charts = input.querySelectorAll('.chart-container');
     for (let i = 0; i < charts.length; i += 2) {
@@ -92,10 +119,8 @@ const VirtualDataReport = () => {
       const secondChartCanvas = charts[i + 1] ? await html2canvas(charts[i + 1], { scale: 2 }) : null;
       const secondImgData = secondChartCanvas ? secondChartCanvas.toDataURL('image/png') : null;
 
-      const imgWidth = 595.28; // A4 width in points
       const pageHeight = 841.89; // A4 height in points
       const imgHeight = firstChartCanvas.height * imgWidth / firstChartCanvas.width;
-      const margin = 20;
 
       // Adjust the height to fit two charts in one page
       const adjustedHeight = (pageHeight - margin * 3 - offset) / 2;
@@ -119,6 +144,13 @@ const VirtualDataReport = () => {
         offset = 70; // reset offset
       }
     }
+
+    // Print the table
+    const table = input.querySelector('.project-list-table');
+    const tableCanvas = await html2canvas(table, { scale: 2 });
+    const tableImgData = tableCanvas.toDataURL('image/png');
+    pdf.addPage();
+    pdf.addImage(tableImgData, 'PNG', margin, offset + margin, imgWidth - 40, tableCanvas.height * imgWidth / tableCanvas.width);
 
     pdf.save('report.pdf');
   };
@@ -282,6 +314,43 @@ const VirtualDataReport = () => {
                 <div style={{ position: 'relative', height: '300px', width: '100%' }}>
                   <Bar data={topKProjectsData} options={barOptions} />
                 </div>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="12" className="mb-4">
+            <Card>
+              <CardBody>
+                <CardTitle tag="h5">Project List</CardTitle>
+                <Table striped className="project-list-table">
+                  <thead>
+                    <tr>
+                      <th>Project ID</th>
+                      <th>Project Name</th>
+                      <th>Client</th>
+                      <th>Tutor</th>
+                      <th>Coordinator</th>
+                      <th>Allocate Team</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {projectList.map(project => (
+                      <tr key={project.projectId}>
+                        <td>{project.projectId}</td>
+                        <td>{project.title}</td>
+                        <td>{project.clientName}</td>
+                        <td>{project.tutorName}</td>
+                        <td>{project.coorName}</td>
+                        <td>
+                          {project.allocatedTeam && project.allocatedTeam.length > 0
+                            ? project.allocatedTeam.map(team => team.teamName).join(', ').replace(/,/g, ',\n')
+                            : "None"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
               </CardBody>
             </Card>
           </Col>
