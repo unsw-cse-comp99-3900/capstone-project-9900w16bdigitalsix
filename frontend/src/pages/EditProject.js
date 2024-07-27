@@ -4,7 +4,6 @@ import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
 import '../assets/scss/FullLayout.css';//make sure import this
 import EditProjectForm from '../components/EditProjectForm';
-// import { apiCall } from './api'; // 确保路径正确
 import { useParams } from 'react-router-dom';
 
 const apiCall = async (method, endpoint) => {
