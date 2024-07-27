@@ -155,7 +155,7 @@ const Message = () => {
       } else if (response.error) {
         setAllChannelData([]);
       } else {
-        setAllChannelData(response.channels);
+        setAllChannelData(response.channels ?  response.channels : []);
       }
   }
 
