@@ -2248,7 +2248,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/response.SearchTeamResponse"
+                                "$ref": "#/definitions/response.ProjectSearchTeamResponse"
                             }
                         }
                     },
@@ -4565,6 +4565,38 @@ const docTemplate = `{
                 },
                 "tutorName": {
                     "type": "string"
+                }
+            }
+        },
+        "response.ProjectSearchTeamResponse": {
+            "type": "object",
+            "properties": {
+                "course": {
+                    "type": "string"
+                },
+                "preferenceNum": {
+                    "type": "integer"
+                },
+                "teamId": {
+                    "type": "integer"
+                },
+                "teamIdShow": {
+                    "type": "integer"
+                },
+                "teamMember": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.TeamMember2"
+                    }
+                },
+                "teamName": {
+                    "type": "string"
+                },
+                "teamSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

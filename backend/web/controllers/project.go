@@ -468,6 +468,7 @@ func GetAllocatedTeamDetail(c *gin.Context) {
 			TeamMember:       members,
 			TeamSkills:       skills,
 			PreferenceReason: preference.Reason,
+			PreferenceNum:    preference.PreferenceNum,
 		})
 	}
 
@@ -601,6 +602,7 @@ func GetProjectPreferencedByTeamDetail(c *gin.Context) {
 		TeamMember:       members,
 		TeamSkills:       skills,
 		PreferenceReason: preference.Reason,
+		PreferenceNum:    preference.PreferenceNum,
 	}
 
 	c.JSON(http.StatusOK, response)

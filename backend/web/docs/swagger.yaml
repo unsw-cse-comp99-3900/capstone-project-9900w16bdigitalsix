@@ -652,6 +652,27 @@ definitions:
       tutorName:
         type: string
     type: object
+  response.ProjectSearchTeamResponse:
+    properties:
+      course:
+        type: string
+      preferenceNum:
+        type: integer
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamMember:
+        items:
+          $ref: '#/definitions/response.TeamMember2'
+        type: array
+      teamName:
+        type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
+    type: object
   response.ProjectStatistic:
     properties:
       field:
@@ -2402,7 +2423,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/response.SearchTeamResponse'
+              $ref: '#/definitions/response.ProjectSearchTeamResponse'
             type: array
         "500":
           description: '{"error": "Failed to fetch teams"}'

@@ -77,3 +77,13 @@ type SearchTeamResponse struct {
 	TeamMember []TeamMember2 `json:"teamMember"`
 	TeamSkills []string      `json:"teamSkills"`
 }
+
+type ProjectSearchTeamResponse struct {
+	TeamId        uint          `json:"teamId"`
+	TeamIdShow    uint          `json:"teamIdShow"`
+	TeamName      string        `json:"teamName"`
+	Course        string        `json:"course"`
+	PreferenceNum int           `json:"preferenceNum"`
+	TeamMember    []TeamMember2 `json:"teamMember"`
+	TeamSkills    []string      `json:"teamSkills"`
+}

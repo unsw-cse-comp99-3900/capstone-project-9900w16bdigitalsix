@@ -20,7 +20,7 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param body body forms.SearchTeamRequest true "Request Body"
-// @Success 200 {array} response.SearchTeamResponse
+// @Success 200 {array} response.ProjectSearchTeamResponse
 // @Failure 500 {object} map[string]string "{"error": "Failed to fetch teams"}"
 // @Router /v1/search/team/unallocated/preferenceProject/list/detail [post]
 func SearchUnallocatedTeamsProject(c *gin.Context) {
@@ -46,7 +46,7 @@ func SearchUnallocatedTeamsProject(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, formatSearchTeamResponse(teams))
+	c.JSON(http.StatusOK, formatProjectSearchTeamResponse(req.ProjectId, teams))
 }
 
 // SearchUnallocatedTeams godoc
@@ -185,6 +185,42 @@ func fetchTeamsBySkills(c *gin.Context, projectId uint, searchList []string, tea
 	}
 
 	return false
+}
+
+func formatProjectSearchTeamResponse(projectId uint, teams []models.Team) []response.ProjectSearchTeamResponse {
+	var teamResponses []response.ProjectSearchTeamResponse
+	for _, team := range teams {
+		var teamSkills []string
+		for _, skill := range team.Skills {
+			teamSkills = append(teamSkills, skill.SkillName)
+		}
+
+		var teamMembers []response.TeamMember2
+		for _, member := range team.Members {
+			teamMembers = append(teamMembers, response.TeamMember2{
+				UserID:    member.ID,
+				UserName:  member.Username,
+				Email:     member.Email,
+				AvatarURL: member.AvatarURL,
+			})
+		}
+
+		// Get PreferenceNum from team_preferences_projects
+		var preference models.TeamPreferenceProject
+		global.DB.Where("team_id = ? AND project_id = ?", team.ID, projectId).
+			First(&preference)
+
+		teamResponses = append(teamResponses, response.ProjectSearchTeamResponse{
+			TeamId:        team.ID,
+			TeamIdShow:    team.TeamIdShow,
+			TeamName:      team.Name,
+			Course:        team.Course,
+			PreferenceNum: preference.PreferenceNum,
+			TeamMember:    teamMembers,
+			TeamSkills:    teamSkills,
+		})
+	}
+	return teamResponses
 }
 
 func formatSearchTeamResponse(teams []models.Team) []response.SearchTeamResponse {
