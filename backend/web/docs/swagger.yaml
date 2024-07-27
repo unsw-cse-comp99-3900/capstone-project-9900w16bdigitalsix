@@ -513,6 +513,8 @@ definitions:
     type: object
   response.MessageDetail:
     properties:
+      avatarUrl:
+        type: string
       messageContent:
         $ref: '#/definitions/response.MessageContent'
       messageTime:
@@ -1356,7 +1358,8 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"msg":"create channel successfully"}'
+          description: '{"channelID": "string", "msg":"create channel successfully"}"
+            or "{"channelID": "string", "msg": "private chat channel already exists"}'
           schema:
             additionalProperties:
               type: string
@@ -1382,11 +1385,17 @@ paths:
       summary: create channel
       tags:
       - Message
-  /v1/message/get/all/channels:
+  /v1/message/get/all/channels/{userId}:
     get:
       consumes:
       - application/json
-      description: get details of all channels
+      description: get details of all channels for a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -1400,7 +1409,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: get all channels
+      summary: get all channels for a specific user
       tags:
       - Message
   /v1/message/invite/to/channel:

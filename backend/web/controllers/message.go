@@ -15,14 +15,13 @@ import (
 	"web/models"
 )
 
-// CreateChannel Create channel
 // @Summary create channel
 // @Description private channle or group channel
 // @Tags Message
 // @Accept json
 // @Produce json
 // @Param CreateChannelForm body forms.CreateChannelForm true "create channel form"
-// @Success 200 {object} map[string]string "{"msg":"create channel successfully"}"
+// @Success 200 {object} map[string]string "{"channelID": "string", "msg":"create channel successfully"}" or "{"channelID": "string", "msg": "private chat channel already exists"}"
 // @Failure 400 {object} map[string]string "{"error": "bad request"}"
 // @Failure 409 {object} map[string]string "{"error": "private chat channel already exists"}""
 // @Failure 500 {object} map[string]string "{"error": "Internal server error"}"
@@ -44,7 +43,7 @@ func CreateChannel(c *gin.Context) {
 			Where("cu1.user_id = ? AND cu2.user_id = ? AND channels.type = ?", form.UserIds[0], form.UserIds[1], form.ChannelType).
 			First(&existingChannel).Error
 		if err == nil {
-			c.JSON(http.StatusConflict, gin.H{"error": "private chat channel already exists"})
+			c.JSON(http.StatusOK, gin.H{"channelID": existingChannel.ID, "msg": "private chat channel already exists"})
 			return
 		}
 		if err != gorm.ErrRecordNotFound {
@@ -52,7 +51,6 @@ func CreateChannel(c *gin.Context) {
 			return
 		}
 	}
-
 	// Create new channel
 	var users []models.User
 	for _, userID := range form.UserIds {
@@ -173,57 +171,58 @@ func InviteToChannel(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error": "internal server error"}"
 // @Router /v1/message/leave/channel [delete]
 func LeaveChannel(c *gin.Context) {
-    var form forms.LeaveChannelForm
-    if err := c.ShouldBindJSON(&form); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
+	var form forms.LeaveChannelForm
+	if err := c.ShouldBindJSON(&form); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-    db := global.DB
-    var channel models.Channel
-    var user models.User
+	db := global.DB
+	var channel models.Channel
+	var user models.User
 
-    if err := db.First(&channel, form.ChannelID).Error; err != nil {
-        if err == gorm.ErrRecordNotFound {
-            c.JSON(http.StatusNotFound, gin.H{"error": "channel not found"})
-        } else {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        }
-        return
-    }
+	if err := db.First(&channel, form.ChannelID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "channel not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
 
-    if err := db.First(&user, form.UserID).Error; err != nil {
-        if err == gorm.ErrRecordNotFound {
-            c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
-        } else {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        }
-        return
-    }
+	if err := db.First(&user, form.UserID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
 
-    if err := db.Model(&channel).Association("Users").Delete(&user); err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
+	if err := db.Model(&channel).Association("Users").Delete(&user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
-    userCount := db.Model(&channel).Association("Users").Count()
-    if userCount == 0 {
-        if err := db.Transaction(func(tx *gorm.DB) error {
-            if err := tx.Where("channel_id = ?", channel.ID).Delete(&models.Message{}).Error; err != nil {
-                return err
-            }
-            if err := tx.Delete(&channel).Error; err != nil {
-                return err
-            }
-            return nil
-        }); err != nil {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-            return
-        }
-    }
+	userCount := db.Model(&channel).Association("Users").Count()
+	if userCount == 0 {
+		if err := db.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Where("channel_id = ?", channel.ID).Delete(&models.Message{}).Error; err != nil {
+				return err
+			}
+			if err := tx.Delete(&channel).Error; err != nil {
+				return err
+			}
+			return nil
+		}); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
 
-    c.JSON(http.StatusOK, gin.H{"msg": "left channel successfully"})
+	c.JSON(http.StatusOK, gin.H{"msg": "left channel successfully"})
 }
+
 // GetChannelUsersDetail Get specific channel users detail
 // @Summary get specific channel users detail
 // @Description get details of all users in a specified channel
@@ -350,77 +349,84 @@ func SendMessage(c *gin.Context) {
 // @Failure 500 {object} map[string]string "{"error": "internal server error"}"
 // @Router /v1/message/channel/{channelId}/messages [get]
 func GetChannelMessages(c *gin.Context) {
-    channelIdStr := c.Param("channelId")
-    channelId, err := strconv.Atoi(channelIdStr)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid channel ID"})
-        return
-    }
+	channelIdStr := c.Param("channelId")
+	channelId, err := strconv.Atoi(channelIdStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid channel ID"})
+		return
+	}
 
-    db := global.DB
-    var messages []models.Message
+	db := global.DB
+	var messages []models.Message
 
-    if err := db.Where("channel_id = ?", channelId).Preload("Sender").Find(&messages).Error; err != nil {
-        if err == gorm.ErrRecordNotFound {
-            c.JSON(http.StatusNotFound, gin.H{"error": "channel not found"})
-        } else {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        }
-        return
-    }
+	if err := db.Where("channel_id = ?", channelId).Preload("Sender").Find(&messages).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "channel not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
 
-    var messageDetails []response.MessageDetail
-    for _, message := range messages {
-        var content response.MessageContent
-        if message.Type == 1 {
-            content.Content = message.Content
-        } else if message.Type == 2 {
-            var cardContent map[string]string
-            if err := json.Unmarshal([]byte(message.Content), &cardContent); err != nil {
-                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-                return
-            }
-            content.Name = cardContent["name"]
-            content.Email = cardContent["email"]
-        }
+	var messageDetails []response.MessageDetail
+	for _, message := range messages {
+		var content response.MessageContent
+		if message.Type == 1 {
+			content.Content = message.Content
+		} else if message.Type == 2 {
+			var cardContent map[string]string
+			if err := json.Unmarshal([]byte(message.Content), &cardContent); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			content.Name = cardContent["name"]
+			content.Email = cardContent["email"]
+		}
 
-        messageDetails = append(messageDetails, response.MessageDetail{
-            MessageTime:    message.CreatedAt.Format(time.RFC3339),
-            MessageContent: content,
-            MessageType:    message.Type,
-            SenderName:     message.Sender.Username,
-        })
-    }
+		messageDetails = append(messageDetails, response.MessageDetail{
+			MessageTime:    message.CreatedAt.Format(time.RFC3339),
+			MessageContent: content,
+			MessageType:    message.Type,
+			SenderName:     message.Sender.Username,
+			AvatarUrl:      message.Sender.AvatarURL,
+		})
+	}
 
-    c.JSON(http.StatusOK, response.ChannelMessagesResponse{Messages: messageDetails})
+	c.JSON(http.StatusOK, response.ChannelMessagesResponse{Messages: messageDetails})
 }
 
-// GetAllChannels Get all channels
-// @Summary get all channels
-// @Description get details of all channels
+// GetAllChannels Get all channels for a specific user
+// @Summary get all channels for a specific user
+// @Description get details of all channels for a specific user
 // @Tags Message
 // @Accept json
 // @Produce json
+// @Param userId path int true "User ID"
 // @Success 200 {object} response.AllChannelsResponse
 // @Failure 500 {object} map[string]string "{"error": "internal server error"}"
-// @Router /v1/message/get/all/channels [get]
+// @Router /v1/message/get/all/channels/{userId} [get]
 func GetAllChannels(c *gin.Context) {
-    db := global.DB
-    var channels []models.Channel
+	userId := c.Param("userId")
 
-    if err := db.Find(&channels).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
+	db := global.DB
+	var channels []models.Channel
 
-    var channelDetails []response.ChannelDetail
-    for _, channel := range channels {
-        channelDetails = append(channelDetails, response.ChannelDetail{
-            ChannelID:   channel.ID,
-            ChannelName: channel.Name,
-            Type:        channel.Type,
-        })
-    }
+	// Join channels with channel_users to filter by userId
+	if err := db.Joins("JOIN channel_users ON channels.id = channel_users.channel_id").
+		Where("channel_users.user_id = ?", userId).
+		Find(&channels).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
-    c.JSON(http.StatusOK, response.AllChannelsResponse{Channels: channelDetails})
+	var channelDetails []response.ChannelDetail
+	for _, channel := range channels {
+		channelDetails = append(channelDetails, response.ChannelDetail{
+			ChannelID:   channel.ID,
+			ChannelName: channel.Name,
+			Type:        channel.Type,
+		})
+	}
+
+	c.JSON(http.StatusOK, response.AllChannelsResponse{Channels: channelDetails})
 }

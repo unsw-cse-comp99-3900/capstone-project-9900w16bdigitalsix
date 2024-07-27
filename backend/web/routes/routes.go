@@ -136,8 +136,8 @@ func MessageRouter(Router *gin.RouterGroup) {
 		messageRouter.DELETE("leave/channel", controllers.LeaveChannel)
 		messageRouter.GET(":channelId/users/detail", controllers.GetChannelUsersDetail)
 		messageRouter.POST("send", controllers.SendMessage)
-		messageRouter.GET("receive/:channelId", controllers.GetChannelMessages)
-		messageRouter.GET("/get/all/channels", controllers.GetAllChannels)
+		messageRouter.GET("channel/:channelId/messages", controllers.GetChannelMessages)
+		messageRouter.GET("/get/all/channels/:userId", controllers.GetAllChannels)
 
 	}
 }

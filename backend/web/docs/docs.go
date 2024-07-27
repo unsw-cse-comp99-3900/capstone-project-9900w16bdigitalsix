@@ -643,7 +643,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"msg\":\"create channel successfully\"}",
+                        "description": "{\"channelID\": \"string\", \"msg\":\"create channel successfully\"}\" or \"{\"channelID\": \"string\", \"msg\": \"private chat channel already exists\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -681,9 +681,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/message/get/all/channels": {
+        "/v1/message/get/all/channels/{userId}": {
             "get": {
-                "description": "get details of all channels",
+                "description": "get details of all channels for a specific user",
                 "consumes": [
                     "application/json"
                 ],
@@ -693,7 +693,16 @@ const docTemplate = `{
                 "tags": [
                     "Message"
                 ],
-                "summary": "get all channels",
+                "summary": "get all channels for a specific user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -4347,6 +4356,9 @@ const docTemplate = `{
         "response.MessageDetail": {
             "type": "object",
             "properties": {
+                "avatarUrl": {
+                    "type": "string"
+                },
                 "messageContent": {
                     "$ref": "#/definitions/response.MessageContent"
                 },

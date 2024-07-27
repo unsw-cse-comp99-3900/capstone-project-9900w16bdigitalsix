@@ -16,28 +16,29 @@ type ChannelUsersResponse struct {
 }
 
 type MessageContent struct {
-    Content string `json:"content,omitempty"`
-    Name    string `json:"name,omitempty"`
-    Email   string `json:"email,omitempty"`
+	Content string `json:"content,omitempty"`
+	Name    string `json:"name,omitempty"`
+	Email   string `json:"email,omitempty"`
 }
 
 type MessageDetail struct {
-    MessageTime    string         `json:"messageTime"`
-    MessageContent MessageContent `json:"messageContent"`
-    MessageType    int            `json:"messageType"`
-    SenderName     string         `json:"senderName"`
+	MessageTime    string         `json:"messageTime"`
+	MessageContent MessageContent `json:"messageContent"`
+	MessageType    int            `json:"messageType"`
+	SenderName     string         `json:"senderName"`
+	AvatarUrl      string         `json:"avatarUrl"`
 }
 
 type ChannelMessagesResponse struct {
-    Messages []MessageDetail `json:"messages"`
+	Messages []MessageDetail `json:"messages"`
 }
 
 type ChannelDetail struct {
-    ChannelID   uint   `json:"channelId"`
-    ChannelName string `json:"channelName"`
-    Type        int    `json:"type"`
+	ChannelID   uint   `json:"channelId"`
+	ChannelName string `json:"channelName"`
+	Type        int    `json:"type"`
 }
 
 type AllChannelsResponse struct {
-    Channels []ChannelDetail `json:"channels"`
+	Channels []ChannelDetail `json:"channels"`
 }
