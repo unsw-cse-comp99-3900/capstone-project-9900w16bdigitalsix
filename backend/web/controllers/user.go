@@ -650,6 +650,7 @@ func GetAllStudents(c *gin.Context) {
 			UserName:   user.Username,
 			Role:       user.Role,
 			Email:      user.Email,
+			Course:     user.Course,
 			AvatarURL:  user.AvatarURL,
 			UserSkills: skills,
 		})
@@ -725,4 +726,49 @@ func GetAllUsersInfo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, userResponses)
+}
+
+// @Summary Get all students have the same course
+// @Description Get all students have the same course with user
+// @Tags Student
+// @Accept  json
+// @Produce  json
+// @Param userId path int true "User ID"
+// @Success 200 {array} response.StudentListResponse
+// @Failure 500 {object} map[string]string "{"error": "Failed to fetch users"}"
+// @Router /v1/user/same/course/student/list/{userId} [get]
+func GetAllSameCourseStudents(c *gin.Context) {
+	userId := c.Param("userId")
+
+	var user models.User
+	if err := global.DB.First(&user, userId).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user"})
+		return
+	}
+
+	var students []models.User
+	if err := global.DB.Where("role = ? AND course = ?", 1, user.Course).Preload("Skills").Find(&students).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
+		return
+	}
+
+	var studentResponses []response.StudentListResponse
+	for _, student := range students {
+		var skills []string
+		for _, skill := range student.Skills {
+			skills = append(skills, skill.SkillName)
+		}
+
+		studentResponses = append(studentResponses, response.StudentListResponse{
+			UserID:     student.ID,
+			UserName:   student.Username,
+			Role:       student.Role,
+			Email:      student.Email,
+			Course:     student.Course,
+			AvatarURL:  student.AvatarURL,
+			UserSkills: skills,
+		})
+	}
+
+	c.JSON(http.StatusOK, studentResponses)
 }

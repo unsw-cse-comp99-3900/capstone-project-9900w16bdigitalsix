@@ -159,7 +159,7 @@ func fetchTeamsByIDShow(c *gin.Context, projectId uint, idShow uint, teams *[]mo
 	}
 
 	if len(*teams) > 0 {
-		c.JSON(http.StatusOK, formatSearchTeamResponse(*teams))
+		c.JSON(http.StatusOK, formatProjectSearchTeamResponse(projectId, *teams))
 		return true
 	}
 

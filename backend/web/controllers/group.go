@@ -428,6 +428,7 @@ func GetAllTeams(c *gin.Context) {
 			TeamIdShow: team.TeamIdShow,
 			TeamName:   team.Name,
 			TeamSkills: teamSkills,
+			Course:     team.Course,
 		})
 	}
 

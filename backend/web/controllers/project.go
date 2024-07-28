@@ -18,7 +18,7 @@ import (
 
 // CreateProject godoc
 // @Summary Clinet create a new project
-// @Description client 创建一个新的项目并上传文件, this api makes sure only client can create the project
+// @Description client create project, this api makes sure only client can create the project
 // @Tags Project
 // @Accept multipart/form-data
 // @Produce json
@@ -38,7 +38,6 @@ func CreateProject(c *gin.Context) {
 	var fileName string
 	var fileURL string
 
-	// 解析其他字段
 	title := c.PostForm("title")
 	field := c.PostForm("field")
 	description := c.PostForm("description")
@@ -46,35 +45,38 @@ func CreateProject(c *gin.Context) {
 	requiredSkills := c.PostFormArray("requiredSkills[]")
 	maxTeamsStr := c.PostForm("maxTeams")
 
-	maxTeams, err := strconv.Atoi(maxTeamsStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid maxTeams value"})
-		return
+	var maxTeams int
+	var err error
+	if maxTeamsStr != "" {
+		maxTeams, err = strconv.Atoi(maxTeamsStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid maxTeams value"})
+			return
+		}
+
 	}
 
-	// 检查客户是否存在
 	var client models.User
 	if err := global.DB.Where("email = ?", email).First(&client).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Client not found"})
 		return
 	}
 
-	// 检查客户的角色是否为客户端
+	// check if user is client
 	if client.Role != 3 {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Only client can create project"})
 		return
 	}
 
-	// 解析文件
 	file, err := c.FormFile("file")
 	if err == nil {
-		// 创建上传目录
+		// create directory
 		uploadDir := global.ServerConfig.FilePath
 		if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
 			os.Mkdir(uploadDir, os.ModePerm)
 		}
 
-		// 保存文件到本地存储
+		// save file to local filesystem
 		fileURL = filepath.Join(uploadDir, file.Filename)
 		if err := c.SaveUploadedFile(file, fileURL); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
@@ -93,16 +95,18 @@ func CreateProject(c *gin.Context) {
 
 	clientID := client.ID
 
-	// 创建项目
+	// create project
 	project := models.Project{
 		Name:        title,
 		Field:       field,
 		Description: description,
-		ClientID:    &clientID, // 存储创建者ID
-		MaxTeams:    maxTeams,
+		ClientID:    &clientID, 
 	}
 
-	// 如果有上传文件，则保存文件名和文件路径
+	if maxTeams != 0 {
+		project.MaxTeams = maxTeams
+	}
+
 	if fileURL != "" {
 		project.FileURL = fileURL
 	}
@@ -112,7 +116,7 @@ func CreateProject(c *gin.Context) {
 		return
 	}
 
-	// 处理所需技能
+	// handle required skills
 	var skills []models.Skill
 	for _, skillName := range requiredSkills {
 		var skill models.Skill
@@ -128,7 +132,7 @@ func CreateProject(c *gin.Context) {
 		skills = append(skills, skill)
 	}
 
-	// 更新项目的技能关联
+	// update project skills
 	if err := global.DB.Model(&project).Association("Skills").Replace(skills); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to associate skills"})
 		return
@@ -202,7 +206,7 @@ func GetProjectList(c *gin.Context) {
 }
 
 // @Summary Get project detail by projectID
-// @Description 根据项目ID获取项目的详细信息
+// @Description get project detail by projectID
 // @Tags Project
 // @Produce json
 // @Param projectId path uint true "项目ID"
@@ -259,7 +263,7 @@ func GetProjectDetail(c *gin.Context) {
 
 // DeleteProject godoc
 // @Summary Delete project
-// @Description 根据项目ID删除项目
+// @Description delete project
 // @Tags Project
 // @Produce json
 // @Param projectId path int true "Project ID"
@@ -308,7 +312,7 @@ func DeleteProject(c *gin.Context) {
 
 // ModifyProjectDetail godoc
 // @Summary Modify project detail information
-// @Description 通过 projectId 修改项目详细信息，并更新项目的 client, this api makes sure Projects can only be assigned to clients
+// @Description  update project detail，update project client, this api makes sure Projects can only be assigned to clients
 // @Tags Project
 // @Accept multipart/form-data
 // @Produce json
@@ -331,7 +335,7 @@ func ModifyProjectDetail(c *gin.Context) {
 	var fileName, fileURL string
 	var project models.Project
 
-	// 检查项目是否存在
+	// check if project exists
 	if err := global.DB.First(&project, projectId).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
@@ -341,7 +345,6 @@ func ModifyProjectDetail(c *gin.Context) {
 		return
 	}
 
-	// 解析表单数据
 	title := c.PostForm("title")
 	clientEmail := c.PostForm("clientEmail")
 	requiredSkills := c.PostFormArray("requiredSkills[]")
@@ -349,13 +352,17 @@ func ModifyProjectDetail(c *gin.Context) {
 	description := c.PostForm("description")
 	maxTeamsStr := c.PostForm("maxTeams")
 
-	maxTeams, err := strconv.Atoi(maxTeamsStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid maxTeams value"})
-		return
+	var maxTeams = 0
+	var err error
+	if maxTeamsStr != "" {
+		maxTeams, err = strconv.Atoi(maxTeamsStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid maxTeams value"})
+			return
+		}
 	}
 
-	// 查找用户
+	// find user
 	var user models.User
 	if err := global.DB.Where("email = ?", clientEmail).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -366,17 +373,17 @@ func ModifyProjectDetail(c *gin.Context) {
 		return
 	}
 
-	// 检查客户的角色是否为 clinet
+	// check if user is client
 	if user.Role != 3 {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Project can only be assigned to client"})
 		return
 	}
 
-	// 获取文件
+	// get file
 	file, err := c.FormFile("spec")
-	if err == nil { // 上传了文件
+	if err == nil { // if the file is uploaded
 		uploadDir := global.ServerConfig.FilePath
-		// 保存文件到本地存储
+		// save file to local filesystem
 		fileURL = filepath.Join(uploadDir, file.Filename)
 		if err := c.SaveUploadedFile(file, fileURL); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
@@ -389,22 +396,24 @@ func ModifyProjectDetail(c *gin.Context) {
 		fileURL = fmt.Sprintf("http://%s:%d/files/%s", host, port, fileName)
 	}
 
-	// 更新项目数据
+	// update project data
 	project.Name = title
 	project.Field = field
 	project.Description = description
 	project.FileURL = fileURL
 	project.ClientID = &user.ID
-	project.MaxTeams = maxTeams
-
-	// 更新技能 关联表(project_skills）
+	if maxTeams != 0 {
+		project.MaxTeams = maxTeams
+	}
+	
+	// update skills
 	var skills []models.Skill
 	if len(requiredSkills) > 0 {
 		for _, skillName := range requiredSkills {
 			var skill models.Skill
 			if err := global.DB.Where("skill_name = ?", skillName).First(&skill).Error; err != nil {
 				if err == gorm.ErrRecordNotFound {
-					// 如果技能不存在，则创建新技能
+					// create new skills if skills doesn't exist
 					skill = models.Skill{SkillName: skillName}
 					if err := global.DB.Create(&skill).Error; err != nil {
 						c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create new skill"})
@@ -420,7 +429,6 @@ func ModifyProjectDetail(c *gin.Context) {
 		global.DB.Model(&project).Association("Skills").Replace(skills)
 	}
 
-	// 保存项目更新
 	if err := global.DB.Save(&project).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
