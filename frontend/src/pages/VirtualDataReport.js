@@ -21,9 +21,11 @@ const fieldColors = {
   "Other": 'rgba(255, 159, 64, 0.6)'
 };
 
+const userId = localStorage.getItem('userId');
 const fetchProjectList = async () => {
   try {
-    const response = await fetch('http://127.0.0.1:8080/v1/project/get/list/byRole/5', {
+    // const response = await fetch(`http://127.0.0.1:8080/v1/project/get/list/byRole/3`, {
+      const response = await fetch("http://127.0.0.1:8080/v1/project/get/public_project/list", {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

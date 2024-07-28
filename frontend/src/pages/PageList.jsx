@@ -42,6 +42,7 @@ import TestProjectDetail from "./TestProjectDetail";
 // report
 import GenerateProgressReport from "./GenerateProgressReport";
 import GenerateVirtual from "./GenerateVirtual";
+import VirtualDataReport from "./VirtualDataReport";
 
 // message
 import Message from "./Message";
