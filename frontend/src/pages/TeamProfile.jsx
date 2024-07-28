@@ -74,6 +74,7 @@ const TeamProfile = ({
   isInvite,
   setIsInvite,
 }) => {
+  // some states
   const [editable, setEditable] = useState(false);
   const [personName, setPersonName] = React.useState([]);
   const userId = parseInt(localStorage.getItem("userId"));
@@ -90,8 +91,6 @@ const TeamProfile = ({
   const handleLeaveDialogClose = () => {
     setLeaveDialogOpen(false);
   };
-  // const [isInvite, setIsInvite] = useState(false);
-  // console.log(currentMember);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -131,10 +130,10 @@ const TeamProfile = ({
     setEditable(true);
   };
 
+  // this function is used to save the team details after editing
   const handleSaveClick = async () => {
     setEditable(false);
     try {
-      // console.log(personName);
       const body = {
         TeamSkills: personName.length > 0 ? personName : [],
         teamName: teamName,
@@ -149,7 +148,6 @@ const TeamProfile = ({
         setAlertType("error");
         setShowError(true);
       } else {
-        console.log(res);
         setCurTeamSkills(personName);
         setErrorMessage("Success!");
         setAlertType("success");

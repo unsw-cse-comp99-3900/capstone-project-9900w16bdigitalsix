@@ -246,6 +246,7 @@ export default function TeamTutor() {
                                   <Chip key={index} label={skill} variant="outlined" />
                                 ))}
                               </Box>
+                              <div>Course: {item.course}</div>
                             </>
                           }/>
                       </List.Item>
@@ -279,6 +280,7 @@ export default function TeamTutor() {
                                   <Chip key={index} label={skill} variant="outlined" />
                                 ))}
                               </Box>
+                              <div>Course: {item.course}</div>
                             </>
                           }
                         />

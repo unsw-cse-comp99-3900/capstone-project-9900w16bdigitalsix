@@ -77,7 +77,7 @@ const ProjectAdmin = () => {
   };
 
   const handleReport = () => {
-    navigate('/project/report');
+    navigate('/project/virtual-data-report');
   }
 
   useEffect(() => {

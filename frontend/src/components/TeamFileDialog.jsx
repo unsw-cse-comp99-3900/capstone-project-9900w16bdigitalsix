@@ -40,6 +40,7 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
     overflowY: "auto",
   });
 
+  // some states
   const [selected, setSelected] = useState("Preference List");
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -67,7 +68,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
         "GET",
         `v1/project/preferencedBy/team/${projectId}`
       );
-      // console.log(res);
       if (res === null) {
         setCurrentTeam([]);
         setOriginalTeams([]);
@@ -94,7 +94,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
         "GET",
         `v1/project/team/allocated/${projectId}`
       );
-      // console.log(res);
       if (res === null) {
         setCurrentTeam([]);
         setOriginalTeams([]);
@@ -151,7 +150,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
         "GET",
         `v1/project/${projectId}/preferencedBy/${teamId}/detail`
       );
-      // console.log(res);
       if (res === null) {
         return;
       }
@@ -398,9 +396,6 @@ const TeamFile = ({ open, handleClose, projectId, handleClickOpen }) => {
                   <div
                     style={{
                       margin: 10,
-                      // display: "flex",
-                      // justifyContent: "right",
-                      // width: "100%",
                     }}
                   >
                     <NativeSelect
