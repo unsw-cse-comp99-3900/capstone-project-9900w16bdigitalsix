@@ -16,6 +16,7 @@ import { Avatar } from 'antd';
 const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role, allocatedTeamsCount, maxTeams, showActions = true }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleCardNavi = () => {
@@ -25,7 +26,18 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    if (allocatedTeamsCount >= maxTeams) {
+      setConfirmOpen(true);
+    } else {
+      setOpen(true);
+    }
+  };
+
+  const handleConfirmClose = (confirmed) => {
+    setConfirmOpen(false);
+    if (confirmed) {
+      setOpen(true);
+    }
   };
 
   const handleClose = () => {
@@ -217,6 +229,29 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
           </Button>
           <Button onClick={() => setArchiveDialogOpen(false)} color="secondary" autoFocus>
             Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={confirmOpen}
+        onClose={() => handleConfirmClose(false)}
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
+      >
+        <DialogTitle id="confirm-dialog-title">
+          {"Maximum Teams Reached"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-dialog-description">
+            The number of teams has reached the maximum limit. Are you sure you want to continue?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleConfirmClose(true)} color="primary">
+            Yes
+          </Button>
+          <Button onClick={() => handleConfirmClose(false)} color="secondary" autoFocus>
+            No
           </Button>
         </DialogActions>
       </Dialog>
