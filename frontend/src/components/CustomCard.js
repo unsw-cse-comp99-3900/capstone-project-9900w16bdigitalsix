@@ -51,11 +51,12 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
   const handleArchive = async () => {
     try {
       const response = await fetch(`http://127.0.0.1:8080/v1/project/archive/${id}`, {
-        method: 'POST',
+        method: 'GET',
       });
       if (response.ok) {
         message.success('Project archived successfully');
         setArchiveDialogOpen(false);
+        navigate(0);
       } else {
         message.error('Failed to archive the project');
       }
