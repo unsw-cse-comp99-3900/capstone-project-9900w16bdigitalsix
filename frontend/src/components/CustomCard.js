@@ -13,7 +13,7 @@ import '../assets/scss/CustomCard.css'; // import CSS file
 import TeamFile from "../components/TeamFileDialog";
 import { Avatar } from 'antd';
 
-const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role, allocatedTeamsCount, showActions = true }) => {
+const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role, allocatedTeamsCount, maxTeams, showActions = true }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
   const navigate = useNavigate();
@@ -66,7 +66,6 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
   };
 
   const renderAvatar = () => {
-    console.log(clientAvatar)
     if (clientAvatar) {
       return <img src={clientAvatar} alt="Client Avatar" className="avatar" />;
     } else {
@@ -74,12 +73,25 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
     }
   };
 
+  const getColor = (allocated, max) => {
+    if (allocated < max / 2) {
+      return 'green';
+    } else if (allocated < max) {
+      return 'yellow';
+    } else {
+      return 'red';
+    }
+  };
+
   return (
     <>
       <Card className="mb-4 custom-card">
         {role !== 1 && (
-          <div className="allocated-teams-count">
-            {allocatedTeamsCount}
+          <div 
+            className="allocated-teams-count"
+            style={{ color: getColor(allocatedTeamsCount, maxTeams) }}
+          >
+            {allocatedTeamsCount} / {maxTeams}
           </div>
         )}
         <div 

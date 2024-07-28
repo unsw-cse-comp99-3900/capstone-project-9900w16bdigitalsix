@@ -48,6 +48,7 @@ const ProjectList = () => {
             clientAvatar: project.clientAvatar,
             field: project.field,
             allocatedTeamsCount: project.allocatedTeam ? project.allocatedTeam.length : 0,
+            maxTeams: project.maxTeams // New parameter
           }));
           console.log('Mapped Projects:', mappedProjects);
           setProjects(mappedProjects);
@@ -71,6 +72,7 @@ const ProjectList = () => {
           skills: project.requiredSkills || 'N/A',
           clientAvatar: project.clientAvatar,
           field: project.field,
+          maxTeams: project.maxTeams // New parameter
         }));
         console.log('Mapped Archived Projects:', mappedArchivedProjects);
         setArchivedProjects(mappedArchivedProjects);
@@ -181,6 +183,7 @@ const ProjectList = () => {
                     onDelete={handleDelete}
                     role={role}
                     allocatedTeamsCount={project.allocatedTeamsCount} 
+                    maxTeams={project.maxTeams} // Pass maxTeams to CustomCard
                     showActions={true}
                   />
                 </Col>
@@ -198,6 +201,7 @@ const ProjectList = () => {
                     clientAvatar={project.clientAvatar}
                     skills={project.skills}
                     field={project.field}
+                    maxTeams={project.maxTeams} // Pass maxTeams to CustomCard
                     role={role}
                     showActions={false}
                   />
