@@ -21,6 +21,7 @@ const apiCall = async (method, endpoint) => {
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
+  const [archivedProjects, setArchivedProjects] = useState([]);
   const [role, setRole] = useState(null);
   const [openAlert, setOpenAlert] = useState(false);
   const [alertContent, setAlertContent] = useState('');
@@ -57,6 +58,27 @@ const ProjectList = () => {
       }
     };
 
+    const fetchArchivedProjects = async () => {
+      try {
+        const archivedResponse = await apiCall('GET', `/v1/project/get/archived/list`);
+        console.log('Archived Project Response:', archivedResponse);
+
+        const mappedArchivedProjects = archivedResponse.map(project => ({
+          id: project.projectId,
+          title: project.title,
+          client: project.clientName,
+          clientTitle: project.clientEmail,
+          skills: project.requiredSkills || 'N/A',
+          clientAvatar: project.clientAvatar,
+          field: project.field,
+        }));
+        console.log('Mapped Archived Projects:', mappedArchivedProjects);
+        setArchivedProjects(mappedArchivedProjects);
+      } catch (error) {
+        console.error('Error fetching archived projects:', error);
+      }
+    };
+
     const checkTeamAndFetchProjects = async () => {
       try {
         const userId = localStorage.getItem('userId');
@@ -74,6 +96,7 @@ const ProjectList = () => {
           }
         }
         fetchProjects(userId);
+        fetchArchivedProjects();
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -158,6 +181,25 @@ const ProjectList = () => {
                     onDelete={handleDelete}
                     role={role}
                     allocatedTeamsCount={project.allocatedTeamsCount} 
+                    showActions={true}
+                  />
+                </Col>
+              ))}
+            </Row>
+            <h3 className="mt-4">Archived Projects</h3>
+            <Row>
+              {archivedProjects.map(project => (
+                <Col key={project.id} md="4">
+                  <CustomCard
+                    id={project.id}
+                    title={project.title}
+                    client={project.client}
+                    clientTitle={project.clientTitle}
+                    clientAvatar={project.clientAvatar}
+                    skills={project.skills}
+                    field={project.field}
+                    role={role}
+                    showActions={false}
                   />
                 </Col>
               ))}

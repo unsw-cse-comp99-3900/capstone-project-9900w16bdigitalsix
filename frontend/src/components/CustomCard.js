@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardBody, CardTitle, CardText, Button as StrapButton } from 'reactstrap';
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -13,7 +13,7 @@ import '../assets/scss/CustomCard.css'; // import CSS file
 import TeamFile from "../components/TeamFileDialog";
 import { Avatar } from 'antd';
 
-const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role, allocatedTeamsCount }) => {
+const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role, allocatedTeamsCount, showActions = true }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
   const navigate = useNavigate();
@@ -109,49 +109,51 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
           <div className="field-container">
             <span className="field-badge">{field}</span>
           </div>
-          <div className="mt-auto d-flex justify-content-between">
-            {(role === 3 || role === 4 || role === 5) && (
-              <Tooltip title="Archive">
-                <Button 
-                  onClick={() => setArchiveDialogOpen(true)} 
-                  style={{ color: 'green', cursor: 'pointer', minWidth: '40px' }}
-                >
-                  <i className="bi bi-file-earmark"></i>
-                </Button>
-              </Tooltip>
-            )}
-            {(role === 3 || role === 4 || role === 5) && (
-              <Tooltip title="Edit">
-                <Link to={`/project/edit/${id}`}>
+          {showActions && (
+            <div className="mt-auto d-flex justify-content-between">
+              {(role === 3 || role === 4 || role === 5) && (
+                <Tooltip title="Archive">
                   <Button 
-                    style={{ color: 'black', cursor: 'pointer', minWidth: '40px' }}
+                    onClick={() => setArchiveDialogOpen(true)} 
+                    style={{ color: 'green', cursor: 'pointer', minWidth: '40px' }}
                   >
-                    <i className="bi bi-pencil"></i>
+                    <i className="bi bi-file-earmark"></i>
                   </Button>
-                </Link>
-              </Tooltip>
-            )}
-            {(role === 2 || role === 3 || role === 4 || role === 5)  && (
-              <Tooltip title="Teams">
-                <Button 
-                  onClick={handleClickOpen}
-                  style={{ color: 'blue', cursor: 'pointer', minWidth: '40px' }}
-                >
-                  <i className="bi bi-person"></i>
-                </Button>
-              </Tooltip>
-            )}
-            {(role === 3 || role === 4 || role === 5) && (
-              <Tooltip title="Delete">
-                <Button 
-                  onClick={() => setModalOpen(true)} 
-                  style={{ color: 'red', cursor: 'pointer', minWidth: '40px' }}
-                >
-                  <i className="bi bi-trash"></i>
-                </Button>
-              </Tooltip>
-            )}
-          </div>
+                </Tooltip>
+              )}
+              {(role === 3 || role === 4 || role === 5) && (
+                <Tooltip title="Edit">
+                  <Link to={`/project/edit/${id}`}>
+                    <Button 
+                      style={{ color: 'black', cursor: 'pointer', minWidth: '40px' }}
+                    >
+                      <i className="bi bi-pencil"></i>
+                    </Button>
+                  </Link>
+                </Tooltip>
+              )}
+              {(role === 2 || role === 3 || role === 4 || role === 5)  && (
+                <Tooltip title="Teams">
+                  <Button 
+                    onClick={handleClickOpen}
+                    style={{ color: 'blue', cursor: 'pointer', minWidth: '40px' }}
+                  >
+                    <i className="bi bi-person"></i>
+                  </Button>
+                </Tooltip>
+              )}
+              {(role === 3 || role === 4 || role === 5) && (
+                <Tooltip title="Delete">
+                  <Button 
+                    onClick={() => setModalOpen(true)} 
+                    style={{ color: 'red', cursor: 'pointer', minWidth: '40px' }}
+                  >
+                    <i className="bi bi-trash"></i>
+                  </Button>
+                </Tooltip>
+              )}
+            </div>
+          )}
         </CardBody>
         <TeamFile
           open={open}
