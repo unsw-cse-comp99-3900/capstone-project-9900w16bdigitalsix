@@ -5,7 +5,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Container, Row, Col, Card, CardBody, CardTitle, FormGroup, Label, Input, Button, Table } from 'reactstrap';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-
+import "../assets/scss/VirtualDataReport.css"
 // field color map
 const fieldColors = {
   "Artificial Intelligence": 'rgba(75, 192, 192, 0.6)',
@@ -69,6 +69,13 @@ const VirtualDataReport = () => {
   const [data, setData] = useState(null);
   const [projectList, setProjectList] = useState([]);
   const [selectedField, setSelectedField] = useState("");
+  
+  const [clientFilter, setClientFilter] = useState("");
+
+  const [tutorFilter, setTutorFilter] = useState("");
+
+  const [coorFilter, setCoorFilter] = useState("");
+
   const reportRef = useRef(null);
 
   useEffect(() => {
@@ -157,6 +164,46 @@ const VirtualDataReport = () => {
   if (!data) {
     return <div>Loading...</div>;
   }
+  const filteredProjects = projectList.filter(project => {
+
+    return (
+
+      (!clientFilter || project.clientName === clientFilter) &&
+
+      (!tutorFilter || project.tutorName === tutorFilter) &&
+
+      (!coorFilter || project.coorName === coorFilter)
+
+    );
+
+  });
+  
+
+
+  const uniqueValues = (key) => {
+
+    return [...new Set(projectList.map(project => project[key]).filter(Boolean))];
+  }
+  const renderFilterDropdown = (field, setFilter) => {
+    const values = uniqueValues(field);
+    if (values.length === 0) return null;
+
+    return (
+      <span className="filter-icon">
+        ▼
+        <div className="filter-dropdown">
+          <ul>
+            {values.map(value => (
+              <li key={value} onClick={() => setFilter(value)}>
+                {value}
+              </li>
+            ))}
+            <li onClick={() => setFilter('')}>Clear</li>
+          </ul>
+        </div>
+      </span>
+    );
+  };
 
   const totalUsersData = {
     labels: ['Students', 'Clients', 'Tutors', 'Coordinators'],
@@ -323,33 +370,55 @@ const VirtualDataReport = () => {
               <CardBody>
                 <CardTitle tag="h5">Project List</CardTitle>
                 <Table striped className="project-list-table">
-                  <thead>
-                    <tr>
-                      <th>Project ID</th>
-                      <th>Project Name</th>
-                      <th>Client</th>
-                      <th>Tutor</th>
-                      <th>Coordinator</th>
-                      <th>Allocate Team</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {projectList.map(project => (
-                      <tr key={project.projectId}>
-                        <td>{project.projectId}</td>
-                        <td>{project.title}</td>
-                        <td>{project.clientName}</td>
-                        <td>{project.tutorName}</td>
-                        <td>{project.coorName}</td>
-                        <td>
-                          {project.allocatedTeam && project.allocatedTeam.length > 0
-                            ? project.allocatedTeam.map(team => team.teamName).join(', ').replace(/,/g, ',\n')
-                            : "None"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+        <thead>
+          <tr>
+            <th>Project ID</th>
+            <th>Project Name</th>
+            {uniqueValues('clientName').length > 0 && (
+              <th>
+                Client 
+                {renderFilterDropdown('clientName', setClientFilter)}
+              </th>
+            )}
+            {uniqueValues('tutorName').length > 0 && (
+              <th>
+                Tutor 
+                {renderFilterDropdown('tutorName', setTutorFilter)}
+              </th>
+            )}
+            {uniqueValues('coorName').length > 0 && (
+              <th>
+                Coordinator 
+                {renderFilterDropdown('coorName', setCoorFilter)}
+              </th>
+            )}
+            <th>Team Allocation</th>
+            <th>Allocate Team</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {filteredProjects.map(project => (
+            <tr key={project.projectId}>
+              <td>{project.projectId}</td>
+              <td>{project.title}</td>
+
+              {uniqueValues('clientName').length > 0 && <td>{project.clientName}</td>}
+              {uniqueValues('tutorName').length > 0 && <td>{project.tutorName}</td>}
+              {uniqueValues('coorName').length > 0 && <td>{project.coorName}</td>}
+              <td>
+                {project.allocatedTeam ? project.allocatedTeam.length : 0} / {project.maxTeams || 'N/A'}
+              </td>
+              <td>
+                {project.allocatedTeam && project.allocatedTeam.length > 0
+                  ? project.allocatedTeam.map(team => team.teamName).join(', ').replace(/,/g, ',\n')
+                  : "None"}
+              </td>
+              
+            </tr>
+          ))}
+        </tbody>
+      </Table>
               </CardBody>
             </Card>
           </Col>
