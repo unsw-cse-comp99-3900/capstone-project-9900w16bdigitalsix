@@ -2256,6 +2256,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/student/unassigned/list/{course}": {
+            "get": {
+                "description": "Return a list of unassigned students, note that the Role field in the users table, 1 represents student, 2 represents tutor, 3 represents client, 4 represents convenor, 5 represents admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Get all unassigned students list by course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course",
+                        "name": "course",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.StudentListResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch students\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/team/create": {
             "post": {
                 "description": "创建 team, 并且创建人加入了 team, 后端随机生成 teamName, 存入了数据库",
@@ -2330,6 +2374,50 @@ const docTemplate = `{
                     "Team"
                 ],
                 "summary": "Get Team List",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.TeamListResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch teams\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/team/get/list/{course}": {
+            "get": {
+                "description": "Get all teams for a specific course",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Get Team List By Course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course",
+                        "name": "course",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2450,6 +2538,50 @@ const docTemplate = `{
                     "Team"
                 ],
                 "summary": "Get Unallocated Team List",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.TeamListResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch teams\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/team/get/unallocated/list/{course}": {
+            "get": {
+                "description": "Get all unallocated teams for a specific course",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Team"
+                ],
+                "summary": "Get Unallocated Team List By Course",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Course",
+                        "name": "course",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

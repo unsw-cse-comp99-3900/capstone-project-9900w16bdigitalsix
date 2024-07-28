@@ -51,9 +51,10 @@ func AdminRouter(Router *gin.RouterGroup) {
 }
 
 func StudentRouter(Router *gin.RouterGroup) {
-	StudentRouter := Router.Group("student")
+	studentRouter := Router.Group("student")
 	{
-		StudentRouter.GET("/unassigned/list", controllers.GetAllUnassignedStudents)
+		studentRouter.GET("/unassigned/list", controllers.GetAllUnassignedStudents)
+		studentRouter.GET("/unassigned/list/:course", controllers.GetAllUnassignedStudentsByCourse)
 	}
 }
 
@@ -68,7 +69,9 @@ func GroupRouter(Router *gin.RouterGroup) {
 		groupRouter.DELETE("/leave/:userId", controllers.LeaveTeam)
 		groupRouter.GET("/get/student-info/:teamName", controllers.GetStudentInfo)
 		groupRouter.GET("/get/list", controllers.GetAllTeams)
+		groupRouter.GET("/get/list/:course", controllers.GetAllTeamsByCourse)
 		groupRouter.GET("/get/unallocated/list", controllers.GetUnallocatedTeams)
+		groupRouter.GET("/get/unallocated/list/:course", controllers.GetUnallocatedTeamsByCourse)
 		groupRouter.GET("/invite/:userId/:teamId", controllers.InviteUserToTeam)
 		groupRouter.PUT("/preference/project/:userId", controllers.UpdateTeamPreferences)
 		groupRouter.GET("/get/preferences/:userId", controllers.GetTeamPreferences)

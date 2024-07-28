@@ -772,3 +772,43 @@ func GetAllSameCourseStudents(c *gin.Context) {
 
 	c.JSON(http.StatusOK, studentResponses)
 }
+
+// @Summary Get all unassigned students list by course
+// @Description Return a list of unassigned students, note that the Role field in the users table, 1 represents student, 2 represents tutor, 3 represents client, 4 represents convenor, 5 represents admin
+// @Tags Student
+// @Accept  json
+// @Produce  json
+// @Param course path string true "Course"
+// @Success 200 {array} response.StudentListResponse
+// @Failure 500 {object} map[string]string "{"error": "Failed to fetch students"}"
+// @Router /v1/student/unassigned/list/{course} [get]
+func GetAllUnassignedStudentsByCourse(c *gin.Context) {
+	course := c.Param("course")
+
+	var users []models.User
+	if err := global.DB.Where("role = ? AND belongs_to_group IS NULL AND course = ?", 1, course).Preload("Skills").Find(&users).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
+		return
+	}
+
+	var userResponses []response.StudentListResponse
+	for _, user := range users {
+		var skills []string
+		for _, skill := range user.Skills {
+			skills = append(skills, skill.SkillName)
+		}
+
+		userResponses = append(userResponses, response.StudentListResponse{
+			UserID:     user.ID,
+			UserName:   user.Username,
+			Role:       user.Role,
+			Email:      user.Email,
+			AvatarURL:  user.AvatarURL,
+			Course:     user.Course,
+			UserSkills: skills,
+		})
+	}
+
+	c.JSON(http.StatusOK, userResponses)
+}
+

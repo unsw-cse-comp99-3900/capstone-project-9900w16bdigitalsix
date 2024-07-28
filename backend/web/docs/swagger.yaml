@@ -2425,6 +2425,37 @@ paths:
       summary: Get all students unassigned list
       tags:
       - Student
+  /v1/student/unassigned/list/{course}:
+    get:
+      consumes:
+      - application/json
+      description: Return a list of unassigned students, note that the Role field
+        in the users table, 1 represents student, 2 represents tutor, 3 represents
+        client, 4 represents convenor, 5 represents admin
+      parameters:
+      - description: Course
+        in: path
+        name: course
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.StudentListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch students"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all unassigned students list by course
+      tags:
+      - Student
   /v1/team/create:
     post:
       consumes:
@@ -2486,6 +2517,35 @@ paths:
               type: string
             type: object
       summary: Get Team List
+      tags:
+      - Team
+  /v1/team/get/list/{course}:
+    get:
+      consumes:
+      - application/json
+      description: Get all teams for a specific course
+      parameters:
+      - description: Course
+        in: path
+        name: course
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Team List By Course
       tags:
       - Team
   /v1/team/get/preferences/{userId}:
@@ -2566,6 +2626,35 @@ paths:
               type: string
             type: object
       summary: Get Unallocated Team List
+      tags:
+      - Team
+  /v1/team/get/unallocated/list/{course}:
+    get:
+      consumes:
+      - application/json
+      description: Get all unallocated teams for a specific course
+      parameters:
+      - description: Course
+        in: path
+        name: course
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Unallocated Team List By Course
       tags:
       - Team
   /v1/team/invite/{userId}/{teamId}:

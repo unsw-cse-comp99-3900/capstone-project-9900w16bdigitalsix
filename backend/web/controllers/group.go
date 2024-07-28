@@ -415,7 +415,6 @@ func GetAllTeams(c *gin.Context) {
 		return
 	}
 
-	// 映射到返回的结构体
 	var teamResponses []response.TeamListResponse
 	for _, team := range teams {
 		var teamSkills []string
@@ -637,3 +636,79 @@ func GetTeamPreferences(c *gin.Context) {
 
 	c.JSON(http.StatusOK, responses)
 }
+
+// @Summary Get Team List By Course
+// @Description Get all teams for a specific course
+// @Tags Team
+// @Accept  json
+// @Produce  json
+// @Param course path string true "Course"
+// @Success 200 {array} response.TeamListResponse
+// @Failure 500 {object} map[string]string "{"error": "Failed to fetch teams"}"
+// @Router /v1/team/get/list/{course} [get]
+func GetAllTeamsByCourse(c *gin.Context) {
+	course := c.Param("course")
+
+	var teams []models.Team
+	if err := global.DB.Where("course = ?", course).Preload("Skills").Find(&teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
+		return
+	}
+
+	var teamResponses []response.TeamListResponse
+	for _, team := range teams {
+		var teamSkills []string
+		for _, skill := range team.Skills {
+			teamSkills = append(teamSkills, skill.SkillName)
+		}
+
+		teamResponses = append(teamResponses, response.TeamListResponse{
+			TeamID:     team.ID,
+			TeamIdShow: team.TeamIdShow,
+			TeamName:   team.Name,
+			TeamSkills: teamSkills,
+			Course:     team.Course,
+		})
+	}
+
+	c.JSON(http.StatusOK, teamResponses)
+}
+
+// @Summary Get Unallocated Team List By Course
+// @Description Get all unallocated teams for a specific course
+// @Tags Team
+// @Accept  json
+// @Produce  json
+// @Param course path string true "Course"
+// @Success 200 {array} response.TeamListResponse
+// @Failure 500 {object} map[string]string "{"error": "Failed to fetch teams"}"
+// @Router /v1/team/get/unallocated/list/{course} [get]
+func GetUnallocatedTeamsByCourse(c *gin.Context) {
+	course := c.Param("course")
+
+	var teams []models.Team
+	
+	if err := global.DB.Preload("Skills").Where("allocated_project IS NULL AND course = ?", course).Find(&teams).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
+		return
+	}
+
+	var teamResponses []response.TeamListResponse
+	for _, team := range teams {
+		var teamSkills []string
+		for _, skill := range team.Skills {
+			teamSkills = append(teamSkills, skill.SkillName)
+		}
+
+		teamResponses = append(teamResponses, response.TeamListResponse{
+			TeamID:     team.ID,
+			TeamIdShow: team.TeamIdShow,
+			TeamName:   team.Name,
+			TeamSkills: teamSkills,
+			Course:     team.Course,
+		})
+	}
+
+	c.JSON(http.StatusOK, teamResponses)
+}
+

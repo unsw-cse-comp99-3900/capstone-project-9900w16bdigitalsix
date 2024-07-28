@@ -196,6 +196,7 @@ func GetProjectList(c *gin.Context) {
 			Field:            project.Field,
 			Description:      project.Description,
 			SpecLink:         project.FileURL,
+			MaxTeams:         project.MaxTeams,
 			AllocatedTeam:    allocatedTeams,
 		}
 
@@ -467,11 +468,12 @@ func GetAllocatedTeamDetail(c *gin.Context) {
 
 	var responses []response.TeamDetailResponse
 	for _, team := range teams {
-		var members []response.ProjectTeamMember
+		var members []response.TeamMember3
 		for _, member := range team.Members {
-			members = append(members, response.ProjectTeamMember{
+			members = append(members, response.TeamMember3{
 				UserID:    member.ID,
 				UserName:  member.Username,
+				UserEmail: member.Email,
 				AvatarURL: member.AvatarURL,
 			})
 		}

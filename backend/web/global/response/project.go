@@ -60,13 +60,20 @@ type ProjectTeamMember struct {
 	AvatarURL  string   `json:"avatarURL"`
 }
 
+type TeamMember3 struct {
+	UserID    uint   `json:"userId"`
+	UserName  string `json:"userName"`
+	UserEmail string `json:"userEmail"`
+	AvatarURL string `json:"avatarURL"`
+}
+
 type TeamDetailResponse struct {
-	TeamID           uint                `json:"teamId"`
-	TeamIdShow       uint                `json:"teamIdShow"`
-	TeamName         string              `json:"teamName"`
-	Course           string              `json:"course"`
-	TeamMember       []ProjectTeamMember `json:"teamMember"`
-	TeamSkills       []string            `json:"teamSkills"`
-	PreferenceReason string              `json:"preferenceReason"`
-	PreferenceNum    int                 `json:"preferenceNum"`
+	TeamID           uint          `json:"teamId"`
+	TeamIdShow       uint          `json:"teamIdShow"`
+	TeamName         string        `json:"teamName"`
+	Course           string        `json:"course"`
+	TeamMember       []TeamMember3 `json:"teamMember"`
+	TeamSkills       []string      `json:"teamSkills"`
+	PreferenceReason string        `json:"preferenceReason"`
+	PreferenceNum    int           `json:"preferenceNum"`
 }
