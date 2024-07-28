@@ -429,6 +429,7 @@ const Message = () => {
         // refreshData={loadMessageData} // update function
         channelId={channelId}
         cardType={cardType}
+        setChannelId={setChannelId}
       >
       </ChatPersonalCard>
 

@@ -7,6 +7,22 @@ import MessageAlert from './MessageAlert';
 
 const { Search } = Input;
 
+const roleMap = {
+  1: 'Student',
+  2: 'Tutor',
+  3: 'Client',
+  4: 'Coordinator',
+  5: 'Administrator'
+};
+
+const roleColorMap = {
+  1: { background: '#e0f7fa', color: '#006064' }, // blue Student
+  2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
+  3: { background: '#fff9c4', color: '#f57f17' }, // yellow Client
+  4: { background: '#ffe0b2', color: '#e65100' }, // orange Coordinator
+  5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
+};
+
 const ChatAllMemberCard = ({ visible, onOk, onCancel, refreshData, channelId, cardType }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
@@ -94,7 +110,21 @@ const ChatAllMemberCard = ({ visible, onOk, onCancel, refreshData, channelId, ca
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <div><strong>Name:</strong> {item.userName}</div>
                   <div><strong>Email:</strong> {item.email}</div>
-                  <div><strong>Course:</strong> {item.course}</div>
+                  <div>
+                    <span
+                      className="list-item-meta-role"
+                      style={{
+                        backgroundColor: roleColorMap[item.role].background,
+                        color: roleColorMap[item.role].color,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: 'inline-block',
+                      }}
+                    >
+                      {roleMap[item.role]}
+                    </span>
+                  </div>
                 </div>
               </div>
             </List.Item>

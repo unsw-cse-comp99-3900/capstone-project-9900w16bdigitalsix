@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
@@ -7,10 +7,16 @@ import { Bar, Line, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { useNavigate, useParams } from 'react-router-dom';
+import html2canvas from 'html2canvas';
+import htmlToPdfmake from 'html-to-pdfmake';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 
 import '../assets/scss/FullLayout.css'; // Make sure to import this
 import '../assets/scss/reportStyle.css';
 import { apiCall } from "../helper";
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const GenerateProgressReport = () => {
   let globalUserStoryIndex = 1;
@@ -19,6 +25,8 @@ const GenerateProgressReport = () => {
   const token = localStorage.getItem('token');
   //get userId, teamId from router
   const { projectId, teamId } = useParams();
+  // for pdf generate
+  const contentRef = useRef();
   // project basic informations
   const [title, setTitle] = useState("");
   const [clientName, setClientName] = useState("");
@@ -151,13 +159,33 @@ const GenerateProgressReport = () => {
   };
   const totalProjectDays = calculateTotalProjectDays();
 
+  const generatePdf = async () => {
+    const element = contentRef.current;
+    const canvasArray = element.querySelectorAll('canvas');
+  
+    for (let canvas of canvasArray) {
+      const image = await html2canvas(canvas, { scale: 1.1 });
+      const dataURL = image.toDataURL();
+      canvas.parentNode.insertAdjacentHTML('afterend', `<img src="${dataURL}" style="width: 100%; height: auto;" />`);
+      canvas.remove();
+    }
+  
+    const htmlContent = contentRef.current.innerHTML;
+    const pdfContent = htmlToPdfmake(htmlContent);
+    const documentDefinition = {
+      content: pdfContent,
+      pageSize: 'A4',
+      pageMargins: [20, 20, 20, 20]  // page margin
+    };
+    pdfMake.createPdf(documentDefinition).download(`${title}ProgressReport.pdf`);
+  };
+
   useEffect(() => {
     getProjectDetail();
     getProgresstDetail();
     const timer = setTimeout(() => setShowCharts(true), 1000);
     return () => clearTimeout(timer);
   }, []);
-
 
   // functions to load data to charts
   const updateChartData = (sprints) => {
@@ -370,146 +398,142 @@ const pieOptions = {
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
-        {/********Sidebar**********/}
         <aside className="sidebarArea shadow" id="sidebarArea">
           <Sidebar />
         </aside>
-        {/********Content Area**********/}
         <div className="contentArea">
           <div className="d-lg-none headerMd">
-            {/********Header**********/}
             <Header />
           </div>
           <div className="d-none d-lg-block headerLg">
-            {/********Header**********/}
             <Header />
           </div>
-          {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
-            <Row>
-              <Col lg="12" className="mb-4">
-                <Card>
-                <Row>
-                  <Col lg="6">
+          <a href="#" onClick={(e) => { e.preventDefault(); generatePdf(); }}>Download PDF</a>
+            <div ref={contentRef}>
+              <Row>
+                <Col lg="12" className="mb-4">
+                  <Card>
+                    <Row>
+                      <Col lg="6">
+                        <CardBody>
+                          <CardTitle tag="h5"><strong>Project Progress Chart</strong></CardTitle>
+                          {showCharts && (
+                            <>
+                              <div className="chart-container mb-4"  style={{ padding: '30px 0 0 0' }}>
+                                <Bar data={sprintData} options={options} plugins={[ChartDataLabels]} />                  
+                              </div>
+                              <h6 style={{ textAlign: 'center', padding: '0 0 20px 0' }}>Fig 1. User Story Completion Tracking Chart</h6>
+                              <div className="chart-container mb-4"  style={{ padding: '10px 0 0 0' }}>
+                                <Pie data={pieData} options={pieOptions} plugins={[ChartDataLabels]} />
+                              </div>
+                              <h6 style={{ textAlign: 'center', padding: '0 0 20px 0'}}>Fig 2. User Story Progress Overview</h6>   
+                              <div className="chart-container mb-4"  style={{ padding: '10px 0 0 0' }}>
+                                <Line data={sprintDetailsData} options={sprintOptions} />
+                              </div>
+                              <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Fig 3. Comparison of Sprint Scores to Average</h6>
+                            </>
+                          )}
+                        </CardBody>
+                      </Col>
+                      <Col lg="6">
+                        <CardBody>
+                          <CardTitle tag="h5"><strong>Time Tracking Chart</strong></CardTitle>
+                          <div className="chart-container mb-4" style={{ padding: '30px 0 0 0' }}>
+                            <Bar data={timebarData} options={timeBarOptions} />
+                          </div>
+                          <h6 style={{ textAlign: 'center', padding: '0 0 30px 0'}}>Fig 4. Duration of Sprints Over Time</h6>
+                          <div className="chart-container mb-4">
+                            <Pie data={timepieData} options={pieOptions} plugins={[ChartDataLabels]} />
+                          </div>
+                          <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Fig 5. Sprint Time Contributions to Total Project Duration</h6>
+                        </CardBody>
+                      </Col>
+                    </Row>
+                  </Card>
+                </Col>
+              </Row>
+              <Row>
+                <Col lg="12" className="mb-4">
+                  <Card>
                     <CardBody>
-                      <CardTitle tag="h5"><strong>Project Progress Chart</strong></CardTitle>
-                      {showCharts && (
-                        <>
-                          <div className="chart-container mb-4"  style={{ padding: '30px 0 0 0' }}>
-                            <Bar data={sprintData} options={options} plugins={[ChartDataLabels]} />                  
-                          </div>
-                          <h6 style={{ textAlign: 'center', padding: '0 0 20px 0' }}>Fig 1. User Story Completion Tracking Chart</h6>
-                          <div className="chart-container mb-4"  style={{ padding: '10px 0 0 0' }}>
-                            <Pie data={pieData} options={pieOptions} plugins={[ChartDataLabels]} />
-                          </div>
-                          <h6 style={{ textAlign: 'center', padding: '0 0 20px 0'}}>Fig 2. User Story Progress Overview</h6>   
-                          <div className="chart-container mb-4"  style={{ padding: '10px 0 0 0' }}>
-                            <Line data={sprintDetailsData} options={sprintOptions} />
-                          </div>
-                          <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Fig 3. Comparison of Sprint Scores to Average</h6>
-                        </>
-                      )}
-                    </CardBody>
-                  </Col>
-                  
-                  <Col lg="6">
-                    <CardBody>
-                    <CardTitle tag="h5"><strong>Time Tracking Chart</strong></CardTitle>
-                    <div className="chart-container mb-4" style={{ padding: '30px 0 0 0' }}>
-                    <Bar data={timebarData} options={timeBarOptions} />
-                    </div>
-                    <h6 style={{ textAlign: 'center', padding: '0 0 30px 0'}}>Fig 4. Duration of Sprints Over Time</h6>
-                    <div className="chart-container mb-4">
-                      <Pie data={timepieData} options={pieOptions} plugins={[ChartDataLabels]}/>
-                    </div>
-                    <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Fig 5. Sprint Time Contributions to Total Project Duration</h6>
-                    </CardBody>
-                  </Col>
-                  </Row>
-                </Card>
-              </Col>
-
-            </Row>
-            <Row>
-              <Col lg="12" className="mb-4">
-                <Card>
-                  <CardBody>
-                    <CardText>
-                      <Row>
-                        <Col md="6">
-                        <CardTitle tag="h5"><strong>Project Overview</strong></CardTitle>
-                        <CardText style = {{textAlign: 'justify'}}>
-                          <strong>Project Name:</strong> {title}<br />
-                          <strong>Field:</strong> {field}<br />
-                          <strong>Description:</strong> {description}<br />
-                          <strong>Required Skills:</strong> {requiredSkills.join(', ')}<br />
-                          Client: {clientName} - <span class="light-text">{clientEmail}</span><br />
-                          Tutor: {tutorName} - <span class="light-text">{tutorEmail}</span><br />
-                          Coordinator: {coorName} - <span class="light-text">{coorEmail}</span><br />
-                          <a href={specLink} target="_blank" rel="noopener noreferrer">Click here to view project specification document</a>
-                        </CardText>
-                        </Col>
-                        <Col md="6">
-                          <CardTitle tag="h5"><strong>Sprint Details and User Stories:</strong></CardTitle>
-                          <ul>
-                            {sprints.map((sprint, index) => (
-                              <li key={index} style = {{textAlign: 'justify'}}>
-                                Sprint {sprint.sprintNum}: {sprint.startDate && sprint.endDate ? `${sprint.startDate} / ${sprint.endDate}` : '(Date to be determined)'},
-                                <ul>
-                                  {sprint.userStoryList.map((story) => (
-                                    <li key={story.userStoryId} style={{ marginBottom: '6px' }}>
-                                      User Story {globalUserStoryIndex++}: {story.userStoryDescription}<br />
-                                      Status: {userstoryStatus(story.userStoryStatus)}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </li>
-                            ))}
-                          </ul>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col md="6">
-                        <CardTitle tag="h5"><strong>Time Tracking</strong></CardTitle>
-                          <ul>
-                            {sprints.map((sprint, index) => {
-                              const days = sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0;
-                              const percentage = totalProjectDays ? ((days / totalProjectDays) * 100).toFixed(2) : 0;
-                              return (
-                                <li key={index}>
-                                  Sprint {sprint.sprintNum}: {days ? `${days} days` : '(Date to be determined)'},
-                                  Overtime - {percentage}%
+                      <CardText>
+                        <Row>
+                          <Col md="6">
+                            <CardTitle tag="h5"><strong>Project Overview</strong></CardTitle>
+                            <CardText style = {{textAlign: 'justify'}}>
+                              <strong>Project Name:</strong> {title}<br />
+                              <strong>Field:</strong> {field}<br />
+                              <strong>Description:</strong> {description}<br />
+                              <strong>Required Skills:</strong> {requiredSkills.join(', ')}<br />
+                              Client: {clientName} - <span class="light-text">{clientEmail}</span><br />
+                              Tutor: {tutorName} - <span class="light-text">{tutorEmail}</span><br />
+                              Coordinator: {coorName} - <span class="light-text">{coorEmail}</span><br />
+                              <a href={specLink} target="_blank" rel="noopener noreferrer">Click here to view project specification document</a>
+                            </CardText>
+                          </Col>
+                          <Col md="6">
+                            <CardTitle tag="h5"><strong>Sprint Details and User Stories:</strong></CardTitle>
+                            <ul>
+                              {sprints.map((sprint, index) => (
+                                <li key={index} style = {{textAlign: 'justify'}}>
+                                  Sprint {sprint.sprintNum}: {sprint.startDate && sprint.endDate ? `${sprint.startDate} / ${sprint.endDate}` : '(Date to be determined)'},
+                                  <ul>
+                                    {sprint.userStoryList.map((story) => (
+                                      <li key={story.userStoryId} style={{ marginBottom: '6px' }}>
+                                        User Story {globalUserStoryIndex++}: {story.userStoryDescription}<br />
+                                        Status: {userstoryStatus(story.userStoryStatus)}
+                                      </li>
+                                    ))}
+                                  </ul>
                                 </li>
-                              );
-                            })}
-                          </ul>
-                        </Col>
-                        <Col md="6">
-                          <CardTitle tag="h5"><strong>Performance Metrics</strong></CardTitle>
-                          <strong>Sprint Scores:</strong>
-                          <ul>
-                            {sprints.map((sprint, index) => (
-                              <li key={index}>
-                                Sprint {sprint.sprintNum}: Score - {sprint.sprintGrade}
-                              </li>
-                            ))}
-                          </ul>
-                          <strong>Sprint Comments:</strong>
-                          <ul>
-                            {sprints.map((sprint, index) => (
-                              <li key={index}>
-                                Sprint {sprint.sprintNum}: {sprint.sprintComment}
-                              </li>
-                            ))}
-                          </ul>
-                          <strong>Average Sprint Score:</strong> {calculateAverageScore()}
-                        </Col>
-                      </Row>
-                    </CardText>
-                  </CardBody>
-                </Card>
-              </Col>
-            </Row>
+                              ))}
+                            </ul>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md="6">
+                            <CardTitle tag="h5"><strong>Time Tracking</strong></CardTitle>
+                            <ul>
+                              {sprints.map((sprint, index) => {
+                                const days = sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0;
+                                const percentage = totalProjectDays ? ((days / totalProjectDays) * 100).toFixed(2) : 0;
+                                return (
+                                  <li key={index}>
+                                    Sprint {sprint.sprintNum}: {days ? `${days} days` : '(Date to be determined)'},
+                                    Overtime - {percentage}%
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </Col>
+                          <Col md="6">
+                            <CardTitle tag="h5"><strong>Performance Metrics</strong></CardTitle>
+                            <strong>Sprint Scores:</strong>
+                            <ul>
+                              {sprints.map((sprint, index) => (
+                                <li key={index}>
+                                  Sprint {sprint.sprintNum}: Score - {sprint.sprintGrade}
+                                </li>
+                              ))}
+                            </ul>
+                            <strong>Sprint Comments:</strong>
+                            <ul>
+                              {sprints.map((sprint, index) => (
+                                <li key={index}>
+                                  Sprint {sprint.sprintNum}: {sprint.sprintComment}
+                                </li>
+                              ))}
+                            </ul>
+                            <strong>Average Sprint Score:</strong> {calculateAverageScore()}
+                          </Col>
+                        </Row>
+                      </CardText>
+                    </CardBody>
+                  </Card>
+                </Col>
+              </Row>
+            </div>
           </Container>
         </div>
       </div>
