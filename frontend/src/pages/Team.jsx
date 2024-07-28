@@ -9,11 +9,12 @@ import Header from "../layouts/Header";
 import { apiCall } from "../helper";
 import JoinTeamDialog from "./JoinTeam";
 import TeamProfile from "./TeamProfile";
-import "../assets/scss/FullLayout.css"; //make sure import this
+import "../assets/scss/FullLayout.css";
 import "../assets/scss/teamStyle.css";
 import cap from "../assets/images/logos/cap.png";
 
 const Team = (props) => {
+  // some states
   const [hasTeam, setHasTeam] = useState(null);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -38,13 +39,13 @@ const Team = (props) => {
   };
 
   useEffect(() => {
+    // this function is used to get the team details that a user belong to
     const isTeam = async () => {
       const res = await apiCall("GET", `v1/team/profile/${userId}`);
       if (res.error) {
         setHasTeam(false);
         setLoading(false);
       } else {
-        console.log(res);
         setTeamId(res.teamId);
         setTeamIdShow(res.teamIdShow);
         setCourse(res.course);
@@ -64,6 +65,7 @@ const Team = (props) => {
     }
   }, [userId, teamId, isInvite]);
 
+  // this function is used to create a team
   const clickCreate = async () => {
     try {
       const body1 = { user_id: userId };
@@ -96,6 +98,7 @@ const Team = (props) => {
     setDialogOpen(true);
   };
 
+  // this function is used to join a team
   const joinTeam = async (uid, tid) => {
     try {
       const body = { userId: uid, teamIdShow: parseInt(tid) };
@@ -124,9 +127,9 @@ const Team = (props) => {
     }
   };
 
+  // this function is used to leave a team
   const leaveTeam = async (uid) => {
     try {
-      // console.log(uid);
       const res = await apiCall("DELETE", `v1/team/leave/${uid}`);
       if (res.error) {
         setErrorMessage(res.error);
