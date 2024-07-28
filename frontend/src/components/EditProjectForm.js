@@ -61,9 +61,18 @@ const EditProjectForm = ({ initialValues, id }) => {
       }
     }
 
+    if (name === 'maxTeams') {
+      if (value !== '' && (isNaN(value) || parseInt(value, 10) <= 0)) {
+        setAlertMessage('Maximum teams must be a positive integer.');
+        setAlertType('error');
+        setAlertOpen(true);
+        return;
+      }
+    }
+
     if (files) {
       setFormData({ ...formData, [name]: files[0] });
-      setFileName(files[0].name); // 保存原始文件名
+      setFileName(files[0].name); 
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -110,6 +119,12 @@ const EditProjectForm = ({ initialValues, id }) => {
       setAlertOpen(true);
       return;
     }
+    if (!formData.maxTeams || parseInt(formData.maxTeams, 10) <= 0) {
+      setAlertMessage('Maximum teams is required and must be a positive integer.');
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    }
 
     const form = new FormData();
     for (const key in formData) {
@@ -124,7 +139,6 @@ const EditProjectForm = ({ initialValues, id }) => {
           const newFileName = `${id}_${originalFileName}`;
           form.append('spec', formData[key], newFileName);
         }
-
       } else {
         form.append(key, formData[key]);
       }
@@ -236,6 +250,17 @@ const EditProjectForm = ({ initialValues, id }) => {
             id="requiredSkills"
             placeholder="Enter required skills"
             value={formData.requiredSkills}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="maxTeams">Maximum Teams</Label>
+          <Input
+            type="text"
+            name="maxTeams"
+            id="maxTeams"
+            placeholder="Enter maximum number of teams"
+            value={formData.maxTeams}
             onChange={handleChange}
           />
         </FormGroup>

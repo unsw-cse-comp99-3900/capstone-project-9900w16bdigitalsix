@@ -21,11 +21,14 @@ const apiCall = async (method, endpoint) => {
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
+  const [archivedProjects, setArchivedProjects] = useState([]);
   const [role, setRole] = useState(null);
   const [openAlert, setOpenAlert] = useState(false);
   const [alertContent, setAlertContent] = useState('');
   const [hasProjects, setHasProjects] = useState(false);
   const [hasTeam, setHasTeam] = useState(false);
+
+  const userId = localStorage.getItem('userId');
 
   const navigate = useNavigate();
 
@@ -46,6 +49,8 @@ const ProjectList = () => {
             skills: project.requiredSkills || 'N/A',
             clientAvatar: project.clientAvatar,
             field: project.field,
+            allocatedTeamsCount: project.allocatedTeam ? project.allocatedTeam.length : 0,
+            maxTeams: project.maxTeams // New parameter
           }));
           console.log('Mapped Projects:', mappedProjects);
           setProjects(mappedProjects);
@@ -56,9 +61,36 @@ const ProjectList = () => {
       }
     };
 
+    const fetchArchivedProjects = async () => {
+      try {
+        const archivedResponse = await apiCall('GET', `/v1/project/get/archived/list`);
+        console.log('Archived Project Response:', archivedResponse);
+
+        const mappedArchivedProjects = archivedResponse
+          .filter(project => 
+            project.clientId === parseInt(userId) || 
+            project.coorId === parseInt(userId) || 
+            project.tutorId === parseInt(userId)
+          )
+          .map(project => ({
+            id: project.projectId,
+            title: project.title,
+            client: project.clientName,
+            clientTitle: project.clientEmail,
+            skills: project.requiredSkills || 'N/A',
+            clientAvatar: project.clientAvatar,
+            field: project.field,
+            maxTeams: project.maxTeams // New parameter
+          }));
+        console.log('Mapped Archived Projects:', mappedArchivedProjects);
+        setArchivedProjects(mappedArchivedProjects);
+      } catch (error) {
+        console.error('Error fetching archived projects:', error);
+      }
+    };
+
     const checkTeamAndFetchProjects = async () => {
       try {
-        const userId = localStorage.getItem('userId');
         const role = parseInt(localStorage.getItem('role'), 10);
         setRole(role);
 
@@ -73,6 +105,7 @@ const ProjectList = () => {
           }
         }
         fetchProjects(userId);
+        fetchArchivedProjects();
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -93,7 +126,7 @@ const ProjectList = () => {
     setOpenAlert(false);
     navigate('/team/student');
   };
-  
+
   return (
     <main>
       <MessageAlert
@@ -151,11 +184,37 @@ const ProjectList = () => {
                     title={project.title}
                     client={project.client}
                     clientTitle={project.clientTitle}
-                    clientAvatar={project.clientAvatar} // Pass the clientAvatarURL
+                    clientAvatar={project.clientAvatar}
                     skills={project.skills}
                     field={project.field}
                     onDelete={handleDelete}
                     role={role}
+                    allocatedTeamsCount={project.allocatedTeamsCount} 
+                    maxTeams={project.maxTeams} // Pass maxTeams to CustomCard
+                    showActions={true}
+                    showTeamsCount={true} // Show teams count for published projects
+                  />
+                </Col>
+              ))}
+            </Row>
+            {(role === 2 || role === 3 || role === 4) && (
+              <h3 className="mt-4">Archived Projects</h3>
+            )}
+            <Row>
+              {archivedProjects.map(project => (
+                <Col key={project.id} md="4">
+                  <CustomCard
+                    id={project.id}
+                    title={project.title}
+                    client={project.client}
+                    clientTitle={project.clientTitle}
+                    clientAvatar={project.clientAvatar}
+                    skills={project.skills}
+                    field={project.field}
+                    maxTeams={project.maxTeams} // Pass maxTeams to CustomCard
+                    role={role}
+                    showActions={false}
+                    showTeamsCount={false} // Hide teams count for archived projects
                   />
                 </Col>
               ))}

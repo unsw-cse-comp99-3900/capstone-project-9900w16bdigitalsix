@@ -25,6 +25,7 @@ const ProjectForm = () => {
     email: '',
     requiredSkills: '',
     file: null,
+    maxTeams: '',
   });
 
   const [role, setRole] = useState(null);
@@ -56,6 +57,16 @@ const ProjectForm = () => {
         return;
       }
     }
+    if (name === 'maxTeams') {
+      if (value !== '' && (isNaN(value) || parseInt(value, 10) <= 0)) {
+        setAlertMessage('Maximum teams must be a positive integer.');
+        setAlertType('error');
+        setAlertOpen(true);
+        return;
+      }
+    }
+
+
 
     if (files) {
       setFormData({ ...formData, [name]: files[0] });
@@ -101,6 +112,12 @@ const ProjectForm = () => {
     }
     if (!formData.requiredSkills) {
       setAlertMessage('Required skills are required.');
+      setAlertType('error');
+      setAlertOpen(true);
+      return;
+    }
+    if (!formData.maxTeams) {
+      setAlertMessage('Maximum teams is required.');
       setAlertType('error');
       setAlertOpen(true);
       return;
@@ -220,6 +237,17 @@ const ProjectForm = () => {
             id="requiredSkills"
             placeholder="Enter required skills"
             value={formData.requiredSkills}
+            onChange={handleChange}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="maxTeams">Maximum Teams</Label>
+          <Input
+            type="text"
+            name="maxTeams"
+            id="maxTeams"
+            placeholder="Enter maximum number of teams"
+            value={formData.maxTeams}
             onChange={handleChange}
           />
         </FormGroup>

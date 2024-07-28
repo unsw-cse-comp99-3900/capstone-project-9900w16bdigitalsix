@@ -85,3 +85,44 @@
 .circle-buttonshare:hover {
   background-color: #1662ad !important; /* 深蓝色悬停效果 */
 }
+
+.channel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.channel-title p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.edit-icon {
+  margin-left: 10px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.edit-icon:hover {
+  color: #999;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.invite-button {
+  background-color: #4CAF50; /* 绿色 */
+  color: white;
+}
+
+.leave-button {
+  background-color: #f44336; /* 红色 */
+  color: white;
+}

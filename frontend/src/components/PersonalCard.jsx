@@ -9,7 +9,7 @@ import MessageAlert from './MessageAlert';
 
 const { Option } = Select;
 
-const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
+const PersonalCard = ({ visible, onOk, onCancel, refreshData, channelId }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
@@ -18,22 +18,25 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
   const seachRef = useRef();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const userId = localStorage.getItem('userId');
+  const userId = parseInt(localStorage.getItem('userId'));
   const token = localStorage.getItem('token');
 
   // student list
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
-
+  const [selectedName, setSelectedName] = useState(null);
+  const [selectedEmail, setSelectedEmail] = useState(null);
   useEffect(() => {
     loadStudentData();
     setSelectedId(null);
     handleClear();
   }, []);
   // update selected student 
-  const handleSelect = (e) => {
-    setSelectedId(e);
+  const handleSelect = (id, name, email) => {
+    setSelectedId(id);
+    setSelectedName(name);
+    setSelectedEmail(email);
   };
 
   const loadStudentData = async() => {
@@ -52,6 +55,7 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
     }
   }
 
+  // share a personal card
   const handleSubmit = async () => {
     if (!selectedId) {
       setSnackbarContent('Please select a personal card');
@@ -66,33 +70,34 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
       setAlertOpen(true);
       return;
     }
-    setSelectedId(null);
-    handleClear();
-    onCancel();
-    // const response = await apiCall('POST', 'v1/admin/modify/user/role', {
-    //   userId: user.userId,
-    //   role: selectedRole,
-    //   notification: {
-    //     content: `Your role has been changed to ${selectedRoleName}.`,
-    //     to: {
-    //       users: [
-    //         user.userId
-    //       ]
-    //     }
-    //   },
-    // }, token, true);
+  
+    const requestBody = {
+      SenderId: userId,
+      channelId: channelId,
+      messageContent: {
+        name: selectedName,
+        email: selectedEmail,
+      },
+      messageType: 2,
+    };
 
-    // if (response.error) {
-    //   setSnackbarContent(response.error);
-    //   setAlertType('error');
-    //   setAlertOpen(true);
-    // } else {
-    //   setSnackbarContent('User role updated successfully');
-    //   setAlertType('success');
-    //   setAlertOpen(true);
-    //   onOk();
-    //   refreshData();
-    // }
+    console.log("requestBody", requestBody);
+    const response = await apiCall('POST', 'v1/message/send', requestBody, token, true);
+    if (!response){
+      return
+    } else if (response.error){
+      setSnackbarContent(response.error);
+      setAlertType('error');
+      setAlertOpen(true);
+    } else {
+      refreshData();
+      setSnackbarContent('Share successfully.');
+      setAlertType('success');
+      setAlertOpen(true);
+      setSelectedId(null);
+      handleClear();
+      onCancel();
+    }
   };
 
   const handleCancel = () => {
@@ -138,7 +143,7 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
         onCancel={handleCancel}
         footer={[
           <Button key="cancel" onClick={handleCancel}>Cancel</Button>,
-          <Button key="submit" type="primary" onClick={handleSubmit}>Save</Button>
+          <Button key="submit" type="primary" onClick={handleSubmit}>Share</Button>
         ]}
       >
         <div className="search" style={{ display: 'flex', alignItems: 'center', border: 'none' }}>
@@ -171,12 +176,12 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
           dataSource={filteredData}
           style={{ maxHeight: '400px', overflowY: 'auto' }}
           renderItem={item => (
-            <List.Item onClick={() => handleSelect(item.userId)} style={{ cursor: 'pointer' }}>
+            <List.Item onClick={() => handleSelect(item.userId, item.userName, item.email)} style={{ cursor: 'pointer' }}>
               <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                 <Radio
                   value={item.userId}
                   checked={selectedId === item.userId}
-                  onChange={() => handleSelect(item.userId)}
+                  onChange={() => handleSelect(item.userId, item.userName, item.email)}
                   style={{ marginRight: 16 }}
                 />
                 <Avatar src={item.avatarURL ? item.avatarURL : ''} style={{ marginRight: 16 }} />
@@ -184,6 +189,7 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData }) => {
                   <div><strong>Name:</strong> {item.userName}</div>
                   <div><strong>Email:</strong> {item.email}</div>
                   <div><strong>Course:</strong> {item.course}</div>
+                  <div><strong>Skills:</strong> {item.userSkills}</div>
                 </div>
               </div>
             </List.Item>

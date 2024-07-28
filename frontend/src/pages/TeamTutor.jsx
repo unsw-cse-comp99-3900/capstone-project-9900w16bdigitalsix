@@ -12,6 +12,8 @@ import Header from '../layouts/Header';
 import { Container } from 'reactstrap';
 import { Avatar, Chip, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import Typography from "@mui/material/Typography";
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 export default function TeamTutor() {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -21,6 +23,7 @@ export default function TeamTutor() {
   const [data, setData] = useState([]);
   const [allData, setAllData] = useState([]);
   const [searchTerm, setSearchTerm] = useState(''); // State to manage input value
+  const [course, setCourse] = useState("");
 
   const seachRef = useRef();
   const mountedRef = useRef(false);
@@ -138,8 +141,37 @@ export default function TeamTutor() {
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <>
-              <div className="titleBtn">
+             
+             
+              <div className="seach" style={{width:'600px',flexDirection: 'column'}}>
+                <div style={{width:'100%',marginBottom:'10px',color:"rgba(0,0,0,0.6)"}}> 
+                <Typography
+                      variant="h4"
+                      gutterBottom
+                      fontWeight={"bold"}
+                      textAlign="left"
+                    >
+                      {/* Team List */}
+                      {team ? "TEAM LIST" : "STUDENT LIST"}
+                    </Typography>
+                <div className="actions-wrap" style={{width:"100%",display:"flex",alignItems:"center"}}>
+                <FormControl fullWidth style={{ flexDirection: 'column', alignItems: 'top',width:'440px'}}>
+                    <InputLabel id="course-label">Course</InputLabel>
+                    <Select
+                      labelId="course-label"
+                      id="course"
+                      value={course}
+                      label="Course"
+                      onChange={e => setCourse(e.target.value)}
+                    >
+                      <MenuItem value="">Back</MenuItem>
+                      <MenuItem value="COMP9900">COMP9900</MenuItem>
+                      <MenuItem value="COMP3900">COMP3900</MenuItem>
+                    </Select>
+                </FormControl>
+               <div className="titleBtn">
                 <Flex gap="small" wrap>
+                 
                   <Button
                     style={{ backgroundColor: "#6451e9", borderColor: "#6451e9" }}
                     type="primary"
@@ -158,8 +190,11 @@ export default function TeamTutor() {
                   </Button>
                 </Flex>
               </div>
-              <div className="seach" style={{width:'600px'}}>
-              <Input
+                </div>
+               
+                </div>
+                <div style={{display:'flex',alignItems: 'center',width:'600px'}}>
+                <Input
                   value={searchTerm} // Bind input value to state
                   onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
                   placeholder={team ? "Search Team" : "Search Student"}
@@ -183,6 +218,8 @@ export default function TeamTutor() {
               >
                 Clear
               </Button>
+                </div>
+              
               </div>
               <div
                 id="scrollableDiv"
@@ -209,6 +246,7 @@ export default function TeamTutor() {
                                   <Chip key={index} label={skill} variant="outlined" />
                                 ))}
                               </Box>
+                              <div>Course: {item.course}</div>
                             </>
                           }/>
                       </List.Item>
@@ -242,6 +280,7 @@ export default function TeamTutor() {
                                   <Chip key={index} label={skill} variant="outlined" />
                                 ))}
                               </Box>
+                              <div>Course: {item.course}</div>
                             </>
                           }
                         />

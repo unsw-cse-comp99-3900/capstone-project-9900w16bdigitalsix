@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Container } from 'reactstrap';
 import Sidebar from '../layouts/Sidebar';
 import Header from '../layouts/Header';
-import '../assets/scss/FullLayout.css';//make sure import this
+import '../assets/scss/FullLayout.css'; // make sure to import this
 import EditProjectForm from '../components/EditProjectForm';
-// import { apiCall } from './api'; // 确保路径正确
 import { useParams } from 'react-router-dom';
 
 const apiCall = async (method, endpoint) => {
@@ -32,6 +31,7 @@ const EditProject = () => {
           description: data.description || '',
           email: data.clientEmail || '',
           requiredSkills: data.requiredSkills ? data.requiredSkills.join(', ') : '',
+          maxTeams: data.maxTeams || 0, // New parameter
           file: null,
         });
       } catch (error) {
