@@ -1486,7 +1486,7 @@ const docTemplate = `{
         },
         "/v1/project/create": {
             "post": {
-                "description": "client 创建一个新的项目并上传文件, this api makes sure only client can create the project",
+                "description": "client create project, this api makes sure only client can create the project",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -1580,7 +1580,7 @@ const docTemplate = `{
         },
         "/v1/project/delete/{projectId}": {
             "delete": {
-                "description": "根据项目ID删除项目",
+                "description": "delete project",
                 "produces": [
                     "application/json"
                 ],
@@ -1628,7 +1628,7 @@ const docTemplate = `{
         },
         "/v1/project/detail/{projectId}": {
             "get": {
-                "description": "根据项目ID获取项目的详细信息",
+                "description": "get project detail by projectID",
                 "produces": [
                     "application/json"
                 ],
@@ -1724,7 +1724,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "用户ID",
+                        "description": "User ID",
                         "name": "userId",
                         "in": "path",
                         "required": true
@@ -1813,7 +1813,7 @@ const docTemplate = `{
         },
         "/v1/project/modify/{projectId}": {
             "post": {
-                "description": "通过 projectId 修改项目详细信息，并更新项目的 client, this api makes sure Projects can only be assigned to clients",
+                "description": "update project detail，update project client, this api makes sure Projects can only be assigned to clients",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -3567,6 +3567,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/user/same/course/student/list/{userId}": {
+            "get": {
+                "description": "Get all students have the same course with user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Get all students have the same course",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.StudentListResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"error\": \"Failed to fetch users\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/user/student/list": {
             "get": {
                 "description": "返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
@@ -4254,6 +4298,9 @@ const docTemplate = `{
                 "field": {
                     "type": "string"
                 },
+                "maxTeams": {
+                    "type": "integer"
+                },
                 "projectId": {
                     "type": "integer"
                 },
@@ -4545,6 +4592,9 @@ const docTemplate = `{
                 },
                 "field": {
                     "type": "string"
+                },
+                "maxTeams": {
+                    "type": "integer"
                 },
                 "projectId": {
                     "type": "integer"
