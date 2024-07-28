@@ -18,11 +18,7 @@ const fieldColors = {
   "Information Systems": 'rgba(153, 102, 255, 0.6)',
   "Machine Learning": 'rgba(255, 99, 132, 0.6)',
   "Blockchain": 'rgba(54, 162, 235, 0.6)',
-  "Other": 'rgba(255, 159, 64, 0.6)',
-  "dasd": 'rgba(75, 75, 192, 0.6)',
-  "wedqasda": 'rgba(192, 75, 192, 0.6)',
-  "AIII": 'rgba(75, 192, 75, 0.6)',
-  "MLAI": 'rgba(192, 192, 75, 0.6)'
+  "Other": 'rgba(255, 159, 64, 0.6)'
 };
 
 const fetchProjectList = async () => {
@@ -77,9 +73,10 @@ const VirtualDataReport = () => {
     const fetchData = async () => {
       const apiData = await fetchApiData();
       if (apiData) {
-        setData(apiData);
-        if (apiData.fields.length > 0) {
-          setSelectedField(apiData.fields[0].field);
+        const filteredFields = apiData.fields.filter(field => fieldColors.hasOwnProperty(field.field));
+        setData({ ...apiData, fields: filteredFields });
+        if (filteredFields.length > 0) {
+          setSelectedField(filteredFields[0].field);
         }
       }
 
