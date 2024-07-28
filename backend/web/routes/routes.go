@@ -32,7 +32,7 @@ func UserRouter(Router *gin.RouterGroup) {
 		UserRouter.GET("/profile/:user_id", controllers.GetPersonProfile)
 		UserRouter.GET("/student/list", controllers.GetAllStudents)
 		UserRouter.GET("/get/user/list", controllers.GetAllUsersInfo)
-		UserRouter.GET("/same/course/student/list/:userId", controllers.GetAllStudents)
+		UserRouter.GET("/same/course/student/list/:userId", controllers.GetAllSameCourseStudents)
 	}
 }
 
