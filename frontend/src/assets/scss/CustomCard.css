@@ -1,6 +1,7 @@
 .custom-card {
   background-color: #E6F0FA; /* Light blue background */
   border: 1px solid #B0C4DE; /* Border color */
+  position: relative;
 }
 
 .custom-card-header {
@@ -103,3 +104,14 @@
   width: 90%;
 }
 
+.allocated-teams-count {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  /* background-color: #f0f0f0; */
+  padding: 0.5em;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #666;
+}

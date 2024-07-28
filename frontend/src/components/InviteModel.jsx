@@ -17,11 +17,12 @@ export default function InviteModel({
   const mountedRef = useRef(false);
 
   const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
 
   const loadMoreData = async () => {
     if (loading) return;
     setLoading(true);
-    const url = "v1/user/student/list";
+    const url = `v1/user/same/course/student/list/${userId}`;
     const response = await apiCall("GET", url, null, token, null);
     console.log("....list....", response);
     if (!response || response.error) {
