@@ -21,6 +21,7 @@ type GetProjectListResponse struct {
 	RequiredSkills   []string        `json:"requiredSkills"`
 	Field            string          `json:"field"`
 	AllocatedTeam    []AllocatedTeam `json:"allocatedTeam"`
+	MaxTeams         int             `json:"maxTeams"`
 }
 
 type ProjectDetailResponse struct {
@@ -38,6 +39,7 @@ type ProjectDetailResponse struct {
 	CoordinatorEmail string          `json:"coorEmail"`
 	RequiredSkills   []string        `json:"requiredSkills"`
 	Field            string          `json:"field"`
+	MaxTeams         int             `json:"maxTeams"`
 	Description      string          `json:"description"`
 	SpecLink         string          `json:"specLink"`
 	AllocatedTeam    []AllocatedTeam `json:"allocatedTeam"`

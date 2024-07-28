@@ -100,7 +100,7 @@ func CreateProject(c *gin.Context) {
 		Name:        title,
 		Field:       field,
 		Description: description,
-		ClientID:    &clientID, 
+		ClientID:    &clientID,
 	}
 
 	if maxTeams != 0 {
@@ -255,6 +255,7 @@ func GetProjectDetail(c *gin.Context) {
 		Field:            project.Field,
 		Description:      project.Description,
 		SpecLink:         project.FileURL,
+		MaxTeams:         project.MaxTeams,
 		AllocatedTeam:    allocatedTeams,
 	}
 
@@ -405,7 +406,7 @@ func ModifyProjectDetail(c *gin.Context) {
 	if maxTeams != 0 {
 		project.MaxTeams = maxTeams
 	}
-	
+
 	// update skills
 	var skills []models.Skill
 	if len(requiredSkills) > 0 {
@@ -741,7 +742,7 @@ func RejectProjectAllocation(c *gin.Context) {
 // @Tags Project
 // @Accept json
 // @Produce json
-// @Param userId path int true "用户ID"
+// @Param userId path int true "User ID"
 // @Success 200 {array} response.GetProjectListResponse
 // @Failure 400 {object} map[string]string "{"error": "Invalid userId"}""
 // @Failure 404 {object} map[string]string "{"error": "User not found", "error": "Team not found", "error": "Project not found"}"
@@ -836,6 +837,7 @@ func GetProjectsByRole(c *gin.Context) {
 			RequiredSkills:   requiredSkills,
 			Field:            project.Field,
 			AllocatedTeam:    allocatedTeams,
+			MaxTeams:         project.MaxTeams,
 		})
 	}
 
