@@ -90,7 +90,6 @@ const GenerateProgressReport = () => {
   const getProjectDetail = async () => {
     try {
       const res = await apiCall("GET", `v1/project/detail/${projectId}`);
-      console.log(res);
       if (res === null) {
         return;
       }
@@ -118,7 +117,6 @@ const GenerateProgressReport = () => {
     try {
       const data = await apiCall('GET', `v1/progress/get/detail/${teamId}`);
       setSprints(data.sprints);
-      console.log("sprint data:", data.sprints);
       updateChartData(data.sprints);
       updatePieChartData(data.sprints);
       updateLineChartData(data.sprints);
@@ -190,14 +188,14 @@ const GenerateProgressReport = () => {
       pageSize: 'A4',
       pageMargins: [20, 20, 20, 20]  // page margin
     };
-    pdfMake.createPdf(documentDefinition).download(`${title}_team${teamId}_ProgressReport.pdf`);
+    pdfMake.createPdf(documentDefinition).download(`${title}_team${teamData.teamIdShow}_ProgressReport.pdf`);
   };
 
   useEffect(() => {
     getProjectDetail();
     getProgresstDetail();
     getFilteredTeam();
-    console.log("teamdata:",teamData);
+    // console.log("teamdata:",teamData);
     const timer = setTimeout(() => setShowCharts(true), 1000);
     return () => clearTimeout(timer);
   }, []);
