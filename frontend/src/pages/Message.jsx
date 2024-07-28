@@ -209,18 +209,16 @@ const Message = () => {
 
   // Handle leave channel
   const handleLeaveChannel = async () => {
-    const requestBody = {
-      channelId: parseInt(channelId),
-      userId: parseInt(userId),
-    };
-    console.log("requestBody:",requestBody);
-    const response = await apiCall('DELETE', 'v1/message/leave/channel', requestBody, token, true);
+    const response = await apiCall('DELETE', `v1/message/leave/channel/${channelId}/${userId}`, null, token, true);
     console.log("response:",response);
 
     if (response && !response.error) {
       setSnackbarContent('Left channel successfully');
       setAlertType('success');
       setAlertOpen(true);
+      setTimeout(() => {
+        window.location.reload();
+    }, 1500);
     } else {
       setSnackbarContent('Failed to leave channel');
       setAlertType('error');
