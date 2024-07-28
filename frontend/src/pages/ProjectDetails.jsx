@@ -15,7 +15,7 @@ import ListItemText from "@mui/material/ListItemText";
 
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
-import "../assets/scss/FullLayout.css"; //make sure import this
+import "../assets/scss/FullLayout.css";
 import { apiCall } from "../helper";
 
 const ProjectDetails = () => {
@@ -37,7 +37,6 @@ const ProjectDetails = () => {
   const getProjectDetail = async () => {
     try {
       const res = await apiCall("GET", `v1/project/detail/${projectId}`);
-      console.log(res);
       if (res === null) {
         return;
       }
@@ -70,7 +69,6 @@ const ProjectDetails = () => {
         "GET",
         `v1/project/team/allocated/${projectId}`
       );
-      // console.log(res);
       if (res === null) {
         setCurrentTeam([]);
         return;
@@ -135,6 +133,7 @@ const ProjectDetails = () => {
           </div>
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
+            {/* this card is used to show the project details */}
             <Card style={{ marginTop: "5%" }}>
               <CardTitle
                 tag="h5"
@@ -240,6 +239,7 @@ const ProjectDetails = () => {
           </Container>
         </div>
       </div>
+      {/* this dialog is used to show the project's allocated teams */}
       <Dialog open={open} onClose={handleClose}>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <DialogTitle style={{ paddingBottom: 2, marginRight: "15vw" }}>

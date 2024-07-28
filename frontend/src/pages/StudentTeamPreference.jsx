@@ -21,7 +21,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { Input } from "antd";
-import "../assets/scss/FullLayout.css"; //make sure import this
+import "../assets/scss/FullLayout.css";
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import { apiCall } from "../helper";
@@ -106,6 +106,7 @@ const ReasonField = ({ value, onChange, index }) => {
 };
 
 const StudentTeamPreference = () => {
+  // some states
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [alertType, setAlertType] = useState("error");

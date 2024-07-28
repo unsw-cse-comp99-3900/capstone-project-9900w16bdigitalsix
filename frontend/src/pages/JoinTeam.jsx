@@ -9,6 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import MessageAlert from "../components/MessageAlert";
 
 const JoinTeamDialog = ({ open, onClose, joinTeam }) => {
+  // some states
   const [teamIdShow, setTeamIdShow] = useState("");
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -22,6 +23,7 @@ const JoinTeamDialog = ({ open, onClose, joinTeam }) => {
     setShowError(false);
   };
 
+  // submit to join a team
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (teamIdShow === "") {
