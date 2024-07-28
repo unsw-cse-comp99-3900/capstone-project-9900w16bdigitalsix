@@ -13,7 +13,7 @@ import '../assets/scss/CustomCard.css'; // import CSS file
 import TeamFile from "../components/TeamFileDialog";
 import { Avatar } from 'antd';
 
-const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role, allocatedTeamsCount, maxTeams, showActions = true }) => {
+const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role, allocatedTeamsCount, maxTeams, showActions = true, showTeamsCount = false }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -98,7 +98,7 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
   return (
     <>
       <Card className="mb-4 custom-card">
-        {role !== 1 && (
+        {showTeamsCount && maxTeams > 0 && (
           <div 
             className="allocated-teams-count"
             style={{ color: getColor(allocatedTeamsCount, maxTeams) }}

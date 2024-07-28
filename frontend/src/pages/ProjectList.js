@@ -185,6 +185,7 @@ const ProjectList = () => {
                     allocatedTeamsCount={project.allocatedTeamsCount} 
                     maxTeams={project.maxTeams} // Pass maxTeams to CustomCard
                     showActions={true}
+                    showTeamsCount={true} // Show teams count for published projects
                   />
                 </Col>
               ))}
@@ -204,6 +205,7 @@ const ProjectList = () => {
                     maxTeams={project.maxTeams} // Pass maxTeams to CustomCard
                     role={role}
                     showActions={false}
+                    showTeamsCount={false} // Hide teams count for archived projects
                   />
                 </Col>
               ))}
