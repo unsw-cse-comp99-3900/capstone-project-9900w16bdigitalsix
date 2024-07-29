@@ -13,7 +13,7 @@ import {
   MDBBtn,
 } from "mdb-react-ui-kit";
 import { Button as MUIButton } from '@mui/material';
-import { Button, Flex, List, Input, Modal, Avatar } from 'antd';
+import { Button, Flex, List, Input, Modal, Avatar, notification } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { Outlet, useActionData } from "react-router-dom";
 import Sidebar from "../layouts/Sidebar";
@@ -239,13 +239,25 @@ const Message = () => {
 
   const handleKeyPress = async(event) => {
     if (event.key === 'Enter' && sendMessage.trim()) {
+      const response_member = await apiCall('GET', `v1/message/${channelId}/users/detail`, null, token, true);
+      let notification = {};
+      if (response_member && !response_member.error) {
+        const userIds = response_member.users
+        .map(user => parseInt(user.userId, 10))
+        .filter(id => id !== userId);
+        notification = {
+          content: `New Messages in channel: ${channelName}.`,
+          to: userIds
+        }
+      }
       const requestBody = {
         SenderId: parseInt(userId),
         channelId: parseInt(channelId),
         messageContent: sendMessage,
         messageType: 1,
+        notification: notification,
       };
-  
+      
       console.log("requestBody", requestBody);
       const response = await apiCall('POST', 'v1/message/send', requestBody, token, true);
       if (!response){
@@ -341,7 +353,7 @@ const Message = () => {
                       >
                         <GroupIcon />
                       </IconButton>
-                    {channelType !== 1 && (
+                    {parseInt(channelType) !== 1 && (
                       <div className="buttons">
                         
                         <Button 
