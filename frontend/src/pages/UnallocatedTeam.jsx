@@ -97,6 +97,35 @@ const FullLayout = () => {
     navigate(-1);
   };
 
+  const getCouseChangeData = async (course) => {
+    let fetcUrl = "";
+    if (team) {
+      fetcUrl = `v1/team/get/unallocated/list/${course}`;
+      if (!course) {
+        fetcUrl = `v1/team/get/unallocated/list`;
+      }
+    } else {
+      fetcUrl = `v1/team/get/unallocated/list/${course}`;
+      if (!course) {
+        fetcUrl = `v1/team/get/unallocated/list`;
+      }
+    }
+    const res = await apiCall("GET", fetcUrl);
+    console.log(res);
+    if (res) {
+      setData(res);
+    } else {
+      setData([]);
+    }
+  }
+  
+
+  const changeSelectData = async (value)=>{
+    setCourse(value)
+    setSearchTerm("")
+    await getCouseChangeData(value)
+  }
+
   
 
   return (
@@ -140,7 +169,7 @@ const FullLayout = () => {
                     id="course"
                     value={course}
                     label="Course"
-                    onChange={e => setCourse(e.target.value)}
+                    onChange={e => changeSelectData(e.target.value)}
                   >
                     <MenuItem value="">Back</MenuItem>
                     <MenuItem value="COMP9900">COMP9900</MenuItem>
