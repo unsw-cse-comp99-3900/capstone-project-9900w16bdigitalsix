@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Logo = () => {
   return (
-    <Link to="/">
+    <Link to="/project/allproject">
       {/* <LogoDark /> */}
       <img src={capstone} alt="logo" style={{ width: '80%', height: '80%' }}/>
     </Link>
