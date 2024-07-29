@@ -40,6 +40,7 @@ const GenerateProgressReport = () => {
   const [description, setDiscription] = useState("");
   const [specLink, setSpecLink] = useState("");
   const [sprints, setSprints] = useState([]);
+  const [teamData, setTeamData] = useState(null);
   // data initialliate for sprint data(into two groups) to chart
   const [sprintData, setSprintData] = useState({
     labels: [],
@@ -89,7 +90,6 @@ const GenerateProgressReport = () => {
   const getProjectDetail = async () => {
     try {
       const res = await apiCall("GET", `v1/project/detail/${projectId}`);
-      console.log(res);
       if (res === null) {
         return;
       }
@@ -117,7 +117,6 @@ const GenerateProgressReport = () => {
     try {
       const data = await apiCall('GET', `v1/progress/get/detail/${teamId}`);
       setSprints(data.sprints);
-      console.log("sprint data:", data.sprints);
       updateChartData(data.sprints);
       updatePieChartData(data.sprints);
       updateLineChartData(data.sprints);
@@ -125,6 +124,18 @@ const GenerateProgressReport = () => {
       console.error('Failed to fetch data:', error);
     }
   };
+
+  // get team information
+  const getFilteredTeam = async () => {
+    try {
+        const data = await apiCall('GET', `v1/project/team/allocated/${projectId}`);
+        const teamIdDecimal = parseInt(teamId, 10); 
+        const filteredTeam = data.find(team => team.teamId === teamIdDecimal);
+        setTeamData(filteredTeam);
+    } catch (error) {
+        console.error('Error fetching team data:', error);
+    }
+}
 
   // form for userstory status
   const userstoryStatus = (status) => {
@@ -166,7 +177,7 @@ const GenerateProgressReport = () => {
     for (let canvas of canvasArray) {
       const image = await html2canvas(canvas, { scale: 1.1 });
       const dataURL = image.toDataURL();
-      canvas.parentNode.insertAdjacentHTML('afterend', `<img src="${dataURL}" style="width: 100%; height: auto;" />`);
+      canvas.parentNode.insertAdjacentHTML('afterend', `<img src="${dataURL}" style="width: 100%; max-width: 700px;height: auto;" />`);
       canvas.remove();
     }
   
@@ -177,12 +188,14 @@ const GenerateProgressReport = () => {
       pageSize: 'A4',
       pageMargins: [20, 20, 20, 20]  // page margin
     };
-    pdfMake.createPdf(documentDefinition).download(`${title}ProgressReport.pdf`);
+    pdfMake.createPdf(documentDefinition).download(`${title}_team${teamData.teamIdShow}_ProgressReport.pdf`);
   };
 
   useEffect(() => {
     getProjectDetail();
     getProgresstDetail();
+    getFilteredTeam();
+    // console.log("teamdata:",teamData);
     const timer = setTimeout(() => setShowCharts(true), 1000);
     return () => clearTimeout(timer);
   }, []);
@@ -469,6 +482,20 @@ const pieOptions = {
                               Client: {clientName} - <span class="light-text">{clientEmail}</span><br />
                               Tutor: {tutorName} - <span class="light-text">{tutorEmail}</span><br />
                               Coordinator: {coorName} - <span class="light-text">{coorEmail}</span><br />
+                              {teamData ? (
+                                <div>
+                                    Team Name: {teamData.teamName}<br />
+                                    Team ID: {teamData.teamIdShow}<br />
+                                    Team Members:<br />
+                                    <div style={{ lineHeight: '1.5' }}>
+                                        {teamData.teamMember.map((member, index) => (
+                                            <p key={index} style={{ margin: 0 }}>{member.userName}</p>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <p>No team data...</p>
+                            )}
                               <a href={specLink} target="_blank" rel="noopener noreferrer">Click here to view project specification document</a>
                             </CardText>
                           </Col>

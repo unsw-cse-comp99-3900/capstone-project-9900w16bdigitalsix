@@ -31,7 +31,7 @@ import ChatPersonalCard from '../components/ChatPersonalCard';
 import MessageText from '../components/MessageText';
 import MessageCard from '../components/MessageCard';
 import apiCall from '../helper';
-import AllChannelsModal from '../components/AllChannelModal';
+import AllChannelModal from '../components/AllChannelModal';
 import MessageAlert from '../components/MessageAlert';
 
 const Message = () => {
@@ -156,6 +156,9 @@ const Message = () => {
         setAllChannelData([]);
       } else {
         setAllChannelData(response.channels ?  response.channels : []);
+        // console.log("all channel data:",response);
+        // console.log("channelid:",channelId);
+        
       }
   }
 
@@ -206,18 +209,16 @@ const Message = () => {
 
   // Handle leave channel
   const handleLeaveChannel = async () => {
-    const requestBody = {
-      channelId: parseInt(channelId),
-      userId: parseInt(userId),
-    };
-    console.log("requestBody:",requestBody);
-    const response = await apiCall('DELETE', 'v1/message/leave/channel', requestBody, token, true);
+    const response = await apiCall('DELETE', `v1/message/leave/channel/${channelId}/${userId}`, null, token, true);
     console.log("response:",response);
 
     if (response && !response.error) {
       setSnackbarContent('Left channel successfully');
       setAlertType('success');
       setAlertOpen(true);
+      setTimeout(() => {
+        window.location.reload();
+    }, 1500);
     } else {
       setSnackbarContent('Failed to leave channel');
       setAlertType('error');
@@ -430,6 +431,9 @@ const Message = () => {
         channelId={channelId}
         cardType={cardType}
         setChannelId={setChannelId}
+        channelName={channelName}
+        setChannelName={setChannelName}
+        loadChannelData={loadChannelData}
       >
       </ChatPersonalCard>
 
@@ -445,7 +449,7 @@ const Message = () => {
       </ChatAllMemberCard>
 
       {/* show all channels */}
-      <AllChannelsModal
+      <AllChannelModal
         visible={isAllChannelVisible}
         onOk={handleAllChannelOk}
         onCancel={handleAllChannelCancel}
@@ -458,7 +462,7 @@ const Message = () => {
         setChannelName={setChannelName}
         data={allChannelData}
       >
-      </AllChannelsModal>
+      </AllChannelModal>
 
       <MessageAlert
                 open={alertOpen}
