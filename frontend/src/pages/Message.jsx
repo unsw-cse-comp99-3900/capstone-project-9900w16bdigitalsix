@@ -445,6 +445,7 @@ const Message = () => {
         setChannelId={setChannelId}
         channelName={channelName}
         setChannelName={setChannelName}
+        setChannelType={setChannelType}
         loadChannelData={loadChannelData}
       >
       </ChatPersonalCard>
