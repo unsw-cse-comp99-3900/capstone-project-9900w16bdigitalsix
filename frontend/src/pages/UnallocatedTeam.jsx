@@ -12,8 +12,6 @@ import { Chip, Box } from '@mui/material';
 import Typography from "@mui/material/Typography";
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
-
-
 const FullLayout = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
