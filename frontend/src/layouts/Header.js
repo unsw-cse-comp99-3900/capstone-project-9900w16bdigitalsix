@@ -47,8 +47,8 @@ const Header = () => {
   const [snackbarContent, setSnackbarContent] = useState('');
   const [notificationCount, setNotificationCount] = useState(0);
 
-  const role = localStorage.getItem('role');
-  const handleAlertClose = () => {
+  const role = localStorage.getItem('role')?localStorage.getItem('role'):1;
+const handleAlertClose = () => {
     setAlertOpen(false);
   };
 

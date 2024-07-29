@@ -63,8 +63,11 @@ export default function TeamTutor() {
   }, [mountedRef]);
 
   const changeList = () => {
+    setCourse("")
+    setSearchTerm("")
     setData([]);
     setTeam(!team);
+
   };
 
   const seachList = () => {
@@ -113,12 +116,41 @@ export default function TeamTutor() {
   };
 
   const navigateToUnallocatedTeams = () => {
-    navigate("/team/unallocated"); // Replace with the actual path
+    navigate("/team/unallocated"); 
   };
   const handleClearSearch = () => {
     setSearchTerm('');
     loadMoreData();
   };
+
+  const getCouseChangeData = async (course)=>{
+ 
+    let   fetcUrl = ""
+    if (team){
+      fetcUrl = `v1/team/get/list/${course}`
+      if (!course){
+        fetcUrl = `v1/team/get/list`
+      }
+    }else{
+      fetcUrl = `v1/student/unassigned/list/${course}`
+      if (!course){
+        fetcUrl = `v1/student/unassigned/list`
+      }
+    }
+    const res = await apiCall("GET",fetcUrl)
+    console.log(res)
+    if (res){
+      setData(res)
+    }else{
+      setData([])
+    }
+  }
+
+  const changeSelectData = async (value)=>{
+    setCourse(value)
+    setSearchTerm("")
+    await getCouseChangeData(value)
+  }
 
 
   return (
@@ -162,7 +194,7 @@ export default function TeamTutor() {
                       id="course"
                       value={course}
                       label="Course"
-                      onChange={e => setCourse(e.target.value)}
+                      onChange={e => changeSelectData(e.target.value)}
                     >
                       <MenuItem value="">Back</MenuItem>
                       <MenuItem value="COMP9900">COMP9900</MenuItem>
