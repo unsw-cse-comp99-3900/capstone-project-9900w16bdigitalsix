@@ -392,9 +392,8 @@ const VirtualDataReport = () => {
                 {renderFilterDropdown('coorName', setCoorFilter)}
               </th>
             )}
-            <th>Team Allocation</th>
             <th>Allocate Team</th>
-            
+            <th>Team Allocation</th>
           </tr>
         </thead>
         <tbody>
