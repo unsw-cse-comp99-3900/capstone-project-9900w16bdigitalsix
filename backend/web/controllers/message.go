@@ -22,7 +22,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param CreateChannelForm body forms.CreateChannelForm true "create channel form"
-// @Success 200 {object} map[string]string "{"channelID": "string", "msg":"create channel successfully"}" or "{"channelID": "string", "msg": "private chat channel already exists"}"
+// @Success 200 {object} map[string]string "{"channelID": "string", "channelName": "string", "channelType":1, "msg":"create channel successfully"}" or "{"channelID": "string", "channelName":"string", "channelType":1, "msg": "private chat channel already exists"}"
 // @Failure 400 {object} map[string]string "{"error": "bad request"}"
 // @Failure 409 {object} map[string]string "{"error": "private chat channel already exists"}"
 // @Failure 500 {object} map[string]string "{"error": "Internal server error"}"
@@ -44,7 +44,12 @@ func CreateChannel(c *gin.Context) {
 			Where("cu1.user_id = ? AND cu2.user_id = ? AND channels.type = ?", form.UserIds[0], form.UserIds[1], form.ChannelType).
 			First(&existingChannel).Error
 		if err == nil {
-			c.JSON(http.StatusOK, gin.H{"channelID": existingChannel.ID, "msg": "private chat channel already exists"})
+			c.JSON(http.StatusOK, gin.H{
+				"channelID": existingChannel.ID, 
+				"channelType": form.ChannelType,
+				"channelName":existingChannel.Name,
+				"msg": "private chat channel already exists",
+			})
 			return
 		}
 		if err != gorm.ErrRecordNotFound {
@@ -82,6 +87,8 @@ func CreateChannel(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"channelID": channel.ID,
+		"channelName": channelName,
+		"channelType": form.ChannelType,
 		"msg":       "Create channel successfully",
 	})
 }

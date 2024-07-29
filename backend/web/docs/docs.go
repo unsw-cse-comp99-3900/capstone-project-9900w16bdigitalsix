@@ -581,7 +581,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"channelID\": \"string\", \"msg\":\"create channel successfully\"}\" or \"{\"channelID\": \"string\", \"msg\": \"private chat channel already exists\"}",
+                        "description": "{\"channelID\": \"string\", \"channelName\": \"string\", \"channelType\":1, \"msg\":\"create channel successfully\"}\" or \"{\"channelID\": \"string\", \"channelName\":\"string\", \"channelType\":1, \"msg\": \"private chat channel already exists\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
