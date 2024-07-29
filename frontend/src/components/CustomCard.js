@@ -42,6 +42,7 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
 
   const handleClose = () => {
     setOpen(false);
+    navigate(0)
   };
 
   const handleDelete = async () => {

@@ -47,8 +47,8 @@ const Header = () => {
   const [snackbarContent, setSnackbarContent] = useState('');
   const [notificationCount, setNotificationCount] = useState(0);
 
-  const role = localStorage.getItem('role');
-  const handleAlertClose = () => {
+  const role = localStorage.getItem('role')?localStorage.getItem('role'):1;
+const handleAlertClose = () => {
     setAlertOpen(false);
   };
 
@@ -116,7 +116,7 @@ const Header = () => {
   return (
     <Navbar color="primary" dark expand="md" className="bg-gradient">
       <div className="d-flex align-items-center">
-        <NavbarBrand href="/" className="d-lg-none">
+        <NavbarBrand href="/project/allproject" className="d-lg-none">
           {/* <LogoWhite /> */}
           <img src={cap} alt="small_logo" style={{ width: '30px', height: '30px' }}/>
         </NavbarBrand>

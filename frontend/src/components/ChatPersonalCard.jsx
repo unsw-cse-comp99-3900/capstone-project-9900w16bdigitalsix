@@ -23,7 +23,7 @@ const roleColorMap = {
   5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
 };
 
-const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, cardType, setChannelId }) => {
+const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, cardType, setChannelId, channelName, setChannelName, setChannelType }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
@@ -106,8 +106,9 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, car
       console.log("requestBody:",requestBody);
       const response = await apiCall('POST', 'v1/message/create/channel', requestBody, token, true);
       if (response && !response.error) {
-        console.log("response:",response);
-        setChannelId(response.channelID)
+        setChannelId(response.channelID);
+        setChannelName(response.channelName);
+        setChannelType(response.channelType);
         setSnackbarContent('Operation successful');
         setAlertType('success');
         setAlertOpen(true);

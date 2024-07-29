@@ -172,7 +172,13 @@ const TeamProfile = ({
         >
           <Grid item xs={10}>
             <Item>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "-60px",
+                }}
+              >
                 <Grid item xs={6}>
                   <Item style={{ textAlign: "left" }}>
                     {editable ? (
@@ -195,7 +201,7 @@ const TeamProfile = ({
                   </Item>
                   <Item style={{ textAlign: "left" }}>
                     <Typography variant="h6" gutterBottom color="grey">
-                      Team Id: {teamIdShow}
+                      Team Id: {teamIdShow} <br />
                     </Typography>{" "}
                     <Typography variant="h6" gutterBottom color="grey">
                       Course: {course}

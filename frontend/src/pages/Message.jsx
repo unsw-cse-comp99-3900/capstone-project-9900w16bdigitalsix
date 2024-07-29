@@ -13,7 +13,7 @@ import {
   MDBBtn,
 } from "mdb-react-ui-kit";
 import { Button as MUIButton } from '@mui/material';
-import { Button, Flex, List, Input, Modal, Avatar } from 'antd';
+import { Button, Flex, List, Input, Modal, Avatar, notification } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { Outlet, useActionData } from "react-router-dom";
 import Sidebar from "../layouts/Sidebar";
@@ -31,7 +31,7 @@ import ChatPersonalCard from '../components/ChatPersonalCard';
 import MessageText from '../components/MessageText';
 import MessageCard from '../components/MessageCard';
 import apiCall from '../helper';
-import AllChannelsModal from '../components/AllChannelModal';
+import AllChannelModal from '../components/AllChannelModal';
 import MessageAlert from '../components/MessageAlert';
 
 const Message = () => {
@@ -156,6 +156,9 @@ const Message = () => {
         setAllChannelData([]);
       } else {
         setAllChannelData(response.channels ?  response.channels : []);
+        // console.log("all channel data:",response);
+        // console.log("channelid:",channelId);
+        
       }
   }
 
@@ -206,18 +209,16 @@ const Message = () => {
 
   // Handle leave channel
   const handleLeaveChannel = async () => {
-    const requestBody = {
-      channelId: parseInt(channelId),
-      userId: parseInt(userId),
-    };
-    console.log("requestBody:",requestBody);
-    const response = await apiCall('DELETE', 'v1/message/leave/channel', requestBody, token, true);
+    const response = await apiCall('DELETE', `v1/message/leave/channel/${channelId}/${userId}`, null, token, true);
     console.log("response:",response);
 
     if (response && !response.error) {
       setSnackbarContent('Left channel successfully');
       setAlertType('success');
       setAlertOpen(true);
+      setTimeout(() => {
+        window.location.reload();
+    }, 1500);
     } else {
       setSnackbarContent('Failed to leave channel');
       setAlertType('error');
@@ -238,13 +239,25 @@ const Message = () => {
 
   const handleKeyPress = async(event) => {
     if (event.key === 'Enter' && sendMessage.trim()) {
+      const response_member = await apiCall('GET', `v1/message/${channelId}/users/detail`, null, token, true);
+      let notification = {};
+      if (response_member && !response_member.error) {
+        const userIds = response_member.users
+        .map(user => parseInt(user.userId, 10))
+        .filter(id => id !== userId);
+        notification = {
+          content: `New Messages in channel: ${channelName}.`,
+          to: userIds
+        }
+      }
       const requestBody = {
         SenderId: parseInt(userId),
         channelId: parseInt(channelId),
         messageContent: sendMessage,
         messageType: 1,
+        notification: notification,
       };
-  
+      
       console.log("requestBody", requestBody);
       const response = await apiCall('POST', 'v1/message/send', requestBody, token, true);
       if (!response){
@@ -340,7 +353,7 @@ const Message = () => {
                       >
                         <GroupIcon />
                       </IconButton>
-                    {channelType !== 1 && (
+                    {parseInt(channelType) !== 1 && (
                       <div className="buttons">
                         
                         <Button 
@@ -430,6 +443,10 @@ const Message = () => {
         channelId={channelId}
         cardType={cardType}
         setChannelId={setChannelId}
+        channelName={channelName}
+        setChannelName={setChannelName}
+        setChannelType={setChannelType}
+        loadChannelData={loadChannelData}
       >
       </ChatPersonalCard>
 
@@ -445,7 +462,7 @@ const Message = () => {
       </ChatAllMemberCard>
 
       {/* show all channels */}
-      <AllChannelsModal
+      <AllChannelModal
         visible={isAllChannelVisible}
         onOk={handleAllChannelOk}
         onCancel={handleAllChannelCancel}
@@ -458,7 +475,7 @@ const Message = () => {
         setChannelName={setChannelName}
         data={allChannelData}
       >
-      </AllChannelsModal>
+      </AllChannelModal>
 
       <MessageAlert
                 open={alertOpen}
