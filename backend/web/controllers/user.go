@@ -728,8 +728,8 @@ func GetAllUsersInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, userResponses)
 }
 
-// @Summary Get all students have the same course
-// @Description Get all students have the same course with user
+// @Summary Get all students have the same course doesn't join the team
+// @Description Get all students who have the same course as the user and are not in any team
 // @Tags Student
 // @Accept  json
 // @Produce  json
@@ -747,7 +747,7 @@ func GetAllSameCourseStudents(c *gin.Context) {
 	}
 
 	var students []models.User
-	if err := global.DB.Where("role = ? AND course = ?", 1, user.Course).Preload("Skills").Find(&students).Error; err != nil {
+	if err := global.DB.Where("role = ? AND course = ? AND belongs_to_group IS NULL", 1, user.Course).Preload("Skills").Find(&students).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch students"})
 		return
 	}
@@ -811,4 +811,3 @@ func GetAllUnassignedStudentsByCourse(c *gin.Context) {
 
 	c.JSON(http.StatusOK, userResponses)
 }
-

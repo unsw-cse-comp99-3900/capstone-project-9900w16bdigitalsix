@@ -145,6 +145,18 @@ definitions:
     - content
     - to
     type: object
+  forms.Notification2:
+    properties:
+      content:
+        type: string
+      to:
+        items:
+          type: integer
+        type: array
+    required:
+    - content
+    - to
+    type: object
   forms.NotificationTo:
     properties:
       users:
@@ -283,11 +295,14 @@ definitions:
       messageContent: {}
       messageType:
         type: integer
+      notification:
+        $ref: '#/definitions/forms.Notification2'
     required:
     - SenderId
     - channelId
     - messageContent
     - messageType
+    - notification
     type: object
   forms.TeamNotification:
     properties:
@@ -803,6 +818,29 @@ definitions:
         type: integer
       teamMember:
         items:
+          $ref: '#/definitions/response.TeamMember3'
+        type: array
+      teamName:
+        type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.TeamDetailResponse2:
+    properties:
+      course:
+        type: string
+      preferenceNum:
+        type: integer
+      preferenceReason:
+        type: string
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamMember:
+        items:
           $ref: '#/definitions/response.ProjectTeamMember'
         type: array
       teamName:
@@ -849,6 +887,17 @@ definitions:
       avatarURL:
         type: string
       email:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+    type: object
+  response.TeamMember3:
+    properties:
+      avatarURL:
+        type: string
+      userEmail:
         type: string
       userId:
         type: integer
@@ -1477,7 +1526,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 'send a message in a specified channel if messageType == 2,  messageContent
+      description: 'send a message in a specified channel if messageType == 2, messageContent
         is the format of {"name": "string", "email": "string"}'
       parameters:
       - description: send message form
@@ -1873,7 +1922,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.TeamDetailResponse'
+            $ref: '#/definitions/response.TeamDetailResponse2'
         "404":
           description: '{"error": "Project not found"}" or "{"error": "Team not found"}'
           schema:
@@ -2029,7 +2078,7 @@ paths:
     get:
       description: get project detail by projectID
       parameters:
-      - description: 项目ID
+      - description: Project ID
         in: path
         name: projectId
         required: true
@@ -2133,7 +2182,7 @@ paths:
       - Project
   /v1/project/get/public_project/list:
     get:
-      description: is_public 字段 1表示 public， 2 表示未公开, 这里返回的公开的 project 信息
+      description: is_public field 1 represent public， 2 represent archived
       produces:
       - application/json
       responses:
@@ -3389,7 +3438,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all students have the same course with user
+      description: Get all students who have the same course as the user and are not
+        in any team
       parameters:
       - description: User ID
         in: path
@@ -3411,7 +3461,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Get all students have the same course
+      summary: Get all students have the same course doesn't join the team
       tags:
       - Student
   /v1/user/student/list:

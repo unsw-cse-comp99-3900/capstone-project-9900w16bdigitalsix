@@ -148,7 +148,7 @@ func CreateProject(c *gin.Context) {
 
 // GetProjectList godoc
 // @Summary Get pubilic project list
-// @Description is_public 字段 1表示 public， 2 表示未公开, 这里返回的公开的 project 信息
+// @Description is_public field 1 represent public， 2 represent archived
 // @Tags Project
 // @Produce json
 // @Success 200 {array} response.GetProjectListResponse
@@ -210,7 +210,7 @@ func GetProjectList(c *gin.Context) {
 // @Description get project detail by projectID
 // @Tags Project
 // @Produce json
-// @Param projectId path uint true "项目ID"
+// @Param projectId path uint true "Project ID"
 // @Success 200 {object} response.ProjectDetailResponse
 // @Failure 404 {object} map[string]string "{"error": "Project not found"}"
 // @Failure 500 {object} map[string]string "{"error": "Internal Server Error"}"
@@ -536,11 +536,12 @@ func GetPreferencedByTeamsDetail(c *gin.Context) {
 
 		// 检查团队是否没有被分配项目
 		if team.AllocatedProject == nil {
-			var members []response.ProjectTeamMember
+			var members []response.TeamMember3
 			for _, member := range team.Members {
-				members = append(members, response.ProjectTeamMember{
+				members = append(members, response.TeamMember3{
 					UserID:    member.ID,
 					UserName:  member.Username,
+					UserEmail: member.Email,
 					AvatarURL: member.AvatarURL,
 				})
 			}
@@ -577,7 +578,7 @@ func GetPreferencedByTeamsDetail(c *gin.Context) {
 // @Produce json
 // @Param projectId path int true "Project ID"
 // @Param teamId path int true "Team ID"
-// @Success 200 {object} response.TeamDetailResponse
+// @Success 200 {object} response.TeamDetailResponse2
 // @Failure 404 {object} map[string]string "{"error": "Project not found"}" or "{"error": "Team not found"}"
 // @Router /v1/project/{projectId}/preferencedBy/{teamId}/detail [get]
 func GetProjectPreferencedByTeamDetail(c *gin.Context) {
@@ -623,7 +624,7 @@ func GetProjectPreferencedByTeamDetail(c *gin.Context) {
 		skills = append(skills, skill.SkillName)
 	}
 
-	response := response.TeamDetailResponse{
+	response := response.TeamDetailResponse2{
 		TeamID:           team.ID,
 		TeamIdShow:       team.TeamIdShow,
 		TeamName:         team.Name,

@@ -313,7 +313,7 @@ func GetChannelUsersDetail(c *gin.Context) {
 
 // SendMessage Send message in channel
 // @Summary send message in channel
-// @Description send a message in a specified channel if messageType == 2,  messageContent is the format of {"name": "string", "email": "string"}
+// @Description send a message in a specified channel if messageType == 2, messageContent is the format of {"name": "string", "email": "string"}
 // @Tags Message
 // @Accept json
 // @Produce json
@@ -365,6 +365,27 @@ func SendMessage(c *gin.Context) {
 	if err := db.Create(&message).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Create notification
+	notification := models.Notification{
+		Content: form.Notification.Content,
+	}
+	if err := db.Create(&notification).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Associate notification with users
+	for _, userID := range form.Notification.To {
+		userNotification := models.UserNotifications{
+			UserID:         userID,
+			NotificationID: notification.ID,
+		}
+		if err := db.Create(&userNotification).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{"msg": "message sent successfully"})

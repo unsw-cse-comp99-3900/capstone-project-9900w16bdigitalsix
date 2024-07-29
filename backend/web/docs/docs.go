@@ -795,7 +795,7 @@ const docTemplate = `{
         },
         "/v1/message/send": {
             "post": {
-                "description": "send a message in a specified channel if messageType == 2,  messageContent is the format of {\"name\": \"string\", \"email\": \"string\"}",
+                "description": "send a message in a specified channel if messageType == 2, messageContent is the format of {\"name\": \"string\", \"email\": \"string\"}",
                 "consumes": [
                     "application/json"
                 ],
@@ -1639,7 +1639,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "项目ID",
+                        "description": "Project ID",
                         "name": "projectId",
                         "in": "path",
                         "required": true
@@ -1781,7 +1781,7 @@ const docTemplate = `{
         },
         "/v1/project/get/public_project/list": {
             "get": {
-                "description": "is_public 字段 1表示 public， 2 表示未公开, 这里返回的公开的 project 信息",
+                "description": "is_public field 1 represent public， 2 represent archived",
                 "produces": [
                     "application/json"
                 ],
@@ -2061,7 +2061,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.TeamDetailResponse"
+                            "$ref": "#/definitions/response.TeamDetailResponse2"
                         }
                     },
                     "404": {
@@ -3701,7 +3701,7 @@ const docTemplate = `{
         },
         "/v1/user/same/course/student/list/{userId}": {
             "get": {
-                "description": "Get all students have the same course with user",
+                "description": "Get all students who have the same course as the user and are not in any team",
                 "consumes": [
                     "application/json"
                 ],
@@ -3711,7 +3711,7 @@ const docTemplate = `{
                 "tags": [
                     "Student"
                 ],
-                "summary": "Get all students have the same course",
+                "summary": "Get all students have the same course doesn't join the team",
                 "parameters": [
                     {
                         "type": "integer",
@@ -3996,6 +3996,24 @@ const docTemplate = `{
                 }
             }
         },
+        "forms.Notification2": {
+            "type": "object",
+            "required": [
+                "content",
+                "to"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "forms.NotificationTo": {
             "type": "object",
             "required": [
@@ -4195,7 +4213,8 @@ const docTemplate = `{
                 "SenderId",
                 "channelId",
                 "messageContent",
-                "messageType"
+                "messageType",
+                "notification"
             ],
             "properties": {
                 "SenderId": {
@@ -4207,6 +4226,9 @@ const docTemplate = `{
                 "messageContent": {},
                 "messageType": {
                     "type": "integer"
+                },
+                "notification": {
+                    "$ref": "#/definitions/forms.Notification2"
                 }
             }
         },
@@ -4994,6 +5016,41 @@ const docTemplate = `{
                 "teamMember": {
                     "type": "array",
                     "items": {
+                        "$ref": "#/definitions/response.TeamMember3"
+                    }
+                },
+                "teamName": {
+                    "type": "string"
+                },
+                "teamSkills": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "response.TeamDetailResponse2": {
+            "type": "object",
+            "properties": {
+                "course": {
+                    "type": "string"
+                },
+                "preferenceNum": {
+                    "type": "integer"
+                },
+                "preferenceReason": {
+                    "type": "string"
+                },
+                "teamId": {
+                    "type": "integer"
+                },
+                "teamIdShow": {
+                    "type": "integer"
+                },
+                "teamMember": {
+                    "type": "array",
+                    "items": {
                         "$ref": "#/definitions/response.ProjectTeamMember"
                     }
                 },
@@ -5064,6 +5121,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "email": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "userName": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.TeamMember3": {
+            "type": "object",
+            "properties": {
+                "avatarURL": {
+                    "type": "string"
+                },
+                "userEmail": {
                     "type": "string"
                 },
                 "userId": {

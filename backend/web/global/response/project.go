@@ -77,3 +77,14 @@ type TeamDetailResponse struct {
 	PreferenceReason string        `json:"preferenceReason"`
 	PreferenceNum    int           `json:"preferenceNum"`
 }
+
+type TeamDetailResponse2 struct {
+	TeamID           uint          `json:"teamId"`
+	TeamIdShow       uint          `json:"teamIdShow"`
+	TeamName         string        `json:"teamName"`
+	Course           string        `json:"course"`
+	TeamMember       []ProjectTeamMember `json:"teamMember"`
+	TeamSkills       []string      `json:"teamSkills"`
+	PreferenceReason string        `json:"preferenceReason"`
+	PreferenceNum    int           `json:"preferenceNum"`
+}
