@@ -9,7 +9,7 @@ import MessageAlert from './MessageAlert';
 
 const { Option } = Select;
 
-const PersonalCard = ({ visible, onOk, onCancel, refreshData, channelId }) => {
+const PersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, channelName }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
@@ -70,7 +70,18 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData, channelId }) => {
       setAlertOpen(true);
       return;
     }
-  
+
+    const response_member = await apiCall('GET', `v1/message/${channelId}/users/detail`, null, token, true);
+    let notification = {};
+    if (response_member && !response_member.error) {
+      const userIds = response_member.users
+      .map(user => parseInt(user.userId, 10))
+      .filter(id => id !== userId);
+      notification = {
+        content: `New Messages in channel: ${channelName}.`,
+        to: userIds
+      }
+    }
     const requestBody = {
       SenderId: userId,
       channelId: channelId,
@@ -79,6 +90,7 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData, channelId }) => {
         email: selectedEmail,
       },
       messageType: 2,
+      notification: notification,
     };
 
     console.log("requestBody", requestBody);

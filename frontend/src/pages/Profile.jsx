@@ -122,7 +122,8 @@ const Profile = (props) => {
                         organization: organization,
                         role: roleReverseMap[role],
                         skills: skills,
-                        userId: parseInt(userId, 10)
+                        userId: parseInt(userId, 10),
+                        course: course,
                     }
                 };
     
