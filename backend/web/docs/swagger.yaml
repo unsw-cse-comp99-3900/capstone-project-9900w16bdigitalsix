@@ -1,0 +1,3492 @@
+definitions:
+  forms.ChangePasswordForm:
+    properties:
+      email:
+        type: string
+      new_password:
+        type: string
+      old_password:
+        type: string
+    required:
+    - email
+    - new_password
+    - old_password
+    type: object
+  forms.ChangeProjectCoordinatorRequest:
+    properties:
+      coorId:
+        type: integer
+      notification:
+        $ref: '#/definitions/forms.Notification'
+      projectId:
+        type: integer
+    required:
+    - coorId
+    - notification
+    - projectId
+    type: object
+  forms.ChangeProjectTutorRequest:
+    properties:
+      notification:
+        $ref: '#/definitions/forms.Notification'
+      projectId:
+        type: integer
+      tutorId:
+        type: integer
+    required:
+    - notification
+    - projectId
+    - tutorId
+    type: object
+  forms.CreateChannelForm:
+    properties:
+      channelType:
+        type: integer
+      userId:
+        items:
+          type: integer
+        type: array
+    required:
+    - channelType
+    - userId
+    type: object
+  forms.CreateTeamForm:
+    properties:
+      user_id:
+        type: integer
+    required:
+    - user_id
+    type: object
+  forms.EditGradeReq:
+    properties:
+      notification:
+        $ref: '#/definitions/forms.TeamNotification'
+      sprints:
+        items:
+          $ref: '#/definitions/forms.EditSprintGrade'
+        type: array
+      teamId:
+        type: integer
+    required:
+    - sprints
+    - teamId
+    type: object
+  forms.EditSprintDateReq:
+    properties:
+      endDate:
+        type: string
+      sprintNum:
+        type: integer
+      startDate:
+        type: string
+      teamId:
+        type: integer
+    required:
+    - endDate
+    - sprintNum
+    - startDate
+    - teamId
+    type: object
+  forms.EditSprintGrade:
+    properties:
+      comment:
+        type: string
+      grade:
+        type: integer
+      sprintNum:
+        type: integer
+    required:
+    - comment
+    - grade
+    - sprintNum
+    type: object
+  forms.InviteToChannelForm:
+    properties:
+      channelId:
+        type: integer
+      userId:
+        items:
+          type: integer
+        type: array
+    required:
+    - channelId
+    - userId
+    type: object
+  forms.JoinTeamForm:
+    properties:
+      teamIdShow:
+        type: integer
+      userId:
+        type: integer
+    required:
+    - teamIdShow
+    - userId
+    type: object
+  forms.ModifyUserRoleRequest:
+    properties:
+      notification:
+        $ref: '#/definitions/forms.Notification'
+      role:
+        type: integer
+      userId:
+        type: integer
+    required:
+    - notification
+    - role
+    - userId
+    type: object
+  forms.Notification:
+    properties:
+      content:
+        type: string
+      to:
+        $ref: '#/definitions/forms.NotificationTo'
+    required:
+    - content
+    - to
+    type: object
+  forms.Notification2:
+    properties:
+      content:
+        type: string
+      to:
+        items:
+          type: integer
+        type: array
+    required:
+    - content
+    - to
+    type: object
+  forms.NotificationTo:
+    properties:
+      users:
+        items:
+          type: integer
+        type: array
+    required:
+    - users
+    type: object
+  forms.NotificationToTeam:
+    properties:
+      teamId:
+        type: integer
+    required:
+    - teamId
+    type: object
+  forms.PasswordLoginForm:
+    properties:
+      email:
+        type: string
+      password:
+        maxLength: 20
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  forms.PreferenceRequest:
+    properties:
+      projectId:
+        type: integer
+      reason:
+        type: string
+    required:
+    - projectId
+    type: object
+  forms.Profile:
+    properties:
+      avatarBase64:
+        type: string
+      bio:
+        type: string
+      course:
+        type: string
+      field:
+        type: string
+      name:
+        type: string
+      organization:
+        type: string
+      role:
+        type: integer
+      skills:
+        items:
+          type: string
+        type: array
+      userId:
+        type: integer
+    type: object
+  forms.ProfileRequest:
+    properties:
+      profile:
+        $ref: '#/definitions/forms.Profile'
+    required:
+    - profile
+    type: object
+  forms.RegisterForm:
+    properties:
+      course:
+        type: string
+      email:
+        type: string
+      password:
+        maxLength: 20
+        minLength: 3
+        type: string
+      password_confirm:
+        type: string
+      username:
+        type: string
+    required:
+    - course
+    - email
+    - password
+    - password_confirm
+    - username
+    type: object
+  forms.ResetPasswordForm:
+    properties:
+      new_password:
+        type: string
+      new_password_confirm:
+        type: string
+      token:
+        type: string
+    required:
+    - new_password
+    - new_password_confirm
+    - token
+    type: object
+  forms.SearchTeamRequest:
+    properties:
+      projectId:
+        type: integer
+      searchList:
+        items:
+          type: string
+        type: array
+    required:
+    - projectId
+    - searchList
+    type: object
+  forms.SearchUnallocatedTeamRequest:
+    properties:
+      searchList:
+        items:
+          type: string
+        type: array
+    required:
+    - searchList
+    type: object
+  forms.SendEmailResetPwdForm:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  forms.SendMessageForm:
+    properties:
+      SenderId:
+        type: integer
+      channelId:
+        type: integer
+      messageContent: {}
+      messageType:
+        type: integer
+      notification:
+        $ref: '#/definitions/forms.Notification2'
+    required:
+    - SenderId
+    - channelId
+    - messageContent
+    - messageType
+    - notification
+    type: object
+  forms.TeamNotification:
+    properties:
+      content:
+        type: string
+      to:
+        $ref: '#/definitions/forms.NotificationToTeam'
+    required:
+    - content
+    - to
+    type: object
+  forms.UpdateChannelNameForm:
+    properties:
+      ChannelName:
+        type: string
+      channelId:
+        type: integer
+    required:
+    - ChannelName
+    - channelId
+    type: object
+  forms.UpdateTeamProfileForm:
+    properties:
+      TeamSkills:
+        items:
+          type: string
+        type: array
+      teamName:
+        type: string
+    type: object
+  forms.UserStoryReq:
+    properties:
+      sprintNum:
+        type: integer
+      teamId:
+        type: integer
+      userStoryDescription:
+        type: string
+      userStoryStatus:
+        enum:
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - sprintNum
+    - teamId
+    - userStoryDescription
+    - userStoryStatus
+    type: object
+  response.AllChannelsResponse:
+    properties:
+      channels:
+        items:
+          $ref: '#/definitions/response.ChannelDetail'
+        type: array
+    type: object
+  response.AllocatedTeam:
+    properties:
+      teamId:
+        type: integer
+      teamName:
+        type: string
+    type: object
+  response.ChannelDetail:
+    properties:
+      channelId:
+        type: integer
+      channelName:
+        type: string
+      type:
+        type: integer
+    type: object
+  response.ChannelMessagesResponse:
+    properties:
+      messages:
+        items:
+          $ref: '#/definitions/response.MessageDetail'
+        type: array
+    type: object
+  response.ChannelUsersResponse:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/response.UserDetail'
+        type: array
+    type: object
+  response.CoorInfoResponse:
+    properties:
+      avatarURL:
+        type: string
+      coorId:
+        type: integer
+      email:
+        type: string
+      name:
+        type: string
+      role:
+        type: integer
+    type: object
+  response.CreateTeamResponse:
+    properties:
+      course:
+        type: string
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamMember:
+        items:
+          $ref: '#/definitions/response.TeamMember'
+        type: array
+      teamName:
+        type: string
+    type: object
+  response.FieldStatistic:
+    properties:
+      field:
+        type: string
+      projects:
+        type: integer
+      teams:
+        type: integer
+    type: object
+  response.GetProjectListResponse:
+    properties:
+      allocatedTeam:
+        items:
+          $ref: '#/definitions/response.AllocatedTeam'
+        type: array
+      clientAvatar:
+        type: string
+      clientEmail:
+        type: string
+      clientId:
+        type: integer
+      clientName:
+        type: string
+      coorEmail:
+        type: string
+      coorId:
+        type: integer
+      coorName:
+        type: string
+      field:
+        type: string
+      maxTeams:
+        type: integer
+      projectId:
+        type: integer
+      requiredSkills:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      tutorEmail:
+        type: string
+      tutorId:
+        type: integer
+      tutorName:
+        type: string
+    type: object
+  response.GetTeamProfileResponse:
+    properties:
+      course:
+        type: string
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamMember:
+        items:
+          $ref: '#/definitions/response.TeamMember'
+        type: array
+      teamName:
+        type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.GradeResponse:
+    properties:
+      sprints:
+        items:
+          $ref: '#/definitions/response.SprintGrade'
+        type: array
+    type: object
+  response.JoinTeamResponse:
+    properties:
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamMember:
+        items:
+          $ref: '#/definitions/response.TeamMember'
+        type: array
+      teamName:
+        type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.MessageContent:
+    properties:
+      content:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+    type: object
+  response.MessageDetail:
+    properties:
+      avatarUrl:
+        type: string
+      messageContent:
+        $ref: '#/definitions/response.MessageContent'
+      messageTime:
+        type: string
+      messageType:
+        type: integer
+      senderName:
+        type: string
+    type: object
+  response.ModifyProjectDetailResponse:
+    properties:
+      createdBy:
+        type: string
+      createdByEmail:
+        type: string
+      createdByUserId:
+        type: integer
+      message:
+        type: string
+    type: object
+  response.NotificationResponse:
+    properties:
+      content:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  response.PreferenceResponse:
+    properties:
+      projectId:
+        type: integer
+      projectTitle:
+        type: string
+      reason:
+        type: string
+    type: object
+  response.ProfileResponse:
+    properties:
+      avatarURL:
+        type: string
+      bio:
+        type: string
+      course:
+        type: string
+      email:
+        type: string
+      field:
+        type: string
+      name:
+        type: string
+      organization:
+        type: string
+      role:
+        type: integer
+      skills:
+        items:
+          type: string
+        type: array
+      userId:
+        type: integer
+    type: object
+  response.ProgressDetailResponse:
+    properties:
+      clientEmail:
+        type: string
+      clientId:
+        type: integer
+      clientName:
+        type: string
+      coorEmail:
+        type: string
+      coorId:
+        type: integer
+      coorName:
+        type: string
+      projectId:
+        type: integer
+      sprints:
+        items:
+          $ref: '#/definitions/response.SprintDetail'
+        type: array
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamName:
+        type: string
+      title:
+        type: string
+      tutorEmail:
+        type: string
+      tutorId:
+        type: integer
+      tutorName:
+        type: string
+    type: object
+  response.ProjectDetailResponse:
+    properties:
+      allocatedTeam:
+        items:
+          $ref: '#/definitions/response.AllocatedTeam'
+        type: array
+      clientAvatarURL:
+        type: string
+      clientEmail:
+        type: string
+      clientId:
+        type: integer
+      clientName:
+        type: string
+      coorEmail:
+        type: string
+      coorId:
+        type: integer
+      coorName:
+        type: string
+      description:
+        type: string
+      field:
+        type: string
+      maxTeams:
+        type: integer
+      projectId:
+        type: integer
+      requiredSkills:
+        items:
+          type: string
+        type: array
+      specLink:
+        type: string
+      title:
+        type: string
+      tutorEmail:
+        type: string
+      tutorId:
+        type: integer
+      tutorName:
+        type: string
+    type: object
+  response.ProjectSearchTeamResponse:
+    properties:
+      course:
+        type: string
+      preferenceNum:
+        type: integer
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamMember:
+        items:
+          $ref: '#/definitions/response.TeamMember2'
+        type: array
+      teamName:
+        type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.ProjectStatistic:
+    properties:
+      field:
+        type: string
+      projectId:
+        type: integer
+      teams:
+        type: integer
+      title:
+        type: string
+    type: object
+  response.ProjectTeamMember:
+    properties:
+      avatarURL:
+        type: string
+      userEmail:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+      userSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.SearchTeamResponse:
+    properties:
+      course:
+        type: string
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamMember:
+        items:
+          $ref: '#/definitions/response.TeamMember2'
+        type: array
+      teamName:
+        type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.SprintDetail:
+    properties:
+      endDate:
+        type: string
+      sprintComment:
+        type: string
+      sprintGrade:
+        type: integer
+      sprintNum:
+        type: integer
+      startDate:
+        type: string
+      userStoryList:
+        items:
+          $ref: '#/definitions/response.UserStoryDetail'
+        type: array
+    type: object
+  response.SprintGrade:
+    properties:
+      comment:
+        type: string
+      grade:
+        type: integer
+      sprintNum:
+        type: integer
+    type: object
+  response.StatisticsResponse:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/response.FieldStatistic'
+        type: array
+      projects:
+        items:
+          $ref: '#/definitions/response.ProjectStatistic'
+        type: array
+      totalClients:
+        type: integer
+      totalCoordinators:
+        type: integer
+      totalStudents:
+        type: integer
+      totalTutors:
+        type: integer
+    type: object
+  response.StudentInfoResponse:
+    properties:
+      avatarURL:
+        type: string
+      course:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  response.StudentListResponse:
+    properties:
+      avatarURL:
+        type: string
+      course:
+        type: string
+      email:
+        type: string
+      role:
+        type: integer
+      userId:
+        type: integer
+      userName:
+        type: string
+      userSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.TeamDetailResponse:
+    properties:
+      course:
+        type: string
+      preferenceNum:
+        type: integer
+      preferenceReason:
+        type: string
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamMember:
+        items:
+          $ref: '#/definitions/response.TeamMember3'
+        type: array
+      teamName:
+        type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.TeamDetailResponse2:
+    properties:
+      course:
+        type: string
+      preferenceNum:
+        type: integer
+      preferenceReason:
+        type: string
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamMember:
+        items:
+          $ref: '#/definitions/response.ProjectTeamMember'
+        type: array
+      teamName:
+        type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.TeamListResponse:
+    properties:
+      course:
+        type: string
+      teamId:
+        type: integer
+      teamIdShow:
+        type: integer
+      teamName:
+        type: string
+      teamSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.TeamMember:
+    properties:
+      avatarURL:
+        type: string
+      course:
+        type: string
+      email:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+      userSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.TeamMember2:
+    properties:
+      avatarURL:
+        type: string
+      email:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+    type: object
+  response.TeamMember3:
+    properties:
+      avatarURL:
+        type: string
+      userEmail:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+    type: object
+  response.TutorInfoResponse:
+    properties:
+      avatarURL:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      role:
+        type: integer
+      tutorId:
+        type: integer
+    type: object
+  response.UserDetail:
+    properties:
+      avatarURL:
+        type: string
+      email:
+        type: string
+      role:
+        type: integer
+      userCourse:
+        type: string
+      userEmail:
+        type: string
+      userId:
+        type: integer
+      userName:
+        type: string
+      userSkills:
+        items:
+          type: string
+        type: array
+    type: object
+  response.UserListResponse:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      role:
+        type: integer
+      userId:
+        type: integer
+      userName:
+        type: string
+    type: object
+  response.UserStoryDetail:
+    properties:
+      userStoryDescription:
+        type: string
+      userStoryId:
+        type: integer
+      userStoryStatus:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/admin/change/project/coordinator:
+    post:
+      consumes:
+      - application/json
+      description: '修改 project coordinator，注意 header 需要 Authorization: Bearer <token>'
+      parameters:
+      - description: Bearer <token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 修改 coordinator 请求参数
+        in: body
+        name: ChangeProjectCoordinatorRequest
+        required: true
+        schema:
+          $ref: '#/definitions/forms.ChangeProjectCoordinatorRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg": "Project Coordinator updated successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: '{"error": "Please login"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: '{"error": "Only admin have permission"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Coordinator not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Failed to update coordinator"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update project coordinator
+      tags:
+      - Admin
+  /v1/admin/change/project/tutor:
+    post:
+      consumes:
+      - application/json
+      description: '更新负责这个 project 的 tutor，注意 header 需要 Authorization: Bearer <token>'
+      parameters:
+      - description: Bearer <token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 修改 coordinator 请求参数
+        in: body
+        name: ChangeProjectTutorRequest
+        required: true
+        schema:
+          $ref: '#/definitions/forms.ChangeProjectTutorRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg": "Project tutor updated successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: '{"error": "Please login"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: '{"error": "Only admin have permission"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Tutor not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Failed to update tutor"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update project tutor
+      tags:
+      - Admin
+  /v1/admin/get/coordinator/{projectId}:
+    get:
+      description: Get coordinator information by project ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CoorInfoResponse'
+        "400":
+          description: '{"error": Invalid projectId}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Project not found"}" or "{"error": "Coordinator
+            not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get coordinator information by project ID
+      tags:
+      - Admin
+  /v1/admin/get/coordinator/list:
+    get:
+      consumes:
+      - application/json
+      description: '注意 header  Authorization: Bearer <token>, 返回所有 Coordinator 列表，
+        注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor,
+        5表示admin'
+      parameters:
+      - description: Bearer <token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.UserListResponse'
+            type: array
+        "401":
+          description: '{"error": "Please login"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: '{"error": "only admin have permission to access"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error, Failed to fetch tutors"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all coordinator List
+      tags:
+      - Admin
+  /v1/admin/get/tutor/{projectId}:
+    get:
+      description: Get tutor information by project ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TutorInfoResponse'
+        "400":
+          description: '{"error": Invalid projectId}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Project not found"}" or "{"error": "Tutor not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get tutor information by project ID
+      tags:
+      - Admin
+  /v1/admin/get/tutor/list:
+    get:
+      consumes:
+      - application/json
+      description: '注意 header  Authorization: Bearer <token>, 返回所有 Tutor 列表， 注意 users
+        表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin'
+      parameters:
+      - description: Bearer <token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.UserListResponse'
+            type: array
+        "401":
+          description: '{"error": "Please login"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: '{"error": "only admin have permission to access"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Failed to fetch tutors"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all tutor List
+      tags:
+      - Admin
+  /v1/admin/modify/user/role:
+    post:
+      consumes:
+      - application/json
+      description: '修改用户的角色信息, 注意header  Authorization: Bearer <token>，如果用户离开队伍且队伍没有其他成员，解散队伍并删除'
+      parameters:
+      - description: Bearer <token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User ID, Role, and Notification
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/forms.ModifyUserRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "User role updated successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "Bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: '{"error": "Please login first"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: '{"error": ""only admin can change user role""}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "User not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Modify user role
+      tags:
+      - Admin
+  /v1/message/{channelId}/users/detail:
+    get:
+      consumes:
+      - application/json
+      description: get details of all users in a specified channel
+      parameters:
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ChannelUsersResponse'
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: get specific channel users detail
+      tags:
+      - Message
+  /v1/message/channel/{channelId}/messages:
+    get:
+      consumes:
+      - application/json
+      description: get details of all messages in a specified channel
+      parameters:
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ChannelMessagesResponse'
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: get messages of a specific channel
+      tags:
+      - Message
+  /v1/message/create/channel:
+    post:
+      consumes:
+      - application/json
+      description: private channel or group channel
+      parameters:
+      - description: create channel form
+        in: body
+        name: CreateChannelForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.CreateChannelForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"channelID": "string", "channelName": "string", "channelType":1,
+            "msg":"create channel successfully"}" or "{"channelID": "string", "channelName":"string",
+            "channelType":1, "msg": "private chat channel already exists"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: '{"error": "private chat channel already exists"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: create channel
+      tags:
+      - Message
+  /v1/message/get/all/channels/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: get details of all channels for a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.AllChannelsResponse'
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: get all channels for a specific user
+      tags:
+      - Message
+  /v1/message/invite/to/channel:
+    post:
+      consumes:
+      - application/json
+      description: invite users to an existing channel
+      parameters:
+      - description: invite to channel form
+        in: body
+        name: InviteToChannelForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.InviteToChannelForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"invited to channel successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: invite people to channel
+      tags:
+      - Message
+  /v1/message/leave/channel/{channelId}/{userId}:
+    delete:
+      consumes:
+      - application/json
+      description: remove user from a channel
+      parameters:
+      - description: Channel ID
+        in: path
+        name: channelId
+        required: true
+        type: integer
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"left channel successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel or user not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: leave channel
+      tags:
+      - Message
+  /v1/message/send:
+    post:
+      consumes:
+      - application/json
+      description: 'send a message in a specified channel if messageType == 2, messageContent
+        is the format of {"name": "string", "email": "string"}'
+      parameters:
+      - description: send message form
+        in: body
+        name: SendMessageForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.SendMessageForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"message sent successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: send message in channel
+      tags:
+      - Message
+  /v1/message/update/channelName:
+    post:
+      consumes:
+      - application/json
+      description: update the name of a specified channel
+      parameters:
+      - description: update channel name form
+        in: body
+        name: UpdateChannelNameForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.UpdateChannelNameForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg": "update channel name successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "channel not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: update channel name
+      tags:
+      - Message
+  /v1/notification/clear/all/{userId}:
+    delete:
+      consumes:
+      - application/json
+      description: Clears all notifications for a user by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg": "Clear all notifications successfully for the user}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Clear all notifications for a user
+      tags:
+      - Notification
+  /v1/notification/get/all/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all notifications for a user by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.NotificationResponse'
+            type: array
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all notifications for a user
+      tags:
+      - Notification
+  /v1/progress/create/userstory:
+    post:
+      consumes:
+      - application/json
+      description: 'Create a new user story for a given team and sprint, User Story
+        Status (1: not started, 2: in progress, 3: completed)'
+      parameters:
+      - description: UserStoryReq
+        in: body
+        name: UserStoryReq
+        required: true
+        schema:
+          $ref: '#/definitions/forms.UserStoryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"userStoryId": 123}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: '{"error": "invalid request body"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create user story
+      tags:
+      - Project Progress
+  /v1/progress/delete/{userStoryId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing user story
+      parameters:
+      - description: User Story ID
+        in: path
+        name: userStoryId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "User story deleted successfully"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: '{"error": "User story not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete user story
+      tags:
+      - Project Progress
+  /v1/progress/edit/{userStoryId}:
+    post:
+      consumes:
+      - application/json
+      description: 'Edit an existing user story, User Story Status (1: not started,
+        2: in progress, 3: completed)'
+      parameters:
+      - description: UserStoryReq
+        in: body
+        name: UserStoryReq
+        required: true
+        schema:
+          $ref: '#/definitions/forms.UserStoryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "User story updated successfully"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: '{"error": "invalid request body"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "User story not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Edit user story
+      tags:
+      - Project Progress
+  /v1/progress/edit/grade:
+    post:
+      consumes:
+      - application/json
+      description: Edit the grade and comment of an existing sprint
+      parameters:
+      - description: Edit Grade
+        in: body
+        name: grade
+        required: true
+        schema:
+          $ref: '#/definitions/forms.EditGradeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Grade updated successfully"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: '{"error": "invalid request body"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Failed to create sprint"}" or "{"error": "failed
+            to fetch sprint"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Edit grade
+      tags:
+      - Project Progress
+  /v1/progress/edit/sprint/date:
+    post:
+      consumes:
+      - application/json
+      description: Edit the start and end dates of an existing sprint，日期格式 RFC3339
+      parameters:
+      - description: Sprint Date
+        in: body
+        name: sprint
+        required: true
+        schema:
+          $ref: '#/definitions/forms.EditSprintDateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Sprint dates updated successfully"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: '{"error": "invalid request body"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Sprint not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Edit sprint start and end dates
+      tags:
+      - Project Progress
+  /v1/progress/get/detail/{teamId}:
+    get:
+      consumes:
+      - application/json
+      description: Get project progress detail for specific team
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ProgressDetailResponse'
+        "400":
+          description: '{"error": "invalid team ID"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "no details found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get project progress detail
+      tags:
+      - Project Progress
+  /v1/progress/get/grade/{teamId}:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定团队的所有 Sprint 的成绩和评论
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GradeResponse'
+        "400":
+          description: '{"error": "invalid team ID"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "no grades found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all sprint grades of a team
+      tags:
+      - Project Progress
+  /v1/project/{projectId}/preferencedBy/{teamId}/detail:
+    get:
+      description: Get the details of a team that prefer a project
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      - description: Team ID
+        in: path
+        name: teamId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TeamDetailResponse2'
+        "404":
+          description: '{"error": "Project not found"}" or "{"error": "Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get project preferred by team detail
+      tags:
+      - Project Preference
+  /v1/project/archive/{projectId}:
+    get:
+      consumes:
+      - application/json
+      description: Set the IsPublic field of the project to 2
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Project archived"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "Invalid project ID"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Project not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Unable to update project"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Archive the specified project
+      tags:
+      - Project
+  /v1/project/create:
+    post:
+      consumes:
+      - multipart/form-data
+      description: client create project, this api makes sure only client can create
+        the project
+      parameters:
+      - description: Project Title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Project Field
+        in: formData
+        name: field
+        required: true
+        type: string
+      - description: Project Description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Clinet Email
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: Max Team Numbers
+        in: formData
+        name: maxTeams
+        required: true
+        type: string
+      - description: Required Skills
+        in: formData
+        name: requiredSkills[]
+        type: array
+      - description: upload file
+        in: formData
+        name: file
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg": "Project created successfully", "projectId": 1, "filePath":
+            "backend/files/filename.pdf", "createdBy": 1}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: '{"error": "Invalid email"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: '{"error": "Client not found"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: '{"error": "Failed to save file"} or {"error": "Failed to create
+            project"} or {"error": "Failed to find or create skill"} or {"error":
+            "Failed to associate skills"}'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Clinet create a new project
+      tags:
+      - Project
+  /v1/project/delete/{projectId}:
+    delete:
+      description: delete project
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success": bool}'
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: '{"error": string}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": string}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete project
+      tags:
+      - Project
+  /v1/project/detail/{projectId}:
+    get:
+      description: get project detail by projectID
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ProjectDetailResponse'
+        "404":
+          description: '{"error": "Project not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Internal Server Error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get project detail by projectID
+      tags:
+      - Project
+  /v1/project/get/archived/list:
+    get:
+      consumes:
+      - application/json
+      description: Get the details of all projects with IsPublic field set to 2
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.ProjectDetailResponse'
+            type: array
+        "500":
+          description: '{"error": "Unable to retrieve archived projects"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all archived projects
+      tags:
+      - Project
+  /v1/project/get/list/byRole/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of the corresponding public projects based on the userID
+        and role. If the user is a student (role == 1), the projects assigned by the
+        team the user belongs to are returned; if the user is a client (role == 3)
+        or a coordinator (role == 4), all the public projects for which they are each
+        responsible are returned.
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.GetProjectListResponse'
+            type: array
+        "400":
+          description: '{"error": "Invalid userId"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: '{"error": "User does not have the required role"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "User not found", "error": "Team not found", "error":
+            "Project not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Internal Server Error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: get public project list by user role
+      tags:
+      - Project
+  /v1/project/get/public_project/list:
+    get:
+      description: is_public field 1 represent public， 2 represent archived
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.GetProjectListResponse'
+            type: array
+        "500":
+          description: '{"error": string}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get pubilic project list
+      tags:
+      - Project
+  /v1/project/modify/{projectId}:
+    post:
+      consumes:
+      - multipart/form-data
+      description: update project detail，update project client, this api makes sure
+        Projects can only be assigned to clients
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      - description: Project Title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Client Email
+        in: formData
+        name: clientEmail
+        required: true
+        type: string
+      - description: Required Skills
+        in: formData
+        name: requiredSkills
+        type: array
+      - description: Project Field
+        in: formData
+        name: field
+        required: true
+        type: string
+      - description: Project Description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Max Team Number
+        in: formData
+        name: maxTeams
+        required: true
+        type: string
+      - description: Specification File
+        in: formData
+        name: spec
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ModifyProjectDetailResponse'
+        "400":
+          description: '{"error": "File not provided"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: '{"error": "Project can only be assigned to client"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "Project not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": Internal Error}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Modify project detail information
+      tags:
+      - Project
+  /v1/project/preferencedBy/team/{projectId}:
+    get:
+      description: Get the detail of unallocated teams that prefer a given project
+        ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamDetailResponse'
+            type: array
+        "404":
+          description: '{"error": "Project not found"}" or "{"error": "Teams not found"}"
+            or ""No unallocated teams found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get  unallocated teams that prefer a project
+      tags:
+      - Project Preference
+  /v1/project/statistics:
+    get:
+      consumes:
+      - application/json
+      description: Get total number of students, clients, tutors, coordinators, and
+        top 5 popular project and top 5 popular project field
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.StatisticsResponse'
+      summary: Get statistics of projects and teams
+      tags:
+      - Statistics
+  /v1/project/team/allocated/{projectId}:
+    get:
+      description: 查看一个 project 被 allocated 的所有 team 的信息
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamDetailResponse'
+            type: array
+        "404":
+          description: '{"error": "Project not found"}" or "{"error": "Teams not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get allocated team details
+      tags:
+      - Project Allocation
+  /v1/searach/team/unallocated/list/detail:
+    post:
+      consumes:
+      - application/json
+      description: Search unallocated team list based on team skills or teamIdShow
+      parameters:
+      - description: Request Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/forms.SearchUnallocatedTeamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.SearchTeamResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search unallocated teams by team name or team skills or teamIdShow
+      tags:
+      - Search
+  /v1/search/public/project/{filterString}:
+    get:
+      consumes:
+      - application/json
+      description: Search for public projects by title or field, fuzzy matching, and
+        support for similarity thresholds
+      parameters:
+      - description: 过滤字符串
+        in: path
+        name: filterString
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.GetProjectListResponse'
+            type: array
+        "400":
+          description: '{"error": "Invalid filter string"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Internal Server Error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search public projects by title or field
+      tags:
+      - Search
+  /v1/search/team/unallocated/preferenceProject/list/detail:
+    post:
+      consumes:
+      - application/json
+      description: Search unallocated teams that preference a paticular project by
+        team skills or teamIdShow
+      parameters:
+      - description: Request Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/forms.SearchTeamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.ProjectSearchTeamResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Search unallocated teams that preference a paticular project by team
+        skills or teamIdShow
+      tags:
+      - Search
+  /v1/student/unassigned/list:
+    get:
+      consumes:
+      - application/json
+      description: 返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client,
+        4表示convenor, 5表示admin
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.StudentListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch users"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all students unassigned list
+      tags:
+      - Student
+  /v1/student/unassigned/list/{course}:
+    get:
+      consumes:
+      - application/json
+      description: Return a list of unassigned students, note that the Role field
+        in the users table, 1 represents student, 2 represents tutor, 3 represents
+        client, 4 represents convenor, 5 represents admin
+      parameters:
+      - description: Course
+        in: path
+        name: course
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.StudentListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch students"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all unassigned students list by course
+      tags:
+      - Student
+  /v1/team/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建 team, 并且创建人加入了 team, 后端随机生成 teamName, 存入了数据库
+      parameters:
+      - description: Create Team form
+        in: body
+        name: createTeamForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.CreateTeamForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CreateTeamResponse'
+        "400":
+          description: '{"error":"User already belongs to a team, cannot create team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error":"User not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error":"Failed to create team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new team
+      tags:
+      - Team
+  /v1/team/get/list:
+    get:
+      consumes:
+      - application/json
+      description: Get all teams
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Team List
+      tags:
+      - Team
+  /v1/team/get/list/{course}:
+    get:
+      consumes:
+      - application/json
+      description: Get all teams for a specific course
+      parameters:
+      - description: Course
+        in: path
+        name: course
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Team List By Course
+      tags:
+      - Team
+  /v1/team/get/preferences/{userId}:
+    get:
+      description: Get the team preferences for a given user
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.PreferenceResponse'
+            type: array
+        "404":
+          description: '{"error": "User not found"}" or {"error": "User does not belong
+            to any team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get team preferences
+      tags:
+      - Project Preference
+  /v1/team/get/student-info/{teamName}:
+    get:
+      consumes:
+      - application/json
+      description: Get student list information by team name
+      parameters:
+      - description: Team Name
+        in: path
+        name: teamName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.StudentInfoResponse'
+            type: array
+        "404":
+          description: '{"error": "Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get student list information by team name
+      tags:
+      - Team
+  /v1/team/get/unallocated/list:
+    get:
+      consumes:
+      - application/json
+      description: Get all unallocated teams
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Unallocated Team List
+      tags:
+      - Team
+  /v1/team/get/unallocated/list/{course}:
+    get:
+      consumes:
+      - application/json
+      description: Get all unallocated teams for a specific course
+      parameters:
+      - description: Course
+        in: path
+        name: course
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TeamListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch teams"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Unallocated Team List By Course
+      tags:
+      - Team
+  /v1/team/invite/{userId}/{teamId}:
+    get:
+      consumes:
+      - application/json
+      description: Invite a student to join a team
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: Team ID
+        in: path
+        name: teamId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "User invited to team successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "User already belongs to a team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "User not found"} or gin.H{"error": "Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: '{"error": "Course mismatch"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Failed to invite user to team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Invite User to Team
+      tags:
+      - Team
+  /v1/team/join:
+    put:
+      consumes:
+      - application/json
+      description: User join a team
+      parameters:
+      - description: Join Team form
+        in: body
+        name: joinTeamForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.JoinTeamForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.JoinTeamResponse'
+        "400":
+          description: '{"error":"Validation failed"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error":"Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: '{"error": "Course mismatch"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error":"Failed to update team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Join a team
+      tags:
+      - Team
+  /v1/team/leave/{userId}:
+    delete:
+      consumes:
+      - application/json
+      description: 用户离开团队
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"User has left the team successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error":"User does not belong to any team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error":"User not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error":"Failed to update user"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Leave a team
+      tags:
+      - Team
+  /v1/team/preference/project/{userId}:
+    put:
+      consumes:
+      - application/json
+      description: Update the team preference project for a given user
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Preferences
+        in: body
+        name: preferences
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/forms.PreferenceRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated team preferences
+          schema:
+            type: string
+        "400":
+          description: '{"error": "body error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "User not found"}" or "{"error": "User does not
+            belong to any team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: '{"error": "Team already allocated a project, cannot update
+            preferences"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Failed to retrieve team"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update team preferences
+      tags:
+      - Project Preference
+  /v1/team/profile/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户所属团队的信息
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetTeamProfileResponse'
+        "404":
+          description: '{"error":"Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Team Profile
+      tags:
+      - Team
+  /v1/team/project/allocation:
+    put:
+      consumes:
+      - application/json
+      description: Allocate a project to a team and send notification to team members
+      parameters:
+      - description: Project ID
+        in: body
+        name: projectId
+        required: true
+        schema:
+          type: integer
+      - description: Team ID
+        in: body
+        name: teamId
+        required: true
+        schema:
+          type: integer
+      - description: Notification Content and To
+        in: body
+        name: notification
+        required: true
+        schema:
+          $ref: '#/definitions/forms.TeamNotification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Project allocated and notification sent successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'error: Error message'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'error: Team not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'error: Internal server error'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Agree to allocate a Project to a Team
+      tags:
+      - Project Allocation
+  /v1/team/project/reject:
+    put:
+      consumes:
+      - application/json
+      description: 检查团队是否已经被分配了项目，如果已经分配了项目，则取消分配并发送通知
+      parameters:
+      - description: Project ID
+        in: body
+        name: projectId
+        required: true
+        schema:
+          type: integer
+      - description: Team ID
+        in: body
+        name: teamId
+        required: true
+        schema:
+          type: integer
+      - description: Notification Content and To
+        in: body
+        name: notification
+        required: true
+        schema:
+          $ref: '#/definitions/forms.TeamNotification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Allocation canceled and notification sent successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'error: Error message'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'error: Team not found or not allocated'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'error: Internal server error'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Reject a team allocation
+      tags:
+      - Project Allocation
+  /v1/team/update/profile/{teamId}:
+    put:
+      consumes:
+      - application/json
+      description: 更新团队的资料和技能
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamId
+        required: true
+        type: string
+      - description: Update Team Profile form
+        in: body
+        name: updateTeamProfileForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.UpdateTeamProfileForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"Updated team profile successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error":"Validation failed"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error":"Team not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error":"Failed to update team profile"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update Team Profile
+      tags:
+      - Team
+  /v1/user/change_password:
+    post:
+      consumes:
+      - application/json
+      description: 修改用户密码
+      parameters:
+      - description: Change Password form
+        in: body
+        name: changePasswordForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.ChangePasswordForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"Password updated successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error":"Original passwords do not match"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error":"User not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error":"Failed to connect to user service"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Change Password
+      tags:
+      - Personal Management
+  /v1/user/forget_password/send_email:
+    post:
+      consumes:
+      - application/json
+      description: 发送重置密码邮件
+      parameters:
+      - description: Reset Password form
+        in: body
+        name: sendEmailResetPwdForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.SendEmailResetPwdForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"Reset password email sent successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error":"Validation failed"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "User not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error":"Failed to send reset password email"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Reset password (send email)
+      tags:
+      - Personal Management
+  /v1/user/get/user/list:
+    get:
+      consumes:
+      - application/json
+      description: Role field（int）， 1 represent student, 2 represent tutor, 3 represent
+        client, 4 represent convenor, 5 represent admin
+      parameters:
+      - description: Bearer <token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.UserListResponse'
+            type: array
+        "401":
+          description: '{"error": "Please login"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: '{"error": "only admin have permission"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Failed to fetch users"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all users List
+      tags:
+      - User
+  /v1/user/modify/profile:
+    post:
+      consumes:
+      - application/json
+      description: 更新用户个人信息和技能
+      parameters:
+      - description: Profile Request
+        in: body
+        name: profileReq
+        required: true
+        schema:
+          $ref: '#/definitions/forms.ProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"User profile updated successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error":"Validation failed"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error":"User not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error":"Failed to update user profile"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update User Profile
+      tags:
+      - Personal Management
+  /v1/user/profile/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户个人信息
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ProfileResponse'
+        "404":
+          description: '{"error":"User not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get User Profile
+      tags:
+      - Personal Management
+  /v1/user/pwd_login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with email and password, Role 1表示student, 2表示tutor,
+        3表示client, 4表示convenor, 5表示admin
+      parameters:
+      - description: Login Form
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/forms.PasswordLoginForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"id": int, "username": string, "token": string, "expires_at":
+            int64}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error": "Invalid credentials. Please check your email and
+            password."}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "User not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "Internal server error. Please try again later."}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User Login
+      tags:
+      - Personal Management
+  /v1/user/register/send_email:
+    post:
+      consumes:
+      - application/json
+      description: 用户注册，发送验证邮件
+      parameters:
+      - description: Register form
+        in: body
+        name: registerForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.RegisterForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"Verification email sent successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error":"Validation failed"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: '{"error": "User already exists"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error":"Failed to send verification email"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User register（send email）
+      tags:
+      - Personal Management
+  /v1/user/register/verify:
+    get:
+      consumes:
+      - application/json
+      description: 验证邮箱，并完成用户注册
+      parameters:
+      - description: Verification Token
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"Register successfully"}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: '{"error":"Invalid or expired token"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error":"Failed to verify token"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User register (verify email)
+      tags:
+      - Personal Management
+  /v1/user/reset/password:
+    post:
+      consumes:
+      - application/json
+      description: 重置用户密码
+      parameters:
+      - description: Reset Password form
+        in: body
+        name: resetPasswordForm
+        required: true
+        schema:
+          $ref: '#/definitions/forms.ResetPasswordForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"msg":"Password reset successfully"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: '{"error":"Invalid or expired token"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error":"Failed to reset password"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Reset Password
+      tags:
+      - Personal Management
+  /v1/user/same/course/student/list/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: Get all students who have the same course as the user and are not
+        in any team
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.StudentListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch users"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all students have the same course doesn't join the team
+      tags:
+      - Student
+  /v1/user/student/list:
+    get:
+      consumes:
+      - application/json
+      description: 返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client,
+        4表示convenor, 5表示admin
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.StudentListResponse'
+            type: array
+        "500":
+          description: '{"error": "Failed to fetch users"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all students List
+      tags:
+      - Student
+swagger: "2.0"
