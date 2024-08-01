@@ -47,6 +47,7 @@ const Profile = (props) => {
     const [alertType, setAlertType] = useState('');
     const [snackbarContent, setSnackbarContent] = useState('');
     const [avatar, setAvatar] = useState('');
+    const [course, setCourse] = useState('');
     useEffect(() => {
         const fetchUserData = async () => {
             const userId = localStorage.getItem('userId');
@@ -61,6 +62,7 @@ const Profile = (props) => {
                     setOrganization(response.organization);
                     setSkills(response.skills);
                     setField(response.field);
+                    setCourse(response.course);
                     console.log("response:", response);
                     const imagePath = response.avatarURL; 
                 if (imagePath) {
@@ -120,7 +122,8 @@ const Profile = (props) => {
                         organization: organization,
                         role: roleReverseMap[role],
                         skills: skills,
-                        userId: parseInt(userId, 10)
+                        userId: parseInt(userId, 10),
+                        course: course,
                     }
                 };
     
@@ -315,6 +318,18 @@ const handleFileChange = async (event) => {
                             ) : (
                                 <Typography variant="body2" sx={{ mt: 1, bgcolor: 'grey.200', p: 2, borderRadius: 1 }}>
                                     {organization}
+                                </Typography>
+                            )}
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography variant="body1">Course:</Typography>
+                            {editable ? (
+                                <Typography variant="body2" sx={{ mt: 1, bgcolor: 'grey.200', p: 2, borderRadius: 1 }}>
+                                    {course}
+                                </Typography>
+                            ) : (
+                                <Typography variant="body2" sx={{ mt: 1, bgcolor: 'grey.200', p: 2, borderRadius: 1 }}>
+                                    {course}
                                 </Typography>
                             )}
                         </Grid>

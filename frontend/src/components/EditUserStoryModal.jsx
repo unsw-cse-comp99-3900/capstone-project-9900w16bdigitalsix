@@ -1,71 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Select, Avatar, Button, message } from 'antd';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Modal, Select, Avatar, Input, Button, message, Typography } from 'antd';
 
 import '../assets/scss/AssignRoleModal.css';
 import { apiCall } from '../helper';
 import MessageAlert from './MessageAlert';
 
+import TextField from '@mui/material/TextField';
+
 const { Option } = Select;
 
-const roleMap = {
-  1: 'Student',
-  2: 'Tutor',
-  3: 'Client',
-  4: 'Coordinator',
-  5: 'Administrator'
+const statusMap = {
+  1: 'TO DO',
+  2: 'IN PROGRESS',
+  3: 'DONE',
 };
 
-const roleColorMap = {
-  1: { background: '#e0f7fa', color: '#006064' }, // blue Student
-  2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
-  3: { background: '#fff9c4', color: '#f57f17' }, // yellow Client
-  4: { background: '#ffe0b2', color: '#e65100' }, // orange Coordinator
-  5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
+const statusColorMap = {
+  1: '#808080',   // grey
+  2: '#88D2FF',   // blue
+  3: '#52c41a'    // green
 };
 
-const EditUserStoryModal = ({ visible, user, onOk, onCancel, refreshData }) => {
-  const [selectedRole, setSelectedRole] = useState(null);
+const CreateUserStoryModal = ({ title, visible, description, setDescription, onOk, onCancel, refreshData, sprintNo, teamId, userStoryId, userStoryStatus, setUserStoryStatus }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user && user.role !== undefined) {
-      setSelectedRole(user.role);
-    }
-  }, [user]);
-
-  const handleRoleChange = (value) => {
-    setSelectedRole(parseInt(value, 10));
+  // record status
+  const handleStatusChange = (value) => {
+    setUserStoryStatus(parseInt(value, 10));
   };
 
+  // record description
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  }
+
   const handleSubmit = async () => {
-    if (!selectedRole) {
-      setSnackbarContent('Please select a role');
+    // valid check
+    if (!description) {
+      setSnackbarContent('Please complete description.');
       setAlertType('error');
       setAlertOpen(true);
       return;
     }
 
+    // token check
     const token = localStorage.getItem('token');
     if (!token) {
-      setSnackbarContent('Please login first');
-      setAlertType('error');
-      setAlertOpen(true);
+      navigate('/login')
       return;
     }
 
-    const response = await apiCall('POST', 'v1/admin/modify/user/role', {
-      userId: user.userId,
-      role: selectedRole
-    }, token, true);
+    // request
+    const requestBody = {
+      sprintNum: parseInt(sprintNo, 10),
+      teamId: parseInt(teamId, 10),
+      userStoryDescription: description,
+      userStoryStatus: userStoryStatus
+    };
+
+    console.log("requestBody", requestBody);
+    const response = await apiCall('POST', `v1/progress/edit/${userStoryId}`, requestBody, token, true);
 
     if (response.error) {
       setSnackbarContent(response.error);
       setAlertType('error');
       setAlertOpen(true);
     } else {
-      setSnackbarContent('User role updated successfully');
+      setSnackbarContent('Create successfully');
       setAlertType('success');
       setAlertOpen(true);
       onOk();
@@ -76,8 +81,8 @@ const EditUserStoryModal = ({ visible, user, onOk, onCancel, refreshData }) => {
   return (
     <>
       <Modal
-        title="Edit User Story - Sprint X"
-        visible={visible}
+        title={title}
+        open={visible}
         onOk={handleSubmit}
         onCancel={onCancel}
         footer={[
@@ -85,30 +90,31 @@ const EditUserStoryModal = ({ visible, user, onOk, onCancel, refreshData }) => {
           <Button key="submit" type="primary" onClick={handleSubmit}>Save</Button>
         ]}
       >
-        <div className="modal-content">
-          <Avatar src={user?.avatar || ''} size={80} className="avatar" />
-          <div className="user-details">
-            <div className="user-name">{user?.userName}</div>
-            <div className="user-email">{user?.email}</div>
-            <div className="user-role">
-              Current Role: <span className={`role-${user?.role}`}>{roleMap[user?.role]}</span>
-            </div>
-          </div>
-        </div>
+        <Typography.Text
+          style={{marginRight: '16px'}}
+        >
+          Select Status:
+        </Typography.Text>
+        <Select
+          className="status-select"
+          placeholder="Select status"
+          value={userStoryStatus !== null ? userStoryStatus.toString() : undefined}
+          onChange={handleStatusChange}
+          style={{width: '50%'}}
+        >
+          {Object.keys(statusMap).map((key) => (
+            <Option key={key} value={key} label={statusMap[key]}>
+              <span style={{ color: statusColorMap[key] }}>{statusMap[key]}</span>
+            </Option>
+          ))}
+        </Select>
         <div className="modal-body">
-          <p className="assign-role-text"><strong>Assign role to {user?.userName}</strong></p>
-          <Select
-            className="role-select"
-            placeholder="Select a role"
-            value={selectedRole !== null ? selectedRole.toString() : undefined} // 确保显示选项文字
-            onChange={handleRoleChange}
-          >
-            <Option value="1">Student</Option>
-            <Option value="2">Tutor</Option>
-            <Option value="3">Client</Option>
-            <Option value="4">Coordinator</Option>
-            <Option value="5">Administrator</Option>
-          </Select>
+          <Input.TextArea 
+            placeholder="Description"
+            autoSize={{ minRows: 3, maxRows: 6 }} 
+            onChange={handleDescriptionChange}
+            value={description}
+          />
         </div>
       </Modal>
       <MessageAlert
@@ -121,4 +127,4 @@ const EditUserStoryModal = ({ visible, user, onOk, onCancel, refreshData }) => {
   );
 };
 
-export default EditUserStoryModal;
+export default CreateUserStoryModal;

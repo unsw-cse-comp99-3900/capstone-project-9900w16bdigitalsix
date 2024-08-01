@@ -15,11 +15,15 @@ export default function InviteModel({
   const [allData, setAllData] = useState([]);
   const seachRef = useRef();
   const mountedRef = useRef(false);
+
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
+
   const loadMoreData = async () => {
     if (loading) return;
     setLoading(true);
-    const url = "v1/user/student/list";
-    const response = await apiCall("GET", url);
+    const url = `v1/user/same/course/student/list/${userId}`;
+    const response = await apiCall("GET", url, null, token, null);
     console.log("....list....", response);
     if (!response || response.error) {
       setData([]);
@@ -67,13 +71,15 @@ export default function InviteModel({
   const handleOk = async () => {
     console.log(checkedList);
     if (checkedList.length > 0) {
-      const url = `v1/team/invite/${checkedList}/${localStorage.getItem(
-        "teamId"
-      )}`;
-      const response = await apiCall("GET", url);
-      console.log(response);
-      if (response.error) {
-        message.error(response.error);
+      const teamId = localStorage.getItem("teamId");
+      const promises = checkedList.map(async (id) => {
+        const url = `v1/team/invite/${id}/${teamId}`;
+        return await apiCall("GET", url);
+      });
+      const responses = await Promise.all(promises);
+      const errors = responses.filter(response => response.error);
+      if (errors.length > 0) {
+        errors.forEach(error => message.error(error.error));
       } else {
         messageApi.success("success");
         setCheckedList([]);
@@ -81,7 +87,7 @@ export default function InviteModel({
         handleClose();
       }
     } else {
-      message.warning("warning");
+      message.warning("Please select at least one user to invite");
     }
   };
 
@@ -150,7 +156,13 @@ export default function InviteModel({
               >
                 <List.Item.Meta
                   title={<a>{item.userName}</a>}
-                  description={item.email}
+                  description={
+                    <>
+                    <div><strong>Email:</strong> {item.email}</div>
+                    <div><strong>Course:</strong> {item.course}</div>
+                    <div><strong>Skills:</strong> {item.userSkills}</div>
+                    </>
+                  }
                 />
               </List.Item>
             )}
