@@ -45,7 +45,7 @@ func GetAllTutorInfo(c *gin.Context) {
 }
 
 // @Summary Get all coordinator List
-// @Description 注意 header  Authorization: Bearer <token>, 返回所有 Coordinator 列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
+// @Description note header  Authorization: Bearer <token>, return all Coordinator list
 // @Tags Admin
 // @Accept  json
 // @Produce  json
@@ -102,6 +102,11 @@ func ModifyUserRole(c *gin.Context) {
 	if err := global.DB.First(&user, req.UserID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
+	}
+
+	if (user.Role == 5) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Cannot modify admin role"})
+        return
 	}
 
 	// 如果用户属于某个队伍且新角色不是学生，将用户从队伍中移除
