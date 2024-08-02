@@ -1,8 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-import Dashboard from "../layouts/FullLayout";
-
 // auth
 import Login from "./Login";
 import Register from "./Register";
@@ -26,7 +24,7 @@ import CreateProject from "./CreateProject";
 import EditProject from "./EditProject";
 import ProjectProgress from "./ProjectProgress";
 import ProjectDetails from "./ProjectDetails";
-import AllProject from "./AllProject"   
+import AllProject from "./AllProject";
 
 //admin
 import RoleManage from "./RoleManage";
@@ -49,17 +47,26 @@ import Message from "./Message";
 const PageList = () => {
   const [token, setToken] = React.useState(null);
   const [role, setRole] = React.useState(null);
-  
+
   const userId = localStorage.getItem("userId");
   return (
     <>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-
         {/* auth */}
         <Route
           path="/register"
           element={<Register token={token} setToken={setToken} />}
+        />
+        <Route
+          path="/"
+          element={
+            <Login
+              token={token}
+              setToken={setToken}
+              role={role}
+              setRole={setRole}
+            />
+          }
         />
         <Route
           path="/login"
@@ -132,7 +139,10 @@ const PageList = () => {
           path="/project/details/:projectId"
           element={<ProjectDetails token={token} setToken={setToken} />}
         />
-        <Route path="/project/allproject" element={<AllProject token={token} setToken={setToken}/>}/>
+        <Route
+          path="/project/allproject"
+          element={<AllProject token={token} setToken={setToken} />}
+        />
         <Route
           path="/project/preference"
           element={<StudentTeamPreference token={token} setToken={setToken} />}
@@ -168,17 +178,16 @@ const PageList = () => {
         {/* virtual data report */}
         <Route
           path="/project/virtual-data-report"
-          element={<GenerateVirtual token={token} setToken={setToken}/>}
+          element={<GenerateVirtual token={token} setToken={setToken} />}
         />
 
         {/* Message */}
         <Route
           path="/message"
-          element={<Message token={token} setToken={setToken}/>}
+          element={<Message token={token} setToken={setToken} />}
         />
       </Routes>
-      
-      
+
       <br />
     </>
   );
