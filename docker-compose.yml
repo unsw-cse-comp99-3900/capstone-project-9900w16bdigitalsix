@@ -73,6 +73,8 @@ services:
     depends_on:
       - mysql
     environment:
-      DATABASE_DSN: "root:root@tcp(127.0.0.1:3306)/capstone?charset=utf8mb4&parseTime=True&loc=Local"
+      DATABASE_DSN: "root:root@tcp(mysql:3306)/capstone?charset=utf8mb4&parseTime=True&loc=Local"
+    restart: on-failure
+    
 volumes:
   mysql-data:

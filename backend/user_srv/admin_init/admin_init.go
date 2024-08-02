@@ -8,6 +8,7 @@ import (
 	"user_srv/model"
 
 	"github.com/anaskhan96/go-password-encoder"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -22,7 +23,7 @@ func main() {
 	var user model.User
 	result := global.DB.Where("Email = ?", "admin@unsw.edu").First(&user)
 	if result.Error == nil {
-		// zap.S().Info("Admin user already exists")
+		zap.S().Info("Admin user already exists")
 		return
 	}
 
