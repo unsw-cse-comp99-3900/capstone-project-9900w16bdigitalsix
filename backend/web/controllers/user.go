@@ -82,8 +82,8 @@ func PasswordLogin(ctx *gin.Context) {
 			switch e.Code() { // 把 grpc 的 code 转换成 HTTP 的状态码
 			case codes.NotFound:
 				ctx.JSON(http.StatusNotFound, gin.H{
-					// "error": "User not found",
-					"error": "Account and password do not match",
+					"error": "User not found",
+					// "error": "Account and password do not match",
 				})
 			default:
 				ctx.JSON(http.StatusInternalServerError, gin.H{
