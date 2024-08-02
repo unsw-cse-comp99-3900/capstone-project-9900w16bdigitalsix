@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/anaskhan96/go-password-encoder"
-	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
@@ -38,7 +37,6 @@ func ModelToResponse(user *model.User) *proto.UserInfoResponse {
 	return userInfoRsp
 }
 
-// 分页
 func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if page <= 0 {
@@ -82,7 +80,7 @@ func (s *UserServer) GetUserByEmail(ctx context.Context, req *proto.EmailRequest
 	var user model.User
 	result := global.DB.Where("email =?", req.Email).First(&user)
 	if result.RowsAffected == 0 {
-		return nil, status.Errorf(codes.NotFound, "用户不存在")
+		return nil, status.Errorf(codes.NotFound, "User not found")
 	}
 	if result.Error != nil {
 		return nil, result.Error
@@ -96,7 +94,7 @@ func (s *UserServer) GetUserByID(ctx context.Context, req *proto.IDRequest) (*pr
 	var user model.User
 	result := global.DB.First(&user, req.Id)
 	if result.RowsAffected == 0 {
-		return nil, status.Errorf(codes.NotFound, "用户不存在")
+		return nil, status.Errorf(codes.NotFound, "User not found")
 	}
 	if result.Error != nil {
 		return nil, result.Error
@@ -109,16 +107,16 @@ func (s *UserServer) CreateUser(ctx context.Context, req *proto.CreateUserInfo) 
 	var user model.User
 	result := global.DB.Where("email = ?", req.Email).First(&user)
 	if result.RowsAffected == 1 {
-		zap.S().Errorf("用户已存在")
-		return nil, status.Errorf(codes.AlreadyExists, "用户已存在")
+		// zap.S().Errorf("User %v already exists")
+		return nil, status.Errorf(codes.AlreadyExists, "User already exists")
 	}
 
-	// 用户不存在可以进行创建
+	// creste the user
 	user.Email = req.Email
 	user.Username = req.Username
 	user.Course = req.Course
 
-	// 加密
+	// encription
 	options := &password.Options{SaltLen: 10, Iterations: 100, KeyLen: 32, HashFunction: sha512.New}
 	salt, encodedPwd := password.Encode(req.Password, options)
 	user.Password = fmt.Sprintf("pbkdf2-sha512$%s$%s", salt, encodedPwd)
@@ -133,11 +131,10 @@ func (s *UserServer) CreateUser(ctx context.Context, req *proto.CreateUserInfo) 
 }
 
 func (s *UserServer) UpdateUser(ctx context.Context, req *proto.UpdateUserInfo) (*proto.Empty, error) {
-	// 用户在个人中心可以修改用户信息
 	var user model.User
 	result := global.DB.First(&user, req.Id)
 	if result.RowsAffected == 0 {
-		return nil, status.Errorf(codes.NotFound, "用户不存在")
+		return nil, status.Errorf(codes.NotFound, "User not found")
 	}
 	// user.Gender = req.Gender
 	// birthday := time.Unix(int64(req.Birthday), 0)
@@ -150,7 +147,7 @@ func (s *UserServer) UpdateUser(ctx context.Context, req *proto.UpdateUserInfo) 
 }
 
 func (s *UserServer) CheckPassword(ctx context.Context, req *proto.CheckPasswordInfo) (*proto.CheckResponse, error) {
-	// 检查密码
+	// check password
 	// Using custom options
 	options := &password.Options{SaltLen: 10, Iterations: 100, KeyLen: 32, HashFunction: sha512.New}
 	encryptedPwd := req.EncryptedPassward

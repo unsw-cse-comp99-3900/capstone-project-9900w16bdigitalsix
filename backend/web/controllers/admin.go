@@ -29,7 +29,7 @@ func GetAllTutorInfo(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch tutors"})
 		return
 	}
-	// 映射到返回的结构体
+
 	var tutorResponses []response.UserListResponse
 	for _, tutor := range tutors {
 		tutorResponses = append(tutorResponses, response.UserListResponse{
@@ -61,7 +61,7 @@ func GetAllCoordinatorInfo(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch coordinator"})
 		return
 	}
-	// 映射到返回的结构体
+
 	var tutorResponses []response.UserListResponse
 	for _, tutor := range tutors {
 		tutorResponses = append(tutorResponses, response.UserListResponse{
@@ -77,7 +77,7 @@ func GetAllCoordinatorInfo(c *gin.Context) {
 }
 
 // @Summary Modify user role
-// @Description 修改用户的角色信息, 注意header  Authorization: Bearer <token>，如果用户离开队伍且队伍没有其他成员，解散队伍并删除
+// @Description change user role, header  Authorization: Bearer <token>，if user leave the team, and team doesn't have member, delete the team
 // @Tags Admin
 // @Accept json
 // @Produce json
@@ -104,31 +104,30 @@ func ModifyUserRole(c *gin.Context) {
 		return
 	}
 
-	if (user.Role == 5) {
+	if user.Role == 5 {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Cannot modify admin role"})
-        return
+		return
 	}
 
-	// 如果用户属于某个队伍且新角色不是学生，将用户从队伍中移除
+	// if user belongsss to a team, and the role change to other role, deletet the user fronm the team
 	if user.BelongsToGroup != nil && req.Role != 1 {
-		// 保存用户所属队伍的ID
+
 		teamID := user.BelongsToGroup
 
-		// 将用户从队伍中移除
 		user.BelongsToGroup = nil
 		if err := global.DB.Save(&user).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		// 检查队伍是否还有其他成员
+		// check if team has other student
 		var members []models.User
 		if err := global.DB.Where("belongs_to_group = ?", teamID).Find(&members).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		// 如果队伍没有其他成员，解散队伍并删除
+		// if team has no member, delete the team
 		if len(members) == 0 {
 			if err := global.DB.Delete(&models.Team{}, teamID).Error; err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -137,14 +136,12 @@ func ModifyUserRole(c *gin.Context) {
 		}
 	}
 
-	// 修改用户角色
 	user.Role = req.Role
 	if err := global.DB.Save(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// 调用通知处理函数
 	if err := handleNotification(req.Notification.Content, req.Notification.To.Users); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -192,7 +189,6 @@ func ChangeProjectCoordinator(c *gin.Context) {
 		return
 	}
 
-	// 调用通知处理函数
 	if err := handleNotification(req.Notification.Content, req.Notification.To.Users); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -240,7 +236,6 @@ func ChangeProjectTutor(c *gin.Context) {
 		return
 	}
 
-	// 调用通知处理函数
 	if err := handleNotification(req.Notification.Content, req.Notification.To.Users); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

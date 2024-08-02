@@ -42,7 +42,6 @@ import (
 // @Failure 500 {object} map[string]string "{"error": "Internal server error. Please try again later."}"
 // @Router /v1/user/pwd_login [post]
 func PasswordLogin(ctx *gin.Context) {
-	// 表单验证
 	passwordLoginForm := forms.PasswordLoginForm{}
 	if err := ctx.ShouldBind(&passwordLoginForm); err != nil {
 		HandleValidatorError(ctx, err)
@@ -63,12 +62,12 @@ func PasswordLogin(ctx *gin.Context) {
 	// 拨号连接用户 grpc 服务
 	clientConn, err := grpc.NewClient(fmt.Sprintf("%s:%d", ip, port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		zap.S().Errorw("[GetUserList] 连接【用户服务】 失败",
+		zap.S().Errorw("[GetUserList] connection failed",
 			"msg", err.Error(),
 		)
 	}
 	defer clientConn.Close()
-	zap.S().Debug("用密码登陆")
+	zap.S().Debug("login")
 
 	// 使用 clientConn 来创建服务客户端
 	userSrvClient := proto.NewUserClient(clientConn)
@@ -94,7 +93,7 @@ func PasswordLogin(ctx *gin.Context) {
 			return
 		}
 	}
-	// 用户存在， check密码
+	// check password
 	if pwdRsp, pwdErr := userSrvClient.CheckPassword(ctx, &proto.CheckPasswordInfo{
 		Passward:          passwordLoginForm.Password,
 		EncryptedPassward: rsp.Password,
@@ -103,7 +102,7 @@ func PasswordLogin(ctx *gin.Context) {
 			"error": "Login failed",
 		})
 	} else {
-		if pwdRsp.Success { // 密码认证通过
+		if pwdRsp.Success { // password is correct
 
 			// 生成 token
 			// 1. 创建 JWT 实例
@@ -412,12 +411,12 @@ func ChangePassword(c *gin.Context) {
 	// 拨号连接用户 grpc 服务
 	clientConn, err := grpc.NewClient(fmt.Sprintf("%s:%d", ip, port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		zap.S().Errorw("[GetUserList] 连接【用户服务】 失败",
+		zap.S().Errorw("[GetUserList] connecction failed",
 			"error", err.Error(),
 		)
 	}
 	defer clientConn.Close()
-	zap.S().Info("修改密码")
+	zap.S().Info("change passsword")
 
 	// 使用 clientConn 来创建服务客户端
 	userSrvClient := proto.NewUserClient(clientConn)
@@ -584,7 +583,7 @@ func UpdateUserInfo(c *gin.Context) {
 
 // GetPersonProfile godoc
 // @Summary Get User Profile
-// @Description 获取用户个人信息
+// @Description Get User Profile
 // @Tags Personal Management
 // @Accept json
 // @Produce json
