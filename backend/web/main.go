@@ -14,6 +14,7 @@ func main() {
 	initialize.InitLogger()
 	initialize.InitConfig()
 	initialize.InitDB()
+	initialize.CreateAdminUser() // create admin user if not exists
 
 	global.DB.AutoMigrate(&models.User{}, &models.Team{}, &models.Project{},
 		&models.Skill{}, &models.Sprint{}, &models.UserStory{}, &models.TeamPreferenceProject{}, 
