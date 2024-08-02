@@ -181,18 +181,18 @@ func VerifyEmail(ctx *gin.Context) {
 		return
 	}
 
-	// 删除 redis token 记录
+	// delete redis token record
 	if err := rdb.Del(context.Background(), token).Err(); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete token"})
 		return
 	}
 
-	// 拨号连接用户 grpc 服务
+	// connect to grpc server
 	ip := global.ServerConfig.UserSrvInfo.Host
 	port := global.ServerConfig.UserSrvInfo.Port
 	clientConn, err := grpc.NewClient(fmt.Sprintf("%s:%d", ip, port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		zap.S().Errorw("[GetUserList] 连接【用户服务】 失败",
+		zap.S().Errorw("[GetUserList] connect failed",
 			"msg", err.Error(),
 		)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to user service"})
@@ -210,13 +210,13 @@ func VerifyEmail(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		zap.S().Errorw("[Register] 【新建用户失败】%s", err)
+		zap.S().Errorw("[Register] 【create user account failed】%s", err)
 		HandleGrpcErrorToHttp(err, ctx)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg": "注册成功",
+		"msg": "register successfully",
 	})
 
 }
