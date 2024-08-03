@@ -13,8 +13,7 @@ import (
 )
 
 // @Summary Get all tutor List
-// @Description 注意 header  Authorization: Bearer <token>, 返回所有 Tutor 列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
-// @Tags Admin
+// @Description  header  Authorization: Bearer <token>, get all Tutor list
 // @Accept  json
 // @Produce  json
 // @Param Authorization header string true "Bearer <token>"
@@ -151,7 +150,7 @@ func ModifyUserRole(c *gin.Context) {
 }
 
 // @Summary Update project coordinator
-// @Description 修改 project coordinator，注意 header 需要 Authorization: Bearer <token>
+// @Description change project coordinator， header need Authorization: Bearer <token>
 // @Tags Admin
 // @Accept json
 // @Produce json
@@ -198,7 +197,7 @@ func ChangeProjectCoordinator(c *gin.Context) {
 }
 
 // @Summary Update project tutor
-// @Description 更新负责这个 project 的 tutor，注意 header 需要 Authorization: Bearer <token>
+// @Description update project 的 tutor， header need Authorization: Bearer <token>
 // @Tags Admin
 // @Accept json
 // @Produce json

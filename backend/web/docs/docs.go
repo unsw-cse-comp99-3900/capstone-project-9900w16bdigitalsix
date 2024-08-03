@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/v1/admin/change/project/coordinator": {
             "post": {
-                "description": "修改 project coordinator，注意 header 需要 Authorization: Bearer \u003ctoken\u003e",
+                "description": "change project coordinator， header need Authorization: Bearer \u003ctoken\u003e",
                 "consumes": [
                     "application/json"
                 ],
@@ -97,7 +97,7 @@ const docTemplate = `{
         },
         "/v1/admin/change/project/tutor": {
             "post": {
-                "description": "更新负责这个 project 的 tutor，注意 header 需要 Authorization: Bearer \u003ctoken\u003e",
+                "description": "update project 的 tutor， header need Authorization: Bearer \u003ctoken\u003e",
                 "consumes": [
                     "application/json"
                 ],
@@ -177,7 +177,7 @@ const docTemplate = `{
         },
         "/v1/admin/get/coordinator/list": {
             "get": {
-                "description": "注意 header  Authorization: Bearer \u003ctoken\u003e, 返回所有 Coordinator 列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
+                "description": "note header  Authorization: Bearer \u003ctoken\u003e, return all Coordinator list",
                 "consumes": [
                     "application/json"
                 ],
@@ -293,15 +293,12 @@ const docTemplate = `{
         },
         "/v1/admin/get/tutor/list": {
             "get": {
-                "description": "注意 header  Authorization: Bearer \u003ctoken\u003e, 返回所有 Tutor 列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
+                "description": "header  Authorization: Bearer \u003ctoken\u003e, get all Tutor list",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
-                ],
-                "tags": [
-                    "Admin"
                 ],
                 "summary": "Get all tutor List",
                 "parameters": [
@@ -409,7 +406,7 @@ const docTemplate = `{
         },
         "/v1/admin/modify/user/role": {
             "post": {
-                "description": "修改用户的角色信息, 注意header  Authorization: Bearer \u003ctoken\u003e，如果用户离开队伍且队伍没有其他成员，解散队伍并删除",
+                "description": "change user role, header  Authorization: Bearer \u003ctoken\u003e，if user leave the team, and team doesn't have member, delete the team",
                 "consumes": [
                     "application/json"
                 ],
@@ -1992,7 +1989,7 @@ const docTemplate = `{
         },
         "/v1/project/team/allocated/{projectId}": {
             "get": {
-                "description": "查看一个 project 被 allocated 的所有 team 的信息",
+                "description": "view project 被 allocated 的 all team information",
                 "produces": [
                     "application/json"
                 ],
@@ -2223,7 +2220,7 @@ const docTemplate = `{
         },
         "/v1/student/unassigned/list": {
             "get": {
-                "description": "返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
+                "description": "Get all students unassigned student list",
                 "consumes": [
                     "application/json"
                 ],
@@ -2302,7 +2299,7 @@ const docTemplate = `{
         },
         "/v1/team/create": {
             "post": {
-                "description": "创建 team, 并且创建人加入了 team, 后端随机生成 teamName, 存入了数据库",
+                "description": "create team",
                 "consumes": [
                     "application/json"
                 ],
@@ -2754,7 +2751,7 @@ const docTemplate = `{
         },
         "/v1/team/leave/{userId}": {
             "delete": {
-                "description": "用户离开团队",
+                "description": "student leave a team",
                 "consumes": [
                     "application/json"
                 ],
@@ -2896,7 +2893,7 @@ const docTemplate = `{
         },
         "/v1/team/profile/{userId}": {
             "get": {
-                "description": "获取用户所属团队的信息",
+                "description": "get team profile",
                 "consumes": [
                     "application/json"
                 ],
@@ -3019,7 +3016,7 @@ const docTemplate = `{
         },
         "/v1/team/project/reject": {
             "put": {
-                "description": "检查团队是否已经被分配了项目，如果已经分配了项目，则取消分配并发送通知",
+                "description": "Reject a team allocation",
                 "consumes": [
                     "application/json"
                 ],
@@ -3101,7 +3098,7 @@ const docTemplate = `{
         },
         "/v1/team/update/profile/{teamId}": {
             "put": {
-                "description": "更新团队的资料和技能",
+                "description": "update team profile",
                 "consumes": [
                     "application/json"
                 ],
@@ -3172,7 +3169,7 @@ const docTemplate = `{
         },
         "/v1/user/change_password": {
             "post": {
-                "description": "修改用户密码",
+                "description": "change password",
                 "consumes": [
                     "application/json"
                 ],
@@ -3236,7 +3233,7 @@ const docTemplate = `{
         },
         "/v1/user/forget_password/send_email": {
             "post": {
-                "description": "发送重置密码邮件",
+                "description": "send reset password email",
                 "consumes": [
                     "application/json"
                 ],
@@ -3362,7 +3359,7 @@ const docTemplate = `{
         },
         "/v1/user/modify/profile": {
             "post": {
-                "description": "更新用户个人信息和技能",
+                "description": "update user profile",
                 "consumes": [
                     "application/json"
                 ],
@@ -3426,7 +3423,7 @@ const docTemplate = `{
         },
         "/v1/user/profile/{user_id}": {
             "get": {
-                "description": "获取用户个人信息",
+                "description": "Get User Profile",
                 "consumes": [
                     "application/json"
                 ],
@@ -3467,7 +3464,7 @@ const docTemplate = `{
         },
         "/v1/user/pwd_login": {
             "post": {
-                "description": "Authenticate user with email and password, Role 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
+                "description": "Authenticate user with email and password",
                 "consumes": [
                     "application/json"
                 ],
@@ -3531,7 +3528,7 @@ const docTemplate = `{
         },
         "/v1/user/register/send_email": {
             "post": {
-                "description": "用户注册，发送验证邮件",
+                "description": "user register, send email",
                 "consumes": [
                     "application/json"
                 ],
@@ -3595,7 +3592,7 @@ const docTemplate = `{
         },
         "/v1/user/register/verify": {
             "get": {
-                "description": "验证邮箱，并完成用户注册",
+                "description": "verify email and complete register",
                 "consumes": [
                     "application/json"
                 ],
@@ -3646,7 +3643,7 @@ const docTemplate = `{
         },
         "/v1/user/reset/password": {
             "post": {
-                "description": "重置用户密码",
+                "description": "reset password",
                 "consumes": [
                     "application/json"
                 ],
@@ -3745,7 +3742,7 @@ const docTemplate = `{
         },
         "/v1/user/student/list": {
             "get": {
-                "description": "返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin",
+                "description": "get all student list",
                 "consumes": [
                     "application/json"
                 ],
