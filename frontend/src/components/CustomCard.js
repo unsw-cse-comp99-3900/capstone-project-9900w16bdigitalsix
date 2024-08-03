@@ -13,18 +13,22 @@ import '../assets/scss/CustomCard.css'; // import CSS file
 import TeamFile from "../components/TeamFileDialog";
 import { Avatar } from 'antd';
 
+// the card to show the project
 const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, field, onDelete, role, allocatedTeamsCount, maxTeams, showActions = true, showTeamsCount = false }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const navigate = useNavigate();
 
+  // click on the project title, redirect to project detail page
   const handleCardNavi = () => {
     navigate(`/project/details/${id}`);
   };
 
   const [open, setOpen] = useState(false);
 
+  // check if the maximum number of allocated teams has been reached
+  // if yes, raise the modal for alerting
   const handleClickOpen = () => {
     if (allocatedTeamsCount >= maxTeams) {
       setConfirmOpen(true);
@@ -44,6 +48,7 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
     setOpen(false);
   };
 
+  // delete a published project
   const handleDelete = async () => {
     try {
       const response = await fetch(`http://127.0.0.1:8080/v1/project/delete/${id}`, {
@@ -60,6 +65,7 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
     }
   };
 
+  // archive a publised project
   const handleArchive = async () => {
     try {
       const response = await fetch(`http://127.0.0.1:8080/v1/project/archive/${id}`, {
@@ -111,11 +117,13 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
           onClick={handleCardNavi}
           style={{ cursor: "pointer" }}
         >
+          {/* project title */}
           <h5 className="custom-card-title">
             {title}
           </h5>
         </div>
         <CardBody className="d-flex flex-column custom-card-body">
+          {/* client detail */}
           <div className="d-flex align-items-center mb-3">
             <Avatar src={clientAvatar ? clientAvatar : ''} size={40} className="avatar" />
             <div className="client-info">
@@ -123,6 +131,7 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
               <CardText className="client-title">{clientTitle}</CardText>
             </div>
           </div>
+          {/* project required skills */}
           <div className="skills-container">
             {Array.isArray(skills) && skills.map(skill => (
               <span key={skill} className="skill-badge">
@@ -130,9 +139,11 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
               </span>
             ))}
           </div>
+          {/* project field */}
           <div className="field-container">
             <span className="field-badge">{field}</span>
           </div>
+          {/* all the actions for the project */}
           {showActions && (
             <div className="mt-auto d-flex justify-content-between">
               {(role === 3 || role === 4 || role === 5) && (
@@ -186,6 +197,7 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
           handleClickOpen={handleClickOpen}
         />
       </Card>
+      {/* deletion modal */}
       <Dialog
         open={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -209,6 +221,7 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
           </Button>
         </DialogActions>
       </Dialog>
+      {/* archive modal */}
       <Dialog
         open={archiveDialogOpen}
         onClose={() => setArchiveDialogOpen(false)}
@@ -232,6 +245,7 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
           </Button>
         </DialogActions>
       </Dialog>
+      {/* maximum teams reached modal */}
       <Dialog
         open={confirmOpen}
         onClose={() => handleConfirmClose(false)}

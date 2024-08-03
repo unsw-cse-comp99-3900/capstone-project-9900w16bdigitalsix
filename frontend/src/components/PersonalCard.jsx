@@ -93,7 +93,6 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, channel
       notification: notification,
     };
 
-    console.log("requestBody", requestBody);
     const response = await apiCall('POST', 'v1/message/send', requestBody, token, true);
     if (!response){
       return
@@ -128,22 +127,6 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, channel
     const searchTerm = seachRef.current.input.value.toLowerCase();
     const filtered = data.filter(item => item.email.toLowerCase().includes(searchTerm));
     setFilteredData(filtered);
-    // try {
-    //   const response = await apiCall("GET", `v1/search/public/project/${searchTerm}`);
-    //   if (! response) {
-    //     setFilteredData([]);
-    //     return;
-    //   }
-    //   if (response.error) {
-    //     setFilteredData([]);
-    //     return;
-    //   } else {
-    //     const res = Array.isArray(response) ? response : [];
-    //     setFilteredData(res);
-    //   }
-    // } catch (error) {
-    //   return;
-    // }
   }
 
   return (

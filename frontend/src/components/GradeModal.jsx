@@ -32,7 +32,6 @@ const GradeModal = ({ title, sprintData, visible, onOk, onCancel, gradeComment, 
         [sprintNum - 1]: value,
       },
     };
-    console.log("updatedGradeComment", updatedGradeComment);
     setGradeComment(updatedGradeComment);
   };
   
@@ -74,9 +73,7 @@ const GradeModal = ({ title, sprintData, visible, onOk, onCancel, gradeComment, 
       sprints: sprints,
       teamId: parseInt(teamId),
     }
-    console.log("requestBody", requestBody);
     const response = await apiCall('POST', `v1/progress/edit/grade`, requestBody, token, true);
-    console.log("response111", response);
     if (response.error){
       setSnackbarContent("Student team has not start the graded sprint.");
       setAlertType('error');

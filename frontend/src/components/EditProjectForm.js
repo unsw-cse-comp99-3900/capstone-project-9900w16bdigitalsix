@@ -3,13 +3,9 @@ import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import MessageAlert from '../components/MessageAlert';
 
+// define the apicall function
 export const apiCall = async (method, endpoint, data, isFormData = false) => {
   const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
-
-  console.log('Request Headers:', headers);
-  console.log('Request Method:', method);
-  console.log('Request URL:', `http://127.0.0.1:8080${endpoint}`);
-  console.log(data);
 
   const options = {
     method,
@@ -17,11 +13,8 @@ export const apiCall = async (method, endpoint, data, isFormData = false) => {
     body: isFormData ? data : JSON.stringify(data),
   };
 
-  console.log('Request Options:', options);
-
   const response = await fetch(`http://127.0.0.1:8080${endpoint}`, options);
   const result = await response.json();
-  console.log(result);
   return { status: response.status, data: result };
 };
 
@@ -49,6 +42,7 @@ const EditProjectForm = ({ initialValues, id }) => {
     setFormData(initialValues);
   }, [initialValues]);
 
+  // check the validation for project input
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'title') {
@@ -125,7 +119,7 @@ const EditProjectForm = ({ initialValues, id }) => {
       setAlertOpen(true);
       return;
     }
-
+    // create the formdata
     const form = new FormData();
     for (const key in formData) {
       if (key === 'requiredSkills') {
@@ -143,12 +137,7 @@ const EditProjectForm = ({ initialValues, id }) => {
         form.append(key, formData[key]);
       }
     }
-
-    console.log('FormData entries:');
-    for (let [key, value] of form.entries()) {
-      console.log(key, value);
-    }
-
+    // request from backend
     try {
       const result = await apiCall('POST', `/v1/project/modify/${id}`, form, true);
       if (result.status === 200) {
@@ -203,6 +192,7 @@ const EditProjectForm = ({ initialValues, id }) => {
             onChange={handleChange}
           />
         </FormGroup>
+        {/* field selection */}
         <FormGroup>
           <Label for="field">Field</Label>
           <Input
@@ -218,6 +208,7 @@ const EditProjectForm = ({ initialValues, id }) => {
             ))}
           </Input>
         </FormGroup>
+        {/* project description */}
         <FormGroup>
           <Label for="description">Description</Label>
           <Input
@@ -229,6 +220,8 @@ const EditProjectForm = ({ initialValues, id }) => {
             onChange={handleChange}
           />
         </FormGroup>
+        {/* check the user, coordinator can designate the client */}
+        {/* client can only create his own project */}
         {(role === 4 || role === 5) && (
           <FormGroup>
             <Label for="email">Email</Label>
@@ -242,6 +235,7 @@ const EditProjectForm = ({ initialValues, id }) => {
             />
           </FormGroup>
         )}
+        {/* get project's required skills */}
         <FormGroup>
           <Label for="requiredSkills">Required skills (please use ", " to separate each item)</Label>
           <Input
@@ -253,6 +247,7 @@ const EditProjectForm = ({ initialValues, id }) => {
             onChange={handleChange}
           />
         </FormGroup>
+        {/* get defined maximum teams number */}
         <FormGroup>
           <Label for="maxTeams">Maximum Teams</Label>
           <Input
@@ -264,6 +259,7 @@ const EditProjectForm = ({ initialValues, id }) => {
             onChange={handleChange}
           />
         </FormGroup>
+        {/* upload project spectification */}
         <FormGroup>
           <Label for="file">Upload project specification (PDF)</Label>
           <Input
