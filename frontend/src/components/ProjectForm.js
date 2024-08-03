@@ -3,6 +3,7 @@ import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import MessageAlert from '../components/MessageAlert';
 
+// define the apicall function
 const apiCall = async (method, endpoint, body, isFormData = false) => {
   const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
   const response = await fetch(`http://127.0.0.1:8080${endpoint}`, {
@@ -16,6 +17,7 @@ const apiCall = async (method, endpoint, body, isFormData = false) => {
   const data = await response.json();
   return data;
 };
+
 
 const ProjectForm = () => {
   const [formData, setFormData] = useState({
@@ -45,6 +47,7 @@ const ProjectForm = () => {
     }
   }, []);
 
+  // check the validation for project input
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -123,6 +126,7 @@ const ProjectForm = () => {
       return;
     }
 
+    // create the formdata
     const form = new FormData();
     for (const key in formData) {
       if (key === 'requiredSkills') {
@@ -136,12 +140,7 @@ const ProjectForm = () => {
         form.append(key, formData[key]);
       }
     }
-
-    console.log('FormData entries:');
-    for (let [key, value] of form.entries()) {
-      console.log(key, value);
-    }
-
+    // request from backend
     try {
       const result = await apiCall('POST', '/v1/project/create', form, true);
       if (result.msg === 'Project created successfully') {
@@ -182,6 +181,7 @@ const ProjectForm = () => {
             onChange={handleChange}
           />
         </FormGroup>
+        {/* field selection */}
         <FormGroup>
           <Label for="field">Field</Label>
           <Input
@@ -205,6 +205,7 @@ const ProjectForm = () => {
             <option value="Other">Other</option>
           </Input>
         </FormGroup>
+        {/* project description */}
         <FormGroup>
           <Label for="description">Description</Label>
           <Input
@@ -216,6 +217,8 @@ const ProjectForm = () => {
             onChange={handleChange}
           />
         </FormGroup>
+        {/* check the user, coordinator can designate the client */}
+        {/* client can only create his own project */}
         {(role === 4 || role === 5) && (
           <FormGroup>
             <Label for="email">Email</Label>
@@ -229,6 +232,7 @@ const ProjectForm = () => {
             />
           </FormGroup>
         )}
+        {/* get project's required skills */}
         <FormGroup>
           <Label for="requiredSkills">Required skills (please use ", " to separate each item)</Label>
           <Input
@@ -240,6 +244,7 @@ const ProjectForm = () => {
             onChange={handleChange}
           />
         </FormGroup>
+        {/* get defined maximum teams number */}
         <FormGroup>
           <Label for="maxTeams">Maximum Teams</Label>
           <Input
@@ -251,6 +256,7 @@ const ProjectForm = () => {
             onChange={handleChange}
           />
         </FormGroup>
+        {/* upload project spectification */}
         <FormGroup>
           <Label for="file">Upload project specification (PDF)</Label>
           <Input

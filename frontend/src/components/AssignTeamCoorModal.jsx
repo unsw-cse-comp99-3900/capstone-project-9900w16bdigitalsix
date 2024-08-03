@@ -5,6 +5,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { apiCall } from '../helper';
 import MessageAlert from './MessageAlert';
 
+// assign a coordinator for the project
 const CoorAssign = ({ projectId, projectName, assignedCoorId, toggleCoorDialog }) => {
   const [loading, setLoading] = useState(false);
   const [coordinators, setCoordinators] = useState([]);
@@ -15,6 +16,7 @@ const CoorAssign = ({ projectId, projectName, assignedCoorId, toggleCoorDialog }
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
 
+  // show the list of coordinators
   const loadCoordinators = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -40,6 +42,7 @@ const CoorAssign = ({ projectId, projectName, assignedCoorId, toggleCoorDialog }
     toggleCoorDialog(); 
   };
 
+  // admin can choose one of them to be responsible for this project
   const assignCoordinator = async (coordinator) => {
     setSelectedCoordinator(coordinator);
     const token = localStorage.getItem('token');
@@ -88,6 +91,7 @@ const CoorAssign = ({ projectId, projectName, assignedCoorId, toggleCoorDialog }
           onChange={searchList}
         />
       </div>
+      {/* load the list of coordinators */}
       <List
         loading={loading}
         dataSource={filteredCoordinators}

@@ -6,17 +6,16 @@ const { RangePicker } = DatePicker;
 
 const convertToMomentArray = (dateStrings) => {
   const moments = dateStrings.map(dateString => moment(dateString));
-  console.log("Converted moments:", moments);
   return moments;
 };
 
+// change the date range for the selected sprint
 const Calendar = (props) => {
   const { onChange, dates, setDates } = props;
   const [open, setOpen] = useState(false);
 
   const handleChange = (inputDates) => {
     setDates(inputDates);
-    console.log("inputDates", inputDates);
   };
 
   const handleOpenChange = (open) => {

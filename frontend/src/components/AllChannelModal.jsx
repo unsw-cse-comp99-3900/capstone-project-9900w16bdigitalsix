@@ -9,6 +9,7 @@ import MessageAlert from './MessageAlert';
 
 const { Option } = Select;
 
+// show all the channels (private & public) for the current user
 const AllChannelModal = ({ visible, onOk, onCancel, refreshData, channelId, setChannelId, data, channelType, setChannelType, channelName, setChannelName }) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
@@ -17,7 +18,7 @@ const AllChannelModal = ({ visible, onOk, onCancel, refreshData, channelId, setC
   const userId = parseInt(localStorage.getItem('userId'));
   const token = localStorage.getItem('token');
 
-  // share a personal card
+  // select a channel
   const handleClick = (id, type, name) => {
     setChannelId(id);
     setChannelType(type);
@@ -37,6 +38,7 @@ const AllChannelModal = ({ visible, onOk, onCancel, refreshData, channelId, setC
         onCancel={handleCancel}
       >
         <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+          {/* show the list of private channel */}
           <div>
             <strong>Private Channels</strong>
             <List
@@ -63,7 +65,7 @@ const AllChannelModal = ({ visible, onOk, onCancel, refreshData, channelId, setC
               )}
             />
           </div>
-
+          {/* show the list of public channel */}
           <div>
             <strong>Group Channels</strong>
             <List

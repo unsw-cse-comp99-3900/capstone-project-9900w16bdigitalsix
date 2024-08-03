@@ -6,7 +6,11 @@ import { apiCall } from '../helper';
 import MessageAlert from './MessageAlert';
 
 const { Search } = Input;
+////////////////////
+// this component is used for create a new channel and invite new members into the public channel
+///////////////////
 
+// map the role num got from backend
 const roleMap = {
   1: 'Student',
   2: 'Tutor',
@@ -14,7 +18,7 @@ const roleMap = {
   4: 'Coordinator',
   5: 'Administrator'
 };
-
+// define different color to represent different roles
 const roleColorMap = {
   1: { background: '#e0f7fa', color: '#006064' }, // blue Student
   2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
@@ -31,19 +35,21 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, car
   const userId = localStorage.getItem('userId');
   const token = localStorage.getItem('token');
 
-  // student list
+  // record all the users' information of this platform
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAvatars, setSelectedAvatars] = useState([]);
 
+  // load user list
   useEffect(() => {
     loadUserData();
     setSelectedIds([]);
     setSelectedAvatars([]);
   }, []);
 
+  // filter user list
   useEffect(() => {
     const filtered = data.filter(item =>
       item.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -52,6 +58,7 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, car
     setFilteredData(filtered);
   }, [searchTerm, data]);
 
+  // update selected user list
   const handleSelect = (userId, avatarUrl) => {
     if (selectedIds.includes(userId)) {
       setSelectedIds(prevSelectedIds => prevSelectedIds.filter(id => id !== userId));
@@ -75,10 +82,10 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, car
       const res = Array.isArray(response) ? response : [];
       setData(res);
       setFilteredData(res);
-      console.log("response:",response);
     }
   }
 
+  // handle the operation of create a new channel
   const handleSubmit = async () => {
     if (selectedIds.length === 0) {
       setSnackbarContent('Please select at least one personal card');
@@ -103,7 +110,6 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, car
           userId: allUserIds,
         };
       }
-      console.log("requestBody:",requestBody);
       const response = await apiCall('POST', 'v1/message/create/channel', requestBody, token, true);
       if (response && !response.error) {
         setChannelId(response.channelID);
@@ -158,6 +164,7 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, car
           <Button key="submit" type="primary" onClick={handleSubmit}>Invite</Button>
         ]}
       >
+        {/* load all the users */}
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
           {selectedAvatars.map((user, index) => (
             <Avatar
@@ -172,11 +179,13 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, car
             />
           ))}
         </div>
+        {/* search function */}
         <Search
           placeholder="Search by name or email"
           onChange={e => setSearchTerm(e.target.value)}
           style={{ marginBottom: 16 }}
         />
+        {/* user list data */}
         <List
           dataSource={filteredData}
           style={{ maxHeight: '400px', overflowY: 'auto' }}

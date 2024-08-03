@@ -24,7 +24,6 @@ export default function InviteModel({
     setLoading(true);
     const url = `v1/user/same/course/student/list/${userId}`;
     const response = await apiCall("GET", url, null, token, null);
-    console.log("....list....", response);
     if (!response || response.error) {
       setData([]);
       setLoading(false);
@@ -33,35 +32,28 @@ export default function InviteModel({
       setData([...res]);
       setLoading(false);
       setAllData([...res]);
-      console.log("allData", [...res])
     }
   };
   useEffect(() => {
     if (!mountedRef.current) {
-      console.log(12121212);
       mountedRef.current = true;
       loadMoreData();
     }
   }, [mountedRef]);
   const seachList = () => {
     const seachTerm = seachRef.current.input.value.toLowerCase(); 
-    console.log(seachTerm);
 
     if (seachTerm) {
         let filtered = allData.filter((item) =>
             [item.userName, item.email, String(item.userId)].some((field) => {
-                console.log("field", field);
                 if (field) {
                     return field.toLowerCase().includes(seachTerm);
                 }
                 return false; 
             })
         );
-        console.log(filtered);
         setData(filtered);
     } else {
-        console.log(data);
-        // setData(data);
         loadMoreData();
     }
   };
@@ -69,7 +61,6 @@ export default function InviteModel({
   //   const [isModalOpen, setIsModalOpen] = useState(false);
   const [checkedList, setCheckedList] = useState([]);
   const handleOk = async () => {
-    console.log(checkedList);
     if (checkedList.length > 0) {
       const teamId = localStorage.getItem("teamId");
       const promises = checkedList.map(async (id) => {

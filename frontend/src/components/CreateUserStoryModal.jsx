@@ -10,12 +10,13 @@ import TextField from '@mui/material/TextField';
 
 const { Option } = Select;
 
+// map the status num got from backend
 const statusMap = {
   1: 'TO DO',
   2: 'IN PROGRESS',
   3: 'DONE',
 };
-
+// define different color to represent different status
 const statusColorMap = {
   1: '#808080',   // grey
   2: '#88D2FF',   // blue
@@ -66,7 +67,6 @@ const CreateUserStoryModal = ({ title, visible,  description, setDescription, on
       userStoryStatus: userStoryStatus
     };
 
-    console.log("requestBody", requestBody);
     const response = await apiCall('POST', 'v1/progress/create/userstory', requestBody, token, true);
 
     if (response.error) {

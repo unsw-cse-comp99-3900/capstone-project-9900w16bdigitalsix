@@ -7,6 +7,7 @@ import MessageAlert from './MessageAlert';
 
 const { Search } = Input;
 
+// map the role num got from backend
 const roleMap = {
   1: 'Student',
   2: 'Tutor',
@@ -15,6 +16,7 @@ const roleMap = {
   5: 'Administrator'
 };
 
+// define different color to represent different roles
 const roleColorMap = {
   1: { background: '#e0f7fa', color: '#006064' }, // blue Student
   2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
@@ -22,6 +24,7 @@ const roleColorMap = {
   4: { background: '#ffe0b2', color: '#e65100' }, // orange Coordinator
   5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
 };
+
 
 const ChatAllMemberCard = ({ visible, onOk, onCancel, refreshData, channelId, cardType }) => {
   const [alertOpen, setAlertOpen] = useState(false);
@@ -31,7 +34,7 @@ const ChatAllMemberCard = ({ visible, onOk, onCancel, refreshData, channelId, ca
   const userId = localStorage.getItem('userId');
   const token = localStorage.getItem('token');
 
-  // student list
+  // record member list in the selected channel
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -52,10 +55,9 @@ const ChatAllMemberCard = ({ visible, onOk, onCancel, refreshData, channelId, ca
     setFilteredData(filtered);
   }, [searchTerm, data]);
 
+  // load all the members' indormation of the selected channel
   const loadStudentData = async () => {
     const response = await apiCall('GET', `v1/message/${channelId}/users/detail`, null, token, true);
-    console.log("response:",response);
-    console.log("channelId:",channelId);
     if (!response) {
       setData([]);
       setFilteredData([]);
@@ -63,10 +65,8 @@ const ChatAllMemberCard = ({ visible, onOk, onCancel, refreshData, channelId, ca
       setData([]);
       setFilteredData([]);
     } else {
-      // const res = Array.isArray(response.users) ? response : [];
       setData(response.users);
       setFilteredData(response.users);
-      // console.log("data:",data);
     }
   }
   const handleCancel = () => {
@@ -81,6 +81,7 @@ const ChatAllMemberCard = ({ visible, onOk, onCancel, refreshData, channelId, ca
         footer={null}
         onCancel={handleCancel}
       >
+        {/* list all the members in the channel, and distinguish them with different color */}
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
           {selectedAvatars.map((user, index) => (
             <Avatar
