@@ -35,6 +35,12 @@ const statusColorMap = {
   3: '#52c41a'    // green
 };
 
+const statusTextMap = {
+  1: 'TO DO',   // grey
+  2: 'IN PROGRESS',   // blue
+  3: 'DONE'    // green
+};
+
 const sprintData = [
   { sprintNumber: 1, sprintName: 'Sprint 1' },
   { sprintNumber: 2, sprintName: 'Sprint 2' },
@@ -308,7 +314,7 @@ const ProjectProgress = (props) => {
                     </div>
                   }
                 />
-                <Tooltip title='To Do'>
+                <Tooltip title={statusTextMap[story.userStoryStatus]}>
                   <div
                     style={{ 
                       backgroundColor: statusColorMap[story.userStoryStatus],
