@@ -31,7 +31,7 @@ func createUsers() {
 		{"client1@unsw.edu", "client", "password4", 3, ""},
 		{"client2@unsw.edu", "client2", "password4", 3, ""},
 		{"coordinator1@unsw.edu", "coordinator1", "password4", 4, ""},
-		{"coordinator2@unsw.edu", "cooordinator2", "password4", 4, ""},
+		{"coordinator2@unsw.edu", "coordinator2", "password4", 4, ""},
 	}
 
 	// encription
