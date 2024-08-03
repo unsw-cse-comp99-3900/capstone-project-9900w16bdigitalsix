@@ -16,18 +16,22 @@ COPY . .
 # Build the Go application
 RUN go build -o user_srv .
 
+# Build the init_admin script
+RUN go build -o init_admin ./admin_init/admin_init.go
+
 # Start a new stage from scratch
 FROM alpine:latest
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the pre-built binary from the previous stage
+# Copy the pre-built binaries from the previous stage
 COPY --from=builder /app/user_srv .
+COPY --from=builder /app/init_admin .
 COPY --from=builder /app/config-production.yaml .
 
 # Expose port 50051 to the outside world
 EXPOSE 50051
 
-# Command to run the executable
+# Command to run the user_srv executable
 CMD ["./user_srv"]

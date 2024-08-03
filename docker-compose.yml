@@ -66,5 +66,15 @@ services:
     environment:
       - REACT_APP_BACKEND_URL=http://localhost:5555 # this defines the URL the frontend makes requests to
 
+  init_admin:
+    build:
+      context: ./backend/user_srv
+    command: ["./init_admin"]
+    depends_on:
+      - mysql
+    environment:
+      DATABASE_DSN: "root:root@tcp(mysql:3306)/capstone?charset=utf8mb4&parseTime=True&loc=Local"
+    restart: on-failure
+    
 volumes:
   mysql-data:
