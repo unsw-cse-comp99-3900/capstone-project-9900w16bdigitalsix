@@ -134,7 +134,6 @@ func createProjects() {
 		global.DB.Create(&project)
 		zap.S().Infof("Created project %d", i)
 
-		// 为项目添加技能
 		for _, skillName := range skillsList {
 			var skill models.Skill
 			if err := global.DB.Where("skill_name = ?", skillName).First(&skill).Error; err != nil {
@@ -171,7 +170,6 @@ func createProjects() {
 		global.DB.Create(&project)
 		zap.S().Infof("Created project %d", i)
 
-		// 为项目添加技能
 		for _, skillName := range skillsList {
 			var skill models.Skill
 			if err := global.DB.Where("skill_name = ?", skillName).First(&skill).Error; err != nil {
