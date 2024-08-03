@@ -118,7 +118,7 @@ const CustomCard = ({ id, title, client, clientTitle, clientAvatar, skills, fiel
         </div>
         <CardBody className="d-flex flex-column custom-card-body">
           <div className="d-flex align-items-center mb-3">
-            <Avatar src={clientAvatar || ''} size={40} className="avatar" />
+            <Avatar src={clientAvatar ? clientAvatar : ''} size={40} className="avatar" />
             <div className="client-info">
               <CardTitle tag="h5" className="client-name">{client}</CardTitle>
               <CardText className="client-title">{clientTitle}</CardText>

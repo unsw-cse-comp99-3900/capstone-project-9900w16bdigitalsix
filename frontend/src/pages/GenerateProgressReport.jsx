@@ -489,7 +489,7 @@ const pieOptions = {
                                     Team Members:<br />
                                     <div style={{ lineHeight: '1.5' }}>
                                         {teamData.teamMember.map((member, index) => (
-                                            <p key={index} style={{ margin: 0 }}>{member.userName}</p>
+                                            <p key={index} style={{ margin: 0 }}>{member.userName} - <span class="light-text">{member.userEmail}</span></p >
                                         ))}
                                     </div>
                                 </div>

@@ -238,7 +238,7 @@ const Message = () => {
   }
 
   const handleKeyPress = async(event) => {
-    if (event.key === 'Enter' && sendMessage.trim()) {
+    if (event.key === 'Enter' && sendMessage !== null && sendMessage.trim()) {
       const response_member = await apiCall('GET', `v1/message/${channelId}/users/detail`, null, token, true);
       let notification = {};
       if (response_member && !response_member.error) {
@@ -430,6 +430,7 @@ const Message = () => {
         onCancel={handlePersonalCardCancel}
         refreshData={fetchMessages} // update function
         channelId={channelId}
+        channelName={channelName}
       >
 
       </PersonalCard>
