@@ -195,7 +195,6 @@ const GenerateProgressReport = () => {
     getProjectDetail();
     getProgresstDetail();
     getFilteredTeam();
-    // console.log("teamdata:",teamData);
     const timer = setTimeout(() => setShowCharts(true), 1000);
     return () => clearTimeout(timer);
   }, []);
