@@ -93,7 +93,7 @@ const ProjectDetails = () => {
       return;
     }
   };
-
+  // show all allocated information
   const handleClick = () => {
     getAllAllocatedTeams();
     setOpen(true);
@@ -102,7 +102,7 @@ const ProjectDetails = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
+  // redirect to the project progress of the selected team
   const handleClickTeam = (teamId, teamIdShow, teamName) => {
     const item = {
       projectId: projectId,

@@ -6,6 +6,7 @@ import { Container } from "reactstrap";
 import '../assets/scss/FullLayout.css';
 import VirtualDataReport from './VirtualDataReport';
 
+// load all project report for admin
 const GenerateVirtual = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 

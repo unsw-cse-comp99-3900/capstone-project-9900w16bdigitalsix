@@ -318,9 +318,6 @@ const StudentTeamPreference = () => {
                     >
                       Preference List
                     </Typography>
-                    {/* <Typography variant="h5" gutterBottom fontWeight={"bold"}>
-                      You must select at least 7 preferences
-                    </Typography> */}
                   </Item>
                   <Item>
                     {/* the table below is used to record team's preference list */}

@@ -222,7 +222,7 @@ const ProjectProgress = (props) => {
     setIsGradeModalVisible(true);
   };
 
-  ///////////////////////////////////////////////////////TODO
+
   const handleGradeOk = () => {
     setIsGradeModalVisible(false);
   };
@@ -241,7 +241,7 @@ const ProjectProgress = (props) => {
       const startDate = currentSprint ? currentSprint.startDate : null;
       const endDate = currentSprint ? currentSprint.endDate : null;
       const sprintGrade = currentSprint ? currentSprint.sprintGrade : null;
-      // 生成dates数组
+      // generate date list
       const datesRender = [];
       if (startDate) datesRender.push(startDate);
       if (endDate) datesRender.push(endDate);
@@ -287,7 +287,6 @@ const ProjectProgress = (props) => {
           </Typography.Title>
           {/* list of user story */}
           <List
-            // loading={loading}
             dataSource={storys.filter(story => story.sprintNum === sprint.sprintNumber)}
             renderItem={(story, index) => (
               <List.Item className="list-item" key={story.userStoryId}>

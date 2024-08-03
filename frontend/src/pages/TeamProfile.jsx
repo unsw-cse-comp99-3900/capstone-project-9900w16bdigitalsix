@@ -179,6 +179,7 @@ const TeamProfile = ({
                   marginBottom: "-60px",
                 }}
               >
+                {/* show the team name, team id,  */}
                 <Grid item xs={6}>
                   <Item style={{ textAlign: "left" }}>
                     {editable ? (
@@ -208,6 +209,7 @@ const TeamProfile = ({
                     </Typography>{" "}
                   </Item>
                 </Grid>
+                {/* show the function on this page: leave the team */}
                 <Grid item xs={4}>
                   <Item style={{ textAlign: "end" }}>
                     <Button
@@ -272,6 +274,7 @@ const TeamProfile = ({
               </div>
             </Item>
           </Grid>
+          {/* show all the team members */}
           <Grid item xs={10}>
             <Item sx={{ textAlign: "left" }}>
               <Typography
@@ -330,6 +333,7 @@ const TeamProfile = ({
               </List>
             </Item>
           </Grid>
+          {/* show the function for inviting new member */}
           <Grid item xs={10}>
             <Item>
               <Button
@@ -348,6 +352,7 @@ const TeamProfile = ({
               ></InviteModel>
             </Item>
           </Grid>
+          {/* edit the team skills */}
           <Grid item xs={10}>
             <Item sx={{ textAlign: "left" }}>
               {editable ? (

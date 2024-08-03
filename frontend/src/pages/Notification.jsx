@@ -32,14 +32,13 @@ const Notification = () => {
   // for Clear notification
   const toggleDeleteModal = () => setDeleteModalVisible(!deleteModalVisible);
   const handleDelete = async () => {
-    console.log('Clear notification:');
     const response = await apiCall('DELETE', `v1/notification/clear/all/${userId}`, null, token, true);
     loadUserData();
     toggleDeleteModal();
     window.location.reload();
   };
 
-  
+  // load all the nofitication
   const loadUserData = async () => {
     if (loading) return;
     setLoading(true);
@@ -51,8 +50,6 @@ const Notification = () => {
   
     const response = await apiCall('GET', `v1/notification/get/all/${userId}`, null, token, true);
   
-    console.log("response:", response);
-    console.log("userId:", userId);
     if (!response) {
       setData([]);
       setLoading(false);
@@ -72,6 +69,7 @@ const Notification = () => {
     loadUserData();
   }, []);
 
+  // get formatted date and time
   const formatDate = (isoString) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
     const date = new Date(isoString);

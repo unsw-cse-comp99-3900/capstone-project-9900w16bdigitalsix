@@ -6,6 +6,8 @@ import Header from "../layouts/Header";
 import { Container } from "reactstrap";
 import '../assets/scss/FullLayout.css';//make sure import this
 
+// test part: virtual page
+// show project detail for the selected project id
 const TestProjectDetail = () => {
   const navigate = useNavigate();
   const item = {

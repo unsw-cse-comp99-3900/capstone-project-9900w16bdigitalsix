@@ -10,6 +10,7 @@ import Link from '@mui/material/Link';
 
 import cap from '../assets/images/logos/cap.png'
 
+// show the verify page to reset password with the link sent to the email box
 const ResetSuccess = (props) => {
   const navigate = useNavigate();
 
@@ -19,7 +20,6 @@ const ResetSuccess = (props) => {
         <CenteredCard>
           <CardContent>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              {/* <LogoDark /> */}
               <img src={cap} alt="small_logo" style={{ width: '80px', height: '80px' }}/>
             </div>
             <Typography sx={{textAlign:'center'}} variant="h5" component="div">

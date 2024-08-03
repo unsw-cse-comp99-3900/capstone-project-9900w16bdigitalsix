@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Flex, List, Input } from "antd";
 import "../styles/teamTutor.css";
-// import { useNavigate } from "react-router-dom";
 import InviteModel from "../components/InviteModel";
 import { apiCall } from "../helper";
 import '../assets/scss/FullLayout.css';//make sure import this
@@ -15,6 +14,7 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Typography from "@mui/material/Typography";
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
+// show the information for the staff
 export default function TeamTutor() {
   const navigate = useNavigate(); // Initialize useNavigate
   const [team, setTeam] = useState(true);
@@ -27,25 +27,27 @@ export default function TeamTutor() {
 
   const seachRef = useRef();
   const mountedRef = useRef(false);
+
+  // get all team list from backend
+  // get the list of students not in a team
   const loadMoreData = async () => {
     if (loading) return;
     setLoading(true);
     const url = "v1/team/get/list";
     const studentUrl = "v1/student/unassigned/list";
     const response = await apiCall("GET", team ? url : studentUrl);
-    console.log("....list....", response);
     if (!response || response.error) {
       setData([]);
       setLoading(false);
     } else {
       const res = response;
-      console.log("res", res);
       setData([...res]);
       setLoading(false);
       setAllData([...res]);
     }
   };
 
+  // load different date
   useEffect(() => {
     if (mounting.current) {
       mounting.current = false;
@@ -57,7 +59,6 @@ export default function TeamTutor() {
   useEffect(() => {
     if (!mountedRef.current) {
       mountedRef.current = true;
-      console.log("...token..");
       loadMoreData();
     }
   }, [mountedRef]);
@@ -70,15 +71,14 @@ export default function TeamTutor() {
 
   };
 
+  // handle searching token
   const seachList = () => {
     const searchTerm = seachRef.current.input.value.toLowerCase();
-    console.log(searchTerm);
     if (searchTerm) {
       let filtered;
       if (team) {
         filtered = allData.filter((item) =>
           [item.teamName, item.teamSkills, String(item.teamId)].some((field) => {
-            console.log("field", field);
             if (field) {
               if (Array.isArray(field)) {
                 field = field.join(' ');
@@ -99,10 +99,8 @@ export default function TeamTutor() {
           })
         );
       }
-      console.log(filtered);
       setData(filtered);
     } else {
-      console.log(data);
       loadMoreData();
     }
   };
@@ -118,11 +116,14 @@ export default function TeamTutor() {
   const navigateToUnallocatedTeams = () => {
     navigate("/team/unallocated"); 
   };
+
+  // clear token when clicking on clear button
   const handleClearSearch = () => {
     setSearchTerm('');
     loadMoreData();
   };
 
+  // define the apicall url for different pages
   const getCouseChangeData = async (course)=>{
  
     let   fetcUrl = ""
@@ -138,7 +139,6 @@ export default function TeamTutor() {
       }
     }
     const res = await apiCall("GET",fetcUrl)
-    console.log(res)
     if (res){
       setData(res)
     }else{
@@ -187,6 +187,7 @@ export default function TeamTutor() {
                       {team ? "TEAM LIST" : "STUDENT LIST"}
                     </Typography>
                 <div className="actions-wrap" style={{width:"100%",display:"flex",alignItems:"center"}}>
+                {/* filter with course */}
                 <FormControl fullWidth style={{ flexDirection: 'column', alignItems: 'top',width:'440px'}}>
                     <InputLabel id="course-label">Course</InputLabel>
                     <Select
@@ -201,6 +202,7 @@ export default function TeamTutor() {
                       <MenuItem value="COMP3900">COMP3900</MenuItem>
                     </Select>
                 </FormControl>
+              {/* different buttons */}
                <div className="titleBtn">
                 <Flex gap="small" wrap>
                  
@@ -257,7 +259,6 @@ export default function TeamTutor() {
                 id="scrollableDiv"
                 style={{
                   maxHeight: 550,
-                  // overflow: "auto",
                   padding: "0 16px",
                   width:"100%",
                   border: "1px solid rgba(140, 140, 140, 0.35)",

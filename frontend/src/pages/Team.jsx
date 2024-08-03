@@ -42,7 +42,6 @@ const Team = (props) => {
     // this function is used to get the team details that a user belong to
     const isTeam = async () => {
       const res = await apiCall("GET", `v1/team/profile/${userId}`);
-      console.log(res);
       if (res.error) {
         setHasTeam(false);
         setLoading(false);
