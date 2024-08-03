@@ -9,6 +9,7 @@ import GradientBackground from '../components/GradientBackground';
 
 import cap from '../assets/images/logos/cap.png'
 
+// after clicking resigter, redirect to this page which shows the information to inform users to check their mail box
 const Verify = (props) => {
   const navigate = useNavigate();
   return(
@@ -17,7 +18,6 @@ const Verify = (props) => {
         <CenteredCard>
           <CardContent>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              {/* <LogoDark /> */}
               <img src={cap} alt="small_logo" style={{ width: '80px', height: '80px' }}/>
             </div>
             <Typography sx={{textAlign:'center'}} variant="h5" component="div">

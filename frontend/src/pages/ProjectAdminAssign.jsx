@@ -13,6 +13,7 @@ import TutorAssign from '../components/AssignTeamTutorModal';
 import CoorAssign from '../components/AssignTeamCoorModal';
 import { apiCall} from '../helper';
 
+// load the project details page for admin, assign tutor, coordinator for the project
 const ProjectAdminAssign = () => {
   const location = useLocation();
   const { item } = location.state || {};
@@ -38,7 +39,6 @@ const ProjectAdminAssign = () => {
   // State for the Coordinator Dialog
   const [coorDialogOpen, setCoorDialogOpen] = useState(false);
 const toggleCoorDialog = () => {
-  console.log("coorDialogOpen", !coorDialogOpen);
   fetchCoordinator();
   setCoorDialogOpen(!coorDialogOpen);
 }
@@ -53,6 +53,7 @@ const toggleCoorDialog = () => {
     }
   }, [projectId]);
 
+  // get the detail information for the assigned tutor
   const fetchTutor = async () => {
     const token = localStorage.getItem('token');
     const result = await apiCall('GET', `v1/admin/get/tutor/${projectId}`, null, token, true);
@@ -68,7 +69,7 @@ const toggleCoorDialog = () => {
       setTutor(null);
     }
   };
-
+  // get the detail information for the assigned coordinator
   const fetchCoordinator = async () => {
     const token = localStorage.getItem('token');
     const result = await apiCall('GET', `v1/admin/get/coordinator/${projectId}`, null, token, true);
@@ -104,6 +105,7 @@ const toggleCoorDialog = () => {
           </div>
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
+            {/* card to load all the information about project */}
             <Card>
               <CardTitle
                 tag="h5"
@@ -117,6 +119,7 @@ const toggleCoorDialog = () => {
                   </div>
                 </div>
               </CardTitle>
+              {/* project detail: client, description, skills, tutor, coordinator */}
               <CardBody className="p-4" style={{ fontFamily: 'Arial, sans-serif' }}>
                 <div style={{ margin: '30px' }}>
                   <h5 style={{ margin: '0 0 10px 0', fontSize: '18px', fontWeight: '600' }}>Client Information</h5>
@@ -211,6 +214,7 @@ const toggleCoorDialog = () => {
               </CardBody>
             </Card>
           </Container>
+          {/* dialog for assigning a coordinator */}
           <Dialog
             open={coorDialogOpen}
             onClose={() => {
@@ -225,6 +229,7 @@ const toggleCoorDialog = () => {
               <CoorAssign projectId={projectId} projectName={title} assignedCoorId={coordinator?.coorId} toggleCoorDialog={toggleCoorDialog}/>
             </DialogContent>
           </Dialog>
+          {/* dialog for assigning a tutor */}
           <Dialog
             open={tutorDialogOpen}
             onClose={() => {

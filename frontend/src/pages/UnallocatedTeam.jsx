@@ -12,6 +12,7 @@ import { Chip, Box } from '@mui/material';
 import Typography from "@mui/material/Typography";
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
+// show the unallocated team list for the staff
 const FullLayout = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -27,13 +28,11 @@ const FullLayout = () => {
     setLoading(true);
     // const url = 'v1/team/get/unallocated/list';
     const response = await apiCall('GET', url, null, null, null);
-    console.log('....list....', response);
     if (!response || response.error) {
       setData([]);
       setLoading(false);
     } else {
       const res = response;
-      console.log("res", res);
       setData([...res]);
       setLoading(false);
     }
@@ -42,14 +41,13 @@ const FullLayout = () => {
   useEffect(() => {
     if (!mountedRef.current) {
       mountedRef.current = true;
-      console.log('...token..');
       loadMoreData();
     }
   }, [mountedRef]);
 
+  // load filtered list from backend
   const seachList = async () => {
     const searchTerm = seachRef.current.input.value.toLowerCase();
-    console.log(searchTerm);
     if (searchTerm) {
       const url = 'v1/search/team/unallocated/list/detail'; 
       const requestBody = {
@@ -58,31 +56,16 @@ const FullLayout = () => {
       if (loading) return;
       setLoading(true);
       const response = await apiCall('POST', url, requestBody);
-      console.log('....list....', response);
       if (!response || response.error) {
         setData([]);
         setLoading(false);
       } else {
         const res = response;
-        console.log("res", res);
         setData([...res]);
         setLoading(false);
       }
-      // fetch(url, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(requestBody),
-      // })
-      // .then(data => {
-      //   console.log(data);
-      // })
-      // .catch(error => {
-      //   console.error('Error:', error);
-      // });
+
     } else {
-      console.log(888);
       loadMoreData();
     }
   };
@@ -109,7 +92,6 @@ const FullLayout = () => {
       }
     }
     const res = await apiCall("GET", fetcUrl);
-    console.log(res);
     if (res) {
       setData(res);
     } else {

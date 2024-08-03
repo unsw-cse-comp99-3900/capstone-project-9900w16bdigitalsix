@@ -110,7 +110,6 @@ const Message = () => {
 
     try {
       const response = await apiCall('POST', 'v1/message/update/channelName', requestBody, token, true);
-      console.log(response);
 
       if (response && !response.error) {
         setSnackbarContent('Channel name updated successfully');
@@ -118,7 +117,6 @@ const Message = () => {
         setAlertOpen(true);
       } else {
         const errorMsg = response.error || 'Failed to update channel name';
-        console.error(errorMsg);
         setAlertType('error');
         setAlertOpen(true);
       }
@@ -156,8 +154,6 @@ const Message = () => {
         setAllChannelData([]);
       } else {
         setAllChannelData(response.channels ?  response.channels : []);
-        // console.log("all channel data:",response);
-        // console.log("channelid:",channelId);
         
       }
   }
@@ -199,8 +195,6 @@ const Message = () => {
         }
 
         if (response.messages && response.messages.length > prevMsgLengthRef.current) {
-          console.log("response.messages.length", response.messages.length);
-          console.log("prevMsgLength", prevMsgLengthRef.current);
           prevMsgLengthRef.current = response.messages.length;
           setMessages(response.messages ? response.messages : []);
         }
@@ -210,7 +204,6 @@ const Message = () => {
   // Handle leave channel
   const handleLeaveChannel = async () => {
     const response = await apiCall('DELETE', `v1/message/leave/channel/${channelId}/${userId}`, null, token, true);
-    console.log("response:",response);
 
     if (response && !response.error) {
       setSnackbarContent('Left channel successfully');
@@ -258,7 +251,6 @@ const Message = () => {
         notification: notification,
       };
       
-      console.log("requestBody", requestBody);
       const response = await apiCall('POST', 'v1/message/send', requestBody, token, true);
       if (!response){
         return

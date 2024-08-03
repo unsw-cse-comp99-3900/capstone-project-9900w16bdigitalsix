@@ -93,14 +93,7 @@ const ResetPwd = (props) => {
         setAlertType('error');
         setOpen(true);
       } else if (data.msg) {
-        // localStorage.setItem('token', data.token);
-        // localStorage.setItem('email', email);
-        // props.setToken(data.token);
-        // props.setEmail(email);
         setSuccess(true);
-        // setSnackbarContent('data.msg');
-        // setAlertType('success');
-        // setOpen(true);
       }
     } catch (error) {
       console.error('Error during reset password:', error);
