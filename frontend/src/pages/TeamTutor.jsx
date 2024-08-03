@@ -184,7 +184,7 @@ export default function TeamTutor() {
                       textAlign="left"
                     >
                       {/* Team List */}
-                      {team ? "TEAM LIST" : "STUDENT LIST"}
+                      {team ? "TEAM LIST" : "STUDENT LIST(not have a team)"}
                     </Typography>
                 <div className="actions-wrap" style={{width:"100%",display:"flex",alignItems:"center"}}>
                 {/* filter with course */}

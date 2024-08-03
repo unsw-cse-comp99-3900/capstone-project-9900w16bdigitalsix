@@ -59,13 +59,13 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, car
   }, [searchTerm, data]);
 
   // update selected user list
-  const handleSelect = (userId, avatarUrl) => {
+  const handleSelect = (userId, avatar) => {
     if (selectedIds.includes(userId)) {
       setSelectedIds(prevSelectedIds => prevSelectedIds.filter(id => id !== userId));
       setSelectedAvatars(prevSelectedAvatars => prevSelectedAvatars.filter(user => user.userId !== userId));
     } else {
       setSelectedIds(prevSelectedIds => [...prevSelectedIds, userId]);
-      setSelectedAvatars(prevSelectedAvatars => [...prevSelectedAvatars, { userId, avatarUrl }]);
+      setSelectedAvatars(prevSelectedAvatars => [...prevSelectedAvatars, { userId, avatar }]);
     }
   };
 
@@ -170,7 +170,7 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, car
             <Avatar
               key={user.userId}
               id={user.userId}
-              src={user.avatarUrl ? user.avatarUrl : ''}
+              src={user.avatar ? user.avatar : ''}
               size={64}
               style={{
                 marginLeft: index === 0 ? 0 : -16,
@@ -195,10 +195,10 @@ const ChatPersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, car
                 <Checkbox
                   value={item.userId}
                   checked={selectedIds.includes(item.userId)}
-                  onChange={() => handleSelect(item.userId, item.avatarUrl)}
+                  onChange={() => handleSelect(item.userId, item.avatar)}
                   style={{ marginRight: 16 }}
                 />
-                <Avatar src={item.avatarUrl ? item.avatarUrl : ''} style={{ marginRight: 16 }} />
+                <Avatar src={item.avatar ? item.avatar : ''} style={{ marginRight: 16 }} />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <div><strong>Name:</strong> {item.userName}</div>
                   <div><strong>Email:</strong> {item.email}</div>
