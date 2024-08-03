@@ -27,8 +27,9 @@ func createUsers() {
 		{"student4@unsw.edu", "student4", "password4", 1, "COMP3300"},
 		{"student5@unsw.edu", "student5", "password4", 1, "COMP3300"},
 		{"student6@unsw.edu", "student6", "password4", 1, "COMP3300"},
-		{"tutor1@unsw.edu", "student3", "password3", 2, ""},
-		{"client1@unsw.edu", "client", "password4", 3, ""},
+		{"tutor1@unsw.edu", "tutor1", "password3", 2, ""},
+		{"tutor2@unsw.edu", "tutor2", "password3", 2, ""},
+		{"client1@unsw.edu", "client1", "password4", 3, ""},
 		{"client2@unsw.edu", "client2", "password4", 3, ""},
 		{"coordinator1@unsw.edu", "coordinator1", "password4", 4, ""},
 		{"coordinator2@unsw.edu", "coordinator2", "password4", 4, ""},
@@ -97,6 +98,9 @@ func createProjects() {
 	global.DB.Where("Email = ?", "client1@unsw.edu").First(&client1)
 	global.DB.Where("Email = ?", "tutor1@unsw.edu").First(&tutor1)
 	global.DB.Where("Email = ?", "coordinator1@unsw.edu").First(&coordinator1)
+	global.DB.Where("Email = ?", "client2@unsw.edu").First(&client1)
+	global.DB.Where("Email = ?", "tutor2@unsw.edu").First(&tutor1)
+	global.DB.Where("Email = ?", "coordinator2@unsw.edu").First(&coordinator1)
 
 	for i := 1; i <= 5; i++ {
 		project := models.Project{
