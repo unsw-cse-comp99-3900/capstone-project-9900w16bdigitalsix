@@ -7,6 +7,7 @@ import MessageAlert from './MessageAlert';
 
 const { Option } = Select;
 
+// define the map for differnet role number
 const roleMap = {
   1: 'Student',
   2: 'Tutor',
@@ -23,6 +24,7 @@ const roleColorMap = {
   5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
 };
 
+// when admin want to change the role of a user, the frontend will show this modal
 const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -30,6 +32,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
   const [snackbarContent, setSnackbarContent] = useState('');
   const selectedRoleName = roleMap[selectedRole];
 
+  // update the selected user
   useEffect(() => {
     if (user && user.role !== undefined) {
       setSelectedRole(user.role);
@@ -40,6 +43,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
     setSelectedRole(parseInt(value, 10));
   };
 
+  // handle change for the selected user
   const handleSubmit = async () => {
     if (!selectedRole) {
       setSnackbarContent('Please select a role');
@@ -96,6 +100,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
           <Button key="submit" type="primary" onClick={handleSubmit}>Save</Button>
         ]}
       >
+        {/* show the current detail of the current user */}
         <div className="modal-content">
           <Avatar src={user?.avatar || ''} size={80} className="avatar" />
           <div className="user-details">
@@ -106,6 +111,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
             </div>
           </div>
         </div>
+        {/* the operation of assigning a new role */}
         <div className="modal-body">
           <p className="assign-role-text"><strong>Assign role to {user?.userName}</strong></p>
           <Select

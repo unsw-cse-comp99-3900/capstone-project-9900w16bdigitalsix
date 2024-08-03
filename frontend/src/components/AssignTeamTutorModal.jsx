@@ -5,6 +5,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { apiCall } from '../helper';
 import MessageAlert from './MessageAlert';
 
+// assign a tutor for the project
 const TutorAssign = ({ projectId, projectName, assignedTutorId, toggleTutorDialog }) => {
   const [loading, setLoading] = useState(false);
   const [tutors, setTutors] = useState([]);
@@ -15,6 +16,7 @@ const TutorAssign = ({ projectId, projectName, assignedTutorId, toggleTutorDialo
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
 
+  // show the list of tutors
   const loadTutors = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -40,6 +42,7 @@ const TutorAssign = ({ projectId, projectName, assignedTutorId, toggleTutorDialo
     toggleTutorDialog();
   };
 
+  // admin can choose one of them to be responsible for this project
   const assignTutor = async (tutor) => {
     setSelectedTutor(tutor);
     const token = localStorage.getItem('token');
@@ -57,13 +60,11 @@ const TutorAssign = ({ projectId, projectName, assignedTutorId, toggleTutorDialo
     };
     const data = await apiCall('POST', 'v1/admin/change/project/tutor', requestBody, token, true);
     if (data && !data.error) {
-      //console.log('Project tutor updated successfully:', data);
       setSnackbarContent('Project tutor updated successfully');
       setAlertType('success');
       setAlertOpen(true);
       loadTutors();
     } else {
-      //console.error('Failed to update project tutor:', data.error);
       setSnackbarContent('Failed to update project tutor');
       setAlertType('error');
       setAlertOpen(true);
