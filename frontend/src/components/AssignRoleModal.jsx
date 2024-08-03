@@ -77,7 +77,9 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
       setSnackbarContent('User role updated successfully');
       setAlertType('success');
       setAlertOpen(true);
+
       onOk();
+      window.location.reload();
       refreshData();
     }
   };
