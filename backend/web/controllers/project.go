@@ -445,7 +445,7 @@ func ModifyProjectDetail(c *gin.Context) {
 }
 
 // @Summary Get allocated team details
-// @Description 查看一个 project 被 allocated 的所有 team 的信息
+// @Description view project 被 allocated 的 all team information
 // @Tags Project Allocation
 // @Produce json
 // @Param projectId path int true "Project ID"
@@ -686,7 +686,7 @@ func ProjectAllocation(c *gin.Context) {
 }
 
 // @Summary Reject a team allocation
-// @Description 检查团队是否已经被分配了项目，如果已经分配了项目，则取消分配并发送通知
+// @Description Reject a team allocation
 // @Tags Project Allocation
 // @Accept json
 // @Produce json

@@ -16,13 +16,13 @@ var userClient proto.UserClient
 
 func Init() {
 	var err error
-	// 假设的使用方法，具体实现依赖于官方文档的更新
+	//  gRPC connection
 	clientConn, err = grpc.NewClient("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}
 
-	// 使用 clientConn 来创建服务客户端
+	// use clientConn create client connection
 	userClient = proto.NewUserClient(clientConn)
 }
 

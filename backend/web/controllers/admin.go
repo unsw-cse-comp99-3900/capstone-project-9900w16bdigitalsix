@@ -13,8 +13,7 @@ import (
 )
 
 // @Summary Get all tutor List
-// @Description 注意 header  Authorization: Bearer <token>, 返回所有 Tutor 列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
-// @Tags Admin
+// @Description  header  Authorization: Bearer <token>, get all Tutor list
 // @Accept  json
 // @Produce  json
 // @Param Authorization header string true "Bearer <token>"
@@ -29,7 +28,7 @@ func GetAllTutorInfo(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch tutors"})
 		return
 	}
-	// 映射到返回的结构体
+
 	var tutorResponses []response.UserListResponse
 	for _, tutor := range tutors {
 		tutorResponses = append(tutorResponses, response.UserListResponse{
@@ -45,7 +44,7 @@ func GetAllTutorInfo(c *gin.Context) {
 }
 
 // @Summary Get all coordinator List
-// @Description 注意 header  Authorization: Bearer <token>, 返回所有 Coordinator 列表， 注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
+// @Description note header  Authorization: Bearer <token>, return all Coordinator list
 // @Tags Admin
 // @Accept  json
 // @Produce  json
@@ -61,7 +60,7 @@ func GetAllCoordinatorInfo(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch coordinator"})
 		return
 	}
-	// 映射到返回的结构体
+
 	var tutorResponses []response.UserListResponse
 	for _, tutor := range tutors {
 		tutorResponses = append(tutorResponses, response.UserListResponse{
@@ -77,7 +76,7 @@ func GetAllCoordinatorInfo(c *gin.Context) {
 }
 
 // @Summary Modify user role
-// @Description 修改用户的角色信息, 注意header  Authorization: Bearer <token>，如果用户离开队伍且队伍没有其他成员，解散队伍并删除
+// @Description change user role, header  Authorization: Bearer <token>，if user leave the team, and team doesn't have member, delete the team
 // @Tags Admin
 // @Accept json
 // @Produce json
@@ -104,26 +103,30 @@ func ModifyUserRole(c *gin.Context) {
 		return
 	}
 
-	// 如果用户属于某个队伍且新角色不是学生，将用户从队伍中移除
+	if user.Role == 5 {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Cannot modify admin role"})
+		return
+	}
+
+	// if user belongsss to a team, and the role change to other role, deletet the user fronm the team
 	if user.BelongsToGroup != nil && req.Role != 1 {
-		// 保存用户所属队伍的ID
+
 		teamID := user.BelongsToGroup
 
-		// 将用户从队伍中移除
 		user.BelongsToGroup = nil
 		if err := global.DB.Save(&user).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		// 检查队伍是否还有其他成员
+		// check if team has other student
 		var members []models.User
 		if err := global.DB.Where("belongs_to_group = ?", teamID).Find(&members).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		// 如果队伍没有其他成员，解散队伍并删除
+		// if team has no member, delete the team
 		if len(members) == 0 {
 			if err := global.DB.Delete(&models.Team{}, teamID).Error; err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -132,14 +135,12 @@ func ModifyUserRole(c *gin.Context) {
 		}
 	}
 
-	// 修改用户角色
 	user.Role = req.Role
 	if err := global.DB.Save(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// 调用通知处理函数
 	if err := handleNotification(req.Notification.Content, req.Notification.To.Users); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -149,7 +150,7 @@ func ModifyUserRole(c *gin.Context) {
 }
 
 // @Summary Update project coordinator
-// @Description 修改 project coordinator，注意 header 需要 Authorization: Bearer <token>
+// @Description change project coordinator， header need Authorization: Bearer <token>
 // @Tags Admin
 // @Accept json
 // @Produce json
@@ -187,7 +188,6 @@ func ChangeProjectCoordinator(c *gin.Context) {
 		return
 	}
 
-	// 调用通知处理函数
 	if err := handleNotification(req.Notification.Content, req.Notification.To.Users); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -197,7 +197,7 @@ func ChangeProjectCoordinator(c *gin.Context) {
 }
 
 // @Summary Update project tutor
-// @Description 更新负责这个 project 的 tutor，注意 header 需要 Authorization: Bearer <token>
+// @Description update project 的 tutor， header need Authorization: Bearer <token>
 // @Tags Admin
 // @Accept json
 // @Produce json
@@ -235,7 +235,6 @@ func ChangeProjectTutor(c *gin.Context) {
 		return
 	}
 
-	// 调用通知处理函数
 	if err := handleNotification(req.Notification.Content, req.Notification.To.Users); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

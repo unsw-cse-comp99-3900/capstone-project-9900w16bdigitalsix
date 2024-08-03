@@ -25,7 +25,6 @@ const fieldColors = {
 const userId = localStorage.getItem('userId');
 const fetchProjectList = async () => {
   try {
-    // const response = await fetch(`http://127.0.0.1:8080/v1/project/get/list/byRole/3`, {
       const response = await fetch("http://127.0.0.1:8080/v1/project/get/public_project/list", {
       method: 'GET',
       headers: {
@@ -45,6 +44,7 @@ const fetchProjectList = async () => {
   }
 };
 
+// fetch the statistics result from backend
 const fetchApiData = async () => {
   try {
     const response = await fetch('http://127.0.0.1:8080/v1/project/statistics/', {
@@ -77,6 +77,7 @@ const VirtualDataReport = () => {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  // load statistics chats
   useEffect(() => {
     const fetchData = async () => {
       const apiData = await fetchApiData();
@@ -110,6 +111,7 @@ const VirtualDataReport = () => {
     setSelectedField(event.target.value);
   };
 
+  // convert to PDF file
   const handlePrintPdf = async () => {
     const input = reportRef.current;
     const pdf = new jsPDF('p', 'pt', 'a4');
@@ -175,6 +177,7 @@ const VirtualDataReport = () => {
     return <div>Loading...</div>;
   }
 
+  // define the filtering logic
   const filteredProjects = projectList.filter(project => {
     return (
       (!clientFilter || project.clientName === clientFilter) &&
@@ -187,6 +190,7 @@ const VirtualDataReport = () => {
     return [...new Set(projectList.map(project => project[key]).filter(Boolean))];
   }
 
+  // get filtered list
   const renderFilterDropdown = (field, setFilter) => {
     const values = uniqueValues(field);
     if (values.length === 0) return null;
@@ -208,6 +212,7 @@ const VirtualDataReport = () => {
     );
   };
 
+  // load user data
   const totalUsersData = {
     labels: ['Students', 'Clients', 'Tutors', 'Coordinators'],
     datasets: [
@@ -218,6 +223,7 @@ const VirtualDataReport = () => {
     ],
   };
 
+  // load team data
   const fieldTeamsData = {
     labels: data.fields.map(field => field.field),
     datasets: [
@@ -228,6 +234,7 @@ const VirtualDataReport = () => {
     ],
   };
 
+  // load project data
   const selectedFieldProjects = data.projects.filter(project => project.field === selectedField);
   const fieldProjectsData = {
     labels: selectedFieldProjects.map(project => project.title),
@@ -252,6 +259,7 @@ const VirtualDataReport = () => {
     ],
   };
 
+  // define different charts
   const pieOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -317,6 +325,7 @@ const VirtualDataReport = () => {
     <Container fluid>
       <Button onClick={handlePrintPdf} className="mb-4">Print PDF</Button>
       <div ref={reportRef}>
+        {/* load charts */}
         <Row>
           <Col lg="6" className="mb-4 chart-container">
             <Card>
@@ -370,6 +379,7 @@ const VirtualDataReport = () => {
           </Col>
         </Row>
         <Row>
+          {/* load projects with filtering operators */}
           <Col lg="12" className="mb-4">
             <Card>
               <CardBody>

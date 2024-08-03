@@ -15,14 +15,14 @@ import (
 )
 
 func main() {
-	// 初始化
+	// initialize
 	initialize.InitLogger()
-	initialize.InitConfig() // 必须要先initconfig 再初始化数据库
+	initialize.InitConfig() // must first initconfig then initialize database
 	initialize.InitDB()
 
 	zap.S().Info(global.ServerConfig)
 
-	IP := flag.String("ip", global.ServerConfig.Host, "ip address") // 命令行读取
+	IP := flag.String("ip", global.ServerConfig.Host, "ip address") // command line argument
 	Port := flag.Int("port", global.ServerConfig.Port, "port")
 	flag.Parse()
 
@@ -32,7 +32,7 @@ func main() {
 	server := grpc.NewServer()
 	proto.RegisterUserServer(server, &handler.UserServer{})
 
-	// 监听
+	// listen
 	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", *IP, *Port))
 	if err != nil {
 		panic("failed to listen: " + err.Error())

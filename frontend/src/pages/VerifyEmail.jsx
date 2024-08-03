@@ -11,6 +11,7 @@ import { apiCall } from '../helper';
 
 import cap from '../assets/images/logos/cap.png'
 
+// show the verfiy email page with the sent link in the email box
 const VerifyEmail = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,12 +22,10 @@ const VerifyEmail = (props) => {
     // get token from url
     const params = new URLSearchParams(location.search);
     setToken(params.get('token'));
-    console.log(token)
   }, []);
 
   React.useEffect(() => {
     // return error
-    console.log(token)
     if (!token) {
       setMessage('Invalid Link');
       return;
@@ -45,10 +44,6 @@ const VerifyEmail = (props) => {
         setMessage(data.error)
 
       } else if (data.msg) {
-        // localStorage.setItem('token', data.token);
-        // localStorage.setItem('email', email);
-        // props.setToken(data.token);
-        // props.setEmail(email);
         setMessage("Email verification successful!")
       }
     } catch (error) {
@@ -61,7 +56,6 @@ const VerifyEmail = (props) => {
         <CenteredCard>
           <CardContent>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              {/* <LogoDark /> */}
               <img src={cap} alt="small_logo" style={{ width: '80px', height: '80px' }}/>
             </div>
             <Typography sx={{textAlign:'center'}} variant="h5" component="div">

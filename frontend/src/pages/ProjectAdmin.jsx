@@ -21,7 +21,7 @@ const ProjectAdmin = () => {
   const navigate = useNavigate();
   
 
-
+  // load all project data for admin
   const loadProjectData = async () => {
     if (loading) return;
     setLoading(true);
@@ -34,7 +34,6 @@ const ProjectAdmin = () => {
   
     const response = await apiCall('GET', 'v1/project/get/public_project/list');
   
-    console.log("response:", response)
     if (!response){
       setData([]);
       setFilteredData([]);
@@ -51,6 +50,7 @@ const ProjectAdmin = () => {
     }
   };
 
+  // get filtered project list from backend
   const handleSearchProjects = async () => {
     const searchTerm = seachRef.current.input.value.toLowerCase();
     try {
@@ -71,11 +71,13 @@ const ProjectAdmin = () => {
     }
   };
 
+  // clear searching token
   const handleClear = () => {
     setSearchTerm('');
     loadProjectData();
   };
 
+  // when clicking on "report" button
   const handleReport = () => {
     navigate('/project/virtual-data-report');
   }

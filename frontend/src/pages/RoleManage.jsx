@@ -12,6 +12,7 @@ import AssignRoleModal from '../components/AssignRoleModal';
 import '../assets/scss/RoleManage.css'
 import '../assets/scss/FullLayout.css';//make sure import this
 
+// map the role num got from backend
 const roleMap = {
   1: 'Student',
   2: 'Tutor',
@@ -20,6 +21,7 @@ const roleMap = {
   5: 'Administrator'
 };
 
+// define different color to represent different roles
 const roleColorMap = {
   1: { background: '#e0f7fa', color: '#006064' }, // blue Student
   2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
@@ -28,6 +30,7 @@ const roleColorMap = {
   5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
 };
 
+// load all the roles' information for admin
 const RoleManage = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -48,8 +51,6 @@ const RoleManage = () => {
   
     const response = await apiCall('GET', 'v1/user/get/user/list', null, token, true);
   
-    //console.log("response:", response)
-  
     if (response.error) {
       setData([]);
       setFilteredData([]);
@@ -67,6 +68,7 @@ const RoleManage = () => {
     loadUserData();
   }, []);
 
+  // open the change role modal of the selected user
   const showModal = (user) => {
     setSelectedUser(user);
     setIsModalVisible(true);
@@ -80,6 +82,7 @@ const RoleManage = () => {
     setIsModalVisible(false);
   };  
 
+  // handle search function
   const searchList = () => {
     const searchTerm = seachRef.current.input.value.toLowerCase();
     if (searchTerm) {

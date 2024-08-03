@@ -31,7 +31,7 @@ import (
 
 // PasswordLogin handles user login using email and password
 // @Summary User Login
-// @Description Authenticate user with email and password, Role 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
+// @Description Authenticate user with email and password
 // @Tags Personal Management
 // @Accept json
 // @Produce json
@@ -42,7 +42,6 @@ import (
 // @Failure 500 {object} map[string]string "{"error": "Internal server error. Please try again later."}"
 // @Router /v1/user/pwd_login [post]
 func PasswordLogin(ctx *gin.Context) {
-	// 表单验证
 	passwordLoginForm := forms.PasswordLoginForm{}
 	if err := ctx.ShouldBind(&passwordLoginForm); err != nil {
 		HandleValidatorError(ctx, err)
@@ -63,12 +62,12 @@ func PasswordLogin(ctx *gin.Context) {
 	// 拨号连接用户 grpc 服务
 	clientConn, err := grpc.NewClient(fmt.Sprintf("%s:%d", ip, port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		zap.S().Errorw("[GetUserList] 连接【用户服务】 失败",
+		zap.S().Errorw("[GetUserList] connection failed",
 			"msg", err.Error(),
 		)
 	}
 	defer clientConn.Close()
-	zap.S().Debug("用密码登陆")
+	zap.S().Debug("login")
 
 	// 使用 clientConn 来创建服务客户端
 	userSrvClient := proto.NewUserClient(clientConn)
@@ -83,8 +82,8 @@ func PasswordLogin(ctx *gin.Context) {
 			switch e.Code() { // 把 grpc 的 code 转换成 HTTP 的状态码
 			case codes.NotFound:
 				ctx.JSON(http.StatusNotFound, gin.H{
-					// "error": "User not found",
-					"error": "Account and password do not match",
+					"error": "User not found",
+					// "error": "Account and password do not match",
 				})
 			default:
 				ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -94,7 +93,7 @@ func PasswordLogin(ctx *gin.Context) {
 			return
 		}
 	}
-	// 用户存在， check密码
+	// check password
 	if pwdRsp, pwdErr := userSrvClient.CheckPassword(ctx, &proto.CheckPasswordInfo{
 		Passward:          passwordLoginForm.Password,
 		EncryptedPassward: rsp.Password,
@@ -103,7 +102,7 @@ func PasswordLogin(ctx *gin.Context) {
 			"error": "Login failed",
 		})
 	} else {
-		if pwdRsp.Success { // 密码认证通过
+		if pwdRsp.Success { // password is correct
 
 			// 生成 token
 			// 1. 创建 JWT 实例
@@ -124,7 +123,7 @@ func PasswordLogin(ctx *gin.Context) {
 			token, err := j.CreateToken(claims)
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, gin.H{
-					"msg": "生成Token失败",
+					"msg": "fail to create token",
 				})
 				return
 			}
@@ -147,7 +146,7 @@ func PasswordLogin(ctx *gin.Context) {
 
 // VerifyEmail godoc
 // @Summary User register (verify email)
-// @Description 验证邮箱，并完成用户注册
+// @Description verify email and complete register
 // @Tags Personal Management
 // @Accept json
 // @Produce json
@@ -223,7 +222,7 @@ func VerifyEmail(ctx *gin.Context) {
 
 // Register godoc
 // @Summary User register（send email）
-// @Description 用户注册，发送验证邮件
+// @Description user register, send email
 // @Tags Personal Management
 // @Accept json
 // @Produce json
@@ -279,7 +278,7 @@ func Register(ctx *gin.Context) {
 
 // SendEmailResetPassword godoc
 // @Summary Reset password (send email)
-// @Description 发送重置密码邮件
+// @Description send reset password email
 // @Tags Personal Management
 // @Accept json
 // @Produce json
@@ -333,7 +332,7 @@ func SendEmailResetPassword(c *gin.Context) {
 
 // ResetPassword godoc
 // @Summary Reset Password
-// @Description 重置用户密码
+// @Description reset password
 // @Tags Personal Management
 // @Accept json
 // @Produce json
@@ -387,7 +386,7 @@ func ResetPassword(ctx *gin.Context) {
 
 // ChangePassword godoc
 // @Summary Change Password
-// @Description 修改用户密码
+// @Description change password
 // @Tags Personal Management
 // @Accept json
 // @Produce json
@@ -412,12 +411,12 @@ func ChangePassword(c *gin.Context) {
 	// 拨号连接用户 grpc 服务
 	clientConn, err := grpc.NewClient(fmt.Sprintf("%s:%d", ip, port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		zap.S().Errorw("[GetUserList] 连接【用户服务】 失败",
+		zap.S().Errorw("[GetUserList] connecction failed",
 			"error", err.Error(),
 		)
 	}
 	defer clientConn.Close()
-	zap.S().Info("修改密码")
+	zap.S().Info("change passsword")
 
 	// 使用 clientConn 来创建服务客户端
 	userSrvClient := proto.NewUserClient(clientConn)
@@ -473,7 +472,7 @@ func ChangePassword(c *gin.Context) {
 
 // UpdateUserInfo godoc
 // @Summary Update User Profile
-// @Description 更新用户个人信息和技能
+// @Description update user profile
 // @Tags Personal Management
 // @Accept json
 // @Produce json
@@ -584,7 +583,7 @@ func UpdateUserInfo(c *gin.Context) {
 
 // GetPersonProfile godoc
 // @Summary Get User Profile
-// @Description 获取用户个人信息
+// @Description Get User Profile
 // @Tags Personal Management
 // @Accept json
 // @Produce json
@@ -624,7 +623,7 @@ func GetPersonProfile(c *gin.Context) {
 }
 
 // @Summary Get all students List
-// @Description 返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
+// @Description get all student list
 // @Tags Student
 // @Accept  json
 // @Produce  json
@@ -661,7 +660,7 @@ func GetAllStudents(c *gin.Context) {
 
 // GetAllUnassignedStudents godoc
 // @Summary Get all students unassigned list
-// @Description 返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin
+// @Description Get all students unassigned list
 // @Tags Student
 // @Accept  json
 // @Produce  json

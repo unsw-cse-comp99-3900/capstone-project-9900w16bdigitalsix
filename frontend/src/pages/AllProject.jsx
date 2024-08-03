@@ -20,16 +20,17 @@ const FullLayout = () => {
   const mountedRef = useRef(false);
   const role = localStorage.getItem('role');
 
+  // load all project list information
   const loadMoreData = async (url = 'v1/project/get/public_project/list') => {
     const response = await apiCall('GET', url, null, null, null);
-    console.log('....list....', response);
+
     if (!response) {
       setData([]);
     } else if (response.error) {
       setData([]);
     } else {
       const res = response;
-      console.log(res);
+
       setData(res);
     }
   };
@@ -37,21 +38,21 @@ const FullLayout = () => {
   useEffect(() => {
     if (!mountedRef.current) {
       mountedRef.current = true;
-      console.log('...token..');
       loadMoreData();
     }
   }, [mountedRef]);
 
+  // load filtered project list from backend
   const seachList = () => {
     if (searchTerm) {
       const url = `v1/search/public/project/${searchTerm.toLowerCase()}`;
       loadMoreData(url);
     } else {
-      console.log(888);
       loadMoreData();
     }
   };
 
+  // when click on "clear" button, call this function
   const handleClearSearch = () => {
     setSearchTerm('');
     loadMoreData();

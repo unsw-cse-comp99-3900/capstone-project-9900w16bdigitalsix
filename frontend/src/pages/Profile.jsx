@@ -48,6 +48,8 @@ const Profile = (props) => {
     const [snackbarContent, setSnackbarContent] = useState('');
     const [avatar, setAvatar] = useState('');
     const [course, setCourse] = useState('');
+
+    // load user profile
     useEffect(() => {
         const fetchUserData = async () => {
             const userId = localStorage.getItem('userId');
@@ -98,18 +100,22 @@ const Profile = (props) => {
         fetchUserData();
     }, []);
 
+    // open "reset password" modal
     const handleClickOpen = () => {
         setOpen(true);
     };
 
+    // close "reset password" modal
     const handleClose = () => {
         setOpen(false);
     };
 
+    // close alert message
     const handleAlertClose = () => {
       setAlertOpen(false);
     };
 
+    // edit profile 
     const handleEditClick = () => {
         if (editable) {
             const confirmUpdate = async () => {
@@ -175,7 +181,7 @@ const Profile = (props) => {
             setEditable(!editable);
         }
     };    
-
+// handle the functionality of uploading image
 const handleFileChange = async (event) => {
     const file = event.target.files[0];
     try {
@@ -187,7 +193,7 @@ const handleFileChange = async (event) => {
         setAlertOpen(true);
     }
 };
-
+    // check validation of resetting password
     const handleChangePassword = async () => {
       const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         if (!passwordRegex.test(newPassword)) {

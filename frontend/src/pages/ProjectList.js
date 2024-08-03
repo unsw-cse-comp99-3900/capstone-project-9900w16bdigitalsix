@@ -8,6 +8,7 @@ import MessageAlert from '../components/MessageAlert';
 
 import '../assets/scss/FullLayout.css'; // make sure to import this
 
+// define the api calling function
 const apiCall = async (method, endpoint) => {
   const response = await fetch(`http://127.0.0.1:8080${endpoint}`, {
     method,
@@ -19,6 +20,7 @@ const apiCall = async (method, endpoint) => {
   return data;
 };
 
+// load projects for users with different role on my project page
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [archivedProjects, setArchivedProjects] = useState([]);
@@ -32,11 +34,11 @@ const ProjectList = () => {
 
   const navigate = useNavigate();
 
+  // load project information
   useEffect(() => {
     const fetchProjects = async (userId) => {
       try {
         const projectResponse = await apiCall('GET', `/v1/project/get/list/byRole/${userId}`);
-        console.log('Project Response:', projectResponse);
 
         if (projectResponse.length === 0) {
           setHasProjects(false);
@@ -52,7 +54,6 @@ const ProjectList = () => {
             allocatedTeamsCount: project.allocatedTeam ? project.allocatedTeam.length : 0,
             maxTeams: project.maxTeams // New parameter
           }));
-          console.log('Mapped Projects:', mappedProjects);
           setProjects(mappedProjects);
           setHasProjects(true);
         }
@@ -61,10 +62,10 @@ const ProjectList = () => {
       }
     };
 
+    // load archived projects
     const fetchArchivedProjects = async () => {
       try {
         const archivedResponse = await apiCall('GET', `/v1/project/get/archived/list`);
-        console.log('Archived Project Response:', archivedResponse);
 
         const mappedArchivedProjects = archivedResponse
           .filter(project => 
@@ -82,13 +83,13 @@ const ProjectList = () => {
             field: project.field,
             maxTeams: project.maxTeams // New parameter
           }));
-        console.log('Mapped Archived Projects:', mappedArchivedProjects);
         setArchivedProjects(mappedArchivedProjects);
       } catch (error) {
         console.error('Error fetching archived projects:', error);
       }
     };
 
+    // check if the user(student) has a team, if not, redirect to the team formation page
     const checkTeamAndFetchProjects = async () => {
       try {
         const role = parseInt(localStorage.getItem('role'), 10);
@@ -152,6 +153,7 @@ const ProjectList = () => {
           </div>
           {/********Middle Content**********/}
           <Container className="p-4 wrapper" fluid>
+            {/* load project list for students */}
             {role === 1 && hasTeam && !hasProjects && (
               <div className="d-flex justify-content-center align-items-center mb-3" style={{ height: '200px' }}>
                 <Button
@@ -164,6 +166,7 @@ const ProjectList = () => {
                 </Button>
               </div>
             )}
+            {/* load data for clients, coordinators */}
             {(role === 3 || role === 4 || role === 5) && (
               <div className="d-flex justify-content-between align-items-center mb-4">
                 <h3>Published Project</h3>
@@ -172,6 +175,7 @@ const ProjectList = () => {
                 </Link>
               </div>
             )}
+            {/* load data for tutors, tutors can't create projects */}
             {role === 2 && (
               <h3 className="mb-4">Published Project</h3>
             )}
@@ -197,6 +201,7 @@ const ProjectList = () => {
                 </Col>
               ))}
             </Row>
+            {/* load archived projects for client, tutor, coordinator */}
             {(role === 2 || role === 3 || role === 4) && (
               <h3 className="mt-4">Archived Projects</h3>
             )}

@@ -967,7 +967,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: '修改 project coordinator，注意 header 需要 Authorization: Bearer <token>'
+      description: 'change project coordinator， header need Authorization: Bearer
+        <token>'
       parameters:
       - description: Bearer <token>
         in: header
@@ -1020,7 +1021,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: '更新负责这个 project 的 tutor，注意 header 需要 Authorization: Bearer <token>'
+      description: 'update project 的 tutor， header need Authorization: Bearer <token>'
       parameters:
       - description: Bearer <token>
         in: header
@@ -1110,9 +1111,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: '注意 header  Authorization: Bearer <token>, 返回所有 Coordinator 列表，
-        注意 users 表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor,
-        5表示admin'
+      description: 'note header  Authorization: Bearer <token>, return all Coordinator
+        list'
       parameters:
       - description: Bearer <token>
         in: header
@@ -1189,8 +1189,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: '注意 header  Authorization: Bearer <token>, 返回所有 Tutor 列表， 注意 users
-        表格里面有 Role 字段（int）， 1表示student, 2表示tutor, 3表示client, 4表示convenor, 5表示admin'
+      description: 'header  Authorization: Bearer <token>, get all Tutor list'
       parameters:
       - description: Bearer <token>
         in: header
@@ -1225,13 +1224,12 @@ paths:
               type: string
             type: object
       summary: Get all tutor List
-      tags:
-      - Admin
   /v1/admin/modify/user/role:
     post:
       consumes:
       - application/json
-      description: '修改用户的角色信息, 注意header  Authorization: Bearer <token>，如果用户离开队伍且队伍没有其他成员，解散队伍并删除'
+      description: 'change user role, header  Authorization: Bearer <token>，if user
+        leave the team, and team doesn''t have member, delete the team'
       parameters:
       - description: Bearer <token>
         in: header
@@ -2328,7 +2326,7 @@ paths:
       - Statistics
   /v1/project/team/allocated/{projectId}:
     get:
-      description: 查看一个 project 被 allocated 的所有 team 的信息
+      description: view project 被 allocated 的 all team information
       parameters:
       - description: Project ID
         in: path
@@ -2455,8 +2453,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 返回未分配队伍的学生列表，注意 users 表格里面有 Role 字段，1表示student, 2表示tutor, 3表示client,
-        4表示convenor, 5表示admin
+      description: Get all students unassigned student list
       produces:
       - application/json
       responses:
@@ -2510,7 +2507,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 创建 team, 并且创建人加入了 team, 后端随机生成 teamName, 存入了数据库
+      description: create team
       parameters:
       - description: Create Team form
         in: body
@@ -2809,7 +2806,7 @@ paths:
     delete:
       consumes:
       - application/json
-      description: 用户离开团队
+      description: student leave a team
       parameters:
       - description: User ID
         in: path
@@ -2905,7 +2902,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 获取用户所属团队的信息
+      description: get team profile
       parameters:
       - description: User ID
         in: path
@@ -2986,7 +2983,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: 检查团队是否已经被分配了项目，如果已经分配了项目，则取消分配并发送通知
+      description: Reject a team allocation
       parameters:
       - description: Project ID
         in: body
@@ -3040,7 +3037,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: 更新团队的资料和技能
+      description: update team profile
       parameters:
       - description: Team ID
         in: path
@@ -3087,7 +3084,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 修改用户密码
+      description: change password
       parameters:
       - description: Change Password form
         in: body
@@ -3129,7 +3126,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 发送重置密码邮件
+      description: send reset password email
       parameters:
       - description: Reset Password form
         in: body
@@ -3213,7 +3210,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 更新用户个人信息和技能
+      description: update user profile
       parameters:
       - description: Profile Request
         in: body
@@ -3255,7 +3252,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 获取用户个人信息
+      description: Get User Profile
       parameters:
       - description: User ID
         in: path
@@ -3282,8 +3279,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Authenticate user with email and password, Role 1表示student, 2表示tutor,
-        3表示client, 4表示convenor, 5表示admin
+      description: Authenticate user with email and password
       parameters:
       - description: Login Form
         in: body
@@ -3327,7 +3323,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 用户注册，发送验证邮件
+      description: user register, send email
       parameters:
       - description: Register form
         in: body
@@ -3369,7 +3365,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 验证邮箱，并完成用户注册
+      description: verify email and complete register
       parameters:
       - description: Verification Token
         in: query
@@ -3403,7 +3399,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 重置用户密码
+      description: reset password
       parameters:
       - description: Reset Password form
         in: body
@@ -3469,8 +3465,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 返回所有学生列表， 注意 users 表格里面有 Role 字段， 1表示student, 2表示tutor, 3表示client,
-        4表示convenor, 5表示admin
+      description: get all student list
       produces:
       - application/json
       responses:

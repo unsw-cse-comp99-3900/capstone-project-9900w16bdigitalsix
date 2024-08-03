@@ -16,7 +16,7 @@ import (
 
 // CreateTeam godoc
 // @Summary Create a new team
-// @Description 创建 team, 并且创建人加入了 team, 后端随机生成 teamName, 存入了数据库
+// @Description create team
 // @Tags Team
 // @Accept json
 // @Produce json
@@ -100,7 +100,7 @@ func CreateTeam(c *gin.Context) {
 
 // UpdateTeamProfile godoc
 // @Summary Update Team Profile
-// @Description 更新团队的资料和技能
+// @Description update team profile
 // @Tags Team
 // @Accept json
 // @Produce json
@@ -254,7 +254,7 @@ func JoinTeam(c *gin.Context) {
 
 // GetTeamProfile godoc
 // @Summary Get Team Profile
-// @Description 获取用户所属团队的信息
+// @Description get team profile
 // @Tags Team
 // @Accept json
 // @Produce json
@@ -319,7 +319,7 @@ func GetTeamProfile(c *gin.Context) {
 
 // LeaveTeam godoc
 // @Summary Leave a team
-// @Description 用户离开团队
+// @Description student leave a team
 // @Tags Team
 // @Accept json
 // @Produce json
