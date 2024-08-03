@@ -24,9 +24,9 @@ func createUsers() {
 		{"student1@unsw.edu", "student1", "password1", 1, "COMP9900"},
 		{"student2@unsw.edu", "student2", "password2", 1, "COMP9900"},
 		{"student3@unsw.edu", "student3", "password3", 1, "COMP9900"},
-		{"student4@unsw.edu", "student4", "password4", 1, "COMP3300"},
-		{"student5@unsw.edu", "student5", "password4", 1, "COMP3300"},
-		{"student6@unsw.edu", "student6", "password4", 1, "COMP3300"},
+		{"student4@unsw.edu", "student4", "password4", 1, "COMP3900"},
+		{"student5@unsw.edu", "student5", "password4", 1, "COMP3900"},
+		{"student6@unsw.edu", "student6", "password4", 1, "COMP3900"},
 		{"tutor1@unsw.edu", "tutor1", "password3", 2, ""},
 		{"tutor2@unsw.edu", "tutor2", "password3", 2, ""},
 		{"client1@unsw.edu", "client1", "password4", 3, ""},
@@ -68,31 +68,46 @@ func createTeams() {
 	global.DB.Where("Email = ?", "student1@unsw.edu").First(&student1)
 	global.DB.Where("Email = ?", "student4@unsw.edu").First(&student4)
 
-	team1 := models.Team{
-		Name:       "Team1",
-		TeamIdShow: controllers.GenerateRandomInt(),
-		Course:     "COMP9900",
-		Members: []models.User{
-			student1,
-		},
+	if student1.BelongsToGroup != nil {
+		zap.S().Info("student1 is already in a team")
+	} else {
+		team1 := models.Team{
+			Name:       "Team1",
+			TeamIdShow: controllers.GenerateRandomInt(),
+			Course:     "COMP9900",
+			Members: []models.User{
+				student1,
+			},
+		}
+		global.DB.Create(&team1)
+		zap.S().Info("Created team for student1")
 	}
 
-	team2 := models.Team{
-		Name:       "Team2",
-		TeamIdShow: controllers.GenerateRandomInt() + 1,
-		Course:     "COMP3300",
-		Members: []models.User{
-			student4,
-		},
+	if student4.BelongsToGroup != nil {
+		zap.S().Info("student4 is already in a team")
+	} else {
+		team2 := models.Team{
+			Name:       "Team2",
+			TeamIdShow: controllers.GenerateRandomInt() + 1,
+			Course:     "COMP3300",
+			Members: []models.User{
+				student4,
+			},
+		}
+		global.DB.Create(&team2)
+		zap.S().Info("Created team for student4")
 	}
-
-	global.DB.Create(&team1)
-	global.DB.Create(&team2)
-
-	zap.S().Info("Created teams and assigned students")
 }
 
 func createProjects() {
+	var projectCount int64
+	global.DB.Model(&models.Project{}).Count(&projectCount)
+
+	if projectCount >= 20 {
+		zap.S().Info("There are already 20 or more projects. No new projects will be created.")
+		return
+	}
+
 	var client1, tutor1, coordinator1 models.User
 
 	global.DB.Where("Email = ?", "client1@unsw.edu").First(&client1)
@@ -118,11 +133,9 @@ func createProjects() {
 		zap.S().Infof("Created project %d", i)
 	}
 
-	var client2, tutor2, coordinator2 models.User
+	var client2 models.User
 
 	global.DB.Where("Email = ?", "client2@unsw.edu").First(&client2)
-	global.DB.Where("Email = ?", "tutor2@unsw.edu").First(&tutor2)
-	global.DB.Where("Email = ?", "coordinator2@unsw.edu").First(&coordinator2)
 
 	for i := 6; i <= 20; i++ {
 		project := models.Project{
@@ -132,8 +145,6 @@ func createProjects() {
 			IsPublic:      1,
 			Description:   fmt.Sprintf("Description for project %d", i),
 			ClientID:      &client2.ID,
-			TutorID:       &tutor2.ID,
-			CoordinatorID: &coordinator2.ID,
 		}
 
 		global.DB.Create(&project)
