@@ -660,7 +660,7 @@ func GetAllStudents(c *gin.Context) {
 
 // GetAllUnassignedStudents godoc
 // @Summary Get all students unassigned list
-// @Description Get all students unassigned student list
+// @Description Get all students unassigned list
 // @Tags Student
 // @Accept  json
 // @Produce  json

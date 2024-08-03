@@ -18,12 +18,10 @@ import (
 func handleNotification(notificationContent string, userIds []uint) error {
 	var existingNotifications []models.Notification
 
-	// 查找相同内容的通知
 	if err := global.DB.Preload("Users").Where("content = ?", notificationContent).Find(&existingNotifications).Error; err != nil {
 		return err
 	}
 
-	// 检查是否存在针对相同用户的相同通知内容
 	var matchedNotification *models.Notification
 	for _, notification := range existingNotifications {
 		notificationUserIDs := make(map[uint]bool)
@@ -46,13 +44,11 @@ func handleNotification(notificationContent string, userIds []uint) error {
 	}
 
 	if matchedNotification != nil {
-		// 更新 existing notification 的 updatedAt 字段
 		matchedNotification.UpdatedAt = time.Now()
 		if err := global.DB.Save(matchedNotification).Error; err != nil {
 			return err
 		}
 	} else {
-		// 创建新通知
 		newNotification := models.Notification{
 			Content: notificationContent,
 		}
@@ -60,7 +56,6 @@ func handleNotification(notificationContent string, userIds []uint) error {
 			return err
 		}
 
-		// 关联用户
 		for _, userID := range userIds {
 			if err := global.DB.Model(&newNotification).Association("Users").Append(&models.User{Model: gorm.Model{ID: userID}}); err != nil {
 				return err
@@ -84,7 +79,7 @@ func ExtractSkillNames(skills []models.Skill) []string {
 func GenerateRandomInt() uint {
 	src := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(src)
-	return uint(r.Intn(900000) + 100000) // 保证生成的整数是6位数
+	return uint(r.Intn(900000) + 100000)
 }
 
 func HandleValidatorError(ctx *gin.Context, err error) {

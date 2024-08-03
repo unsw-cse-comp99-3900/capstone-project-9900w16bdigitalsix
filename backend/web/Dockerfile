@@ -1,33 +1,37 @@
-# 使用官方的 Golang 运行时作为基础镜像
+# Use the official Golang runtime as a base image
 FROM golang:1.22.3-alpine AS builder
 
-# 设置容器内的工作目录
+# Set the working directory inside the container
 WORKDIR /app
 
-# 复制 go mod 和 sum 文件
+# Copy go mod and sum files
 COPY go.mod go.sum ./
 
-# 下载所有依赖
+# Download all dependencies
 RUN go mod download
 
-# 复制项目源代码到工作目录
+# Copy project source code to the working directory
 COPY . .
 
-# 构建 Go 应用
+# Build the Go application
 RUN go build -o web .
 
-# 从头开始一个新的阶段
+# Build the init_test script
+RUN go build -o init_test ./test_init/test_init.go
+
+# Start a new stage from scratch
 FROM alpine:latest
 
-# 设置容器内的工作目录
+# Set the working directory inside the container
 WORKDIR /app
 
-# 从前一个阶段复制预构建的二进制文件
+# Copy pre-built binaries from the previous stage
 COPY --from=builder /app/web .
+COPY --from=builder /app/init_test .
 COPY --from=builder /app/config-production.yaml .
 
-# 暴露端口 8080
+# Expose port 8080
 EXPOSE 8080
 
-# 运行可执行文件的命令
+# Command to run the executable
 CMD ["./web"]
