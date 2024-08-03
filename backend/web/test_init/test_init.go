@@ -10,6 +10,7 @@ import (
 
 	"github.com/anaskhan96/go-password-encoder"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 func createUsers() {
@@ -64,17 +65,20 @@ func createUsers() {
 
 func createTeams() {
 	var student1, student4 models.User
+	var project models.Project
 
 	global.DB.Where("Email = ?", "student1@unsw.edu").First(&student1)
 	global.DB.Where("Email = ?", "student4@unsw.edu").First(&student4)
+	global.DB.First(&project, 1)
 
 	if student1.BelongsToGroup != nil {
 		zap.S().Info("student1 is already in a team")
 	} else {
 		team1 := models.Team{
-			Name:       "Team1",
-			TeamIdShow: controllers.GenerateRandomInt(),
-			Course:     "COMP9900",
+			Name:             "Team1",
+			TeamIdShow:       controllers.GenerateRandomInt(),
+			Course:           "COMP9900",
+			AllocatedProject: &project.ID,
 			Members: []models.User{
 				student1,
 			},
@@ -108,14 +112,12 @@ func createProjects() {
 		return
 	}
 
-	var client1, tutor1, coordinator1 models.User
+	skillsList := []string{"Python3", "Golang", "C++"}
 
+	var client1, tutor1, coordinator1 models.User
 	global.DB.Where("Email = ?", "client1@unsw.edu").First(&client1)
 	global.DB.Where("Email = ?", "tutor1@unsw.edu").First(&tutor1)
 	global.DB.Where("Email = ?", "coordinator1@unsw.edu").First(&coordinator1)
-	global.DB.Where("Email = ?", "client2@unsw.edu").First(&client1)
-	global.DB.Where("Email = ?", "tutor2@unsw.edu").First(&tutor1)
-	global.DB.Where("Email = ?", "coordinator2@unsw.edu").First(&coordinator1)
 
 	for i := 1; i <= 5; i++ {
 		project := models.Project{
@@ -131,16 +133,35 @@ func createProjects() {
 
 		global.DB.Create(&project)
 		zap.S().Infof("Created project %d", i)
+
+		// 为项目添加技能
+		for _, skillName := range skillsList {
+			var skill models.Skill
+			if err := global.DB.Where("skill_name = ?", skillName).First(&skill).Error; err != nil {
+				if err == gorm.ErrRecordNotFound {
+					skill = models.Skill{
+						SkillName: skillName,
+					}
+					global.DB.Create(&skill)
+					zap.S().Infof("Created new skill %s", skillName)
+				} else {
+					zap.S().Error("Error finding skill: ", err)
+					continue
+				}
+			}
+			global.DB.Model(&project).Association("Skills").Append(&skill)
+			zap.S().Infof("Added skill %s to project %d", skillName, project.ID)
+		}
 	}
 
 	var client2 models.User
-
+	skillsList = []string{"Javascript", "Golang", "React"}
 	global.DB.Where("Email = ?", "client2@unsw.edu").First(&client2)
 
 	for i := 6; i <= 20; i++ {
 		project := models.Project{
 			Name:          "Updated Project Title",
-			Field:         "mechaine learning",
+			Field:         "Machine Learning",
 			MaxTeams:      10,
 			IsPublic:      1,
 			Description:   fmt.Sprintf("Description for project %d", i),
@@ -149,6 +170,25 @@ func createProjects() {
 
 		global.DB.Create(&project)
 		zap.S().Infof("Created project %d", i)
+
+		// 为项目添加技能
+		for _, skillName := range skillsList {
+			var skill models.Skill
+			if err := global.DB.Where("skill_name = ?", skillName).First(&skill).Error; err != nil {
+				if err == gorm.ErrRecordNotFound {
+					skill = models.Skill{
+						SkillName: skillName,
+					}
+					global.DB.Create(&skill)
+					zap.S().Infof("Created new skill %s", skillName)
+				} else {
+					zap.S().Error("Error finding skill: ", err)
+					continue
+				}
+			}
+			global.DB.Model(&project).Association("Skills").Append(&skill)
+			zap.S().Infof("Added skill %s to project %d", skillName, project.ID)
+		}
 	}
 }
 
@@ -164,7 +204,7 @@ func main() {
 		&models.Notification{}, &models.UserNotifications{}, &models.Channel{}, &models.Message{}, &models.ChannelUser{})
 
 	createUsers()
-	createTeams()
 	createProjects()
+	createTeams()
 
 }
