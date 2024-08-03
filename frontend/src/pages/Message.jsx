@@ -236,13 +236,13 @@ const Message = () => {
       let notification = {};
       if (response_member && !response_member.error) {
         const userIds = response_member.users
-        .map(user => parseInt(user.userId, 10));
+        .map(user => parseInt(user.userId, 10))
+        .filter(id => id !== parseInt(userId));
         console.log("userIds", userIds);
-      //   .filter(id => id !== parseInt(userId));
-      //   notification = {
-      //     content: `New Messages in channel: ${channelName}.`,
-      //     to: userIds
-      //   }
+        notification = {
+          content: `New Messages in channel: ${channelName}.`,
+          to: userIds
+        }
       }
       const requestBody = {
         SenderId: parseInt(userId),
