@@ -85,7 +85,6 @@ const ProjectProgress = (props) => {
     setUserStoryId(id);
   }
   const handleDelete = async() => {
-    console.log('Deleting item:');
     const response = await apiCall('DELETE', `v1/progress/delete/${userStoryId}`, null, token, true);
     if (!response) {
       setSnackbarContent("null");
@@ -109,11 +108,9 @@ const ProjectProgress = (props) => {
     setCalendarModalVisible(!calendarModalVisible);
     setSprintNo(sprintNumber);
     setDates([]);
-    console.log("sprintNumber", sprintNumber);
   };
 
   const handleCalendar = async() => {
-    console.log('change calendar:');
     const requestBody = {
       endDate: dates[1].format('YYYY-MM-DD'),
       sprintNum: parseInt(sprintNo, 10),
@@ -144,7 +141,6 @@ const ProjectProgress = (props) => {
     }
   
     const response = await apiCall('GET', `v1/progress/get/detail/${item?.teamId}`, null, token, true);
-    console.log("response", response);
     if (!response) {
       setData(null);
       setLoading(false);
@@ -163,7 +159,6 @@ const ProjectProgress = (props) => {
         // Concatenate mapped user stories to accumulator
         return acc.concat(userStoriesWithIndexes);
       }, []);
-      console.log("allUserStories", allUserStories);
       setStorys(allUserStories);
 
       // update grade and comment
@@ -181,7 +176,6 @@ const ProjectProgress = (props) => {
       }
       setGradeComment({grades: grades, comments: comments});
       setLoading(false);
-      console.log("{grades: grades, comments: comments}", {grades: grades, comments: comments});
     }
   };
   
