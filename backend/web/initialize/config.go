@@ -20,24 +20,24 @@ func InitConfig() {
 		configFileName = "config-debug.yaml"
 	}
 
-	v := viper.New() 
+	v := viper.New()
 
 	v.SetConfigFile(configFileName)
 
 	if err := v.ReadInConfig(); err != nil {
-		panic(err) 
+		panic(err)
 	}
 
-	// 将配置文件映射到结构体
-	// serverConfig := &config.ServerConfig{} // 这个对象如何在其他文件中使用 --全局变量
+	// Map the configuration file to the struct
+	// serverConfig := &config.ServerConfig{} // How can this object be used in other files -- global variables
 	v.Unmarshal(global.ServerConfig)
 
 	zap.S().Infof("配置信息 %+v", global.ServerConfig)
 
-	// // 获取配置文件中的 "name" 配置项的值并打印
+	// // Gets the value of the "name" configuration item in the configuration file and prints it
 	// fmt.Println(v.Get("name"))
 
-	// viper 的功能 -- 动态监控变化
+	// viper Dynamic monitoring of changes
 	v.WatchConfig()
 	v.OnConfigChange(func(e fsnotify.Event) {
 		zap.S().Infof("配置信息产生变化 %s", e.Name)

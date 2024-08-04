@@ -17,11 +17,11 @@ func CORS() gin.HandlerFunc {
 		method := c.Request.Method
 
 		// set CORS HEADER
-		c.Header("Access-Control-Allow-Origin", "*")                                                                                         // 允许所有来源
-		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")                              // 指定允许的请求头，如Content-Type、Authorization等
-		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PATCH, PUT")                                                   // 允许的请求方法
-		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type") // 指定可以暴露给浏览器的响应头
-		c.Header("Access-Control-Allow-Credentials", "true")                                                                                 // 允许发送凭证（如Cookies）
+		c.Header("Access-Control-Allow-Origin", "*") // Allow all sources
+		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
+		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PATCH, PUT")                                                   // Allowed request method
+		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type") // Specifies the response headers that can be exposed to the browser
+		c.Header("Access-Control-Allow-Credentials", "true")                                                                                 // Allow sending of credentials (such as Cookies)
 
 		// handle option request
 		if method == "OPTIONS" {
