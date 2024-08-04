@@ -1021,7 +1021,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 'update project 的 tutor， header need Authorization: Bearer <token>'
+      description: 'update project tutor， header need Authorization: Bearer <token>'
       parameters:
       - description: Bearer <token>
         in: header
@@ -2328,7 +2328,7 @@ paths:
       - Statistics
   /v1/project/team/allocated/{projectId}:
     get:
-      description: view project 被 allocated 的 all team information
+      description: view project allocated all team information
       parameters:
       - description: Project ID
         in: path

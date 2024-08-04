@@ -156,7 +156,7 @@ func ModifyUserRole(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer <token>"
-// @Param ChangeProjectCoordinatorRequest body forms.ChangeProjectCoordinatorRequest true "修改 coordinator 请求参数"
+// @Param ChangeProjectCoordinatorRequest body forms.ChangeProjectCoordinatorRequest true "modify coordinator request parameter"
 // @Success 200 {object} map[string]string "{"msg": "Project Coordinator updated successfully"}"
 // @Failure 404 {object} map[string]string "{"error": "Coordinator not found"}"
 // @Failure 500 {object} map[string]string "{"error": "Failed to update coordinator"}"
@@ -198,12 +198,12 @@ func ChangeProjectCoordinator(c *gin.Context) {
 }
 
 // @Summary Update project tutor
-// @Description update project 的 tutor， header need Authorization: Bearer <token>
+// @Description update project tutor， header need Authorization: Bearer <token>
 // @Tags Admin
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer <token>"
-// @Param ChangeProjectTutorRequest body forms.ChangeProjectTutorRequest true "修改 coordinator 请求参数"
+// @Param ChangeProjectTutorRequest body forms.ChangeProjectTutorRequest true "modify coordinator request parameter"
 // @Success 200 {object} map[string]string "{"msg": "Project tutor updated successfully"}"
 // @Failure 500 {object} map[string]string "{"error": "Failed to update tutor"}"
 // @Failure 403 {object} map[string]string "{"error": "Only admin have permission"}"

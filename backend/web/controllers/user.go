@@ -496,7 +496,7 @@ func UpdateUserInfo(c *gin.Context) {
 
 		parsedURL, err := url.Parse(urlStr)
 		if err != nil {
-			zap.S().Errorf("解析 avatar url 出错")
+			zap.S().Errorf("parse avatar url error")
 			return
 		}
 

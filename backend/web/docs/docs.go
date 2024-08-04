@@ -97,7 +97,7 @@ const docTemplate = `{
         },
         "/v1/admin/change/project/tutor": {
             "post": {
-                "description": "update project 的 tutor， header need Authorization: Bearer \u003ctoken\u003e",
+                "description": "update project tutor， header need Authorization: Bearer \u003ctoken\u003e",
                 "consumes": [
                     "application/json"
                 ],
@@ -1992,7 +1992,7 @@ const docTemplate = `{
         },
         "/v1/project/team/allocated/{projectId}": {
             "get": {
-                "description": "view project 被 allocated 的 all team information",
+                "description": "view project allocated all team information",
                 "produces": [
                     "application/json"
                 ],

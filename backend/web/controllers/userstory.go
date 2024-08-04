@@ -31,7 +31,7 @@ func CreateUserStory(c *gin.Context) {
 
 	var sprint models.Sprint
 	if err := global.DB.Where("team_id = ? AND sprint_num = ?", req.TeamId, req.SprintNum).First(&sprint).Error; err != nil {
-		// if ssprint is nil, create new sprint
+		// if sprint is nil, create new sprint
 		sprint = models.Sprint{
 			TeamID:    req.TeamId,
 			SprintNum: req.SprintNum,
