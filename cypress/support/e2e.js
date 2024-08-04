@@ -14,12 +14,8 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-<<<<<<< HEAD
-import './commands'
-=======
-import 'cypress-file-upload';
-
->>>>>>> origin/final_WH
+import "./commands";
+import "cypress-file-upload";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
