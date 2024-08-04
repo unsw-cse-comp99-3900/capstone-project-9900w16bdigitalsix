@@ -65,7 +65,6 @@ const Profile = (props) => {
                     setSkills(response.skills);
                     setField(response.field);
                     setCourse(response.course);
-                    console.log("response:", response);
                     const imagePath = response.avatarURL; 
                 if (imagePath) {
                     try {
