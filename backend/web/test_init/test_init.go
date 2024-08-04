@@ -93,7 +93,7 @@ func createTeams() {
 		team2 := models.Team{
 			Name:       "Team2",
 			TeamIdShow: controllers.GenerateRandomInt() + 1,
-			Course:     "COMP3300",
+			Course:     "COMP3900",
 			Members: []models.User{
 				student4,
 			},
