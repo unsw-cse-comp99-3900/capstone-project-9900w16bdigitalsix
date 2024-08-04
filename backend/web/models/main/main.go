@@ -7,13 +7,12 @@ import (
 )
 
 func main() {
-	// 自动迁移 schema，将 struct 生成对应的表
+	// Automatically migrate schema and generate corresponding tables from struct
 	initialize.InitConfig()
 	initialize.InitDB()
-	
-    global.DB.AutoMigrate(&models.Project{})
-    global.DB.AutoMigrate(&models.Team{})
-	global.DB.AutoMigrate(&models.User{})
 
+	global.DB.AutoMigrate(&models.Project{})
+	global.DB.AutoMigrate(&models.Team{})
+	global.DB.AutoMigrate(&models.User{})
 
 }
