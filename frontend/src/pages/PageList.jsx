@@ -34,9 +34,6 @@ import ProjectAdminAssign from "./ProjectAdminAssign";
 // notification
 import Notification from "./Notification";
 
-// test
-import TestProjectDetail from "./TestProjectDetail";
-
 // report
 import GenerateProgressReport from "./GenerateProgressReport";
 import GenerateVirtual from "./GenerateVirtual";
@@ -161,12 +158,6 @@ const PageList = () => {
         <Route
           path="/notification"
           element={<Notification token={token} setToken={setToken} />}
-        />
-
-        {/* test */}
-        <Route
-          path="/testProjectDetail"
-          element={<TestProjectDetail token={token} setToken={setToken} />}
         />
 
         {/* generate report */}
