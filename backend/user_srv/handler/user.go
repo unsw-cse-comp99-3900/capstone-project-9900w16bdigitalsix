@@ -108,7 +108,7 @@ func (s *UserServer) CreateUser(ctx context.Context, req *proto.CreateUserInfo) 
 		return nil, status.Errorf(codes.AlreadyExists, "User already exists")
 	}
 
-	// creste the user
+	// create the user
 	user.Email = req.Email
 	user.Username = req.Username
 	user.Course = req.Course

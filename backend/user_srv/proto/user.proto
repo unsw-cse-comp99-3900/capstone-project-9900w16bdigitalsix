@@ -4,12 +4,12 @@ option go_package = ".;proto";
 
 
 service User {
-    rpc GetUserList(PageInfo) returns (UserListResponse); // 用户列表
-    rpc GetUserByEmail(EmailRequest) returns (UserInfoResponse); // 通过 email 查询用户
-    rpc GetUserByID(IDRequest) returns (UserInfoResponse); // 通过 ID 查询用户
-    rpc CreateUser(CreateUserInfo) returns (UserInfoResponse); // 注册添加用户
-    rpc UpdateUser(UpdateUserInfo) returns (Empty); // 更新用户信息
-    rpc CheckPassword(CheckPasswordInfo) returns (CheckResponse); // 检查密码
+    rpc GetUserList(PageInfo) returns (UserListResponse); 
+    rpc GetUserByEmail(EmailRequest) returns (UserInfoResponse); 
+    rpc GetUserByID(IDRequest) returns (UserInfoResponse); 
+    rpc CreateUser(CreateUserInfo) returns (UserInfoResponse); 
+    rpc UpdateUser(UpdateUserInfo) returns (Empty); 
+    rpc CheckPassword(CheckPasswordInfo) returns (CheckResponse);
 }
 
 message Empty {}

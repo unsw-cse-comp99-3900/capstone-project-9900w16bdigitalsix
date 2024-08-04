@@ -10,7 +10,7 @@ import (
 
 func BaseRouter(Router *gin.RouterGroup) {
 	UserRouter := Router.Group("base")
-	zap.S().Info("配置验证码 url")
+	zap.S().Info("captcha url")
 	{
 		UserRouter.GET("/captcha", controllers.GetCaptcha)
 	}
@@ -18,9 +18,8 @@ func BaseRouter(Router *gin.RouterGroup) {
 
 func UserRouter(Router *gin.RouterGroup) {
 	UserRouter := Router.Group("user")
-	zap.S().Info("配置用户相关的 url")
+	zap.S().Info("user related url")
 	{
-		// UserRouter.GET("/list", middlewares.JWTAuth(), middlewares.IsAdmin(), controllers.GetUserList) // 需要登录才能访问
 
 		UserRouter.POST("/register/send_email", controllers.Register)
 		UserRouter.GET("/register/verify", controllers.VerifyEmail)
@@ -60,7 +59,7 @@ func StudentRouter(Router *gin.RouterGroup) {
 
 func GroupRouter(Router *gin.RouterGroup) {
 	groupRouter := Router.Group("team")
-	zap.S().Info("配置分组相关的 url")
+	zap.S().Info("group related url")
 	{
 		groupRouter.POST("/create", controllers.CreateTeam)
 		groupRouter.PUT("/update/profile/:teamId", controllers.UpdateTeamProfile)
@@ -83,7 +82,7 @@ func GroupRouter(Router *gin.RouterGroup) {
 
 func ProjectRouter(Router *gin.RouterGroup) {
 	projectRouter := Router.Group("project")
-	zap.S().Info("配置分组相关的 url")
+	zap.S().Info("project related url")
 	{
 		projectRouter.POST("/create", controllers.CreateProject)
 		projectRouter.GET("/get/public_project/list", controllers.GetProjectList)
