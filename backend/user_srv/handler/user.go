@@ -22,8 +22,6 @@ type UserServer struct {
 
 func ModelToResponse(user *model.User) *proto.UserInfoResponse {
 	userInfoRsp := &proto.UserInfoResponse{
-		// grpc 的 message 中字段有默认值的，不能随便赋值 nil 进去，容易出错
-		// 这里要搞清楚哪些字段有默认值
 		Id:       uint32(user.ID),
 		Password: user.Password,
 		Email:    user.Email,
@@ -56,7 +54,6 @@ func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 }
 
 func (srv *UserServer) GetUserList(ctx context.Context, req *proto.PageInfo) (*proto.UserListResponse, error) {
-	// 获取用户列表
 	var users []model.User
 	result := global.DB.Find(&users)
 	if result.Error != nil {
@@ -76,7 +73,7 @@ func (srv *UserServer) GetUserList(ctx context.Context, req *proto.PageInfo) (*p
 }
 
 func (s *UserServer) GetUserByEmail(ctx context.Context, req *proto.EmailRequest) (*proto.UserInfoResponse, error) {
-	// 通过 email 获取用户信息
+	// get user info by email
 	var user model.User
 	result := global.DB.Where("email =?", req.Email).First(&user)
 	if result.RowsAffected == 0 {
@@ -90,7 +87,7 @@ func (s *UserServer) GetUserByEmail(ctx context.Context, req *proto.EmailRequest
 }
 
 func (s *UserServer) GetUserByID(ctx context.Context, req *proto.IDRequest) (*proto.UserInfoResponse, error) {
-	// 通过 id 获取用户信息
+	// get user info by id
 	var user model.User
 	result := global.DB.First(&user, req.Id)
 	if result.RowsAffected == 0 {

@@ -40,30 +40,27 @@ func CreateTeam(c *gin.Context) {
 		return
 	}
 
-	// 检查用户是否已经属于一个团队
+	// check if user is already belons to a team
 	if user.BelongsToGroup != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User already belongs to a team, cannot create team"})
 		return
 	}
 
-	// 获取一个随机数生成器
 	src := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(src)
 
-	// 生成1到4位数的随机数
+	// generate 1 - 4 random number
 	randomNum := GenerateRandomNumber(r)
 
-	// 创建团队名称
 	teamName := fmt.Sprintf("team_%d", randomNum)
 
-	// 生成6位数的teamIdShow
 	teamIdShow := GenerateRandomInt()
-	// 创建团队
+	// create team
 	team := models.Team{
 		Name:       teamName,
 		TeamIdShow: teamIdShow,
 		Course:     user.Course,
-		Members:    []models.User{user}, // 将创建者加入团队
+		Members:    []models.User{user}, 
 	}
 
 	if err := global.DB.Create(&team).Error; err != nil {
@@ -71,13 +68,11 @@ func CreateTeam(c *gin.Context) {
 		return
 	}
 
-	// 获取用户的技能
 	userSkills := make([]string, len(user.Skills))
 	for i, skill := range user.Skills {
 		userSkills[i] = skill.SkillName
 	}
 
-	// 构建响应数据
 	response := response.CreateTeamResponse{
 		TeamID:     team.ID,
 		TeamName:   team.Name,
@@ -133,7 +128,6 @@ func UpdateTeamProfile(c *gin.Context) {
 		return
 	}
 
-	// 查找或创建技能
 	if len(req.TeamSkills) > 0 {
 		var skills []models.Skill
 		for _, skillName := range req.TeamSkills {
@@ -145,7 +139,6 @@ func UpdateTeamProfile(c *gin.Context) {
 			skills = append(skills, skill)
 		}
 
-		// 将技能添加到团队
 		if err := global.DB.Model(&team).Association("Skills").Replace(skills); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add skills to team"})
 			return
@@ -344,21 +337,19 @@ func LeaveTeam(c *gin.Context) {
 		return
 	}
 
-	// 获取用户所属团队的ID
 	teamID := *user.BelongsToGroup
 
-	// 将用户从团队中移除
 	user.BelongsToGroup = nil
 	if err := global.DB.Save(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
 		return
 	}
 
-	// 检查团队是否还有其他成员
+	//check if team has other members
 	var memberCount int64
 	global.DB.Model(&models.User{}).Where("belongs_to_group = ?", teamID).Count(&memberCount)
 	if memberCount == 0 {
-		// 如果没有其他成员，则删除团队
+		// doesn't have other members, delete team
 		if err := global.DB.Delete(&models.Team{}, teamID).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete team"})
 			return
@@ -444,7 +435,7 @@ func GetAllTeams(c *gin.Context) {
 // @Router /v1/team/get/unallocated/list [get]
 func GetUnallocatedTeams(c *gin.Context) {
 	var teams []models.Team
-	// 只获取未分配项目的团队
+	// teams unallocate project
 	if err := global.DB.Preload("Skills").Where("allocated_project IS NULL").Find(&teams).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch teams"})
 		return

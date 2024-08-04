@@ -31,12 +31,12 @@ func CreateUserStory(c *gin.Context) {
 
 	var sprint models.Sprint
 	if err := global.DB.Where("team_id = ? AND sprint_num = ?", req.TeamId, req.SprintNum).First(&sprint).Error; err != nil {
-		// 如果 sprint 不存在，先创建一个新的 sprint
+		// if ssprint is nil, create new sprint
 		sprint = models.Sprint{
 			TeamID:    req.TeamId,
 			SprintNum: req.SprintNum,
-			StartDate: nil, // 设置为空
-			EndDate:   nil, // 设置为空
+			StartDate: nil, 
+			EndDate:   nil, 
 			Grade:     nil,
 			Comment:   nil,
 		}
@@ -250,7 +250,7 @@ func EditGrade(c *gin.Context) {
 }
 
 // @Summary Get all sprint grades of a team
-// @Description 获取指定团队的所有 Sprint 的成绩和评论
+// @Description Get all sprint grades of a team
 // @Tags Project Progress
 // @Accept json
 // @Produce json

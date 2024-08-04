@@ -59,7 +59,7 @@ func PasswordLogin(ctx *gin.Context) {
 	ip := global.ServerConfig.UserSrvInfo.Host
 	port := global.ServerConfig.UserSrvInfo.Port
 
-	// 拨号连接用户 grpc 服务
+	// connect gprc service
 	clientConn, err := grpc.NewClient(fmt.Sprintf("%s:%d", ip, port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		zap.S().Errorw("[GetUserList] connection failed",
@@ -69,17 +69,16 @@ func PasswordLogin(ctx *gin.Context) {
 	defer clientConn.Close()
 	zap.S().Debug("login")
 
-	// 使用 clientConn 来创建服务客户端
 	userSrvClient := proto.NewUserClient(clientConn)
 
-	// 登录逻辑
+	// login logic
 	rsp, err := userSrvClient.GetUserByEmail(context.Background(), &proto.EmailRequest{
-		Email: passwordLoginForm.Email, // 做完表单验证后
+		Email: passwordLoginForm.Email,
 	})
 	// zap.S().Infof("登陆用户 id: %d", rsp.Id)
 	if err != nil {
 		if e, ok := status.FromError(err); ok {
-			switch e.Code() { // 把 grpc 的 code 转换成 HTTP 的状态码
+			switch e.Code() { // change grpc 的 code to HTTP status code
 			case codes.NotFound:
 				ctx.JSON(http.StatusNotFound, gin.H{
 					"error": "User not found",
@@ -113,13 +112,13 @@ func PasswordLogin(ctx *gin.Context) {
 				Username:    rsp.Username,
 				AuthorityId: uint(rsp.Role),
 				StandardClaims: jwt.StandardClaims{
-					NotBefore: time.Now().Unix(),                          // 签名的生效时间，表示令牌在此时间之前无效
-					ExpiresAt: time.Now().Add(30 * 24 * time.Hour).Unix(), // 30天过期
-					Issuer:    "my-app",                                   // 签发者, 通常是发出令牌的应用程序或服务
+					NotBefore: time.Now().Unix(),                          // token is valid now
+					ExpiresAt: time.Now().Add(30 * 24 * time.Hour).Unix(), // 30天 expiers
+					Issuer:    "my-app",                                   // issuer name
 				},
 			}
 
-			// 3. 创建Token
+			// 3.  create Token
 			token, err := j.CreateToken(claims)
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -132,11 +131,11 @@ func PasswordLogin(ctx *gin.Context) {
 				"id":         rsp.Id,
 				"role":       rsp.Role,
 				"username":   rsp.Username,
-				"token":      token,                                         // 前端可以从这个token 中解析出 JWT 中 的payload
-				"expires_at": time.Now().Add(30*24*time.Hour).Unix() * 1000, // 单位毫秒， 30 天
+				"token":      token,                                         
+				"expires_at": time.Now().Add(30*24*time.Hour).Unix() * 1000, //30 days
 			})
 
-		} else { // 密码认证不对
+		} else { // password incorrect
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": "Invalid credentials. Please check your email and password.",
 			})
@@ -164,7 +163,7 @@ func VerifyEmail(ctx *gin.Context) {
 		DB:       0,  // use default DB
 	})
 
-	// 从 Redis 中获取 RegisterForm 数据
+	// from Redis get RegisterForm data
 	data, err := rdb.Get(context.Background(), token).Result()
 	if err == redis.Nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or expired token"})
@@ -199,7 +198,6 @@ func VerifyEmail(ctx *gin.Context) {
 	}
 	defer clientConn.Close()
 
-	// 使用 clientConn 来创建服务客户端
 	userSrvClient := proto.NewUserClient(clientConn)
 	_, err = userSrvClient.CreateUser(ctx, &proto.CreateUserInfo{
 		Username: registerForm.Username,
@@ -236,13 +234,13 @@ func VerifyEmail(ctx *gin.Context) {
 // @Router /v1/user/register/send_email [post]
 func Register(ctx *gin.Context) {
 	var registerForm forms.RegisterForm
-	// 表单验证
+	
 	if err := ctx.ShouldBind(&registerForm); err != nil {
 		HandleValidatorError(ctx, err)
 		return
 	}
 
-	// 检查用户是否存在
+	// check if user exists
 	var user models.User
 	if err := global.DB.Where("email = ?", registerForm.Email).First(&user).Error; err == nil {
 		ctx.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
@@ -255,14 +253,14 @@ func Register(ctx *gin.Context) {
 		return
 	}
 
-	// 存储 token 和 RegisterForm 到 Redis
+	// store token 和 RegisterForm to Redis
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     global.ServerConfig.RedisInfo.Host + ":" + fmt.Sprintf("%d", global.ServerConfig.RedisInfo.Port),
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
 
-	// 令牌过期时间设置为 1 小时
+	// token expiration 1 hour
 	registerData, _ := json.Marshal(registerForm)
 	if err := rdb.Set(context.Background(), token, registerData, 1*time.Hour).Err(); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store verification token"})
@@ -297,7 +295,7 @@ func SendEmailResetPassword(c *gin.Context) {
 		return
 	}
 
-	// 检查用户是否存在
+	// chaeck if user exists
 	var user models.User
 	if err := global.DB.Where("email = ?", sendEmailResetPwdForm.Email).First(&user).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
@@ -310,14 +308,13 @@ func SendEmailResetPassword(c *gin.Context) {
 		return
 	}
 
-	// 存储 token 到 Redis
+	// store token 到 Redis
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     global.ServerConfig.RedisInfo.Host + ":" + fmt.Sprintf("%d", global.ServerConfig.RedisInfo.Port),
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
 
-	// 令牌过期时间设置为 1 小时
 	if err := rdb.Set(context.Background(), token, sendEmailResetPwdForm.Email, 1*time.Hour).Err(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store verification token"})
 		return
@@ -358,7 +355,7 @@ func ResetPassword(ctx *gin.Context) {
 		DB:       0,  // use default DB
 	})
 
-	// 从 Redis 中获取 email
+	// from Redis get email
 	email, err := rdb.Get(context.Background(), token).Result()
 	if err == redis.Nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or expired token"})
@@ -374,7 +371,7 @@ func ResetPassword(ctx *gin.Context) {
 		return
 	}
 
-	// 重置密码
+	// reset password
 	if err := service.ResetPassword(email, resetPasswordForm.NewPassword); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -408,7 +405,7 @@ func ChangePassword(c *gin.Context) {
 	ip := global.ServerConfig.UserSrvInfo.Host
 	port := global.ServerConfig.UserSrvInfo.Port
 
-	// 拨号连接用户 grpc 服务
+	// connect to grpc server
 	clientConn, err := grpc.NewClient(fmt.Sprintf("%s:%d", ip, port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		zap.S().Errorw("[GetUserList] connecction failed",
@@ -418,7 +415,6 @@ func ChangePassword(c *gin.Context) {
 	defer clientConn.Close()
 	zap.S().Info("change passsword")
 
-	// 使用 clientConn 来创建服务客户端
 	userSrvClient := proto.NewUserClient(clientConn)
 
 	rsp, err := userSrvClient.GetUserByEmail(context.Background(), &proto.EmailRequest{
@@ -427,7 +423,7 @@ func ChangePassword(c *gin.Context) {
 
 	if err != nil {
 		if e, ok := status.FromError(err); ok {
-			switch e.Code() { // 把 grpc 的 code 转换成 HTTP 的状态码
+			switch e.Code() { 
 			case codes.NotFound:
 				c.JSON(http.StatusNotFound, gin.H{
 					"error": "User not found",
@@ -441,9 +437,9 @@ func ChangePassword(c *gin.Context) {
 		}
 	}
 
-	zap.S().Infof("用户修改密码 id: %d", rsp.Id)
+	zap.S().Infof("User change password id: %d", rsp.Id)
 
-	// 用户存在， check密码
+	// user exists, check password
 	pwdRsp, pwdErr := userSrvClient.CheckPassword(c, &proto.CheckPasswordInfo{
 		Passward:          changePasswordForm.OldPassword,
 		EncryptedPassward: rsp.Password,
@@ -454,8 +450,8 @@ func ChangePassword(c *gin.Context) {
 		})
 		return
 	}
-	if pwdRsp.Success { // 密码认证通过
-		// 调用 ResetPassword 函数
+	if pwdRsp.Success { // password correct
+	
 		if err := service.ResetPassword(changePasswordForm.Email, changePasswordForm.NewPassword); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -501,24 +497,24 @@ func UpdateUserInfo(c *gin.Context) {
 	}
 
 	var filename string
-	// 生成文件名
+	// generate file name
 	if user.AvatarURL == "" {
 		filename = time.Now().Format("20060102150405") + ".png"
 	} else {
 		urlStr := user.AvatarURL
-		// 解析 URL
+		
 		parsedURL, err := url.Parse(urlStr)
 		if err != nil {
 			zap.S().Errorf("解析 avatar url 出错")
 			return
 		}
-		// 提取路径部分并获取文件名
+		
 		filename = path.Base(parsedURL.Path)
 	}
 
 	url := ""
 	if profileReq.Profile.Avatarbase64 != "" {
-		// 解析 base64 图片， 并保存
+		// base64 解析， save
 		outputDir := global.ServerConfig.PicturePath
 		var err error
 		_, url, err = util.SaveBase64Image(profileReq.Profile.Avatarbase64, filename, outputDir)
@@ -527,7 +523,7 @@ func UpdateUserInfo(c *gin.Context) {
 		}
 	}
 
-	// 更新用户信息
+	// update user info	
 	user.Username = profileReq.Profile.Name
 	user.Bio = profileReq.Profile.Bio
 	user.Organization = profileReq.Profile.Organization
@@ -536,14 +532,13 @@ func UpdateUserInfo(c *gin.Context) {
 	user.Field = profileReq.Profile.Field
 	user.Course = profileReq.Profile.Course
 
-	// 更新用户技能
 	var skills []models.Skill
 	for _, skillName := range profileReq.Profile.Skills {
 		if skillName == "" {
-			continue // 跳过空技能名称
+			continue 
 		}
 		var skill models.Skill
-		// 先查询是否存在该技能，如果不存在则创建
+		// if skills doesn't exists, create skills
 		if err := global.DB.Where("skill_name = ?", skillName).First(&skill).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				skill = models.Skill{SkillName: skillName}
@@ -559,7 +554,6 @@ func UpdateUserInfo(c *gin.Context) {
 		skills = append(skills, skill)
 	}
 
-	// 更新用户与技能的关联关系
 	if err := global.DB.Model(&user).Association("Skills").Replace(skills); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user skills"})
 		return
@@ -600,7 +594,7 @@ func GetPersonProfile(c *gin.Context) {
 		return
 	}
 
-	// 提取技能名称
+	// get skills name
 	var skillNames []string
 	for _, skill := range user.Skills {
 		skillNames = append(skillNames, skill.SkillName)

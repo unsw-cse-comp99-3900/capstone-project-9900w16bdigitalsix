@@ -10,7 +10,7 @@ import (
 func IsAdmin() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		claims, _ := ctx.Get("claims")
-		currentUser := claims.(*models.CustomClaims) // 类型断言
+		currentUser := claims.(*models.CustomClaims) // type assertion
 		if currentUser.AuthorityId != 5 {
 			ctx.JSON(http.StatusForbidden, gin.H{
 				"msg": "only admin have permission",
