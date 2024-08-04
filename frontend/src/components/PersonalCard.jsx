@@ -76,7 +76,7 @@ const PersonalCard = ({ visible, onOk, onCancel, refreshData, channelId, channel
     if (response_member && !response_member.error) {
       const userIds = response_member.users
       .map(user => parseInt(user.userId, 10))
-      .filter(id => id !== userId);
+      .filter(id => id !== parseInt(userId));
       notification = {
         content: `New Messages in channel: ${channelName}.`,
         to: userIds
