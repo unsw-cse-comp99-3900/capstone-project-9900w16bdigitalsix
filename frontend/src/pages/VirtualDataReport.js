@@ -1,45 +1,60 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Bar, Pie } from 'react-chartjs-2';
-import 'chart.js/auto';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { Container, Row, Col, Card, CardBody, CardTitle, FormGroup, Label, Input, Button, Table } from 'reactstrap';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
-import "../assets/scss/VirtualDataReport.css"
+import React, { useState, useEffect, useRef } from "react";
+import { Bar, Pie } from "react-chartjs-2";
+import "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  CardBody,
+  CardTitle,
+  FormGroup,
+  Label,
+  Input,
+  Button,
+  Table,
+} from "reactstrap";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
+import "../assets/scss/VirtualDataReport.css";
 
 // field color map
 const fieldColors = {
-  "Artificial Intelligence": 'rgba(75, 192, 192, 0.6)',
-  "Data Science": 'rgba(255, 99, 132, 0.6)',
-  "Cyber Security": 'rgba(153, 102, 255, 0.6)',
-  "Software Engineering": 'rgba(255, 159, 64, 0.6)',
-  "Network Engineering": 'rgba(54, 162, 235, 0.6)',
-  "Human-Computer Interaction": 'rgba(255, 206, 86, 0.6)',
-  "Cloud Computing": 'rgba(75, 192, 192, 0.6)',
-  "Information Systems": 'rgba(153, 102, 255, 0.6)',
-  "Machine Learning": 'rgba(255, 99, 132, 0.6)',
-  "Blockchain": 'rgba(54, 162, 235, 0.6)',
-  "Other": 'rgba(255, 159, 64, 0.6)'
+  "Artificial Intelligence": "rgba(75, 192, 192, 0.6)",
+  "Data Science": "rgba(255, 99, 132, 0.6)",
+  "Cyber Security": "rgba(153, 102, 255, 0.6)",
+  "Software Engineering": "rgba(255, 159, 64, 0.6)",
+  "Network Engineering": "rgba(54, 162, 235, 0.6)",
+  "Human-Computer Interaction": "rgba(255, 206, 86, 0.6)",
+  "Cloud Computing": "rgba(75, 192, 192, 0.6)",
+  "Information Systems": "rgba(153, 102, 255, 0.6)",
+  "Machine Learning": "rgba(255, 99, 132, 0.6)",
+  Blockchain: "rgba(54, 162, 235, 0.6)",
+  Other: "rgba(255, 159, 64, 0.6)",
 };
 
-const userId = localStorage.getItem('userId');
+const userId = localStorage.getItem("userId");
 const fetchProjectList = async () => {
   try {
-      const response = await fetch("http://127.0.0.1:8080/v1/project/get/public_project/list", {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await fetch(
+      "http://127.0.0.1:8080/v1/project/get/public_project/list",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error("Network response was not ok");
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    console.error("There was a problem with the fetch operation:", error);
     return [];
   }
 };
@@ -47,21 +62,24 @@ const fetchProjectList = async () => {
 // fetch the statistics result from backend
 const fetchApiData = async () => {
   try {
-    const response = await fetch('http://127.0.0.1:8080/v1/project/statistics/', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await fetch(
+      "http://127.0.0.1:8080/v1/project/statistics/",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error("Network response was not ok");
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    console.error("There was a problem with the fetch operation:", error);
     return null;
   }
 };
@@ -82,7 +100,9 @@ const VirtualDataReport = () => {
     const fetchData = async () => {
       const apiData = await fetchApiData();
       if (apiData) {
-        const filteredFields = apiData.fields.filter(field => fieldColors.hasOwnProperty(field.field));
+        const filteredFields = apiData.fields.filter((field) =>
+          fieldColors.hasOwnProperty(field.field)
+        );
         setData({ ...apiData, fields: filteredFields });
         if (filteredFields.length > 0) {
           setSelectedField(filteredFields[0].field);
@@ -101,9 +121,9 @@ const VirtualDataReport = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -114,7 +134,7 @@ const VirtualDataReport = () => {
   // convert to PDF file
   const handlePrintPdf = async () => {
     const input = reportRef.current;
-    const pdf = new jsPDF('p', 'pt', 'a4');
+    const pdf = new jsPDF("p", "pt", "a4");
 
     // get time
     const currentDate = new Date();
@@ -130,26 +150,46 @@ const VirtualDataReport = () => {
     const imgWidth = 595.28; // A4 width in points
 
     // get all chart elements
-    const charts = input.querySelectorAll('.chart-container');
+    const charts = input.querySelectorAll(".chart-container");
     for (let i = 0; i < charts.length; i += 2) {
       const firstChartCanvas = await html2canvas(charts[i], { scale: 2 });
-      const firstImgData = firstChartCanvas.toDataURL('image/png');
-      const secondChartCanvas = charts[i + 1] ? await html2canvas(charts[i + 1], { scale: 2 }) : null;
-      const secondImgData = secondChartCanvas ? secondChartCanvas.toDataURL('image/png') : null;
+      const firstImgData = firstChartCanvas.toDataURL("image/png");
+      const secondChartCanvas = charts[i + 1]
+        ? await html2canvas(charts[i + 1], { scale: 2 })
+        : null;
+      const secondImgData = secondChartCanvas
+        ? secondChartCanvas.toDataURL("image/png")
+        : null;
 
       const pageHeight = 841.89; // A4 height in points
-      const imgHeight = firstChartCanvas.height * imgWidth / firstChartCanvas.width;
+      const imgHeight =
+        (firstChartCanvas.height * imgWidth) / firstChartCanvas.width;
 
       // Adjust the height to fit two charts in one page
       const adjustedHeight = (pageHeight - margin * 3 - offset) / 2;
-      const adjustedWidth = firstChartCanvas.width * adjustedHeight / firstChartCanvas.height;
+      const adjustedWidth =
+        (firstChartCanvas.width * adjustedHeight) / firstChartCanvas.height;
 
       // Draw the first chart
-      pdf.addImage(firstImgData, 'PNG', margin, offset + margin, adjustedWidth, adjustedHeight);
+      pdf.addImage(
+        firstImgData,
+        "PNG",
+        margin,
+        offset + margin,
+        adjustedWidth,
+        adjustedHeight
+      );
 
       // Draw the second chart if it exists
       if (secondImgData) {
-        pdf.addImage(secondImgData, 'PNG', margin, offset + adjustedHeight + margin * 2, adjustedWidth, adjustedHeight);
+        pdf.addImage(
+          secondImgData,
+          "PNG",
+          margin,
+          offset + adjustedHeight + margin * 2,
+          adjustedWidth,
+          adjustedHeight
+        );
       }
 
       // Add a new page if there are more charts to be added
@@ -164,13 +204,20 @@ const VirtualDataReport = () => {
     }
 
     // Print the table
-    const table = input.querySelector('.project-list-table');
+    const table = input.querySelector(".project-list-table");
     const tableCanvas = await html2canvas(table, { scale: 2 });
-    const tableImgData = tableCanvas.toDataURL('image/png');
+    const tableImgData = tableCanvas.toDataURL("image/png");
     pdf.addPage();
-    pdf.addImage(tableImgData, 'PNG', margin, offset + margin, imgWidth - 40, tableCanvas.height * imgWidth / tableCanvas.width);
+    pdf.addImage(
+      tableImgData,
+      "PNG",
+      margin,
+      offset + margin,
+      imgWidth - 40,
+      (tableCanvas.height * imgWidth) / tableCanvas.width
+    );
 
-    pdf.save('report.pdf');
+    pdf.save("report.pdf");
   };
 
   if (!data) {
@@ -178,7 +225,7 @@ const VirtualDataReport = () => {
   }
 
   // define the filtering logic
-  const filteredProjects = projectList.filter(project => {
+  const filteredProjects = projectList.filter((project) => {
     return (
       (!clientFilter || project.clientName === clientFilter) &&
       (!tutorFilter || project.tutorName === tutorFilter) &&
@@ -187,8 +234,10 @@ const VirtualDataReport = () => {
   });
 
   const uniqueValues = (key) => {
-    return [...new Set(projectList.map(project => project[key]).filter(Boolean))];
-  }
+    return [
+      ...new Set(projectList.map((project) => project[key]).filter(Boolean)),
+    ];
+  };
 
   // get filtered list
   const renderFilterDropdown = (field, setFilter) => {
@@ -200,12 +249,12 @@ const VirtualDataReport = () => {
         ▼
         <div className="filter-dropdown">
           <ul>
-            {values.map(value => (
+            {values.map((value) => (
               <li key={value} onClick={() => setFilter(value)}>
                 {value}
               </li>
             ))}
-            <li onClick={() => setFilter('')}>Clear</li>
+            <li onClick={() => setFilter("")}>Clear</li>
           </ul>
         </div>
       </span>
@@ -214,47 +263,63 @@ const VirtualDataReport = () => {
 
   // load user data
   const totalUsersData = {
-    labels: ['Students', 'Clients', 'Tutors', 'Coordinators'],
+    labels: ["Students", "Clients", "Tutors", "Coordinators"],
     datasets: [
       {
-        data: [data.totalStudents, data.totalClients, data.totalTutors, data.totalCoordinators],
-        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+        data: [
+          data.totalStudents,
+          data.totalClients,
+          data.totalTutors,
+          data.totalCoordinators,
+        ],
+        backgroundColor: [
+          "rgba(75, 192, 192, 0.6)",
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(153, 102, 255, 0.6)",
+          "rgba(255, 159, 64, 0.6)",
+        ],
       },
     ],
   };
 
   // load team data
   const fieldTeamsData = {
-    labels: data.fields.map(field => field.field),
+    labels: data.fields.map((field) => field.field),
     datasets: [
       {
-        data: data.fields.map(field => field.teams),
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        data: data.fields.map((field) => field.teams),
+        backgroundColor: "rgba(54, 162, 235, 0.6)",
       },
     ],
   };
 
   // load project data
-  const selectedFieldProjects = data.projects.filter(project => project.field === selectedField);
+  const selectedFieldProjects = data.projects.filter(
+    (project) => project.field === selectedField
+  );
   const fieldProjectsData = {
-    labels: selectedFieldProjects.map(project => project.title),
+    labels: selectedFieldProjects.map((project) => project.title),
     datasets: [
       {
-        label: 'Teams',
-        data: selectedFieldProjects.map(project => project.teams),
-        backgroundColor: 'rgba(255, 206, 86, 0.6)',
+        label: "Teams",
+        data: selectedFieldProjects.map((project) => project.teams),
+        backgroundColor: "rgba(255, 206, 86, 0.6)",
       },
     ],
   };
 
-  const topKProjects = data.projects.sort((a, b) => b.teams - a.teams).slice(0, 5);
+  const topKProjects = data.projects
+    .sort((a, b) => b.teams - a.teams)
+    .slice(0, 5);
   const topKProjectsData = {
-    labels: topKProjects.map(project => project.title),
+    labels: topKProjects.map((project) => project.title),
     datasets: [
       {
-        label: 'Fields',
-        data: topKProjects.map(project => project.teams),
-        backgroundColor: topKProjects.map(project => fieldColors[project.field]),
+        label: "Fields",
+        data: topKProjects.map((project) => project.teams),
+        backgroundColor: topKProjects.map(
+          (project) => fieldColors[project.field]
+        ),
       },
     ],
   };
@@ -266,11 +331,14 @@ const VirtualDataReport = () => {
     plugins: {
       datalabels: {
         display: true,
-        color: 'white',
+        color: "white",
         formatter: (value, context) => {
-          const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+          const total = context.chart.data.datasets[0].data.reduce(
+            (a, b) => a + b,
+            0
+          );
           const percentage = ((value / total) * 100).toFixed(2);
-          return percentage + '%';
+          return percentage + "%";
         },
       },
     },
@@ -287,19 +355,21 @@ const VirtualDataReport = () => {
     plugins: {
       legend: {
         display: true,
-        position: 'top',
+        position: "top",
         labels: {
           generateLabels: (chart) => {
             const data = chart.data;
-            const uniqueFields = [...new Set(topKProjects.map(project => project.field))];
+            const uniqueFields = [
+              ...new Set(topKProjects.map((project) => project.field)),
+            ];
             return uniqueFields.map((field, i) => ({
               text: field,
               fillStyle: fieldColors[field],
               strokeStyle: fieldColors[field],
-              index: i
+              index: i,
             }));
-          }
-        }
+          },
+        },
       },
     },
   };
@@ -319,11 +389,13 @@ const VirtualDataReport = () => {
     },
   };
 
-  const chartHeight = windowWidth < 768 ? '200px' : '300px';
+  const chartHeight = windowWidth < 768 ? "200px" : "300px";
 
   return (
     <Container fluid>
-      <Button onClick={handlePrintPdf} className="mb-4">Print PDF</Button>
+      <Button onClick={handlePrintPdf} className="mb-4">
+        Print PDF
+      </Button>
       <div ref={reportRef}>
         {/* load charts */}
         <Row>
@@ -331,8 +403,18 @@ const VirtualDataReport = () => {
             <Card>
               <CardBody>
                 <CardTitle tag="h5">Total Users Distribution</CardTitle>
-                <div style={{ position: 'relative', height: chartHeight, width: '100%' }}>
-                  <Pie data={totalUsersData} options={pieOptions} plugins={[ChartDataLabels]} />
+                <div
+                  style={{
+                    position: "relative",
+                    height: chartHeight,
+                    width: "100%",
+                  }}
+                >
+                  <Pie
+                    data={totalUsersData}
+                    options={pieOptions}
+                    plugins={[ChartDataLabels]}
+                  />
                 </div>
               </CardBody>
             </Card>
@@ -341,7 +423,13 @@ const VirtualDataReport = () => {
             <Card>
               <CardBody>
                 <CardTitle tag="h5">Teams per Field</CardTitle>
-                <div style={{ position: 'relative', height: chartHeight, width: '100%' }}>
+                <div
+                  style={{
+                    position: "relative",
+                    height: chartHeight,
+                    width: "100%",
+                  }}
+                >
                   <Bar data={fieldTeamsData} options={noLegendBarOptions} />
                 </div>
               </CardBody>
@@ -354,15 +442,31 @@ const VirtualDataReport = () => {
               <CardBody>
                 <FormGroup>
                   <Label for="fieldSelect">Top 5 Popular Field</Label>
-                  <Input type="select" id="fieldSelect" value={selectedField} onChange={handleFieldChange}>
-                    {data.fields.map(field => (
-                      <option key={field.field} value={field.field}>{field.field}</option>
+                  <Input
+                    type="select"
+                    id="fieldSelect"
+                    value={selectedField}
+                    onChange={handleFieldChange}
+                  >
+                    {data.fields.map((field) => (
+                      <option key={field.field} value={field.field}>
+                        {field.field}
+                      </option>
                     ))}
                   </Input>
                 </FormGroup>
                 <CardTitle tag="h5">{selectedField} Projects</CardTitle>
-                <div style={{ position: 'relative', height: chartHeight, width: '100%' }}>
-                  <Bar data={fieldProjectsData} options={{ responsive: true, maintainAspectRatio: false }} />
+                <div
+                  style={{
+                    position: "relative",
+                    height: chartHeight,
+                    width: "100%",
+                  }}
+                >
+                  <Bar
+                    data={fieldProjectsData}
+                    options={{ responsive: true, maintainAspectRatio: false }}
+                  />
                 </div>
               </CardBody>
             </Card>
@@ -371,7 +475,13 @@ const VirtualDataReport = () => {
             <Card>
               <CardBody>
                 <CardTitle tag="h5">Top 5 Popular Projects</CardTitle>
-                <div style={{ position: 'relative', height: chartHeight, width: '100%' }}>
+                <div
+                  style={{
+                    position: "relative",
+                    height: chartHeight,
+                    width: "100%",
+                  }}
+                >
                   <Bar data={topKProjectsData} options={barOptions} />
                 </div>
               </CardBody>
@@ -384,28 +494,31 @@ const VirtualDataReport = () => {
             <Card>
               <CardBody>
                 <CardTitle tag="h5">Project List</CardTitle>
-                <div style={{ overflowX: 'auto' }}>
+                <div style={{ overflowX: "auto" }}>
                   <Table striped className="project-list-table">
                     <thead>
                       <tr>
                         <th>Project ID</th>
                         <th>Project Name</th>
-                        {uniqueValues('clientName').length > 0 && (
+                        {uniqueValues("clientName").length > 0 && (
                           <th>
-                            Client 
-                            {renderFilterDropdown('clientName', setClientFilter)}
+                            Client
+                            {renderFilterDropdown(
+                              "clientName",
+                              setClientFilter
+                            )}
                           </th>
                         )}
-                        {uniqueValues('tutorName').length > 0 && (
+                        {uniqueValues("tutorName").length > 0 && (
                           <th>
-                            Tutor 
-                            {renderFilterDropdown('tutorName', setTutorFilter)}
+                            Tutor
+                            {renderFilterDropdown("tutorName", setTutorFilter)}
                           </th>
                         )}
-                        {uniqueValues('coorName').length > 0 && (
+                        {uniqueValues("coorName").length > 0 && (
                           <th>
-                            Coordinator 
-                            {renderFilterDropdown('coorName', setCoorFilter)}
+                            Coordinator
+                            {renderFilterDropdown("coorName", setCoorFilter)}
                           </th>
                         )}
                         <th>Allocate Team</th>
@@ -413,23 +526,35 @@ const VirtualDataReport = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredProjects.map(project => (
+                      {filteredProjects.map((project) => (
                         <tr key={project.projectId}>
                           <td>{project.projectId}</td>
                           <td>{project.title}</td>
 
-                          {uniqueValues('clientName').length > 0 && <td>{project.clientName}</td>}
-                          {uniqueValues('tutorName').length > 0 && <td>{project.tutorName}</td>}
-                          {uniqueValues('coorName').length > 0 && <td>{project.coorName}</td>}
+                          {uniqueValues("clientName").length > 0 && (
+                            <td>{project.clientName}</td>
+                          )}
+                          {uniqueValues("tutorName").length > 0 && (
+                            <td>{project.tutorName}</td>
+                          )}
+                          {uniqueValues("coorName").length > 0 && (
+                            <td>{project.coorName}</td>
+                          )}
                           <td>
-                            {project.allocatedTeam ? project.allocatedTeam.length : 0} / {project.maxTeams || 'N/A'}
+                            {project.allocatedTeam
+                              ? project.allocatedTeam.length
+                              : 0}{" "}
+                            / {project.maxTeams || "N/A"}
                           </td>
                           <td>
-                            {project.allocatedTeam && project.allocatedTeam.length > 0
-                              ? project.allocatedTeam.map(team => team.teamName).join(', ').replace(/,/g, ',\n')
+                            {project.allocatedTeam &&
+                            project.allocatedTeam.length > 0
+                              ? project.allocatedTeam
+                                  .map((team) => team.teamName)
+                                  .join(", ")
+                                  .replace(/,/g, ",\n")
                               : "None"}
                           </td>
-                          
                         </tr>
                       ))}
                     </tbody>

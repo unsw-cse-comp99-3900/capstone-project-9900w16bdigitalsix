@@ -30,7 +30,7 @@
 
 .user-role {
   font-size: 16px;
-  color: black; /* 设置 "Current Role:" 的颜色为黑色 */
+  color: black; /* set "Current Role:" color is black*/
   margin-top: 8px;
 }
 
@@ -75,5 +75,5 @@
 }
 
 .role-select {
-  width: 60%; /* 缩短选择框的宽度 */
+  width: 60%; /* Shorten the width of the selection box */
 }

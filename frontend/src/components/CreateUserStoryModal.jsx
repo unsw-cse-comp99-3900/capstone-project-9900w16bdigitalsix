@@ -1,36 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Modal, Select, Avatar, Input, Button, message, Typography } from 'antd';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Modal, Select, Input, Button, Typography } from "antd";
 
-import '../assets/scss/AssignRoleModal.css';
-import { apiCall } from '../helper';
-import MessageAlert from './MessageAlert';
-
-import TextField from '@mui/material/TextField';
+import "../assets/scss/AssignRoleModal.css";
+import { apiCall } from "../helper";
+import MessageAlert from "./MessageAlert";
 
 const { Option } = Select;
 
 // map the status num got from backend
 const statusMap = {
-  1: 'TO DO',
-  2: 'IN PROGRESS',
-  3: 'DONE',
+  1: "TO DO",
+  2: "IN PROGRESS",
+  3: "DONE",
 };
 // define different color to represent different status
 const statusColorMap = {
-  1: '#808080',   // grey
-  2: '#88D2FF',   // blue
-  3: '#52c41a'    // green
+  1: "#808080", // grey
+  2: "#88D2FF", // blue
+  3: "#52c41a", // green
 };
 
-const CreateUserStoryModal = ({ title, visible,  description, setDescription, onOk, onCancel, refreshData, sprintNo, teamId, userStoryStatus, setUserStoryStatus }) => {
+const CreateUserStoryModal = ({
+  title,
+  visible,
+  description,
+  setDescription,
+  onOk,
+  onCancel,
+  refreshData,
+  sprintNo,
+  teamId,
+  userStoryStatus,
+  setUserStoryStatus,
+}) => {
   const [alertOpen, setAlertOpen] = useState(false);
-  const [alertType, setAlertType] = useState('');
-  const [snackbarContent, setSnackbarContent] = useState('');
+  const [alertType, setAlertType] = useState("");
+  const [snackbarContent, setSnackbarContent] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    setDescription('');
+    setDescription("");
   }, []);
 
   // record status
@@ -41,21 +51,21 @@ const CreateUserStoryModal = ({ title, visible,  description, setDescription, on
   // record description
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
-  }
+  };
 
   const handleSubmit = async () => {
     // valid check
     if (!description) {
-      setSnackbarContent('Please complete description.');
-      setAlertType('error');
+      setSnackbarContent("Please complete description.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
 
     // token check
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      navigate('/login')
+      navigate("/login");
       return;
     }
 
@@ -64,18 +74,24 @@ const CreateUserStoryModal = ({ title, visible,  description, setDescription, on
       sprintNum: parseInt(sprintNo, 10),
       teamId: parseInt(teamId, 10),
       userStoryDescription: description,
-      userStoryStatus: userStoryStatus
+      userStoryStatus: userStoryStatus,
     };
 
-    const response = await apiCall('POST', 'v1/progress/create/userstory', requestBody, token, true);
+    const response = await apiCall(
+      "POST",
+      "v1/progress/create/userstory",
+      requestBody,
+      token,
+      true
+    );
 
     if (response.error) {
       setSnackbarContent(response.error);
-      setAlertType('error');
+      setAlertType("error");
       setAlertOpen(true);
     } else {
-      setSnackbarContent('Create successfully');
-      setAlertType('success');
+      setSnackbarContent("Create successfully");
+      setAlertType("success");
       setAlertOpen(true);
       onOk();
       refreshData();
@@ -90,30 +106,36 @@ const CreateUserStoryModal = ({ title, visible,  description, setDescription, on
         onOk={handleSubmit}
         onCancel={onCancel}
         footer={[
-          <Button key="cancel" onClick={onCancel}>Cancel</Button>,
-          <Button key="submit" type="primary" onClick={handleSubmit}>Save</Button>
+          <Button key="cancel" onClick={onCancel}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleSubmit}>
+            Save
+          </Button>,
         ]}
       >
-        <Typography.Text
-          style={{marginRight: '16px'}}
-        >
+        <Typography.Text style={{ marginRight: "16px" }}>
           Select Status:
         </Typography.Text>
         <Select
           className="status-select"
           placeholder="Select status"
-          value={userStoryStatus !== null ? userStoryStatus.toString() : undefined}
+          value={
+            userStoryStatus !== null ? userStoryStatus.toString() : undefined
+          }
           onChange={handleStatusChange}
-          style={{width: '50%'}}
+          style={{ width: "50%" }}
         >
           {Object.keys(statusMap).map((key) => (
             <Option key={key} value={key} label={statusMap[key]}>
-              <span style={{ color: statusColorMap[key] }}>{statusMap[key]}</span>
+              <span style={{ color: statusColorMap[key] }}>
+                {statusMap[key]}
+              </span>
             </Option>
           ))}
         </Select>
         <div className="modal-body">
-          <Input.TextArea 
+          <Input.TextArea
             placeholder="Description"
             autoSize={{ minRows: 3, maxRows: 6 }}
             onChange={handleDescriptionChange}

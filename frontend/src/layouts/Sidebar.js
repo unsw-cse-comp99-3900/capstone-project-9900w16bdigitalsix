@@ -5,32 +5,32 @@ import { Link, useLocation } from "react-router-dom";
 const navigation = [
   {
     title: "Project",
-    href: "/project/allproject",//need to be implented
+    href: "/project/allproject",
     icon: "bi bi-clipboard2-data",
   },
   {
     title: "Notification",
-    href: "/notification",//need to be implented
+    href: "/notification",
     icon: "bi bi-bell",
   },
   {
     title: "Team",
-    href: "/team",//need to be implented
+    href: "/team",
     icon: "bi bi-people",
   },
   {
     title: "Message",
-    href: "/message",//need to be implented
+    href: "/message",
     icon: "bi bi-chat-square-dots",
   },
   {
     title: "Profile",
-    href: "/profile",//need to be implented
+    href: "/profile",
     icon: "bi bi-person-circle",
   },
   {
     title: "Role",
-    href: "/admin/role-manage",//need to be implented
+    href: "/admin/role-manage",
     icon: "bi bi-person-check",
     roles: ["5", 5],
   },
@@ -44,17 +44,16 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     localStorage.clear(); // clear localStorage
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
-  const currentPath = location.pathname.split('/')[1];
+  const currentPath = location.pathname.split("/")[1];
   const sidebarStyle = {
     position: "fixed",
-    top: "56px", 
+    top: "56px",
     bottom: 0,
     width: "250px",
-    // height: "calc(100vh - 56px)", 
-    overflowY: "auto", 
+    overflowY: "auto",
   };
 
   const currentUserRole = localStorage.getItem("role");
@@ -77,22 +76,24 @@ const Sidebar = () => {
       <div className="pt-4 mt-2">
         <Nav vertical className="sidebarNav">
           {navigation
-            .filter(navi => !navi.roles || navi.roles.includes(currentUserRole))
+            .filter(
+              (navi) => !navi.roles || navi.roles.includes(currentUserRole)
+            )
             .map((navi, index) => (
-            <NavItem key={index} className="sidenav-bg">
-              <Link
-                to={navi.href}
-                className={
-                  currentPath === navi.href.split('/')[1]
-                    ? "text-primary nav-link py-3"
-                    : "nav-link text-secondary py-3"
-                }
-              >
-                <i className={navi.icon}></i>
-                <span className="ms-3 d-inline-block">{navi.title}</span>
-              </Link>
-            </NavItem>
-          ))}
+              <NavItem key={index} className="sidenav-bg">
+                <Link
+                  to={navi.href}
+                  className={
+                    currentPath === navi.href.split("/")[1]
+                      ? "text-primary nav-link py-3"
+                      : "nav-link text-secondary py-3"
+                  }
+                >
+                  <i className={navi.icon}></i>
+                  <span className="ms-3 d-inline-block">{navi.title}</span>
+                </Link>
+              </NavItem>
+            ))}
           <Button
             color="danger"
             tag="a"

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Button, DatePicker, Space } from 'antd';
-import moment from 'moment';
+import React, { useState } from "react";
+import { Button, DatePicker, Space } from "antd";
+import moment from "moment";
 
 const { RangePicker } = DatePicker;
 
 const convertToMomentArray = (dateStrings) => {
-  const moments = dateStrings.map(dateString => moment(dateString));
+  const moments = dateStrings.map((dateString) => moment(dateString));
   return moments;
 };
 
@@ -23,13 +23,17 @@ const Calendar = (props) => {
   };
 
   const handleClickSave = () => {
-      setOpen(!open);
-  }
+    setOpen(!open);
+  };
   return (
     <div style={{ padding: 24 }}>
       <Space direction="vertical">
         <Button type="primary" onClick={handleClickSave}>
-          {dates?.length ? `Selected: ${dates[0].format('YYYY-MM-DD')} - ${dates[1].format('YYYY-MM-DD')}` : 'Select Date Range'}
+          {dates?.length
+            ? `Selected: ${dates[0].format("YYYY-MM-DD")} - ${dates[1].format(
+                "YYYY-MM-DD"
+              )}`
+            : "Select Date Range"}
         </Button>
         {open && (
           <RangePicker
@@ -37,7 +41,7 @@ const Calendar = (props) => {
             onChange={handleChange}
             onOpenChange={handleOpenChange}
             value={dates}
-            renderExtraFooter={() => 'Select a date range'}
+            renderExtraFooter={() => "Select a date range"}
             format="YYYY-MM-DD"
           />
         )}

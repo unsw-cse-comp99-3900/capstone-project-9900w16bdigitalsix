@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
-import { useNavigate } from 'react-router-dom';
-import MessageAlert from '../components/MessageAlert';
+import React, { useState, useEffect } from "react";
+import { Form, FormGroup, Label, Input, Button } from "reactstrap";
+import { useNavigate } from "react-router-dom";
+import MessageAlert from "../components/MessageAlert";
 
 // define the apicall function
 const apiCall = async (method, endpoint, body, isFormData = false) => {
-  const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
+  const headers = isFormData ? {} : { "Content-Type": "application/json" };
   const response = await fetch(`http://127.0.0.1:8080${endpoint}`, {
     method,
     headers: {
-      'Accept': 'application/json',
+      Accept: "application/json",
       ...headers,
     },
     body: isFormData ? body : JSON.stringify(body),
@@ -18,31 +18,30 @@ const apiCall = async (method, endpoint, body, isFormData = false) => {
   return data;
 };
 
-
 const ProjectForm = () => {
   const [formData, setFormData] = useState({
-    title: '',
-    field: '',
-    description: '',
-    email: '',
-    requiredSkills: '',
+    title: "",
+    field: "",
+    description: "",
+    email: "",
+    requiredSkills: "",
     file: null,
-    maxTeams: '',
+    maxTeams: "",
   });
 
   const [role, setRole] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
-  const [alertType, setAlertType] = useState('error');
-  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState("error");
+  const [alertMessage, setAlertMessage] = useState("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedRole = localStorage.getItem('role');
-    const storedEmail = localStorage.getItem('email');
+    const storedRole = localStorage.getItem("role");
+    const storedEmail = localStorage.getItem("email");
     setRole(parseInt(storedRole, 10));
 
-    if (storedRole === '3') {
+    if (storedRole === "3") {
       setFormData((prevData) => ({ ...prevData, email: storedEmail }));
     }
   }, []);
@@ -51,25 +50,23 @@ const ProjectForm = () => {
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
-    if (name === 'title') {
+    if (name === "title") {
       const wordCount = value.trim().split(/\s+/).length;
       if (wordCount > 20) {
-        setAlertMessage('Project title cannot exceed 20 words.');
-        setAlertType('error');
+        setAlertMessage("Project title cannot exceed 20 words.");
+        setAlertType("error");
         setAlertOpen(true);
         return;
       }
     }
-    if (name === 'maxTeams') {
-      if (value !== '' && (isNaN(value) || parseInt(value, 10) <= 0)) {
-        setAlertMessage('Maximum teams must be a positive integer.');
-        setAlertType('error');
+    if (name === "maxTeams") {
+      if (value !== "" && (isNaN(value) || parseInt(value, 10) <= 0)) {
+        setAlertMessage("Maximum teams must be a positive integer.");
+        setAlertType("error");
         setAlertOpen(true);
         return;
       }
     }
-
-
 
     if (files) {
       setFormData({ ...formData, [name]: files[0] });
@@ -84,44 +81,44 @@ const ProjectForm = () => {
     // Validate form data
     const titleWordCount = formData.title.trim().split(/\s+/).length;
     if (titleWordCount > 20) {
-      setAlertMessage('Project title cannot exceed 20 words.');
-      setAlertType('error');
+      setAlertMessage("Project title cannot exceed 20 words.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.title) {
-      setAlertMessage('Project title is required.');
-      setAlertType('error');
+      setAlertMessage("Project title is required.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.field) {
-      setAlertMessage('Field is required.');
-      setAlertType('error');
+      setAlertMessage("Field is required.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.description) {
-      setAlertMessage('Description is required.');
-      setAlertType('error');
+      setAlertMessage("Description is required.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.email) {
-      setAlertMessage('Email is required.');
-      setAlertType('error');
+      setAlertMessage("Email is required.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.requiredSkills) {
-      setAlertMessage('Required skills are required.');
-      setAlertType('error');
+      setAlertMessage("Required skills are required.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.maxTeams) {
-      setAlertMessage('Maximum teams is required.');
-      setAlertType('error');
+      setAlertMessage("Maximum teams is required.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
@@ -129,36 +126,36 @@ const ProjectForm = () => {
     // create the formdata
     const form = new FormData();
     for (const key in formData) {
-      if (key === 'requiredSkills') {
-        const skills = formData[key].split(',').map(skill => skill.trim());
-        skills.forEach(skill => form.append('requiredSkills[]', skill));
-      } else if (key === 'email') {
-        form.append('email', formData[key]);
-      } else if (key === 'file' && formData[key]) {
-        form.append('file', formData[key], formData[key].name);
+      if (key === "requiredSkills") {
+        const skills = formData[key].split(",").map((skill) => skill.trim());
+        skills.forEach((skill) => form.append("requiredSkills[]", skill));
+      } else if (key === "email") {
+        form.append("email", formData[key]);
+      } else if (key === "file" && formData[key]) {
+        form.append("file", formData[key], formData[key].name);
       } else {
         form.append(key, formData[key]);
       }
     }
     // request from backend
     try {
-      const result = await apiCall('POST', '/v1/project/create', form, true);
-      if (result.msg === 'Project created successfully') {
+      const result = await apiCall("POST", "/v1/project/create", form, true);
+      if (result.msg === "Project created successfully") {
         setAlertMessage(result.msg);
-        setAlertType('success');
+        setAlertType("success");
         setAlertOpen(true);
         setTimeout(() => {
-          navigate('/project/myproject');
+          navigate("/project/myproject");
         }, 2000);
       } else {
         setAlertMessage(result.error);
-        setAlertType('error');
+        setAlertType("error");
         setAlertOpen(true);
       }
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.error("An error occurred:", error);
       setAlertMessage(error.message);
-      setAlertType('error');
+      setAlertType("error");
       setAlertOpen(true);
     }
   };
@@ -192,12 +189,16 @@ const ProjectForm = () => {
             onChange={handleChange}
           >
             <option value="">Select field</option>
-            <option value="Artificial Intelligence">Artificial Intelligence</option>
+            <option value="Artificial Intelligence">
+              Artificial Intelligence
+            </option>
             <option value="Data Science">Data Science</option>
             <option value="Cyber Security">Cyber Security</option>
             <option value="Software Engineering">Software Engineering</option>
             <option value="Network Engineering">Network Engineering</option>
-            <option value="Human-Computer Interaction">Human-Computer Interaction</option>
+            <option value="Human-Computer Interaction">
+              Human-Computer Interaction
+            </option>
             <option value="Cloud Computing">Cloud Computing</option>
             <option value="Information Systems">Information Systems</option>
             <option value="Machine Learning">Machine Learning</option>
@@ -234,7 +235,9 @@ const ProjectForm = () => {
         )}
         {/* get project's required skills */}
         <FormGroup>
-          <Label for="requiredSkills">Required skills (please use ", " to separate each item)</Label>
+          <Label for="requiredSkills">
+            Required skills (please use ", " to separate each item)
+          </Label>
           <Input
             type="text"
             name="requiredSkills"
@@ -267,7 +270,9 @@ const ProjectForm = () => {
             onChange={handleChange}
           />
         </FormGroup>
-        <Button type="submit" color="primary">Save</Button>
+        <Button type="submit" color="primary">
+          Save
+        </Button>
       </Form>
       <MessageAlert
         open={alertOpen}

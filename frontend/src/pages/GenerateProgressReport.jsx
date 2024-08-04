@@ -1,19 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Outlet } from "react-router-dom";
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
-import { Container, Card, CardBody, CardTitle, CardText, Row, Col } from "reactstrap";
-import { Bar, Line, Pie } from 'react-chartjs-2';
-import 'chart.js/auto';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { useNavigate, useParams } from 'react-router-dom';
-import html2canvas from 'html2canvas';
-import htmlToPdfmake from 'html-to-pdfmake';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import {
+  Container,
+  Card,
+  CardBody,
+  CardTitle,
+  CardText,
+  Row,
+  Col,
+} from "reactstrap";
+import { Bar, Line, Pie } from "react-chartjs-2";
+import "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import { useParams } from "react-router-dom";
+import html2canvas from "html2canvas";
+import htmlToPdfmake from "html-to-pdfmake";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
 
-import '../assets/scss/FullLayout.css'; // Make sure to import this
-import '../assets/scss/reportStyle.css';
+import "../assets/scss/FullLayout.css"; // Make sure to import this
+import "../assets/scss/reportStyle.css";
 import { apiCall } from "../helper";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -22,7 +29,7 @@ const GenerateProgressReport = () => {
   let globalUserStoryIndex = 1;
   const [showCharts, setShowCharts] = useState(false);
   // get localstorage
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   //get userId, teamId from router
   const { projectId, teamId } = useParams();
   // for pdf generate
@@ -46,24 +53,24 @@ const GenerateProgressReport = () => {
     labels: [],
     datasets: [
       {
-        label: 'Completed User Stories',
-        data: [], 
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        label: "Completed User Stories",
+        data: [],
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
       },
       {
-        label: 'Incomplete User Stories',
+        label: "Incomplete User Stories",
         data: [],
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+        backgroundColor: "rgba(255, 99, 132, 0.6)",
       },
     ],
   });
   // initiate data for pie chart
   const [pieData, setPieData] = useState({
-    labels: ['Completed User Stories', 'Remaining User Stories'],
+    labels: ["Completed User Stories", "Remaining User Stories"],
     datasets: [
       {
         data: [0, 0],
-        backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+        backgroundColor: ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)"],
       },
     ],
   });
@@ -71,15 +78,15 @@ const GenerateProgressReport = () => {
     labels: [],
     datasets: [
       {
-        label: 'Sprint Scores',
+        label: "Sprint Scores",
         data: [],
-        borderColor: 'rgba(153, 102, 255, 0.6)',
+        borderColor: "rgba(153, 102, 255, 0.6)",
         fill: false,
       },
       {
-        label: 'Average Score',
+        label: "Average Score",
         data: [],
-        borderColor: 'rgba(255, 159, 64, 0.6)',
+        borderColor: "rgba(255, 159, 64, 0.6)",
         borderDash: [10, 5],
         fill: false,
       },
@@ -115,40 +122,49 @@ const GenerateProgressReport = () => {
 
   const getProgresstDetail = async () => {
     try {
-      const data = await apiCall('GET', `v1/progress/get/detail/${teamId}`);
+      const data = await apiCall("GET", `v1/progress/get/detail/${teamId}`);
       setSprints(data.sprints);
       updateChartData(data.sprints);
       updatePieChartData(data.sprints);
       updateLineChartData(data.sprints);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      console.error("Failed to fetch data:", error);
     }
   };
 
   // get team information
   const getFilteredTeam = async () => {
     try {
-        const data = await apiCall('GET', `v1/project/team/allocated/${projectId}`);
-        const teamIdDecimal = parseInt(teamId, 10); 
-        const filteredTeam = data.find(team => team.teamId === teamIdDecimal);
-        setTeamData(filteredTeam);
+      const data = await apiCall(
+        "GET",
+        `v1/project/team/allocated/${projectId}`
+      );
+      const teamIdDecimal = parseInt(teamId, 10);
+      const filteredTeam = data.find((team) => team.teamId === teamIdDecimal);
+      setTeamData(filteredTeam);
     } catch (error) {
-        console.error('Error fetching team data:', error);
+      console.error("Error fetching team data:", error);
     }
-}
+  };
 
   // form for userstory status
   const userstoryStatus = (status) => {
     switch (status) {
-      case 1: return "Todo";
-      case 2: return "In Progress";
-      case 3: return "Done";
+      case 1:
+        return "Todo";
+      case 2:
+        return "In Progress";
+      case 3:
+        return "Done";
     }
   };
 
   // caculate average sprint score
   const calculateAverageScore = () => {
-    const totalScore = sprints.reduce((total, current) => total + current.sprintGrade, 0);
+    const totalScore = sprints.reduce(
+      (total, current) => total + current.sprintGrade,
+      0
+    );
     return sprints.length ? (totalScore / sprints.length).toFixed(2) : 0;
   };
 
@@ -172,23 +188,28 @@ const GenerateProgressReport = () => {
 
   const generatePdf = async () => {
     const element = contentRef.current;
-    const canvasArray = element.querySelectorAll('canvas');
-  
+    const canvasArray = element.querySelectorAll("canvas");
+
     for (let canvas of canvasArray) {
       const image = await html2canvas(canvas, { scale: 1.1 });
       const dataURL = image.toDataURL();
-      canvas.parentNode.insertAdjacentHTML('afterend', `<img src="${dataURL}" style="width: 100%; max-width: 700px;height: auto;" />`);
+      canvas.parentNode.insertAdjacentHTML(
+        "afterend",
+        `<img src="${dataURL}" style="width: 100%; max-width: 700px;height: auto;" />`
+      );
       canvas.remove();
     }
-  
+
     const htmlContent = contentRef.current.innerHTML;
     const pdfContent = htmlToPdfmake(htmlContent);
     const documentDefinition = {
       content: pdfContent,
-      pageSize: 'A4',
-      pageMargins: [20, 20, 20, 20]  // page margin
+      pageSize: "A4",
+      pageMargins: [20, 20, 20, 20], // page margin
     };
-    pdfMake.createPdf(documentDefinition).download(`${title}_team${teamData.teamIdShow}_ProgressReport.pdf`);
+    pdfMake
+      .createPdf(documentDefinition)
+      .download(`${title}_team${teamData.teamIdShow}_ProgressReport.pdf`);
   };
 
   useEffect(() => {
@@ -201,32 +222,40 @@ const GenerateProgressReport = () => {
 
   // functions to load data to charts
   const updateChartData = (sprints) => {
-    const labels = sprints.map(sprint => `Sprint ${sprint.sprintNum}`);
-    const completedData = sprints.map(sprint => sprint.userStoryList.filter(story => story.userStoryStatus === 3).length);
-    const incompleteData = sprints.map(sprint => sprint.userStoryList.filter(story => story.userStoryStatus !== 3).length);
-  
+    const labels = sprints.map((sprint) => `Sprint ${sprint.sprintNum}`);
+    const completedData = sprints.map(
+      (sprint) =>
+        sprint.userStoryList.filter((story) => story.userStoryStatus === 3)
+          .length
+    );
+    const incompleteData = sprints.map(
+      (sprint) =>
+        sprint.userStoryList.filter((story) => story.userStoryStatus !== 3)
+          .length
+    );
+
     setSprintData({
       labels,
       datasets: [
         {
-          label: 'Completed User Stories',
+          label: "Completed User Stories",
           data: completedData,
-          backgroundColor: 'rgba(75, 192, 192, 0.6)',
+          backgroundColor: "rgba(75, 192, 192, 0.6)",
         },
         {
-          label: 'Incomplete User Stories',
+          label: "Incomplete User Stories",
           data: incompleteData,
-          backgroundColor: 'rgba(255, 99, 132, 0.6)',
+          backgroundColor: "rgba(255, 99, 132, 0.6)",
         },
-      ]
+      ],
     });
   };
   const updatePieChartData = (sprints) => {
     let completedCount = 0;
     let remainingCount = 0;
-  
-    sprints.forEach(sprint => {
-      sprint.userStoryList.forEach(story => {
+
+    sprints.forEach((sprint) => {
+      sprint.userStoryList.forEach((story) => {
         if (story.userStoryStatus === 3) {
           completedCount += 1;
         } else {
@@ -235,40 +264,43 @@ const GenerateProgressReport = () => {
       });
     });
     setPieData({
-      labels: ['Completed User Stories', 'Remaining User Stories'],
+      labels: ["Completed User Stories", "Remaining User Stories"],
       datasets: [
         {
           data: [completedCount, remainingCount],
-          backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+          backgroundColor: [
+            "rgba(75, 192, 192, 0.6)",
+            "rgba(255, 99, 132, 0.6)",
+          ],
         },
       ],
     });
   };
   const updateLineChartData = (sprints) => {
-    const labels = sprints.map(sprint => `Sprint ${sprint.sprintNum}`);
-    const sprintScores = sprints.map(sprint => sprint.sprintGrade);
-    const averageScore = sprintScores.reduce((sum, current) => sum + current, 0) / sprints.length;
-  
+    const labels = sprints.map((sprint) => `Sprint ${sprint.sprintNum}`);
+    const sprintScores = sprints.map((sprint) => sprint.sprintGrade);
+    const averageScore =
+      sprintScores.reduce((sum, current) => sum + current, 0) / sprints.length;
+
     setSprintDetailsData({
       labels,
       datasets: [
         {
-          label: 'Sprint Scores',
+          label: "Sprint Scores",
           data: sprintScores,
-          borderColor: 'rgba(153, 102, 255, 0.6)',
+          borderColor: "rgba(153, 102, 255, 0.6)",
           fill: false,
         },
         {
-          label: 'Average Score',
+          label: "Average Score",
           data: Array(sprints.length).fill(averageScore),
-          borderColor: 'rgba(255, 159, 64, 0.6)',
+          borderColor: "rgba(255, 159, 64, 0.6)",
           borderDash: [10, 5],
           fill: false,
         },
       ],
     });
   };
-  
 
   // New options to display percentage inside bars
   const options = {
@@ -276,11 +308,11 @@ const GenerateProgressReport = () => {
     plugins: {
       datalabels: {
         display: true,
-        color: 'white',
+        color: "white",
         formatter: (value, context) => {
           if (value === 0) return null;
           const total = context.chart.data.datasets
-            .map(dataset => dataset.data[context.dataIndex])
+            .map((dataset) => dataset.data[context.dataIndex])
             .reduce((a, b) => a + b, 0);
           const percentage = ((value / total) * 100).toFixed(2);
           return `${value} (${percentage}%)`;
@@ -295,7 +327,7 @@ const GenerateProgressReport = () => {
         stacked: true,
         title: {
           display: true,
-          text: 'Number of User Stories',
+          text: "Number of User Stories",
         },
       },
     },
@@ -307,7 +339,7 @@ const GenerateProgressReport = () => {
     plugins: {
       datalabels: {
         display: true,
-        color: 'black',
+        color: "black",
         formatter: (value, context) => {
           return value;
         },
@@ -317,61 +349,75 @@ const GenerateProgressReport = () => {
       x: {
         title: {
           display: true,
-          text: 'Sprints',
+          text: "Sprints",
         },
       },
       y: {
         title: {
           display: true,
-          text: 'Scores',
+          text: "Scores",
         },
       },
     },
   };
 
-
-// Options to display percentage inside pie chart
-const pieOptions = {
-  maintainAspectRatio: false,
-  plugins: {
-    datalabels: {
-      display: true,
-      color: 'white',
-      formatter: (value, context) => {
-        const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-        const percentage = ((value / total) * 100).toFixed(2);
-        return percentage + '%';
+  // Options to display percentage inside pie chart
+  const pieOptions = {
+    maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true,
+        color: "white",
+        formatter: (value, context) => {
+          const total = context.chart.data.datasets[0].data.reduce(
+            (a, b) => a + b,
+            0
+          );
+          const percentage = ((value / total) * 100).toFixed(2);
+          return percentage + "%";
+        },
       },
     },
-  },
-};
+  };
 
   // Data for charts
   const timepieData = {
-    labels: sprints.map(sprint => `Sprint ${sprint.sprintNum}`),
-    datasets: [{
-      label: 'Days per Sprint',
-      data: sprints.map(sprint => sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0),
-      backgroundColor: [
-        'rgba(75, 192, 192, 0.6)',
-        'rgba(255, 99, 132, 0.6)',
-        'rgba(52, 152, 219, 0.6)',
-        'rgba(26, 188, 156, 0.6)',
-        'rgba(231, 76, 60, 0.6)',
-        'rgba(243, 156, 18, 0.6)'
-      ],
-      }],
+    labels: sprints.map((sprint) => `Sprint ${sprint.sprintNum}`),
+    datasets: [
+      {
+        label: "Days per Sprint",
+        data: sprints.map((sprint) =>
+          sprint.startDate && sprint.endDate
+            ? getTotalDays(sprint.startDate, sprint.endDate)
+            : 0
+        ),
+        backgroundColor: [
+          "rgba(75, 192, 192, 0.6)",
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(52, 152, 219, 0.6)",
+          "rgba(26, 188, 156, 0.6)",
+          "rgba(231, 76, 60, 0.6)",
+          "rgba(243, 156, 18, 0.6)",
+        ],
+      },
+    ],
   };
 
   const timebarData = {
-    labels: sprints.map(sprint => `Sprint ${sprint.sprintNum}`),
-    datasets: [{
-      label: 'Duration in Days',
-      data: sprints.map(sprint => sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0),
-      backgroundColor: 'rgba(54, 162, 235, 0.6)',
-      borderColor: 'rgba(54, 162, 235, 1)',
-      borderWidth: 1,
-    }],
+    labels: sprints.map((sprint) => `Sprint ${sprint.sprintNum}`),
+    datasets: [
+      {
+        label: "Duration in Days",
+        data: sprints.map((sprint) =>
+          sprint.startDate && sprint.endDate
+            ? getTotalDays(sprint.startDate, sprint.endDate)
+            : 0
+        ),
+        backgroundColor: "rgba(54, 162, 235, 0.6)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1,
+      },
+    ],
   };
 
   const timeBarOptions = {
@@ -380,31 +426,31 @@ const pieOptions = {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Number of Days'
-        }
+          text: "Number of Days",
+        },
       },
       x: {
         title: {
           display: true,
-          text: 'Sprints'
-        }
-      }
+          text: "Sprints",
+        },
+      },
     },
     plugins: {
       legend: {
         display: true,
-        position: 'top'
+        position: "top",
       },
       tooltip: {
         callbacks: {
-          label: function(tooltipItem) {
+          label: function (tooltipItem) {
             return `Duration: ${tooltipItem.raw} days`;
-          }
-        }
-      }
+          },
+        },
+      },
     },
     responsive: true,
-    maintainAspectRatio: false
+    maintainAspectRatio: false,
   };
 
   return (
@@ -421,7 +467,15 @@ const pieOptions = {
             <Header />
           </div>
           <Container className="p-4 wrapper" fluid>
-          <a href="#" onClick={(e) => { e.preventDefault(); generatePdf(); }}>Download PDF</a>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                generatePdf();
+              }}
+            >
+              Download PDF
+            </a>
             <div ref={contentRef}>
               <Row>
                 <Col lg="12" className="mb-4">
@@ -429,36 +483,103 @@ const pieOptions = {
                     <Row>
                       <Col lg="6">
                         <CardBody>
-                          <CardTitle tag="h5"><strong>Project Progress Chart</strong></CardTitle>
+                          <CardTitle tag="h5">
+                            <strong>Project Progress Chart</strong>
+                          </CardTitle>
                           {showCharts && (
                             <>
-                              <div className="chart-container mb-4"  style={{ padding: '30px 0 0 0' }}>
-                                <Bar data={sprintData} options={options} plugins={[ChartDataLabels]} />                  
+                              <div
+                                className="chart-container mb-4"
+                                style={{ padding: "30px 0 0 0" }}
+                              >
+                                <Bar
+                                  data={sprintData}
+                                  options={options}
+                                  plugins={[ChartDataLabels]}
+                                />
                               </div>
-                              <h6 style={{ textAlign: 'center', padding: '0 0 20px 0' }}>Fig 1. User Story Completion Tracking Chart</h6>
-                              <div className="chart-container mb-4"  style={{ padding: '10px 0 0 0' }}>
-                                <Pie data={pieData} options={pieOptions} plugins={[ChartDataLabels]} />
+                              <h6
+                                style={{
+                                  textAlign: "center",
+                                  padding: "0 0 20px 0",
+                                }}
+                              >
+                                Fig 1. User Story Completion Tracking Chart
+                              </h6>
+                              <div
+                                className="chart-container mb-4"
+                                style={{ padding: "10px 0 0 0" }}
+                              >
+                                <Pie
+                                  data={pieData}
+                                  options={pieOptions}
+                                  plugins={[ChartDataLabels]}
+                                />
                               </div>
-                              <h6 style={{ textAlign: 'center', padding: '0 0 20px 0'}}>Fig 2. User Story Progress Overview</h6>   
-                              <div className="chart-container mb-4"  style={{ padding: '10px 0 0 0' }}>
-                                <Line data={sprintDetailsData} options={sprintOptions} />
+                              <h6
+                                style={{
+                                  textAlign: "center",
+                                  padding: "0 0 20px 0",
+                                }}
+                              >
+                                Fig 2. User Story Progress Overview
+                              </h6>
+                              <div
+                                className="chart-container mb-4"
+                                style={{ padding: "10px 0 0 0" }}
+                              >
+                                <Line
+                                  data={sprintDetailsData}
+                                  options={sprintOptions}
+                                />
                               </div>
-                              <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Fig 3. Comparison of Sprint Scores to Average</h6>
+                              <h6
+                                style={{
+                                  textAlign: "center",
+                                  padding: "0 0 10px 0",
+                                }}
+                              >
+                                Fig 3. Comparison of Sprint Scores to Average
+                              </h6>
                             </>
                           )}
                         </CardBody>
                       </Col>
                       <Col lg="6">
                         <CardBody>
-                          <CardTitle tag="h5"><strong>Time Tracking Chart</strong></CardTitle>
-                          <div className="chart-container mb-4" style={{ padding: '30px 0 0 0' }}>
+                          <CardTitle tag="h5">
+                            <strong>Time Tracking Chart</strong>
+                          </CardTitle>
+                          <div
+                            className="chart-container mb-4"
+                            style={{ padding: "30px 0 0 0" }}
+                          >
                             <Bar data={timebarData} options={timeBarOptions} />
                           </div>
-                          <h6 style={{ textAlign: 'center', padding: '0 0 30px 0'}}>Fig 4. Duration of Sprints Over Time</h6>
+                          <h6
+                            style={{
+                              textAlign: "center",
+                              padding: "0 0 30px 0",
+                            }}
+                          >
+                            Fig 4. Duration of Sprints Over Time
+                          </h6>
                           <div className="chart-container mb-4">
-                            <Pie data={timepieData} options={pieOptions} plugins={[ChartDataLabels]} />
+                            <Pie
+                              data={timepieData}
+                              options={pieOptions}
+                              plugins={[ChartDataLabels]}
+                            />
                           </div>
-                          <h6 style={{ textAlign: 'center', padding: '0 0 10px 0'}}>Fig 5. Sprint Time Contributions to Total Project Duration</h6>
+                          <h6
+                            style={{
+                              textAlign: "center",
+                              padding: "0 0 10px 0",
+                            }}
+                          >
+                            Fig 5. Sprint Time Contributions to Total Project
+                            Duration
+                          </h6>
                         </CardBody>
                       </Col>
                     </Row>
@@ -472,43 +593,88 @@ const pieOptions = {
                       <CardText>
                         <Row>
                           <Col md="6">
-                            <CardTitle tag="h5"><strong>Project Overview</strong></CardTitle>
-                            <CardText style = {{textAlign: 'justify'}}>
-                              <strong>Project Name:</strong> {title}<br />
-                              <strong>Field:</strong> {field}<br />
-                              <strong>Description:</strong> {description}<br />
-                              <strong>Required Skills:</strong> {requiredSkills.join(', ')}<br />
-                              Client: {clientName} - <span class="light-text">{clientEmail}</span><br />
-                              Tutor: {tutorName} - <span class="light-text">{tutorEmail}</span><br />
-                              Coordinator: {coorName} - <span class="light-text">{coorEmail}</span><br />
+                            <CardTitle tag="h5">
+                              <strong>Project Overview</strong>
+                            </CardTitle>
+                            <CardText style={{ textAlign: "justify" }}>
+                              <strong>Project Name:</strong> {title}
+                              <br />
+                              <strong>Field:</strong> {field}
+                              <br />
+                              <strong>Description:</strong> {description}
+                              <br />
+                              <strong>Required Skills:</strong>{" "}
+                              {requiredSkills.join(", ")}
+                              <br />
+                              Client: {clientName} -{" "}
+                              <span class="light-text">{clientEmail}</span>
+                              <br />
+                              Tutor: {tutorName} -{" "}
+                              <span class="light-text">{tutorEmail}</span>
+                              <br />
+                              Coordinator: {coorName} -{" "}
+                              <span class="light-text">{coorEmail}</span>
+                              <br />
                               {teamData ? (
                                 <div>
-                                    Team Name: {teamData.teamName}<br />
-                                    Team ID: {teamData.teamIdShow}<br />
-                                    Team Members:<br />
-                                    <div style={{ lineHeight: '1.5' }}>
-                                        {teamData.teamMember.map((member, index) => (
-                                            <p key={index} style={{ margin: 0 }}>{member.userName} - <span class="light-text">{member.userEmail}</span></p >
-                                        ))}
-                                    </div>
+                                  Team Name: {teamData.teamName}
+                                  <br />
+                                  Team ID: {teamData.teamIdShow}
+                                  <br />
+                                  Team Members:
+                                  <br />
+                                  <div style={{ lineHeight: "1.5" }}>
+                                    {teamData.teamMember.map(
+                                      (member, index) => (
+                                        <p key={index} style={{ margin: 0 }}>
+                                          {member.userName} -{" "}
+                                          <span class="light-text">
+                                            {member.userEmail}
+                                          </span>
+                                        </p>
+                                      )
+                                    )}
+                                  </div>
                                 </div>
-                            ) : (
+                              ) : (
                                 <p>No team data...</p>
-                            )}
-                              <a href={specLink} target="_blank" rel="noopener noreferrer">Click here to view project specification document</a>
+                              )}
+                              <a
+                                href={specLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Click here to view project specification
+                                document
+                              </a>
                             </CardText>
                           </Col>
                           <Col md="6">
-                            <CardTitle tag="h5"><strong>Sprint Details and User Stories:</strong></CardTitle>
+                            <CardTitle tag="h5">
+                              <strong>Sprint Details and User Stories:</strong>
+                            </CardTitle>
                             <ul>
                               {sprints.map((sprint, index) => (
-                                <li key={index} style = {{textAlign: 'justify'}}>
-                                  Sprint {sprint.sprintNum}: {sprint.startDate && sprint.endDate ? `${sprint.startDate} / ${sprint.endDate}` : '(Date to be determined)'},
+                                <li
+                                  key={index}
+                                  style={{ textAlign: "justify" }}
+                                >
+                                  Sprint {sprint.sprintNum}:{" "}
+                                  {sprint.startDate && sprint.endDate
+                                    ? `${sprint.startDate} / ${sprint.endDate}`
+                                    : "(Date to be determined)"}
+                                  ,
                                   <ul>
                                     {sprint.userStoryList.map((story) => (
-                                      <li key={story.userStoryId} style={{ marginBottom: '6px' }}>
-                                        User Story {globalUserStoryIndex++}: {story.userStoryDescription}<br />
-                                        Status: {userstoryStatus(story.userStoryStatus)}
+                                      <li
+                                        key={story.userStoryId}
+                                        style={{ marginBottom: "6px" }}
+                                      >
+                                        User Story {globalUserStoryIndex++}:{" "}
+                                        {story.userStoryDescription}
+                                        <br />
+                                        Status:{" "}
+                                        {userstoryStatus(story.userStoryStatus)}
                                       </li>
                                     ))}
                                   </ul>
@@ -519,27 +685,43 @@ const pieOptions = {
                         </Row>
                         <Row>
                           <Col md="6">
-                            <CardTitle tag="h5"><strong>Time Tracking</strong></CardTitle>
+                            <CardTitle tag="h5">
+                              <strong>Time Tracking</strong>
+                            </CardTitle>
                             <ul>
                               {sprints.map((sprint, index) => {
-                                const days = sprint.startDate && sprint.endDate ? getTotalDays(sprint.startDate, sprint.endDate) : 0;
-                                const percentage = totalProjectDays ? ((days / totalProjectDays) * 100).toFixed(2) : 0;
+                                const days =
+                                  sprint.startDate && sprint.endDate
+                                    ? getTotalDays(
+                                        sprint.startDate,
+                                        sprint.endDate
+                                      )
+                                    : 0;
+                                const percentage = totalProjectDays
+                                  ? ((days / totalProjectDays) * 100).toFixed(2)
+                                  : 0;
                                 return (
                                   <li key={index}>
-                                    Sprint {sprint.sprintNum}: {days ? `${days} days` : '(Date to be determined)'},
-                                    Overtime - {percentage}%
+                                    Sprint {sprint.sprintNum}:{" "}
+                                    {days
+                                      ? `${days} days`
+                                      : "(Date to be determined)"}
+                                    , Overtime - {percentage}%
                                   </li>
                                 );
                               })}
                             </ul>
                           </Col>
                           <Col md="6">
-                            <CardTitle tag="h5"><strong>Performance Metrics</strong></CardTitle>
+                            <CardTitle tag="h5">
+                              <strong>Performance Metrics</strong>
+                            </CardTitle>
                             <strong>Sprint Scores:</strong>
                             <ul>
                               {sprints.map((sprint, index) => (
                                 <li key={index}>
-                                  Sprint {sprint.sprintNum}: Score - {sprint.sprintGrade}
+                                  Sprint {sprint.sprintNum}: Score -{" "}
+                                  {sprint.sprintGrade}
                                 </li>
                               ))}
                             </ul>
@@ -547,11 +729,13 @@ const pieOptions = {
                             <ul>
                               {sprints.map((sprint, index) => (
                                 <li key={index}>
-                                  Sprint {sprint.sprintNum}: {sprint.sprintComment}
+                                  Sprint {sprint.sprintNum}:{" "}
+                                  {sprint.sprintComment}
                                 </li>
                               ))}
                             </ul>
-                            <strong>Average Sprint Score:</strong> {calculateAverageScore()}
+                            <strong>Average Sprint Score:</strong>{" "}
+                            {calculateAverageScore()}
                           </Col>
                         </Row>
                       </CardText>

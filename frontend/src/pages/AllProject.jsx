@@ -1,28 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { SearchOutlined } from '@ant-design/icons';
-import { Input, Button, Row, Col } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from "react";
+import { SearchOutlined } from "@ant-design/icons";
+import { Input, Button, Row, Col } from "antd";
+import { useNavigate } from "react-router-dom";
 import { Container } from "reactstrap";
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
-import '../assets/scss/FullLayout.css';
-import '../assets/scss/CustomCard.css';
-import '../styles/project.css';
-import { apiCall } from '../helper';
-import CustomCard from '../components/CustomCard';
+import "../assets/scss/FullLayout.css";
+import "../assets/scss/CustomCard.css";
+import "../styles/project.css";
+import { apiCall } from "../helper";
+import CustomCard from "../components/CustomCard";
 
 const FullLayout = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [team, setTeam] = useState(true);
   let [data, setData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(''); // State to manage input value
+  const [searchTerm, setSearchTerm] = useState(""); // State to manage input value
   const mountedRef = useRef(false);
-  const role = localStorage.getItem('role');
+  const role = localStorage.getItem("role");
 
   // load all project list information
-  const loadMoreData = async (url = 'v1/project/get/public_project/list') => {
-    const response = await apiCall('GET', url, null, null, null);
+  const loadMoreData = async (url = "v1/project/get/public_project/list") => {
+    const response = await apiCall("GET", url, null, null, null);
 
     if (!response) {
       setData([]);
@@ -54,7 +51,7 @@ const FullLayout = () => {
 
   // when click on "clear" button, call this function
   const handleClearSearch = () => {
-    setSearchTerm('');
+    setSearchTerm("");
     loadMoreData();
   };
 
@@ -79,37 +76,33 @@ const FullLayout = () => {
                 size="large"
                 placeholder="Search Projects"
                 prefix={<SearchOutlined />}
-                style={{ width: '70%', marginRight: '10px' }}
+                style={{ width: "70%", marginRight: "10px" }}
               />
               <Button
                 size="large"
                 type="primary"
                 onClick={seachList}
-                style={{ marginRight: '10px' }}
+                style={{ marginRight: "10px" }}
               >
                 Filter
               </Button>
-              <Button
-                size="large"
-                type="primary"
-                onClick={handleClearSearch}
-              >
+              <Button size="large" type="primary" onClick={handleClearSearch}>
                 Clear
               </Button>
             </div>
             <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
               {data.map((project, index) => (
                 <Col xs={24} sm={16} md={8} span={8} key={index}>
-                    <CustomCard
-                      id={project.projectId}
-                      title={project.title}
-                      client={project.clientName}
-                      clientTitle={project.clientEmail}
-                      skills={project.requiredSkills}
-                      clientAvatar={project.clientAvatarURL}
-                      field={project.field}
-                      role={role}
-                    />
+                  <CustomCard
+                    id={project.projectId}
+                    title={project.title}
+                    client={project.clientName}
+                    clientTitle={project.clientEmail}
+                    skills={project.requiredSkills}
+                    clientAvatar={project.clientAvatarURL}
+                    field={project.field}
+                    role={role}
+                  />
                 </Col>
               ))}
             </Row>

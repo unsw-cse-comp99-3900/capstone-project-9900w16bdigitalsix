@@ -1,9 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardBody, CardTitle, CardText, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import '../assets/scss/CustomCard.css'; // 引入CSS文件
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import {
+  Card,
+  CardBody,
+  CardTitle,
+  CardText,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "reactstrap";
+import "../assets/scss/CustomCard.css";
 
-const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete }) => {
+const CustomCard = ({
+  id,
+  title,
+  client,
+  clientTitle,
+  skills,
+  field,
+  onDelete,
+}) => {
   const [modal, setModal] = useState(false);
   const [showMoreSkills, setShowMoreSkills] = useState(false);
   const skillsRef = useRef(null);
@@ -12,16 +30,19 @@ const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete })
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8080/v1/project/delete/${id}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `http://127.0.0.1:8080/v1/project/delete/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (response.ok) {
         onDelete(id);
       } else {
-        console.error('Failed to delete the project.');
+        console.error("Failed to delete the project.");
       }
     } catch (error) {
-      console.error('An error occurred while deleting the project:', error);
+      console.error("An error occurred while deleting the project:", error);
     }
   };
 
@@ -35,10 +56,10 @@ const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete })
     };
 
     checkOverflow();
-    window.addEventListener('resize', checkOverflow);
+    window.addEventListener("resize", checkOverflow);
 
     return () => {
-      window.removeEventListener('resize', checkOverflow);
+      window.removeEventListener("resize", checkOverflow);
     };
   }, [skills]);
 
@@ -54,7 +75,9 @@ const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete })
               <span>{client[0]}</span>
             </div>
             <div className="client-info">
-              <CardTitle tag="h5" className="client-name">{client}</CardTitle>
+              <CardTitle tag="h5" className="client-name">
+                {client}
+              </CardTitle>
               <CardText className="client-title">{clientTitle}</CardText>
             </div>
           </div>
@@ -78,18 +101,24 @@ const CustomCard = ({ id, title, client, clientTitle, skills, field, onDelete })
               <i className="bi bi-pencil"></i>
             </Link>
             <i className="bi bi-person"></i>
-            <i className="bi bi-trash" onClick={toggle} style={{ color: 'red', cursor: 'pointer' }}></i>
+            <i
+              className="bi bi-trash"
+              onClick={toggle}
+              style={{ color: "red", cursor: "pointer" }}
+            ></i>
           </div>
         </CardBody>
       </Card>
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>Confirm Delete</ModalHeader>
-        <ModalBody>
-          Are you sure you want to delete this project?
-        </ModalBody>
+        <ModalBody>Are you sure you want to delete this project?</ModalBody>
         <ModalFooter>
-          <Button color="danger" onClick={handleDelete}>Delete</Button>
-          <Button color="secondary" onClick={toggle}>Cancel</Button>
+          <Button color="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+          <Button color="secondary" onClick={toggle}>
+            Cancel
+          </Button>
         </ModalFooter>
       </Modal>
     </>

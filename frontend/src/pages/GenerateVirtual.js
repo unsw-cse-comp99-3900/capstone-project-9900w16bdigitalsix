@@ -3,8 +3,8 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import { Container } from "reactstrap";
-import '../assets/scss/FullLayout.css';
-import VirtualDataReport from './VirtualDataReport';
+import "../assets/scss/FullLayout.css";
+import VirtualDataReport from "./VirtualDataReport";
 
 // load all project report for admin
 const GenerateVirtual = () => {
@@ -17,10 +17,16 @@ const GenerateVirtual = () => {
   return (
     <main>
       <div className="pageWrapper d-lg-flex">
-        <aside className={`sidebarArea shadow ${isSidebarOpen ? '' : 'collapsed'}`} id="sidebarArea">
+        <aside
+          className={`sidebarArea shadow ${isSidebarOpen ? "" : "collapsed"}`}
+          id="sidebarArea"
+        >
           <Sidebar toggleSidebar={toggleSidebar} />
         </aside>
-        <div className="contentArea" style={{ width: isSidebarOpen ? 'calc(100% - 250px)' : '100%' }}>
+        <div
+          className="contentArea"
+          style={{ width: isSidebarOpen ? "calc(100% - 250px)" : "100%" }}
+        >
           <div className="d-lg-none headerMd">
             <Header />
           </div>

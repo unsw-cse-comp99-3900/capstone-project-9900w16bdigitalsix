@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
-import { useNavigate } from 'react-router-dom';
-import MessageAlert from '../components/MessageAlert';
+import React, { useState, useEffect } from "react";
+import { Form, FormGroup, Label, Input, Button } from "reactstrap";
+import { useNavigate } from "react-router-dom";
+import MessageAlert from "../components/MessageAlert";
 
 // define the apicall function
 export const apiCall = async (method, endpoint, data, isFormData = false) => {
-  const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
+  const headers = isFormData ? {} : { "Content-Type": "application/json" };
 
   const options = {
     method,
@@ -21,19 +21,19 @@ export const apiCall = async (method, endpoint, data, isFormData = false) => {
 const EditProjectForm = ({ initialValues, id }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialValues);
-  const [fileName, setFileName] = useState('');
+  const [fileName, setFileName] = useState("");
 
   const [alertOpen, setAlertOpen] = useState(false);
-  const [alertType, setAlertType] = useState('error');
-  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState("error");
+  const [alertMessage, setAlertMessage] = useState("");
   const [role, setRole] = useState(null);
 
   useEffect(() => {
-    const storedRole = localStorage.getItem('role');
-    const storedEmail = localStorage.getItem('email');
+    const storedRole = localStorage.getItem("role");
+    const storedEmail = localStorage.getItem("email");
     setRole(parseInt(storedRole, 10));
 
-    if (storedRole === '3') {
+    if (storedRole === "3") {
       setFormData((prevData) => ({ ...prevData, email: storedEmail }));
     }
   }, []);
@@ -45,20 +45,20 @@ const EditProjectForm = ({ initialValues, id }) => {
   // check the validation for project input
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'title') {
+    if (name === "title") {
       const wordCount = value.trim().split(/\s+/).length;
       if (wordCount > 20) {
-        setAlertMessage('Project title cannot exceed 20 words.');
-        setAlertType('error');
+        setAlertMessage("Project title cannot exceed 20 words.");
+        setAlertType("error");
         setAlertOpen(true);
         return;
       }
     }
 
-    if (name === 'maxTeams') {
-      if (value !== '' && (isNaN(value) || parseInt(value, 10) <= 0)) {
-        setAlertMessage('Maximum teams must be a positive integer.');
-        setAlertType('error');
+    if (name === "maxTeams") {
+      if (value !== "" && (isNaN(value) || parseInt(value, 10) <= 0)) {
+        setAlertMessage("Maximum teams must be a positive integer.");
+        setAlertType("error");
         setAlertOpen(true);
         return;
       }
@@ -66,7 +66,7 @@ const EditProjectForm = ({ initialValues, id }) => {
 
     if (files) {
       setFormData({ ...formData, [name]: files[0] });
-      setFileName(files[0].name); 
+      setFileName(files[0].name);
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -78,60 +78,62 @@ const EditProjectForm = ({ initialValues, id }) => {
     // Validate form data
     const titleWordCount = formData.title.trim().split(/\s+/).length;
     if (titleWordCount > 20) {
-      setAlertMessage('Project title cannot exceed 20 words.');
-      setAlertType('error');
+      setAlertMessage("Project title cannot exceed 20 words.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.title) {
-      setAlertMessage('Project title is required.');
-      setAlertType('error');
+      setAlertMessage("Project title is required.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.field) {
-      setAlertMessage('Field is required.');
-      setAlertType('error');
+      setAlertMessage("Field is required.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.description) {
-      setAlertMessage('Description is required.');
-      setAlertType('error');
+      setAlertMessage("Description is required.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.email) {
-      setAlertMessage('Email is required.');
-      setAlertType('error');
+      setAlertMessage("Email is required.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.requiredSkills) {
-      setAlertMessage('Required skills are required.');
-      setAlertType('error');
+      setAlertMessage("Required skills are required.");
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     if (!formData.maxTeams || parseInt(formData.maxTeams, 10) <= 0) {
-      setAlertMessage('Maximum teams is required and must be a positive integer.');
-      setAlertType('error');
+      setAlertMessage(
+        "Maximum teams is required and must be a positive integer."
+      );
+      setAlertType("error");
       setAlertOpen(true);
       return;
     }
     // create the formdata
     const form = new FormData();
     for (const key in formData) {
-      if (key === 'requiredSkills') {
-        const skills = formData[key].split(',').map(skill => skill.trim());
-        skills.forEach(skill => form.append('requiredSkills[]', skill));
-      } else if (key === 'email') {
-        form.append('clientEmail', formData[key]);
-      } else if (key === 'file') {
+      if (key === "requiredSkills") {
+        const skills = formData[key].split(",").map((skill) => skill.trim());
+        skills.forEach((skill) => form.append("requiredSkills[]", skill));
+      } else if (key === "email") {
+        form.append("clientEmail", formData[key]);
+      } else if (key === "file") {
         if (formData[key]) {
           const originalFileName = formData[key].name;
           const newFileName = `${id}_${originalFileName}`;
-          form.append('spec', formData[key], newFileName);
+          form.append("spec", formData[key], newFileName);
         }
       } else {
         form.append(key, formData[key]);
@@ -139,23 +141,28 @@ const EditProjectForm = ({ initialValues, id }) => {
     }
     // request from backend
     try {
-      const result = await apiCall('POST', `/v1/project/modify/${id}`, form, true);
+      const result = await apiCall(
+        "POST",
+        `/v1/project/modify/${id}`,
+        form,
+        true
+      );
       if (result.status === 200) {
-        setAlertMessage('Project updated successfully!');
-        setAlertType('success');
+        setAlertMessage("Project updated successfully!");
+        setAlertType("success");
         setAlertOpen(true);
         setTimeout(() => {
-          navigate('/project/myproject');
+          navigate("/project/myproject");
         }, 2000);
       } else {
-        setAlertMessage(result.data.error || 'Failed to update project');
-        setAlertType('error');
+        setAlertMessage(result.data.error || "Failed to update project");
+        setAlertType("error");
         setAlertOpen(true);
       }
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.error("An error occurred:", error);
       setAlertMessage(error.message);
-      setAlertType('error');
+      setAlertType("error");
       setAlertOpen(true);
     }
   };
@@ -175,7 +182,7 @@ const EditProjectForm = ({ initialValues, id }) => {
     "Information Systems",
     "Machine Learning",
     "Blockchain",
-    "Other"
+    "Other",
   ];
 
   return (
@@ -204,7 +211,9 @@ const EditProjectForm = ({ initialValues, id }) => {
           >
             <option value="">Select field</option>
             {fields.map((field, index) => (
-              <option key={index} value={field}>{field}</option>
+              <option key={index} value={field}>
+                {field}
+              </option>
             ))}
           </Input>
         </FormGroup>
@@ -237,7 +246,9 @@ const EditProjectForm = ({ initialValues, id }) => {
         )}
         {/* get project's required skills */}
         <FormGroup>
-          <Label for="requiredSkills">Required skills (please use ", " to separate each item)</Label>
+          <Label for="requiredSkills">
+            Required skills (please use ", " to separate each item)
+          </Label>
           <Input
             type="text"
             name="requiredSkills"
@@ -271,7 +282,9 @@ const EditProjectForm = ({ initialValues, id }) => {
           />
         </FormGroup>
         {fileName && <p>Selected file: {fileName}</p>} {/* 显示选中的文件名 */}
-        <Button type="submit" color="primary">Save</Button>
+        <Button type="submit" color="primary">
+          Save
+        </Button>
       </Form>
       <MessageAlert
         open={alertOpen}

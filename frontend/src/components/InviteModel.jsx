@@ -16,8 +16,8 @@ export default function InviteModel({
   const seachRef = useRef();
   const mountedRef = useRef(false);
 
-  const token = localStorage.getItem('token');
-  const userId = localStorage.getItem('userId');
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
 
   const loadMoreData = async () => {
     if (loading) return;
@@ -41,24 +41,23 @@ export default function InviteModel({
     }
   }, [mountedRef]);
   const seachList = () => {
-    const seachTerm = seachRef.current.input.value.toLowerCase(); 
+    const seachTerm = seachRef.current.input.value.toLowerCase();
 
     if (seachTerm) {
-        let filtered = allData.filter((item) =>
-            [item.userName, item.email, String(item.userId)].some((field) => {
-                if (field) {
-                    return field.toLowerCase().includes(seachTerm);
-                }
-                return false; 
-            })
-        );
-        setData(filtered);
+      let filtered = allData.filter((item) =>
+        [item.userName, item.email, String(item.userId)].some((field) => {
+          if (field) {
+            return field.toLowerCase().includes(seachTerm);
+          }
+          return false;
+        })
+      );
+      setData(filtered);
     } else {
-        loadMoreData();
+      loadMoreData();
     }
   };
 
-  //   const [isModalOpen, setIsModalOpen] = useState(false);
   const [checkedList, setCheckedList] = useState([]);
   const handleOk = async () => {
     if (checkedList.length > 0) {
@@ -68,9 +67,9 @@ export default function InviteModel({
         return await apiCall("GET", url);
       });
       const responses = await Promise.all(promises);
-      const errors = responses.filter(response => response.error);
+      const errors = responses.filter((response) => response.error);
       if (errors.length > 0) {
-        errors.forEach(error => message.error(error.error));
+        errors.forEach((error) => message.error(error.error));
       } else {
         messageApi.success("success");
         setCheckedList([]);
@@ -149,9 +148,15 @@ export default function InviteModel({
                   title={<a>{item.userName}</a>}
                   description={
                     <>
-                    <div><strong>Email:</strong> {item.email}</div>
-                    <div><strong>Course:</strong> {item.course}</div>
-                    <div><strong>Skills:</strong> {item.userSkills}</div>
+                      <div>
+                        <strong>Email:</strong> {item.email}
+                      </div>
+                      <div>
+                        <strong>Course:</strong> {item.course}
+                      </div>
+                      <div>
+                        <strong>Skills:</strong> {item.userSkills}
+                      </div>
                     </>
                   }
                 />

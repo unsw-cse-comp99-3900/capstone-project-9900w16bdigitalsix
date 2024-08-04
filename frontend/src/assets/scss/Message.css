@@ -78,12 +78,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #2087ee !important; /* 蓝色背景 */
-  color: white !important; /* 白色图标 */
+  background-color: #2087ee !important; /* BACKGROUND_BLUE */
+  color: white !important; /* white icon labels */
 }
 
 .circle-buttonshare:hover {
-  background-color: #1662ad !important; /* 深蓝色悬停效果 */
+  background-color: #1662ad !important; /* Dark blue hover effect */
 }
 
 .channel-title {
@@ -118,11 +118,11 @@
 }
 
 .invite-button {
-  background-color: #4CAF50; /* 绿色 */
+  background-color: #4caf50;
   color: white;
 }
 
 .leave-button {
-  background-color: #f44336; /* 红色 */
+  background-color: #f44336;
   color: white;
 }

@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
-import { Outlet } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { Container } from "reactstrap";
 
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
-import '../assets/scss/FullLayout.css';//make sure import this
+import "../assets/scss/FullLayout.css"; //make sure import this
 
 // check the role of the user and navigate to different pages for different role
 const TeamRouter = () => {
@@ -13,9 +12,9 @@ const TeamRouter = () => {
   useEffect(() => {
     const role = parseInt(localStorage.getItem("role"));
     if (role === 1) {
-      navigate('/team/student');
+      navigate("/team/student");
     } else {
-      navigate('/team/tutor');
+      navigate("/team/tutor");
     }
   }, []);
 

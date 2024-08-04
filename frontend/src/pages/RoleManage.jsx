@@ -1,33 +1,31 @@
-import { Outlet } from "react-router-dom";
 import { Container } from "reactstrap";
-import React, { useEffect, useRef, useState } from 'react';
-import { SearchOutlined } from '@ant-design/icons';
-import { Button, Flex, List, Input, Modal, Avatar } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from "react";
+import { SearchOutlined } from "@ant-design/icons";
+import { Button, List, Input, Avatar } from "antd";
 
 import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
-import { apiCall, fileToDataUrl } from '../helper';
-import AssignRoleModal from '../components/AssignRoleModal';
-import '../assets/scss/RoleManage.css'
-import '../assets/scss/FullLayout.css';//make sure import this
+import { apiCall } from "../helper";
+import AssignRoleModal from "../components/AssignRoleModal";
+import "../assets/scss/RoleManage.css";
+import "../assets/scss/FullLayout.css"; //make sure import this
 
 // map the role num got from backend
 const roleMap = {
-  1: 'Student',
-  2: 'Tutor',
-  3: 'Client',
-  4: 'Coordinator',
-  5: 'Administrator'
+  1: "Student",
+  2: "Tutor",
+  3: "Client",
+  4: "Coordinator",
+  5: "Administrator",
 };
 
 // define different color to represent different roles
 const roleColorMap = {
-  1: { background: '#e0f7fa', color: '#006064' }, // blue Student
-  2: { background: '#e1bee7', color: '#6a1b9a' }, // purple Tutor
-  3: { background: '#fff9c4', color: '#f57f17' }, // yellow Client
-  4: { background: '#ffe0b2', color: '#e65100' }, // orange Coordinator
-  5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
+  1: { background: "#e0f7fa", color: "#006064" }, // blue Student
+  2: { background: "#e1bee7", color: "#6a1b9a" }, // purple Tutor
+  3: { background: "#fff9c4", color: "#f57f17" }, // yellow Client
+  4: { background: "#ffe0b2", color: "#e65100" }, // orange Coordinator
+  5: { background: "#ffcdd2", color: "#b71c1c" }, // red Administrator
 };
 
 // load all the roles' information for admin
@@ -42,15 +40,21 @@ const RoleManage = () => {
   const loadUserData = async () => {
     if (loading) return;
     setLoading(true);
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
       console.error("Token not found in localStorage");
       setLoading(false);
       return;
     }
-  
-    const response = await apiCall('GET', 'v1/user/get/user/list', null, token, true);
-  
+
+    const response = await apiCall(
+      "GET",
+      "v1/user/get/user/list",
+      null,
+      token,
+      true
+    );
+
     if (response.error) {
       setData([]);
       setFilteredData([]);
@@ -62,7 +66,6 @@ const RoleManage = () => {
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     loadUserData();
@@ -73,30 +76,30 @@ const RoleManage = () => {
     setSelectedUser(user);
     setIsModalVisible(true);
   };
-  
+
   const handleOk = () => {
     setIsModalVisible(false);
   };
-  
+
   const handleCancel = () => {
     setIsModalVisible(false);
-  };  
+  };
 
   // handle search function
   const searchList = () => {
     const searchTerm = seachRef.current.input.value.toLowerCase();
     if (searchTerm) {
-      const filtered = data.filter(item => 
-        (item.userId && item.userId.toString().includes(searchTerm)) ||
-        (item.userName && item.userName.toLowerCase().includes(searchTerm)) || 
-        (item.email && item.email.toLowerCase().includes(searchTerm))
-        
+      const filtered = data.filter(
+        (item) =>
+          (item.userId && item.userId.toString().includes(searchTerm)) ||
+          (item.userName && item.userName.toLowerCase().includes(searchTerm)) ||
+          (item.email && item.email.toLowerCase().includes(searchTerm))
       );
       setFilteredData(filtered);
     } else {
       setFilteredData(data);
     }
-  };  
+  };
 
   return (
     <main>
@@ -131,24 +134,50 @@ const RoleManage = () => {
                 dataSource={filteredData}
                 renderItem={(item) => (
                   <List.Item className="list-item" key={item.userId}>
-                    <Avatar src={item.avatar || ''} size={48} className="avatar" />
+                    <Avatar
+                      src={item.avatar || ""}
+                      size={48}
+                      className="avatar"
+                    />
                     <List.Item.Meta
                       title={
                         <div className="list-item-meta-title">
-                          <span className="list-item-meta-name" style={{ fontSize: '16px', fontWeight: 'bold' }}>{item.userName}</span>
-                          <span className="list-item-meta-role" style={{ backgroundColor: roleColorMap[item.role].background, color: roleColorMap[item.role].color }}>
+                          <span
+                            className="list-item-meta-name"
+                            style={{ fontSize: "16px", fontWeight: "bold" }}
+                          >
+                            {item.userName}
+                          </span>
+                          <span
+                            className="list-item-meta-role"
+                            style={{
+                              backgroundColor:
+                                roleColorMap[item.role].background,
+                              color: roleColorMap[item.role].color,
+                            }}
+                          >
                             {roleMap[item.role]}
                           </span>
                         </div>
                       }
                       description={
                         <div className="list-item-meta-description">
-                          <div className="list-item-meta-id">ID: {item.userId}</div>
-                          <div className="list-item-meta-email">Email: {item.email}</div>
+                          <div className="list-item-meta-id">
+                            ID: {item.userId}
+                          </div>
+                          <div className="list-item-meta-email">
+                            Email: {item.email}
+                          </div>
                         </div>
                       }
                     />
-                    <Button type="primary" className="list-item-button" onClick={() => showModal(item)}>Assign</Button>
+                    <Button
+                      type="primary"
+                      className="list-item-button"
+                      onClick={() => showModal(item)}
+                    >
+                      Assign
+                    </Button>
                   </List.Item>
                 )}
               />

@@ -1,9 +1,8 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { Container } from "reactstrap";
-import '../assets/scss/FullLayout.css';//make sure import this
+import "../assets/scss/FullLayout.css"; //make sure import this
 
 const FullLayout = () => {
   return (

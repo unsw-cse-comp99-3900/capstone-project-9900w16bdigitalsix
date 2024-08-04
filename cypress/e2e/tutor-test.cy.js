@@ -53,7 +53,7 @@ describe("My First Test", () => {
     //Tutor check student list
     cy.contains("button", "STUDENT LIST").click();
 
-    //Tutor check student信息
+    //Tutor check student message
     cy.get('input[placeholder="Search Student"]').clear().type("3");
     cy.get('input[placeholder="Search Student"]').should("have.value", "3");
     cy.get('div[role="combobox"][id="course"]').click();
