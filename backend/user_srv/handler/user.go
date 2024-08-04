@@ -26,12 +26,8 @@ func ModelToResponse(user *model.User) *proto.UserInfoResponse {
 		Password: user.Password,
 		Email:    user.Email,
 		Username: user.Username,
-		// Gender:   user.Gender,
-		Role: uint32(user.Role),
+		Role:     uint32(user.Role),
 	}
-	// if user.Birthday != nil {
-	// 	userInfoRsp.Birthday = uint64(user.Birthday.Unix())
-	// }
 	return userInfoRsp
 }
 
@@ -104,7 +100,6 @@ func (s *UserServer) CreateUser(ctx context.Context, req *proto.CreateUserInfo) 
 	var user model.User
 	result := global.DB.Where("email = ?", req.Email).First(&user)
 	if result.RowsAffected == 1 {
-		// zap.S().Errorf("User %v already exists")
 		return nil, status.Errorf(codes.AlreadyExists, "User already exists")
 	}
 
@@ -133,9 +128,6 @@ func (s *UserServer) UpdateUser(ctx context.Context, req *proto.UpdateUserInfo) 
 	if result.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "User not found")
 	}
-	// user.Gender = req.Gender
-	// birthday := time.Unix(int64(req.Birthday), 0)
-	// user.Birthday = &birthday
 	result = global.DB.Save(&user)
 	if result.Error != nil {
 		return nil, status.Errorf(codes.Internal, result.Error.Error())

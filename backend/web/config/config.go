@@ -1,13 +1,13 @@
 package config
 
-// 自定义 struct, 把 yaml map  到 struct
+// Custom struct, put yaml map into struct
 type UserSrvConfig struct { // user_srv
 	Host string `mapstructure:"host"`
 	Port int    `mapstructure:"port"`
 }
 
 type JWTConfig struct {
-	SigningKey string `mapstructure:"signing_key"` // 签名密钥
+	SigningKey string `mapstructure:"signing_key"` // signing key
 }
 
 type MysqlConfig struct {

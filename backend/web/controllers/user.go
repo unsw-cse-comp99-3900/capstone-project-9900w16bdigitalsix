@@ -48,14 +48,6 @@ func PasswordLogin(ctx *gin.Context) {
 		return
 	}
 
-	// // 验证码
-	// if !store.Verify(passwordLoginForm.CaptchaID, passwordLoginForm.Captcha, true) {
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{
-	// 		"captcha": "验证码错误",
-	// 	})
-	// 	return
-	// }
-
 	ip := global.ServerConfig.UserSrvInfo.Host
 	port := global.ServerConfig.UserSrvInfo.Port
 
@@ -75,14 +67,13 @@ func PasswordLogin(ctx *gin.Context) {
 	rsp, err := userSrvClient.GetUserByEmail(context.Background(), &proto.EmailRequest{
 		Email: passwordLoginForm.Email,
 	})
-	// zap.S().Infof("登陆用户 id: %d", rsp.Id)
+	// zap.S().Infof("login user id: %d", rsp.Id)
 	if err != nil {
 		if e, ok := status.FromError(err); ok {
 			switch e.Code() { // change grpc 的 code to HTTP status code
 			case codes.NotFound:
 				ctx.JSON(http.StatusNotFound, gin.H{
 					"error": "User not found",
-					// "error": "Account and password do not match",
 				})
 			default:
 				ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -103,17 +94,17 @@ func PasswordLogin(ctx *gin.Context) {
 	} else {
 		if pwdRsp.Success { // password is correct
 
-			// 生成 token
-			// 1. 创建 JWT 实例
+			// Token Generator
+			// 1. Create a JWT instance
 			j := middlewares.NewJWT()
-			// 2. 定义自定义声明 (CustomClaims) JWT的 payload 部分
+			// 2. Define the payload portion of the CustomClaims JWT
 			claims := models.CustomClaims{
 				ID:          uint(rsp.Id),
 				Username:    rsp.Username,
 				AuthorityId: uint(rsp.Role),
 				StandardClaims: jwt.StandardClaims{
 					NotBefore: time.Now().Unix(),                          // token is valid now
-					ExpiresAt: time.Now().Add(30 * 24 * time.Hour).Unix(), // 30天 expiers
+					ExpiresAt: time.Now().Add(30 * 24 * time.Hour).Unix(), // 30 days expiers
 					Issuer:    "my-app",                                   // issuer name
 				},
 			}
@@ -131,7 +122,7 @@ func PasswordLogin(ctx *gin.Context) {
 				"id":         rsp.Id,
 				"role":       rsp.Role,
 				"username":   rsp.Username,
-				"token":      token,                                         
+				"token":      token,
 				"expires_at": time.Now().Add(30*24*time.Hour).Unix() * 1000, //30 days
 			})
 
@@ -234,7 +225,7 @@ func VerifyEmail(ctx *gin.Context) {
 // @Router /v1/user/register/send_email [post]
 func Register(ctx *gin.Context) {
 	var registerForm forms.RegisterForm
-	
+
 	if err := ctx.ShouldBind(&registerForm); err != nil {
 		HandleValidatorError(ctx, err)
 		return
@@ -253,7 +244,7 @@ func Register(ctx *gin.Context) {
 		return
 	}
 
-	// store token 和 RegisterForm to Redis
+	// store token and RegisterForm to Redis
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     global.ServerConfig.RedisInfo.Host + ":" + fmt.Sprintf("%d", global.ServerConfig.RedisInfo.Port),
 		Password: "", // no password set
@@ -308,7 +299,7 @@ func SendEmailResetPassword(c *gin.Context) {
 		return
 	}
 
-	// store token 到 Redis
+	// store token to Redis
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     global.ServerConfig.RedisInfo.Host + ":" + fmt.Sprintf("%d", global.ServerConfig.RedisInfo.Port),
 		Password: "", // no password set
@@ -365,7 +356,7 @@ func ResetPassword(ctx *gin.Context) {
 		return
 	}
 
-	// 删除 redis token 记录
+	// delete redis token record
 	if err := rdb.Del(context.Background(), token).Err(); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete token"})
 		return
@@ -423,7 +414,7 @@ func ChangePassword(c *gin.Context) {
 
 	if err != nil {
 		if e, ok := status.FromError(err); ok {
-			switch e.Code() { 
+			switch e.Code() {
 			case codes.NotFound:
 				c.JSON(http.StatusNotFound, gin.H{
 					"error": "User not found",
@@ -451,7 +442,7 @@ func ChangePassword(c *gin.Context) {
 		return
 	}
 	if pwdRsp.Success { // password correct
-	
+
 		if err := service.ResetPassword(changePasswordForm.Email, changePasswordForm.NewPassword); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -502,19 +493,19 @@ func UpdateUserInfo(c *gin.Context) {
 		filename = time.Now().Format("20060102150405") + ".png"
 	} else {
 		urlStr := user.AvatarURL
-		
+
 		parsedURL, err := url.Parse(urlStr)
 		if err != nil {
 			zap.S().Errorf("解析 avatar url 出错")
 			return
 		}
-		
+
 		filename = path.Base(parsedURL.Path)
 	}
 
 	url := ""
 	if profileReq.Profile.Avatarbase64 != "" {
-		// base64 解析， save
+		// base64 analysis， save
 		outputDir := global.ServerConfig.PicturePath
 		var err error
 		_, url, err = util.SaveBase64Image(profileReq.Profile.Avatarbase64, filename, outputDir)
@@ -523,7 +514,7 @@ func UpdateUserInfo(c *gin.Context) {
 		}
 	}
 
-	// update user info	
+	// update user info
 	user.Username = profileReq.Profile.Name
 	user.Bio = profileReq.Profile.Bio
 	user.Organization = profileReq.Profile.Organization
@@ -535,7 +526,7 @@ func UpdateUserInfo(c *gin.Context) {
 	var skills []models.Skill
 	for _, skillName := range profileReq.Profile.Skills {
 		if skillName == "" {
-			continue 
+			continue
 		}
 		var skill models.Skill
 		// if skills doesn't exists, create skills
@@ -558,13 +549,6 @@ func UpdateUserInfo(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user skills"})
 		return
 	}
-
-	// // 更新用户信息，当使用 struct 更新时，用 Updates 方法，默认情况下GORM 只会更新非零值的字段
-	// if err := global.DB.Model(&user).Updates(&user).Error; err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user profile"})
-	// 	fmt.Println("error", err)
-	// 	return
-	// }
 
 	if err := global.DB.Save(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user profile"})

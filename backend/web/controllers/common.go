@@ -96,7 +96,7 @@ func HandleValidatorError(ctx *gin.Context, err error) {
 
 }
 
-// HandleGrpcErrorToHttp 将 gRPC 的 code 转换成 HTTP 的状态码
+// HandleGrpcErrorToHttp Convert gRPC code to HTTP status code
 func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 	if err != nil {
 		if e, ok := status.FromError(err); ok {
@@ -107,19 +107,19 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 				})
 			case codes.Internal:
 				c.JSON(http.StatusInternalServerError, gin.H{
-					"msg": "内部错误",
+					"msg": "internal error",
 				})
 			case codes.InvalidArgument:
 				c.JSON(http.StatusBadRequest, gin.H{
-					"msg": "参数错误",
+					"msg": "parameter error",
 				})
 			case codes.Unavailable:
 				c.JSON(http.StatusServiceUnavailable, gin.H{
-					"msg": "服务不可用",
+					"msg": "Service unavailable",
 				})
 			case codes.Unauthenticated:
 				c.JSON(http.StatusUnauthorized, gin.H{
-					"msg": "未认证",
+					"msg": "unverified",
 				})
 			default:
 				c.JSON(http.StatusInternalServerError, gin.H{
@@ -132,10 +132,10 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 }
 
 func GenerateRandomNumber(r *rand.Rand) int {
-	// 定义最小和最大值
+	// Define minimum and maximum values
 	min := 1
 	max := 9999
 
-	// 生成随机数
+	// Generate random numbers
 	return r.Intn(max-min+1) + min
 }

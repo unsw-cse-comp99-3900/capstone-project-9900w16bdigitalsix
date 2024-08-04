@@ -445,7 +445,7 @@ func ModifyProjectDetail(c *gin.Context) {
 }
 
 // @Summary Get allocated team details
-// @Description view project 被 allocated 的 all team information
+// @Description view project allocated all team information
 // @Tags Project Allocation
 // @Produce json
 // @Param projectId path int true "Project ID"
@@ -534,7 +534,7 @@ func GetPreferencedByTeamsDetail(c *gin.Context) {
 			return
 		}
 
-		// 检查团队是否没有被分配项目
+		// Check if teams are not assigned projects
 		if team.AllocatedProject == nil {
 			var members []response.TeamMember3
 			for _, member := range team.Members {
@@ -590,12 +590,6 @@ func GetProjectPreferencedByTeamDetail(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Preference not found"})
 		return
 	}
-
-	// var team models.Team
-	// if err := global.DB.Preload("Members").Preload("Skills").First(&team, teamId).Error; err != nil {
-	// 	c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
-	// 	return
-	// }
 
 	var team models.Team
 	if err := global.DB.Preload("Members.Skills").Preload("Skills").First(&team, teamId).Error; err != nil {
@@ -658,7 +652,7 @@ func ProjectAllocation(c *gin.Context) {
 		return
 	}
 
-	// 更新团队的 AllocatedProject 字段
+	// Update the team's AllocatedProject field
 	var team models.Team
 	if err := global.DB.Preload("Members").First(&team, req.TeamID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
@@ -670,13 +664,13 @@ func ProjectAllocation(c *gin.Context) {
 		return
 	}
 
-	// 收集用户ID
+	// Collecting User ids
 	userIds := make([]uint, len(team.Members))
 	for i, member := range team.Members {
 		userIds[i] = member.ID
 	}
 
-	// 处理通知
+	// notice of disposition
 	if err := handleNotification(req.Notification.Content, userIds); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to handle notification"})
 		return
@@ -711,26 +705,26 @@ func RejectProjectAllocation(c *gin.Context) {
 		return
 	}
 
-	// 检查团队是否已经被分配了项目
+	// Check if the team has been assigned a project
 	if team.AllocatedProject == nil || *team.AllocatedProject != req.ProjectID {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not allocated to this project"})
 		return
 	}
 
-	// 取消分配，将 allocatedProject 字段清空
+	// Unassign and clear the allocatedProject field
 	team.AllocatedProject = nil
 	if err := global.DB.Save(&team).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update team"})
 		return
 	}
 
-	// 收集用户ID
+	// Collecting User ids
 	userIds := make([]uint, len(team.Members))
 	for i, member := range team.Members {
 		userIds[i] = member.ID
 	}
 
-	// 处理通知
+	// notice of disposition
 	if err := handleNotification(req.Notification.Content, userIds); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to handle notification"})
 		return

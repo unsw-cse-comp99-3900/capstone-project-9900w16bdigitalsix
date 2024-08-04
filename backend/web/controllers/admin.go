@@ -170,7 +170,7 @@ func ChangeProjectCoordinator(c *gin.Context) {
 		return
 	}
 
-	// 检查 tutor 是否存在
+	// Check that the tutor exists
 	var tutor models.User
 	if err := global.DB.Where("id = ? AND role = ?", req.CoordinatorID, 4).First(&tutor).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Coordinator not found"})
@@ -217,7 +217,7 @@ func ChangeProjectTutor(c *gin.Context) {
 		return
 	}
 
-	// 检查 tutor 是否存在
+	// Check that the tutor exists
 	var tutor models.User
 	if err := global.DB.Where("id = ? AND role = ?", req.TutorID, 2).First(&tutor).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Tutor not found"})

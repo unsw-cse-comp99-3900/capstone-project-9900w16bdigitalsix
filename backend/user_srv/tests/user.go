@@ -51,8 +51,8 @@ func TestCreatedUser() {
 	for i := 0; i < 10; i++ {
 		rsp, err := userClient.CreateUser(context.Background(), &proto.CreateUserInfo{
 			Username: fmt.Sprintf("Lisa%d", i),
-			Email:     fmt.Sprintf("z5462%d28@ad.unsw.edu.au", i),
-			Password:  "admin123",
+			Email:    fmt.Sprintf("z5462%d28@ad.unsw.edu.au", i),
+			Password: "admin123",
 		})
 		if err != nil {
 			panic(err)
@@ -66,7 +66,6 @@ func main() {
 	Init()
 	initialize.InitConfig()
 	defer clientConn.Close()
-	// TestGetUserList()
 	TestCreatedUser()
 
 }
