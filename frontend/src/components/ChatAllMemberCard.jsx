@@ -86,7 +86,7 @@ const ChatAllMemberCard = ({ visible, onOk, onCancel, refreshData, channelId, ca
             <Avatar
               key={user.userId}
               id={user.userId}
-              src={user.avatarUrl ? user.avatarUrl : ''}
+              src={user.avatarURL ? user.avatarURL : ''}
               size={64}
               style={{
                 marginLeft: index === 0 ? 0 : -16,
@@ -106,7 +106,7 @@ const ChatAllMemberCard = ({ visible, onOk, onCancel, refreshData, channelId, ca
           renderItem={item => (
             <List.Item>
               <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                <Avatar src={item.avatarUrl ? item.avatarUrl : ''} style={{ marginRight: 16 }} />
+                <Avatar src={item.avatarURL ? item.avatarURL : ''} style={{ marginRight: 16 }} />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <div><strong>Name:</strong> {item.userName}</div>
                   <div><strong>Email:</strong> {item.email}</div>
