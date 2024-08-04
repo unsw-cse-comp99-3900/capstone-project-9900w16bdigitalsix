@@ -7,6 +7,7 @@ import Sidebar from "../layouts/Sidebar";
 import Header from "../layouts/Header";
 import '../assets/scss/FullLayout.css';//make sure import this
 
+// check the role of the user and navigate to different pages for different role
 const TeamRouter = () => {
   const navigate = useNavigate();
   useEffect(() => {

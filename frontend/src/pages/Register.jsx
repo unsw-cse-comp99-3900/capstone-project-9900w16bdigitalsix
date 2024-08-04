@@ -8,18 +8,31 @@ import CardContent from '@mui/material/CardContent';
 import { CenteredBox, CenteredCard } from '../components/CenterBoxLog';
 import Link from '@mui/material/Link';
 
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+
 import { apiCall } from '../helper';
 import MessageAlert from '../components/MessageAlert';
 import GradientBackground from '../components/GradientBackground';
 
 const Register = (props) => {
+  // all the required fields
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [passwordConfirmed, setPasswordConfirmed] = React.useState('');
   const [name, setName] = React.useState('');
+  const [course, setCourse] = React.useState('');
+
+  // status
   const [unmatched, setUnmatched] = React.useState('');
   const [loading, setLoading] = React.useState(false);
+
+  // redirect
   const navigate = useNavigate();
+
+  // for alerting message
   const [open, setOpen] = React.useState(false); // alert state
   const [snackbarContent, setSnackbarContent] = React.useState('');
   const [alertType, setAlertType] = React.useState('error');
@@ -60,7 +73,7 @@ const Register = (props) => {
     }
 
     // check empty
-    if (!email || !password || !name){
+    if (!email || !password || !name || !course){
       setSnackbarContent('Please fill in the form');
       setAlertType('error');
       setOpen(true);
@@ -90,7 +103,8 @@ const Register = (props) => {
       email: email,
       password: password,
       password_confirm: passwordConfirmed,
-      username: name
+      username: name,
+      course: course
     };
     setLoading(true);
     try {
@@ -100,10 +114,6 @@ const Register = (props) => {
         setAlertType('error');
         setOpen(true);
       } else if (data.msg) {
-        // localStorage.setItem('token', data.token);
-        // localStorage.setItem('email', email);
-        // props.setToken(data.token);
-        // props.setEmail(email);
         setSnackbarContent('data.msg');
         setAlertType('success');
         setOpen(true);
@@ -149,6 +159,20 @@ const Register = (props) => {
               <br /><br />
               <TextField id="name" label="Name" type="text" value={name} onChange={e => setName(e.target.value)} /> <br /><br />
             </Typography>
+            <FormControl fullWidth>
+              <InputLabel id="course-label">Course</InputLabel>
+              <Select
+                labelId="course-label"
+                id="course"
+                value={course}
+                label="Course"
+                onChange={e => setCourse(e.target.value)}
+              >
+                <MenuItem value="">Choose a course</MenuItem>
+                <MenuItem value="COMP9900">COMP9900</MenuItem>
+                <MenuItem value="COMP3900">COMP3900</MenuItem>
+              </Select>
+            </FormControl>
           </CardContent>
           <CardActions>
             <Button

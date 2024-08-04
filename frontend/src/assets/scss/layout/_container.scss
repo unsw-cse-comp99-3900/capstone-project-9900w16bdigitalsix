@@ -1,4 +1,4 @@
-.pageWrapper {
+wrapper.pageWrapper {
   min-height: 100vh;
 }
 .contentArea {
@@ -6,7 +6,7 @@
 }
 .wrapper {
   max-width: 1300px;
-  margin: 0 auto;
+  margin: 20px auto;
 }
 .card {
   box-shadow: $card-box-shadow;

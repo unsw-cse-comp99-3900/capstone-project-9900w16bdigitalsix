@@ -7,6 +7,7 @@ import MessageAlert from './MessageAlert';
 
 const { Option } = Select;
 
+// define the map for differnet role number
 const roleMap = {
   1: 'Student',
   2: 'Tutor',
@@ -23,12 +24,15 @@ const roleColorMap = {
   5: { background: '#ffcdd2', color: '#b71c1c' }  // red Administrator
 };
 
+// when admin want to change the role of a user, the frontend will show this modal
 const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [snackbarContent, setSnackbarContent] = useState('');
+  const selectedRoleName = roleMap[selectedRole];
 
+  // update the selected user
   useEffect(() => {
     if (user && user.role !== undefined) {
       setSelectedRole(user.role);
@@ -39,6 +43,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
     setSelectedRole(parseInt(value, 10));
   };
 
+  // handle change for the selected user
   const handleSubmit = async () => {
     if (!selectedRole) {
       setSnackbarContent('Please select a role');
@@ -57,7 +62,15 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
 
     const response = await apiCall('POST', 'v1/admin/modify/user/role', {
       userId: user.userId,
-      role: selectedRole
+      role: selectedRole,
+      notification: {
+        content: `Your role has been changed to ${selectedRoleName}.`,
+        to: {
+          users: [
+            user.userId
+          ]
+        }
+      },
     }, token, true);
 
     if (response.error) {
@@ -68,7 +81,9 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
       setSnackbarContent('User role updated successfully');
       setAlertType('success');
       setAlertOpen(true);
+
       onOk();
+      window.location.reload();
       refreshData();
     }
   };
@@ -85,6 +100,7 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
           <Button key="submit" type="primary" onClick={handleSubmit}>Save</Button>
         ]}
       >
+        {/* show the current detail of the current user */}
         <div className="modal-content">
           <Avatar src={user?.avatar || ''} size={80} className="avatar" />
           <div className="user-details">
@@ -95,12 +111,13 @@ const AssignRoleModal = ({ visible, user, onOk, onCancel, refreshData }) => {
             </div>
           </div>
         </div>
+        {/* the operation of assigning a new role */}
         <div className="modal-body">
           <p className="assign-role-text"><strong>Assign role to {user?.userName}</strong></p>
           <Select
             className="role-select"
             placeholder="Select a role"
-            value={selectedRole !== null ? selectedRole.toString() : undefined} // 确保显示选项文字
+            value={selectedRole !== null ? selectedRole.toString() : undefined}
             onChange={handleRoleChange}
           >
             <Option value="1">Student</Option>

@@ -62,7 +62,9 @@ const names = [
 
 const TeamProfile = ({
   teamId,
+  teamIdShow,
   teamName,
+  course,
   setTeamName,
   leaveTeam,
   currentMember,
@@ -72,6 +74,7 @@ const TeamProfile = ({
   isInvite,
   setIsInvite,
 }) => {
+  // some states
   const [editable, setEditable] = useState(false);
   const [personName, setPersonName] = React.useState([]);
   const userId = parseInt(localStorage.getItem("userId"));
@@ -88,8 +91,6 @@ const TeamProfile = ({
   const handleLeaveDialogClose = () => {
     setLeaveDialogOpen(false);
   };
-  // const [isInvite, setIsInvite] = useState(false);
-  // console.log(currentMember);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -129,10 +130,10 @@ const TeamProfile = ({
     setEditable(true);
   };
 
+  // this function is used to save the team details after editing
   const handleSaveClick = async () => {
     setEditable(false);
     try {
-      // console.log(personName);
       const body = {
         TeamSkills: personName.length > 0 ? personName : [],
         teamName: teamName,
@@ -147,14 +148,13 @@ const TeamProfile = ({
         setAlertType("error");
         setShowError(true);
       } else {
-        console.log(res);
         setCurTeamSkills(personName);
         setErrorMessage("Success!");
         setAlertType("success");
         setShowError(true);
       }
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message || error.toString());
       setAlertType("error");
       setShowError(true);
     }
@@ -172,7 +172,14 @@ const TeamProfile = ({
         >
           <Grid item xs={10}>
             <Item>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "-60px",
+                }}
+              >
+                {/* show the team name, team id,  */}
                 <Grid item xs={6}>
                   <Item style={{ textAlign: "left" }}>
                     {editable ? (
@@ -195,10 +202,14 @@ const TeamProfile = ({
                   </Item>
                   <Item style={{ textAlign: "left" }}>
                     <Typography variant="h6" gutterBottom color="grey">
-                      Team Id: {teamId}
-                    </Typography>
+                      Team Id: {teamIdShow} <br />
+                    </Typography>{" "}
+                    <Typography variant="h6" gutterBottom color="grey">
+                      Course: {course}
+                    </Typography>{" "}
                   </Item>
                 </Grid>
+                {/* show the function on this page: leave the team */}
                 <Grid item xs={4}>
                   <Item style={{ textAlign: "end" }}>
                     <Button
@@ -263,6 +274,7 @@ const TeamProfile = ({
               </div>
             </Item>
           </Grid>
+          {/* show all the team members */}
           <Grid item xs={10}>
             <Item sx={{ textAlign: "left" }}>
               <Typography
@@ -321,6 +333,7 @@ const TeamProfile = ({
               </List>
             </Item>
           </Grid>
+          {/* show the function for inviting new member */}
           <Grid item xs={10}>
             <Item>
               <Button
@@ -339,6 +352,7 @@ const TeamProfile = ({
               ></InviteModel>
             </Item>
           </Grid>
+          {/* edit the team skills */}
           <Grid item xs={10}>
             <Item sx={{ textAlign: "left" }}>
               {editable ? (

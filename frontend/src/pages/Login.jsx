@@ -28,18 +28,10 @@ const Login = (props) => {
     setOpen(false);
   };
 
-
-  // React.useEffect(() => {
-  //   const inputs = document.querySelectorAll('input');
-  //   inputs.forEach(input => {
-  //     input.value = '';
-  //   });
-  // }, []);
-
   // load dashboard
   React.useEffect(() => {
     if (props.token) {
-      navigate('/');
+      navigate('/project/allproject');
     }
   }, [props.token]);
 
@@ -80,13 +72,11 @@ const Login = (props) => {
         localStorage.setItem('email', email);
         localStorage.setItem('userId', data.id);
         localStorage.setItem('role', data.role);
-        // localStorage.setItem('role', data.role);
         props.setToken(data.token);
         props.setRole(data.role);
         setEmail(email);
-        navigate('/');
+        navigate('/project/allproject');
       }
-      console.log(data);
     } catch (error) {
       console.error('Error during login:', error);
     }
@@ -129,7 +119,6 @@ const Login = (props) => {
             <Link
               href="#"
               onClick={() => navigate('/forget-pwd')}
-              // TODO
               aria-label="Click me to forget password page"
             >
               Forget Password?

@@ -47,6 +47,9 @@ const Profile = (props) => {
     const [alertType, setAlertType] = useState('');
     const [snackbarContent, setSnackbarContent] = useState('');
     const [avatar, setAvatar] = useState('');
+    const [course, setCourse] = useState('');
+
+    // load user profile
     useEffect(() => {
         const fetchUserData = async () => {
             const userId = localStorage.getItem('userId');
@@ -61,6 +64,7 @@ const Profile = (props) => {
                     setOrganization(response.organization);
                     setSkills(response.skills);
                     setField(response.field);
+                    setCourse(response.course);
                     console.log("response:", response);
                     const imagePath = response.avatarURL; 
                 if (imagePath) {
@@ -96,18 +100,22 @@ const Profile = (props) => {
         fetchUserData();
     }, []);
 
+    // open "reset password" modal
     const handleClickOpen = () => {
         setOpen(true);
     };
 
+    // close "reset password" modal
     const handleClose = () => {
         setOpen(false);
     };
 
+    // close alert message
     const handleAlertClose = () => {
       setAlertOpen(false);
     };
 
+    // edit profile 
     const handleEditClick = () => {
         if (editable) {
             const confirmUpdate = async () => {
@@ -120,7 +128,8 @@ const Profile = (props) => {
                         organization: organization,
                         role: roleReverseMap[role],
                         skills: skills,
-                        userId: parseInt(userId, 10)
+                        userId: parseInt(userId, 10),
+                        course: course,
                     }
                 };
     
@@ -172,7 +181,7 @@ const Profile = (props) => {
             setEditable(!editable);
         }
     };    
-
+// handle the functionality of uploading image
 const handleFileChange = async (event) => {
     const file = event.target.files[0];
     try {
@@ -184,7 +193,7 @@ const handleFileChange = async (event) => {
         setAlertOpen(true);
     }
 };
-
+    // check validation of resetting password
     const handleChangePassword = async () => {
       const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         if (!passwordRegex.test(newPassword)) {
@@ -315,6 +324,18 @@ const handleFileChange = async (event) => {
                             ) : (
                                 <Typography variant="body2" sx={{ mt: 1, bgcolor: 'grey.200', p: 2, borderRadius: 1 }}>
                                     {organization}
+                                </Typography>
+                            )}
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography variant="body1">Course:</Typography>
+                            {editable ? (
+                                <Typography variant="body2" sx={{ mt: 1, bgcolor: 'grey.200', p: 2, borderRadius: 1 }}>
+                                    {course}
+                                </Typography>
+                            ) : (
+                                <Typography variant="body2" sx={{ mt: 1, bgcolor: 'grey.200', p: 2, borderRadius: 1 }}>
+                                    {course}
                                 </Typography>
                             )}
                         </Grid>

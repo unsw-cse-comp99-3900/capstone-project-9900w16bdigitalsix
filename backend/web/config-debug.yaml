@@ -1,0 +1,23 @@
+name: "capstone"
+host: '127.0.0.1'
+port: 8080
+filepath: "../files"
+picture_path: "../images"
+user_srv:
+  host: '127.0.0.1'
+  port: 50051
+jwt:
+  signing_key: "QxRcJ$JDmdWrb9PDh90$9wkwyizHJzcv"
+mysql:
+  host: '127.0.0.1'
+  port: 3306
+  user: 'root'
+  password: 'root'
+  db: 'capstone'
+redis:
+  host: '127.0.0.1'
+  port: 6379
+gmail:
+  send_email: 'capstone.manager1@gmail.com'
+  password: 'ftvigqxhubovxdxv'
+  expire: 1  # 1 h 失效
