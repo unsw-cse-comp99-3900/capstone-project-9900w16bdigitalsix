@@ -65,11 +65,8 @@ func createUsers() {
 
 func createTeams() {
 	var student1, student4 models.User
-	var project models.Project
 
 	global.DB.Where("Email = ?", "student1@unsw.edu").First(&student1)
-	global.DB.Where("Email = ?", "student4@unsw.edu").First(&student4)
-	global.DB.First(&project, 1)
 
 	if student1.BelongsToGroup != nil {
 		zap.S().Info("student1 is already in a team")
@@ -78,7 +75,6 @@ func createTeams() {
 			Name:             "Team1",
 			TeamIdShow:       controllers.GenerateRandomInt(),
 			Course:           "COMP9900",
-			AllocatedProject: &project.ID,
 			Members: []models.User{
 				student1,
 			},
