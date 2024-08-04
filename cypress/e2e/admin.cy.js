@@ -29,6 +29,7 @@ describe("Client Path Test", () => {
     cy.contains("a.nav-link", "My Project").click({ force: true });
     cy.url().should("include", "/project/admin");
 
+    cy.wait(1000);
     cy.get('input[placeholder="Search Project"]').type("Updat");
     cy.get("button").contains("Filter").click();
     cy.wait(500);

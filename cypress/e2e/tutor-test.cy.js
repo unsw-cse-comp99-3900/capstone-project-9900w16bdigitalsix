@@ -3,9 +3,11 @@ describe("My First Test", () => {
     // Visit the login page
     cy.visit("http://localhost:3333/login");
 
+    cy.wait(1000);
     // Input Email and Password
     cy.get("#email").type("tutor1@unsw.edu");
     cy.get("#password").type("admin123");
+    cy.wait(1000);
 
     // Click on the Login button
     cy.get("#buttonLogin").click();
