@@ -75,7 +75,7 @@ func ExtractSkillNames(skills []models.Skill) []string {
 	return skillNames
 }
 
-// GenerateRandomInt 生成6位随机 uint
+// GenerateRandomInt generate random int
 func GenerateRandomInt() uint {
 	src := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(src)

@@ -1,6 +1,6 @@
 package config
 
-// ymal config file map 到 struct, 在 initialize/config.go中
+// ymal config file map 到 struct, in initialize/config.go
 type MysqlConfig struct {
 	Host     string `mapstructure:"host" json:"host"`
 	Port     int    `mapstructure:"port" json:"port"`

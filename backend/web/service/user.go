@@ -11,17 +11,17 @@ import (
 
 func ResetPassword(email, newPassword string) error {
 	var user models.User
-	// 查询用户
+	// read user
 	if err := global.DB.Where("email = ?", email).First(&user).Error; err != nil {
 		return fmt.Errorf("user not found")
 	}
 
-	// 加密
+	// encription
 	options := &password.Options{SaltLen: 10, Iterations: 100, KeyLen: 32, HashFunction: sha512.New}
 	salt, encodedPwd := password.Encode(newPassword, options)
 	user.Password = fmt.Sprintf("pbkdf2-sha512$%s$%s", salt, encodedPwd)
 
-	// 更新密码
+	// update password
 	if err := global.DB.Save(&user).Error; err != nil {
 		return fmt.Errorf("failed to update password")
 	}

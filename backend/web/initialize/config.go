@@ -9,25 +9,23 @@ import (
 )
 
 func GetEnvInfo(env string) bool {
-	// 获取环境变量
+	// get environment variables
 	viper.AutomaticEnv()
 	return viper.GetBool(env)
 }
 
 func InitConfig() {
 	configFileName := "config-production.yaml"
-	if GetEnvInfo("CAPSTONE_DEBUG") { // 环境变量的值是 true; export CAPSTONE_DEBUG="true"
+	if GetEnvInfo("CAPSTONE_DEBUG") { //  export CAPSTONE_DEBUG="true"
 		configFileName = "config-debug.yaml"
 	}
 
-	v := viper.New() // 创建一个新的 Viper 实例
+	v := viper.New() 
 
-	// 设置配置文件路径和文件名
 	v.SetConfigFile(configFileName)
 
-	// 读取配置文件并处理可能的错误
 	if err := v.ReadInConfig(); err != nil {
-		panic(err) // 如果读取配置文件时发生错误，则终止程序并输出错误信息
+		panic(err) 
 	}
 
 	// 将配置文件映射到结构体

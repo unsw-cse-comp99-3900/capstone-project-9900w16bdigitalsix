@@ -5,7 +5,7 @@ import (
 	"web/middlewares"
 	"web/routes"
 
-	_ "web/docs" // 重要: 导入docs包，确保docs文件夹的路径正确
+	_ "web/docs" 
 
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"                  // swagger embed files
@@ -14,7 +14,7 @@ import (
 
 func InitRouters() *gin.Engine {
 	Router := gin.Default()
-	// 配置跨域
+	// config CORS
 	Router.Use(middlewares.CORS())
 	//swagger document
 	Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
