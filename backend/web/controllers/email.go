@@ -13,7 +13,7 @@ import (
 )
 
 func generateVerificationToken() (string, error) {
-	token := make([]byte, 8) // 8字节 = 16字符，因为每个字节是2个字符
+	token := make([]byte, 8) // 8 bytes
 	if _, err := rand.Read(token); err != nil {
 		return "", fmt.Errorf("failed to generate random token: %w", err)
 	}
@@ -23,7 +23,7 @@ func generateVerificationToken() (string, error) {
 // emailType 1: register, 2: forget password
 func SendEmail(toEmail, token string, emailType int) error {
 
-	// 配置SMTP服务器信息
+	// 	Set SMTP server info
 	smtpHost := "smtp.gmail.com"
 	smtpPort := 587
 	smtpUser := global.ServerConfig.GmailInfo.SendEmail
@@ -40,7 +40,7 @@ func SendEmail(toEmail, token string, emailType int) error {
 		fmt.Println("email:", toEmail)
 	}
 
-	// 使用邮件服务发送邮件
+	// send email
 	m := gomail.NewMessage()
 	m.SetHeader("From", smtpUser)
 	m.SetHeader("To", toEmail)
@@ -56,11 +56,9 @@ func SendEmail(toEmail, token string, emailType int) error {
 		m.SetBody("text/plain", "Click the following link to reset your password: "+resetPasswordLink)
 	}
 
-	// 设置 SMTP 服务器
 	d := gomail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
-	// 发送邮件
 	if err := d.DialAndSend(m); err != nil {
 		zap.S().Infof("Failed to send verification email: %v", err)
 		return err

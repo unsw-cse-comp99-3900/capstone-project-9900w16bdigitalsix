@@ -7,6 +7,6 @@ import (
 )
 
 var (
-	DB           *gorm.DB                                      // 定义一个全局变量
-	ServerConfig *config.ServerConfig = &config.ServerConfig{} // 指针必须初始化
+	DB           *gorm.DB                                      
+	ServerConfig *config.ServerConfig = &config.ServerConfig{} 
 )

@@ -67,6 +67,7 @@ func createTeams() {
 	var student1, student4 models.User
 
 	global.DB.Where("Email = ?", "student1@unsw.edu").First(&student1)
+	global.DB.Where("Email = ?", "student4@unsw.edu").First(&student4)
 
 	if student1.BelongsToGroup != nil {
 		zap.S().Info("student1 is already in a team")

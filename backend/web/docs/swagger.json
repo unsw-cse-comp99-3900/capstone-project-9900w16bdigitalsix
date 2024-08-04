@@ -289,6 +289,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "Admin"
+                ],
                 "summary": "Get all tutor List",
                 "parameters": [
                     {
@@ -1360,7 +1363,7 @@
         },
         "/v1/progress/get/grade/{teamId}": {
             "get": {
-                "description": "获取指定团队的所有 Sprint 的成绩和评论",
+                "description": "Get all sprint grades of a team",
                 "consumes": [
                     "application/json"
                 ],
@@ -2209,7 +2212,7 @@
         },
         "/v1/student/unassigned/list": {
             "get": {
-                "description": "Get all students unassigned student list",
+                "description": "Get all students unassigned list",
                 "consumes": [
                     "application/json"
                 ],
