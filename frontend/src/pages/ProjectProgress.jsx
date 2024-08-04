@@ -176,6 +176,7 @@ const ProjectProgress = (props) => {
       }
       setGradeComment({grades: grades, comments: comments});
       setLoading(false);
+      console.log("{grades: grades, comments: comments}", {grades: grades, comments: comments});
     }
   };
   

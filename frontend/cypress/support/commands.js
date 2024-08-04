@@ -7,12 +7,7 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
-<<<<<<< HEAD
 //
-=======
-import 'cypress-file-upload';
-
->>>>>>> origin/final_WH
 //
 // -- This is a parent command --
 // Cypress.Commands.add('login', (email, password) => { ... })
@@ -27,9 +22,4 @@ import 'cypress-file-upload';
 //
 //
 // -- This will overwrite an existing command --
-<<<<<<< HEAD
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-import "cypress-file-upload";
-=======
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
->>>>>>> origin/final_WH
