@@ -1224,6 +1224,8 @@ paths:
               type: string
             type: object
       summary: Get all tutor List
+      tags:
+      - Admin
   /v1/admin/modify/user/role:
     post:
       consumes:
@@ -1872,7 +1874,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 获取指定团队的所有 Sprint 的成绩和评论
+      description: Get all sprint grades of a team
       parameters:
       - description: Team ID
         in: path
@@ -2453,7 +2455,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all students unassigned student list
+      description: Get all students unassigned list
       produces:
       - application/json
       responses:

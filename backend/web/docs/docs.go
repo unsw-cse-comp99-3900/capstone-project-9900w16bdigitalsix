@@ -300,6 +300,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "Admin"
+                ],
                 "summary": "Get all tutor List",
                 "parameters": [
                     {
@@ -1371,7 +1374,7 @@ const docTemplate = `{
         },
         "/v1/progress/get/grade/{teamId}": {
             "get": {
-                "description": "获取指定团队的所有 Sprint 的成绩和评论",
+                "description": "Get all sprint grades of a team",
                 "consumes": [
                     "application/json"
                 ],
@@ -2220,7 +2223,7 @@ const docTemplate = `{
         },
         "/v1/student/unassigned/list": {
             "get": {
-                "description": "Get all students unassigned student list",
+                "description": "Get all students unassigned list",
                 "consumes": [
                     "application/json"
                 ],

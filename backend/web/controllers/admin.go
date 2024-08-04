@@ -14,6 +14,7 @@ import (
 
 // @Summary Get all tutor List
 // @Description  header  Authorization: Bearer <token>, get all Tutor list
+// @Tags Admin
 // @Accept  json
 // @Produce  json
 // @Param Authorization header string true "Bearer <token>"

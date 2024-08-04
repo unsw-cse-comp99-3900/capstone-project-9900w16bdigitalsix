@@ -20,4 +20,4 @@ redis:
 gmail:
   send_email: 'capstone.manager1@gmail.com'
   password: 'ftvigqxhubovxdxv'
-  expire: 1  # 1 h 失效
+  expire: 1  # 1 h expires

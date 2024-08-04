@@ -6,7 +6,7 @@ import (
 
 type CustomClaims struct {
 	ID          uint
-	Username   string
-	AuthorityId uint // role 管理员或者普通用户
+	Username    string
+	AuthorityId uint
 	jwt.StandardClaims
 }
