@@ -4,124 +4,111 @@ describe("Student Path Test", () => {
 
     //login
     cy.visit("http://localhost:3333/login");
-    cy.get("input#email").type("coordinator1@unsw.edu");
+    cy.get("input#email").type("student2@unsw.edu");
     cy.get("input#password").type("admin123");
     cy.get("button#buttonLogin").click();
 
     cy.wait(1000);
     cy.scrollTo("top");
 
-    // to myproject
-    cy.contains("a.nav-link", "My Project").click({ force: true });
-    cy.url().should("include", "/project/myproject");
-    cy.wait(1000);
-    cy.scrollTo("top");
-    cy.contains("button", "+ Create Project").click();
-    cy.url().should("include", "/project/create");
-    cy.wait(1000);
-    cy.scrollTo("top");
-
-    const projectName = "New Project Title";
-    cy.get("input#title").type("New Project Title");
-    cy.get("select#field").select("Artificial Intelligence");
-    cy.get("textarea#description").type(
-      "This is a description of the new project."
-    );
-    cy.get("input#email").type("client1@unsw.edu");
-    cy.get("input#requiredSkills").type("Skill 1, Skill 2");
-    cy.get("input#maxTeams").type("5");
-
-    const fileName = "P37 - Capstone Projects Management Platform.pdf";
-    cy.fixture(fileName).then((fileContent) => {
-      cy.get("input#file").attachFile({
-        fileContent: fileContent.toString(),
-        fileName: fileName,
-        mimeType: "application/pdf",
-      });
-    });
-    cy.get('button[type="submit"]').click();
-    cy.url().should("include", "/project/myproject");
+    // to create a team
+    cy.contains("a", "Team").invoke("removeAttr", "target").click();
     cy.wait(2000);
-    cy.scrollTo("top");
 
-    // to all project
-    cy.contains("a.nav-link", "All Project").click({ force: true });
-    cy.url().should("include", "/project/allproject");
-    cy.wait(1000);
-    cy.scrollTo("top");
+    cy.contains("button", "Create a team").click();
+    cy.url().should("include", "/team/student");
     cy.wait(2000);
-    cy.scrollTo("bottom", { duration: 5000 });
-    cy.contains(".custom-card-title", projectName).should("be.visible").click();
-    cy.url().should("include", `/project/details/`);
 
-    cy.contains("a", "Click here to download the project specification")
-      .should("have.attr", "href")
-      .then((href) => {
-        cy.request(href).then((response) => {
-          expect(response.status).to.eq(200);
-          expect(response.headers["content-type"]).to.eq("application/pdf");
-        });
-      });
+    // edit team profile
+    cy.contains("button", "Edit").click();
     cy.wait(2000);
-    cy.scrollTo("top");
 
-    // edit project
-    cy.contains("a.nav-link", "My Project").click({ force: true });
-    cy.url().should("include", "/project/myproject");
+    cy.get("#outlined-required").clear().type("Student_test");
     cy.wait(1000);
-    cy.scrollTo("top");
-    cy.contains(".custom-card-title", "Project 1")
-      .parents(".custom-card")
-      .within(() => {
-        cy.get('a[aria-label="Edit"]').click();
-      });
-    cy.url().should("include", "/project/edit/");
-    cy.wait(1000);
-    cy.scrollTo("top");
 
-    cy.get("input#title").clear().type("Updated Project Title");
-    cy.get("select#field").select("Data Science");
-    cy.get("textarea#description")
-      .clear()
-      .type("This is an updated description of the project.");
-    cy.get("input#requiredSkills")
-      .clear()
-      .type("Updated Skill 1, Updated Skill 2");
-    cy.get("input#maxTeams").clear().type("10");
-
-    cy.get('button[type="submit"]').click();
-    cy.url().should("include", "/project/myproject");
-    cy.wait(2000);
-    cy.scrollTo("top");
-
-    cy.contains(".custom-card-title", "Updated Project Title")
-      .parents(".custom-card")
-      .within(() => {
-        cy.get('a[aria-label="Edit"]').click();
-      });
-    cy.url().should("include", "/project/edit/");
-    cy.wait(1000);
-    cy.scrollTo("top");
-
-    cy.get("input#title").clear().type("Project 1");
-    cy.get('button[type="submit"]').click();
-    cy.url().should("include", "/project/myproject");
-    cy.wait(1000);
-    cy.scrollTo("top");
-
-    // view preferencelist and allocated teams
-    const PN = "Project 1";
-    cy.contains(".custom-card-title", PN)
-      .parents(".custom-card")
-      .within(() => {
-        cy.get('button[aria-label="Teams"]').click();
-      });
-    cy.get(".MuiDialogContent-root").should("be.visible");
-    cy.contains("h6", "No Teams Found").should("exist");
-    cy.contains("Allocated Team").click();
-    cy.contains("h6", "No Teams Found").should("exist");
+    cy.get("#demo-multiple-checkbox").click();
+    cy.get('li[data-value="Python"]').click();
+    cy.wait(500);
+    cy.get('li[data-value="Java"]').click();
     cy.get("body").click(0, 0);
-    cy.get(".MuiDialogContent-root").should("not.exist");
+    cy.wait(500);
+
+    // save the edit
+    cy.contains("button", "Save").click();
+    cy.wait(1000);
+    cy.contains("h5", "Team Name: Student_test").should("exist");
+    cy.contains("h5", "Python, Java").should("exist");
+    cy.wait(1000);
+
+    // invite others to join the team
+    cy.contains("button", "invite new member").click();
+    cy.wait(500);
+    cy.get(".ant-checkbox-input").click();
+    cy.contains("button", "OK").click();
+    cy.contains("span", "student3 (student3@unsw.edu)").should("exist");
+    cy.wait(500);
+
+    // manage preference list
+    cy.contains("a.nav-link", "My Project").click({ force: true });
+    cy.url().should("include", "/project/myproject");
+    cy.wait(1000);
+    cy.contains("button", "Manage your preference list").click();
+    cy.url().should("include", "/project/preference");
+    cy.wait(1000);
+
+    cy.get(".MuiSelect-select").should("have.length", 1);
+    cy.get('textarea[placeholder="Reason"]').should("have.length", 1);
+    cy.wait(500);
+    // select projects
+    cy.get(".MuiSelect-select").click();
+    cy.contains("li", "P3 Project 3").eq(0).click();
+    cy.wait(500);
+    cy.get(".ant-input.css-dev-only-do-not-override-1uq9j6g.ant-input-outlined")
+      .eq(0)
+      .type("This is a student test reason.");
+    cy.wait(500);
+
+    // Add more projects
+    cy.contains("button", "Add one").click();
+    cy.wait(500);
+    cy.get(".MuiSelect-select").should("have.length", 2);
+    cy.get('textarea[placeholder="Reason"]').should("have.length", 2);
+    cy.wait(500);
+    cy.get(".MuiSelect-select").eq(1).click();
+    cy.contains("li", "P4 Project 4").click();
+    cy.wait(500);
+    cy.get(".ant-input.css-dev-only-do-not-override-1uq9j6g.ant-input-outlined")
+      .eq(1)
+      .type("This is a student test reason.");
+    cy.wait(500);
+
+    cy.contains("button", "Add one").click();
+    cy.wait(500);
+    cy.get(".MuiSelect-select").should("have.length", 3);
+    cy.get('textarea[placeholder="Reason"]').should("have.length", 3);
+    cy.wait(500);
+    cy.get(".MuiSelect-select").eq(2).click();
+    cy.contains("li", "P5 Project 5").click();
+    cy.wait(500);
+    cy.get(".ant-input.css-dev-only-do-not-override-1uq9j6g.ant-input-outlined")
+      .eq(2)
+      .type("This is a student test reason.");
+    cy.wait(500);
+
+    cy.get('button[aria-label="delete"]').eq(1).click();
+    cy.wait(500);
+    cy.get(".MuiSelect-select").should("have.length", 2);
+    cy.get('textarea[placeholder="Reason"]').should("have.length", 2);
+    cy.wait(500);
+
+    // submit the preference list
+    cy.get("button.MuiButtonBase-root.MuiButton-root").eq(2).click();
+    cy.wait(1000);
+
+    cy.get("button.MuiButtonBase-root.MuiButton-root").eq(0).click();
+    cy.wait(1000);
+    cy.url().should("include", "/project/myproject");
+    cy.wait(500);
 
     // logout
     cy.contains("a", "Logout").invoke("removeAttr", "target").click();

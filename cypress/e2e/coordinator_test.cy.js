@@ -70,7 +70,7 @@ describe("Coordinator Path Test", () => {
     cy.url().should("include", "/project/myproject");
     cy.wait(1000);
     cy.scrollTo("top");
-    cy.contains(".custom-card-title", "Project 1")
+    cy.contains(".custom-card-title", "Project 2")
       .parents(".custom-card")
       .within(() => {
         cy.get('a[aria-label="Edit"]').click();
@@ -103,14 +103,14 @@ describe("Coordinator Path Test", () => {
     cy.wait(1000);
     cy.scrollTo("top");
 
-    cy.get("input#title").clear().type("Project 1");
+    cy.get("input#title").clear().type("Project 2");
     cy.get('button[type="submit"]').click();
     cy.url().should("include", "/project/myproject");
     cy.wait(1000);
     cy.scrollTo("top");
 
     // view preferencelist and allocated teams
-    const PN = "Project 1";
+    const PN = "Project 2";
     cy.contains(".custom-card-title", PN)
       .parents(".custom-card")
       .within(() => {
@@ -118,8 +118,10 @@ describe("Coordinator Path Test", () => {
       });
     cy.get(".MuiDialogContent-root").should("be.visible");
     cy.contains("h6", "No Teams Found").should("exist");
+    cy.wait(1000);
     cy.contains("Allocated Team").click();
     cy.contains("h6", "No Teams Found").should("exist");
+    cy.wait(1000);
     cy.get("body").click(0, 0);
     cy.get(".MuiDialogContent-root").should("not.exist");
 
